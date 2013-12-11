@@ -21,10 +21,8 @@ class Behavior extends \Behavior\Annotations\Annotation
     }
 
 
-    protected function parseValue($value)
+    protected function parseValue(array $lines)
     {
-        $lines = explode(chr(10), $value);
-        
         $parsedValue = array(
             'description' => array_shift($lines),
             self::KEYWORD_GIVEN => null,

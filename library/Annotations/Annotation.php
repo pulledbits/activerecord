@@ -25,11 +25,11 @@ abstract class Annotation
     final public function __construct(Factory $factory, $value)
     {
         $this->factory = $factory;
-        $this->value = $this->parseValue($value);
+        $this->value = $this->parseValue(explode(chr(10), $value));
     }
     
     /**
-     * @param $value
+     * @param array $lines
      */
-    abstract protected function parseValue($value);
+    abstract protected function parseValue(array $lines);
 }
