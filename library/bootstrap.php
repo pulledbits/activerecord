@@ -53,5 +53,5 @@ return function() {
     }
 
     require __DIR__ . DIRECTORY_SEPARATOR . 'Behavior.php';
-    return new \Behavior();
+    return new \Behavior(new Factory());
 };

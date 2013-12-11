@@ -11,7 +11,7 @@ class Car
     
     /**
      * 
-     * @param integer $speed
+     * @param integer $speed desc rip tion
      * 
      * @behavior Accelrates
      *  Given $speed equals 0
