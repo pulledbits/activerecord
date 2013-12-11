@@ -15,7 +15,7 @@ class Behavior
         
         $reflection = new ReflectionClass($className);
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            var_dump(Behavior\Annotation::parseDocComment($method->getDocComment()));
+            var_dump(Behavior\Annotation\Factory::makeFromDocComment($method->getDocComment()));
         }
     }
 }
