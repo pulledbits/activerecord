@@ -26,11 +26,11 @@ class Behavior
             throw new Behavior\Exception\FailedAutoload('Failed autoloading ' . $baseDirectory);
         }
         
-        $annotationsFactory = $this->factory->makeAnnotationsFactory();
+        $annotatedFactory = $this->factory->makeAnnotatedFactory();
         
         $reflection = new ReflectionClass($className);
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            var_dump($annotationsFactory->makeAnnotationsForReflectionMethod($method));
+            $annotatedMethod = $annotatedFactory->makeAnnotatedMethod($method);
         }
     }
 }

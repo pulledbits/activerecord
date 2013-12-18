@@ -9,6 +9,10 @@ namespace Behavior;
  */
 class Factory
 {
+    public function makeAnnotatedFactory()
+    {
+        return new Annotated\Factory($this);
+    }
     
     public function makeAnnotationsFactory()
     {
