@@ -20,7 +20,7 @@ return function() {
      * @param string $class The fully-qualified class name.
      * @return void
      */
-    function autoload($prefix, $base_dir) {
+    function autoload($base_dir, $prefix) {
         if (!is_dir($base_dir)) {
             return false;
         }
@@ -48,7 +48,7 @@ return function() {
         });
     }
     
-    if (autoload(__NAMESPACE__, __DIR__) === false) {
+    if (autoload(__DIR__, __NAMESPACE__) === false) {
         throw new Exception\FailedAutoload('Bootstrap failed autoloading library');
     }
 

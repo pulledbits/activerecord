@@ -1,11 +1,14 @@
 <?php
+
+namespace App\Vehicle;
+
 /**
  * Description of Car
  *
  * @author Rik Meijer <rmeijer@saa.nl>
  * @behavior 
  */
-class Car
+class Car extends \App\Vehicle
 {
     protected $speed = 0;
     
