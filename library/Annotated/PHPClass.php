@@ -15,6 +15,11 @@ class PHPClass extends \Behavior\Annotated
      */
     protected $methods = array();
     
+    /**
+     * 
+     * @param \Behavior\Annotated\Factory $factory
+     * @param \Reflector $reflector
+     */
     public function __construct(Factory $factory, \Reflector $reflector)
     {
         parent::__construct($factory, $reflector);
@@ -24,10 +29,24 @@ class PHPClass extends \Behavior\Annotated
         }
     }
     
-    
+    /**
+     * 
+     * @param \Behavior\Annotations\Factory $annotationsFactory
+     * @return \Behavior\Annotations
+     */
     protected function makeAnnotations(\Behavior\Annotations\Factory $annotationsFactory)
     {
         return $annotationsFactory->makeAnnotationsForReflectionClass($this->reflector);
+    }
+    
+    /**
+     * 
+     * @param \Behavior\PHP\Factory $phpFactory
+     * @return \Behavior\PHP\PHPClass
+     */
+    public function makeTest(\Behavior\PHP\Factory $phpFactory)
+    {
+        return $phpFactory->makePHPClass($this->reflector->getShortName() . 'Test');
     }
 
 }

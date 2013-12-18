@@ -30,6 +30,8 @@ class Behavior
         
         $annotatedClass = $annotatedFactory->makeAnnotatedClass(new \ReflectionClass($className));
         
-        var_dump($annotatedClass);
+        $testClass = $annotatedClass->makeTest($this->factory->makePHPFactory());
+        print $testClass;
+        
     }
 }

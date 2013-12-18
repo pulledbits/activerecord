@@ -19,4 +19,8 @@ class Factory
         return new Annotations\Factory($this);
     }
     
+    public function makePHPFactory()
+    {
+        return new PHP\Factory($this);
+    }
 }
