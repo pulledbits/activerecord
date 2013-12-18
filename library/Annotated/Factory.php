@@ -20,16 +20,6 @@ class Factory
     {
         $this->factory = $factory;
     }
-
-    /**
-     * 
-     * @param \ReflectionMethod $method
-     * @return \Behavior\Annotated\Subroutine\Method
-     */
-    public function makeAnnotatedMethod(\ReflectionMethod $method)
-    {
-        return new Subroutine\Method($this, $method);
-    }
     
     /**
      * 
@@ -38,5 +28,25 @@ class Factory
     public function makeAnnotationsFactory()
     {
         return $this->factory->makeAnnotationsFactory();
+    }
+
+    /**
+     * 
+     * @param \ReflectionMethod $method
+     * @return Subroutine\Method
+     */
+    public function makeAnnotatedMethod(\ReflectionMethod $method)
+    {
+        return new Subroutine\Method($this, $method);
+    }
+
+    /**
+     * 
+     * @param \ReflectionClass $class
+     * @return PHPClass
+     */
+    public function makeAnnotatedClass(\ReflectionClass $class)
+    {
+        return new PHPClass($this, $class);
     }
 }

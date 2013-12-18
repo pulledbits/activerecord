@@ -28,9 +28,8 @@ class Behavior
         
         $annotatedFactory = $this->factory->makeAnnotatedFactory();
         
-        $reflection = new ReflectionClass($className);
-        foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $annotatedMethod = $annotatedFactory->makeAnnotatedMethod($method);
-        }
+        $annotatedClass = $annotatedFactory->makeAnnotatedClass(new \ReflectionClass($className));
+        
+        var_dump($annotatedClass);
     }
 }

@@ -59,19 +59,17 @@ class Factory
      * @param string $string
      * @return \Behavior\Annotations
      */
-    public function makeAnnotationsForReflectionMethod(\ReflectionMethod $method)
+    protected function makeAnnotationsForDocComment($docComment)
     {
-        $string = $method->getDocComment();
-        
-        $currentAnnotationPosition = $this->findNextAnnotation($string);
+        $currentAnnotationPosition = $this->findNextAnnotation($docComment);
 
         $annotations = $this->makeAnnotations();
-        while ($currentAnnotationPosition < strlen($string)) {
-            $string = substr($string, $currentAnnotationPosition + 1);
+        while ($currentAnnotationPosition < strlen($docComment)) {
+            $docComment = substr($docComment, $currentAnnotationPosition + 1);
 
-            $currentAnnotationPosition = $this->findNextAnnotation($string);
+            $currentAnnotationPosition = $this->findNextAnnotation($docComment);
 
-            $docCommentAnnotation = trim(preg_replace('/[\r\n]+\h+\*\h*(\/$)?/', chr(10), substr($string, 0, $currentAnnotationPosition)));
+            $docCommentAnnotation = trim(preg_replace('/[\r\n]+\h+\*\h*(\/$)?/', chr(10), substr($docComment, 0, $currentAnnotationPosition)));
             list($annotationIdentifier, $annotation) = explode(' ', $docCommentAnnotation, 2);
             
             $annotationClassIdentifier = __NAMESPACE__ . NAMESPACE_SEPARATOR . 'Annotation' . NAMESPACE_SEPARATOR . ucfirst($annotationIdentifier);
@@ -80,5 +78,24 @@ class Factory
         }
         return $annotations;
     }
+    
+    /**
+     * Finds all Annotations in $method and returns an \Behavior\Annotations
+     * @param \ReflectionMethod $method
+     * @return \Behavior\Annotations
+     */
+    public function makeAnnotationsForReflectionMethod(\ReflectionMethod $method)
+    {
+        return $this->makeAnnotationsForDocComment($method->getDocComment());
+    }
 
+    /**
+     * Finds all Annotations for $class and returns an \Behavior\Annotations
+     * @param \ReflectionClass $class
+     * @return \Behavior\Annotations
+     */
+    public function makeAnnotationsForReflectionClass(\ReflectionClass $class)
+    {
+        return $this->makeAnnotationsForDocComment($class->getDocComment());
+    }
 }
