@@ -8,4 +8,12 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 		$class = new PHPClass("ActiveRecord");
 		$this->assertEquals("class ActiveRecord\n{\n}\n", $class->generate());
 	}
+	
+
+	public function testPHPClassWithProperty()
+	{
+		$class = new PHPClass("PersonRecord");
+		$class->addPrivateInstanceVariable("name");
+		$this->assertEquals("class PersonRecord\n{\n\tprivate \$name;\n}\n", $class->generate());
+	}
 }
