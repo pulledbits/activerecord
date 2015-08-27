@@ -27,12 +27,13 @@ class PHPClass
 	 */
 	public function generate()
 	{
-		$code = "class {$this->name}\n{";
+		$lines = array("class {$this->name}", "{");
 		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
-			$code .= "\n\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier;
+			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
-		$code .= "\n}\n";
+		$lines[] = "}";
+		$lines[] = "";
 		
-		return $code;
+		return join("\n", $lines);
 	}
 }
