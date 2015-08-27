@@ -10,7 +10,7 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 	}
 	
 
-	public function testPHPClassWithProperty()
+	public function testPHPClassWithPrivateInstanceVariable()
 	{
 		$class = new PHPClass("PersonRecord");
 		$class->addPrivateInstanceVariable("name");
