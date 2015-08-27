@@ -14,6 +14,11 @@ class PHPVariable
 		$this->name = $name;
 	}
 	
+	public function declareAs($typeIdentifier)
+	{
+		return $typeIdentifier . ' ' . $this->generate();
+	}
+	
 	/**
 	 * @return string
 	 */
