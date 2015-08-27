@@ -27,7 +27,7 @@ class PHPClass
 	 */
 	public function generate()
 	{
-		$lines = array("class {$this->name}", "{");
+		$lines = array("class " . $this->name, "{");
 		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
