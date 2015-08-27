@@ -6,7 +6,7 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 	public function testGeneratePHPClassGivesEmptyPHPClass()
 	{
 		$class = new PHPClass("ActiveRecord");
-		$this->assertEquals("class ActiveRecord\n{\n}\n", $class->generate());
+		$this->assertEquals("class ActiveRecord" . PHP_EOL . "{" . PHP_EOL . "}" . PHP_EOL . "", $class->generate());
 	}
 	
 
@@ -14,6 +14,6 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 	{
 		$class = new PHPClass("PersonRecord");
 		$class->addPrivateInstanceVariable("name");
-		$this->assertEquals("class PersonRecord\n{\n\tprivate \$name;\n}\n", $class->generate());
+		$this->assertEquals("class PersonRecord" . PHP_EOL . "{" . PHP_EOL . "\tprivate \$name;" . PHP_EOL . "}" . PHP_EOL . "", $class->generate());
 	}
 }

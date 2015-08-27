@@ -34,6 +34,6 @@ class PHPClass
 		$lines[] = "}";
 		$lines[] = "";
 		
-		return join("\n", $lines);
+		return join(PHP_EOL, $lines);
 	}
 }
