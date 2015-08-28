@@ -7,6 +7,7 @@ class PrototypeTest extends \PHPUnit_Framework_TestCase
 	{
 		$class = new PHPClass('PersonRecord');
 		$prototype = new Prototype($class);
+		$prototype->addProperty('name');
 		
 		$stream = fopen('php://memory', 'wb');
 		$prototype->writeOut($stream);
