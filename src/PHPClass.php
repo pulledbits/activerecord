@@ -82,6 +82,9 @@ class PHPClass
 	public function generate()
 	{
 		$lines = array("class " . $this->name, "{");
+		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
+			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
+		}
 		if (count($this->constructorArguments) > 0) {
 			$constructorArguments = array();
 			foreach ($this->constructorArguments as $constructorArgumentIdentifier => $constructorArgument) {
@@ -91,9 +94,6 @@ class PHPClass
 			$lines[] = "\t{";
 			$lines[] = "\t\$this->" . $constructorArgumentIdentifier . ' = $' . $constructorArgumentIdentifier . ';';
 			$lines[] = "\t}";
-		}
-		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
-			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
 		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
 			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $memberFunction['arguments']) . ')';

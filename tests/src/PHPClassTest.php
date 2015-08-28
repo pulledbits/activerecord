@@ -29,11 +29,11 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 		$class->dependsOn("repository");
 		$this->assertEquals("class PersonRecord" . PHP_EOL . 
 				"{" . PHP_EOL . 
+				"\tprivate \$repository;" . PHP_EOL . 
 				"\tpublic function __construct(\$repository)" . PHP_EOL . 
 				"\t{" . PHP_EOL .
 				"\t\$this->repository = \$repository;" . PHP_EOL .
 				"\t}" . PHP_EOL .
-				"\tprivate \$repository;" . PHP_EOL . 
 				"}" . PHP_EOL . "", $class->generate());
 	}
 	
