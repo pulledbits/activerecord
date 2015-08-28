@@ -36,4 +36,19 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 				"\tprivate \$repository;" . PHP_EOL . 
 				"}" . PHP_EOL . "", $class->generate());
 	}
+	
+	public function testPHPClassWithGetter()
+	{
+		$class = new PHPClass("PersonRecord");
+		$class->addPrivateInstanceVariable("name");
+		$class->addPublicMethod("getName", "\treturn \$this->name;");
+		$this->assertEquals("class PersonRecord" . PHP_EOL . 
+				"{" . PHP_EOL . 
+				"\tprivate \$name;" . PHP_EOL .
+				"\tpublic function getName()" . PHP_EOL . 
+				"\t{" . PHP_EOL .
+				"\treturn \$this->name;" . PHP_EOL .
+				"\t}" . PHP_EOL . 
+				"}" . PHP_EOL . "", $class->generate());
+	}
 }

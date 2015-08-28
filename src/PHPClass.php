@@ -20,6 +20,12 @@ class PHPClass
 	 * @var array
 	 */
 	private $memberVariables = array();
+
+	/**
+	 * 
+	 * @var array
+	 */
+	private $memberFunctions = array();
 	
 	public function __construct($name)
 	{
@@ -34,6 +40,14 @@ class PHPClass
 	{
 		$this->memberVariables[$name] = array(
 			'access' => 'private'
+		);
+	}
+	
+	public function addPublicMethod($methodIdentifier, $methodBody)
+	{
+		$this->memberFunctions[$methodIdentifier] = array(
+			'body' => $methodBody,
+			'access' => 'public'
 		);
 	}
 	
@@ -61,6 +75,12 @@ class PHPClass
 		}
 		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
+		}
+		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
+			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '()';
+			$lines[] = "\t{";
+			$lines[] = $memberFunction['body'];
+			$lines[] = "\t}";
 		}
 		$lines[] = "}";
 		$lines[] = "";
