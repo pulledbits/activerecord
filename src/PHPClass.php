@@ -8,12 +8,6 @@ class PHPClass
 	 * @var string
 	 */
 	private $name;
-	
-	/**
-	 * 
-	 * @var array
-	 */
-	private $constructorArguments = array();
 
 	/**
 	 * 
@@ -73,7 +67,9 @@ class PHPClass
 	public function dependsOn($name)
 	{
 		$this->addPrivateInstanceVariable($name);
-		$this->constructorArguments[$name] = array();
+		$this->addPublicMethod('__construct', array(
+		    "\$this->" . $name . ' = $' . $name . ';'
+		));
 	}
 	
 	/**
@@ -84,16 +80,6 @@ class PHPClass
 		$lines = array("class " . $this->name, "{");
 		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
-		}
-		if (count($this->constructorArguments) > 0) {
-			$constructorArguments = array();
-			foreach ($this->constructorArguments as $constructorArgumentIdentifier => $constructorArgument) {
-				$constructorArguments[] = '$' . $constructorArgumentIdentifier;
-			}
-			$lines[] = "\tpublic function __construct(" . join(", ", $constructorArguments) . ")";
-			$lines[] = "\t{";
-			$lines[] = "\t\$this->" . $constructorArgumentIdentifier . ' = $' . $constructorArgumentIdentifier . ';';
-			$lines[] = "\t}";
 		}
 		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
 			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $memberFunction['arguments']) . ')';
