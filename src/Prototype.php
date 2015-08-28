@@ -16,6 +16,15 @@ class Prototype
 	
 	/**
 	 * 
+	 * @param string $propertyIdentifier
+	 */
+	public function addProperty($propertyIdentifier)
+	{
+		$this->class->addPrivateInstanceVariable($propertyIdentifier);
+	}
+	
+	/**
+	 * 
 	 * @param resource $stream
 	 * @return integer
 	 */
