@@ -37,12 +37,7 @@ class PHPClass
 		);
 	}
 	
-	/**
-	 * 
-	 * @param string $methodIdentifier
-	 * @param array $methodBody
-	 */
-	public function addPublicMethod($methodIdentifier, array $methodBody)
+	private function extractArgumentsFromMethodBody(array $methodBody)
 	{
 	    $arguments = array();
 	    foreach ($methodBody as $methodBodyLine) {
@@ -56,9 +51,17 @@ class PHPClass
 	            }
 	        }
 	    }
-	    
+	    return array_unique($arguments);
+	}
+	
+	/**
+	 * 
+	 * @param string $methodIdentifier
+	 * @param array $methodBody
+	 */
+	public function addPublicMethod($methodIdentifier, array $methodBody)
+	{
 		$this->memberFunctions[$methodIdentifier] = array(
-		    'arguments' => array_unique($arguments),
 			'body' => $methodBody,
 			'access' => 'public'
 		);
@@ -82,7 +85,7 @@ class PHPClass
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
 		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
-			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $memberFunction['arguments']) . ')';
+			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $this->extractArgumentsFromMethodBody($memberFunction['body'])) . ')';
 			$lines[] = "\t{";
 			foreach ($memberFunction['body'] as $memberFunctionBodyLine) {
 				$lines[] = "\t\t" . $memberFunctionBodyLine;
