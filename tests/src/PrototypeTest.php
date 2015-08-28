@@ -15,6 +15,10 @@ class PrototypeTest extends \PHPUnit_Framework_TestCase
 				"\t{" . PHP_EOL .
 				"\t\treturn \$this->name;" . PHP_EOL .
 				"\t}" . PHP_EOL . 
+				"\tpublic function setName(\$name)" . PHP_EOL . 
+				"\t{" . PHP_EOL .
+				"\t\t\$this->name = \$name;" . PHP_EOL .
+				"\t}" . PHP_EOL . 
 				"}" . PHP_EOL . "", $class->generate());
 	}
 	

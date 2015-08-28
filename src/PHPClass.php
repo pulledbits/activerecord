@@ -50,7 +50,21 @@ class PHPClass
 	 */
 	public function addPublicMethod($methodIdentifier, array $methodBody)
 	{
+	    $arguments = array();
+	    foreach ($methodBody as $methodBodyLine) {
+	        if (preg_match_all('/\$\w+/', $methodBodyLine, $matches, PREG_PATTERN_ORDER) > 0) {
+	            foreach ($matches[0] as $match) {
+	                if ($match === '$this') {
+        	            // reference to self
+        	        } else {
+        	            $arguments[] = $match;
+        	        }
+	            }
+	        }
+	    }
+	    
 		$this->memberFunctions[$methodIdentifier] = array(
+		    'arguments' => array_unique($arguments),
 			'body' => $methodBody,
 			'access' => 'public'
 		);
@@ -82,7 +96,7 @@ class PHPClass
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
 		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
-			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '()';
+			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $memberFunction['arguments']) . ')';
 			$lines[] = "\t{";
 			foreach ($memberFunction['body'] as $memberFunctionBodyLine) {
 				$lines[] = "\t\t" . $memberFunctionBodyLine;

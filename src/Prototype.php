@@ -24,6 +24,9 @@ class Prototype
 		$this->class->addPublicMethod('get' . ucfirst($propertyIdentifier), array(
 			"return \$this->{$propertyIdentifier};"
 		));
+		$this->class->addPublicMethod('set' . ucfirst($propertyIdentifier), array(
+			"\$this->{$propertyIdentifier} = \$name;"
+		));
 	}
 	
 	/**
