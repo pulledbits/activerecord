@@ -21,6 +21,7 @@ class Prototype
 	public function addProperty($propertyIdentifier)
 	{
 		$this->class->addPrivateInstanceVariable($propertyIdentifier);
+		$this->class->addPublicMethod('get' . ucfirst($propertyIdentifier), "\t\treturn \$this->{$propertyIdentifier};");
 	}
 	
 	/**
