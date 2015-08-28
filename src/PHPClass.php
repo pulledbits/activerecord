@@ -43,7 +43,12 @@ class PHPClass
 		);
 	}
 	
-	public function addPublicMethod($methodIdentifier, $methodBody)
+	/**
+	 * 
+	 * @param string $methodIdentifier
+	 * @param array $methodBody
+	 */
+	public function addPublicMethod($methodIdentifier, array $methodBody)
 	{
 		$this->memberFunctions[$methodIdentifier] = array(
 			'body' => $methodBody,
@@ -79,7 +84,9 @@ class PHPClass
 		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
 			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '()';
 			$lines[] = "\t{";
-			$lines[] = $memberFunction['body'];
+			foreach ($memberFunction['body'] as $memberFunctionBodyLine) {
+				$lines[] = "\t\t" . $memberFunctionBodyLine;
+			}
 			$lines[] = "\t}";
 		}
 		$lines[] = "}";
