@@ -14,8 +14,22 @@ class Prototype
 		$this->class = $class;
 	}
 	
+	/**
+	 * 
+	 * @param string $propertyIdentifier
+	 */
 	public function addProperty($propertyIdentifier)
 	{
 		$this->class->addPrivateInstanceVariable($propertyIdentifier);
+	}
+	
+	/**
+	 * 
+	 * @param resource $stream
+	 * @return integer
+	 */
+	public function writeOut($stream)
+	{
+		return fwrite($stream, $this->class->generate());
 	}
 }
