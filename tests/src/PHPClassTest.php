@@ -10,7 +10,15 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 				"{" . PHP_EOL . 
 				"}" . PHP_EOL . "", $class->generate());
 	}
-	
+
+	public function testGenerateFinalPHPClass()
+	{
+	    $class = new PHPClass("ActiveRecord");
+	    $class->preventInheritance();
+	    $this->assertEquals("final class ActiveRecord" . PHP_EOL .
+	        "{" . PHP_EOL .
+	        "}" . PHP_EOL . "", $class->generate());
+	}
 
 	public function testPHPClassWithPrivateInstanceVariable()
 	{

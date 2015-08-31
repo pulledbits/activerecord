@@ -21,6 +21,12 @@ class PHPClass
 	 */
 	private $memberFunctions = array();
 	
+	/**
+	 * 
+	 * @var boolean
+	 */
+	private $final = false;
+	
 	public function __construct($name)
 	{
 		$this->name = $name;
@@ -75,12 +81,27 @@ class PHPClass
 		));
 	}
 	
+	public function preventInheritance()
+	{
+	    $this->final = true;
+	}
+	
+	private function getClassLine()
+	{
+	    $classLine = "";
+	    if ($this->final) {
+	        $classLine = "final ";
+	    }
+	    $classLine .= "class " . $this->name;
+	    return $classLine;
+	}
+	
 	/**
 	 * @return string
 	 */
 	public function generate()
 	{
-		$lines = array("class " . $this->name, "{");
+		$lines = array($this->getClassLine(), "{");
 		foreach ($this->memberVariables as $memberVariableIdentifier => $memberVariable) {
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
