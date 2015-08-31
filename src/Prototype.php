@@ -12,6 +12,7 @@ class Prototype
 	public function __construct(PHPClass $class)
 	{
 		$this->class = $class;
+		$this->class->preventInheritance();
 	}
 	
 	/**

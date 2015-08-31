@@ -8,7 +8,7 @@ class PrototypeTest extends \PHPUnit_Framework_TestCase
 		$class = new PHPClass('PersonRecord');
 		$prototype = new Prototype($class);
 		$prototype->addProperty('name');
-		$this->assertEquals("class PersonRecord" . PHP_EOL .
+		$this->assertEquals("final class PersonRecord" . PHP_EOL .
 				"{" . PHP_EOL .
 				"\tprivate \$name;" . PHP_EOL .
 				"\tpublic function getName()" . PHP_EOL . 
