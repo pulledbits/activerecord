@@ -261,19 +261,19 @@
  </target>
 
  <target name="-check-failure">
-  <!--  fail message="phpunit did not finish successfully">
+  <fail message="phpunit did not finish successfully">
    <condition>
     <not>
      <equals arg1="${result.phpunit}" arg2="0"/>
     </not>
    </condition>
-  </fail -->
-  <fail message="codeception did not finish successfully">
+  </fail>
+  <!--  fail message="codeception did not finish successfully">
    <condition>
     <not>
      <equals arg1="${result.codeception}" arg2="0"/>
     </not>
    </condition>
-  </fail>
+  </fail -->
  </target>
 </project>
