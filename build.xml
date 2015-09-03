@@ -214,8 +214,6 @@
   <exec executable="${phpunit}" resultproperty="result.phpunit" taskname="phpunit">
    <arg value="--configuration"/>
    <arg path="${builddir}/phpunit.xml"/>
-   
-   <arg value="--coverage-html"/>
   </exec>
 
   <property name="phpunit.done" value="true"/>
