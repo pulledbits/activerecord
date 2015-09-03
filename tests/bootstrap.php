@@ -3,5 +3,5 @@
 /* 
  * test specific bootstrapper
  */
-$applicationBootstrap = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
+$applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 $applicationBootstrap();
