@@ -29,14 +29,4 @@ class Prototype
 			"\$this->{$propertyIdentifier} = \$name;"
 		));
 	}
-	
-	/**
-	 * 
-	 * @param resource $stream
-	 * @return integer
-	 */
-	public function writeOut($stream)
-	{
-		return fwrite($stream, $this->class->generate());
-	}
 }
