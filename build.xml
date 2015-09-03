@@ -32,11 +32,11 @@
  <property name="phpunit"   value="${basedir}/vendor/bin/phpunit"/>
  <property name="codeception" value="${basedir}/vendor/bin/codecept"/> -->
 
- <target name="full-build" depends="prepare,composer,static-analysis,codeception,phpdox,-check-failure" description="Performs static analysis, runs the tests, and generates project documentation"/>
+ <target name="full-build" depends="prepare,composer,static-analysis,phpunit,phpdox,-check-failure" description="Performs static analysis, runs the tests, and generates project documentation"/>
 
- <target name="full-build-parallel" depends="prepare,composer,static-analysis-parallel,codeception,phpdox,-check-failure" description="Performs static analysis (executing the tools in parallel), runs the tests, and generates project documentation"/>
+ <target name="full-build-parallel" depends="prepare,composer,static-analysis-parallel,phpunit,phpdox,-check-failure" description="Performs static analysis (executing the tools in parallel), runs the tests, and generates project documentation"/>
 
- <target name="quick-build" depends="prepare,composer,lint,codeception-no-coverage" description="Performs a lint check and runs the tests (without generating code coverage reports)"/>
+ <target name="quick-build" depends="prepare,composer,lint,phpunit-no-coverage" description="Performs a lint check and runs the tests (without generating code coverage reports)"/>
 
  <target name="static-analysis" depends="lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci" description="Performs static analysis"/>
 
@@ -213,7 +213,7 @@
  <target name="phpunit" unless="phpunit.done" depends="prepare" description="Run unit tests with phpunit">
   <exec executable="${phpunit}" resultproperty="result.phpunit" taskname="phpunit">
    <arg value="--configuration"/>
-   <arg path="${builddir}/phpunit.yml"/>
+   <arg path="${builddir}/phpunit.xml"/>
    
    <arg value="--coverage-html"/>
   </exec>
