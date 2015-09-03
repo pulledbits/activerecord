@@ -1,28 +1,28 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\PHP;
 
-class PHPClassTest extends \PHPUnit_Framework_TestCase
+class ClassTest extends \PHPUnit_Framework_TestCase
 {
-	public function testGeneratePHPClassGivesEmptyPHPClass()
+	public function testGenerateClassGivesEmptyClass()
 	{
-		$class = new PHPClass("ActiveRecord");
+		$class = new Class_("ActiveRecord");
 		$this->assertEquals("class ActiveRecord" . PHP_EOL . 
 				"{" . PHP_EOL . 
 				"}" . PHP_EOL . "", $class->generate());
 	}
 
-	public function testGenerateFinalPHPClass()
+	public function testGenerateFinalClass()
 	{
-	    $class = new PHPClass("ActiveRecord");
+	    $class = new Class_("ActiveRecord");
 	    $class->preventInheritance();
 	    $this->assertEquals("final class ActiveRecord" . PHP_EOL .
 	        "{" . PHP_EOL .
 	        "}" . PHP_EOL . "", $class->generate());
 	}
 
-	public function testPHPClassWithPrivateInstanceVariable()
+	public function testClassWithPrivateInstanceVariable()
 	{
-		$class = new PHPClass("PersonRecord");
+		$class = new Class_("PersonRecord");
 		$class->addPrivateInstanceVariable("name");
 		$this->assertEquals("class PersonRecord" . PHP_EOL . 
 				"{" . PHP_EOL . 
@@ -31,9 +31,9 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 	}
 	
 
-	public function testPHPClassWithDependency()
+	public function testClassWithDependency()
 	{
-		$class = new PHPClass("PersonRecord");
+		$class = new Class_("PersonRecord");
 		$class->dependsOn("repository");
 		$this->assertEquals("class PersonRecord" . PHP_EOL . 
 				"{" . PHP_EOL . 
@@ -45,9 +45,9 @@ class PHPClassTest extends \PHPUnit_Framework_TestCase
 				"}" . PHP_EOL . "", $class->generate());
 	}
 	
-	public function testPHPClassWithGetter()
+	public function testClassWithGetter()
 	{
-		$class = new PHPClass("PersonRecord");
+		$class = new Class_("PersonRecord");
 		$class->addPrivateInstanceVariable("name");
 		$class->addPublicMethod("getName", array(
 			"return \$this->name;"	

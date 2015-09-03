@@ -1,7 +1,7 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\PHP;
 
-class PHPClass
+class Class_
 {
 	/**
 	 * 

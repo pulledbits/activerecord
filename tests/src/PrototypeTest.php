@@ -5,7 +5,7 @@ class PrototypeTest extends \PHPUnit_Framework_TestCase
 {
 	public function testPrototypeAcceptsAProperty()
 	{
-		$class = new PHPClass('PersonRecord');
+		$class = new PHP\Class_('PersonRecord');
 		$prototype = new Prototype($class);
 		$prototype->addProperty('name');
 		$this->assertEquals("final class PersonRecord" . PHP_EOL .

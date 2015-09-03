@@ -1,7 +1,7 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\PHP;
 
-class PHPVariable
+class Variable
 {
 	/**
 	 * 

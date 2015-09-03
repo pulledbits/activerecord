@@ -9,7 +9,7 @@ class Prototype
 	 */
 	private $class;
 	
-	public function __construct(PHPClass $class)
+	public function __construct(PHP\Class_ $class)
 	{
 		$this->class = $class;
 		$this->class->preventInheritance();
