@@ -13,6 +13,7 @@ class Prototype
 	{
 		$this->class = $class;
 		$this->class->preventInheritance();
+		$this->class->dependsOn('repository');
 	}
 	
 	/**
