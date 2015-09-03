@@ -47,12 +47,12 @@ class Class_
 	{
 	    $arguments = array();
 	    foreach ($methodBody as $methodBodyLine) {
-	        if (preg_match_all('/\$\w+/', $methodBodyLine, $matches, PREG_PATTERN_ORDER) > 0) {
-	            foreach ($matches[0] as $match) {
-	                if ($match === '$this') {
+	        if (preg_match_all('/\$(\w+)/', $methodBodyLine, $matches, PREG_SET_ORDER) > 0) {
+	            foreach ($matches as $match) {
+	                if ($match[0] === '$this') {
         	            // reference to self
         	        } else {
-        	            $arguments[] = $match;
+        	            $arguments[$match[1]] = $match[0];
         	        }
 	            }
 	        }
@@ -69,16 +69,19 @@ class Class_
 	{
 		$this->memberFunctions[$methodIdentifier] = array(
 			'body' => $methodBody,
-			'access' => 'public'
+			'access' => 'public',
+		    'parameters' => array()
 		);
 	}
 	
-	public function dependsOn($name)
+	public function dependsOn(Declaration $variableDeclaration)
 	{
-		$this->addPrivateInstanceVariable($name);
+	    $dependencyIdentifier = $variableDeclaration->getVariable()->getName();
+		$this->addPrivateInstanceVariable($dependencyIdentifier);
 		$this->addPublicMethod('__construct', array(
-		    "\$this->" . $name . ' = $' . $name . ';'
+		    "\$this->" . $dependencyIdentifier . ' = $' . $dependencyIdentifier . ';'
 		));
+		$this->memberFunctions['__construct']['parameters'][$dependencyIdentifier] = $variableDeclaration;
 	}
 	
 	public function preventInheritance()
@@ -106,7 +109,12 @@ class Class_
 			$lines[] = "\t" . $memberVariable['access'] . ' $' . $memberVariableIdentifier . ';';
 		}
 		foreach ($this->memberFunctions as $memberFunctionIdentifier => $memberFunction) {
-			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $this->extractArgumentsFromMethodBody($memberFunction['body'])) . ')';
+		    $parameters = array();
+		    foreach ($memberFunction['parameters'] as $parameterIdentifier => $parameterDeclaration) {
+		        $parameters[$parameterIdentifier] = $parameterDeclaration->generate();
+		    }
+		    $parameters = array_merge($this->extractArgumentsFromMethodBody($memberFunction['body']), $parameters);
+			$lines[] = "\t" . $memberFunction['access'] . ' function ' . $memberFunctionIdentifier . '(' . join(', ', $parameters) . ')';
 			$lines[] = "\t{";
 			foreach ($memberFunction['body'] as $memberFunctionBodyLine) {
 				$lines[] = "\t\t" . $memberFunctionBodyLine;

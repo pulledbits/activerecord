@@ -21,6 +21,8 @@ class Declaration
 		$this->variable = $variable;
 	}
 
+	
+	
 	/**
 	 * @return string
 	 */
@@ -28,4 +30,13 @@ class Declaration
 	{
 		return $this->typeIdentifier . ' ' . $this->variable->generate();
 	}
+
+	/**
+	 * @return Variable
+	 */
+    public function getVariable()
+    {
+        return $this->variable;
+    }
+ 
 }

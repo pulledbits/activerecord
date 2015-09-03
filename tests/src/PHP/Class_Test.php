@@ -33,12 +33,15 @@ class ClassTest extends \PHPUnit_Framework_TestCase
 
 	public function testClassWithDependency()
 	{
+        $variable = new Variable('repository');
+        $declaration = new Declaration('Repository', $variable);
+	    
 		$class = new Class_("PersonRecord");
-		$class->dependsOn("repository");
+		$class->dependsOn($declaration);
 		$this->assertEquals("class PersonRecord" . PHP_EOL . 
 				"{" . PHP_EOL . 
 				"\tprivate \$repository;" . PHP_EOL . 
-				"\tpublic function __construct(\$repository)" . PHP_EOL . 
+				"\tpublic function __construct(Repository \$repository)" . PHP_EOL . 
 				"\t{" . PHP_EOL .
 				"\t\t\$this->repository = \$repository;" . PHP_EOL .
 				"\t}" . PHP_EOL .

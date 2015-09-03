@@ -9,11 +9,11 @@ class Prototype
 	 */
 	private $class;
 	
-	public function __construct(PHP\Class_ $class)
+	public function __construct(PHP\Class_ $class, PHP\Declaration $repositoryDeclaration)
 	{
 		$this->class = $class;
 		$this->class->preventInheritance();
-		$this->class->dependsOn('repository');
+		$this->class->dependsOn($repositoryDeclaration);
 	}
 	
 	/**

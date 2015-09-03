@@ -14,6 +14,8 @@ class Variable
 		$this->name = $name;
 	}
 	
+	
+	
 	public function declareAs($typeIdentifier)
 	{
 		return $typeIdentifier . ' ' . $this->generate();
@@ -26,4 +28,10 @@ class Variable
 	{
 		return '$' . $this->name;
 	}
+
+    public function getName()
+    {
+        return $this->name;
+    }
+ 
 }
