@@ -2,7 +2,6 @@
 <phpunit bootstrap="../tests/bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
-         strict="true"
          verbose="true">
        
   <testsuites>
@@ -21,7 +20,7 @@
 
   <filter>
     <whitelist addUncoveredFilesFromWhitelist="true">
-      <directory suffix=".php">src</directory>
+      <directory suffix=".php">../src</directory>
       <exclude>
         <file>../src/bootstrap.php</file>
       </exclude>
