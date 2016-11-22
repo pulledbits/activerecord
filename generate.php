@@ -8,10 +8,16 @@ use phootwork\file\Directory;
 
 require __DIR__ . '/vendor/autoload.php';
 
-if ($_SERVER['argc'] == 1) {
-    exit('please enter destination path');
+if ($_SERVER['argc'] < 3) {
+    exit('please enter destination namespace and path');
 }
-$targetDirectory = $_SERVER['argv'][1];
+
+$targetNamespace = $_SERVER['argv'][1];
+if (substr($targetNamespace, -1) != "\\") {
+    $targetNamespace .= "\\";
+}
+
+$targetDirectory = $_SERVER['argv'][2];
 $tablesDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'table';
 if (file_exists($tablesDirectory) == false) {
     mkdir($tablesDirectory);
@@ -27,18 +33,27 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 $schemaManager = $conn->getSchemaManager();
 
 foreach ($schemaManager->listTableNames() as $tableName) {
-    $class = new gossi\codegen\model\PhpClass("Database\\Table\\" . $tableName);
+    $className = $targetNamespace . "Table\\" . $tableName;
+    
+    $class = new gossi\codegen\model\PhpClass($className);
     $class->setFinal(true);
     
     $class->setProperty(PhpProperty::create("connection")->setType("\PDO"));
     $class->setMethod(PhpMethod::create("__construct")->setParameters([PhpParameter::create("connection")->setType("\\PDO")])->setBody('$this->connection = $connection;'));
     
-    foreach ($schemaManager->listTableColumns($tableName) as $columName => $column) {
-        $class->setProperty(PhpProperty::create($columName));
+    $columns = [];
+    foreach ($schemaManager->listTableColumns($tableName) as $columnName => $column) {
+        $class->setProperty(PhpProperty::create($columnName));
+        $columns[] = $columnName;
     }
 
+    $querybuilder = $conn->createQueryBuilder();
+    
     $class->setMethod(PhpMethod::create("fetchAll")->setStatic(true)->setBody(
-        '$this->connection->query("' . $conn->createQueryBuilder()->select("*")->from($tableName) . '");'));
+        '$connection = new \\PDO("' . $connectionParams['url'] . '");' . PHP_EOL .
+        '$statement = $connection->query("' . $querybuilder->select($columns)->from($tableName) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $className) . '", [$connection]);' . PHP_EOL .
+        'return $statement->fetchAll();'
+    ));
     
     $generator = new CodeGenerator();
     
