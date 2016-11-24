@@ -26,13 +26,14 @@ if (file_exists($tablesDirectory) == false) {
 $config = new \Doctrine\DBAL\Configuration();
 //..
 $connectionParams = array(
-    'url' => 'sqlite:///' . __DIR__ . '/database.sqlite'
+    'url' => 'mysql://teach:teach@localhost/teach'
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
 $schemaManager = $conn->getSchemaManager();
 
-foreach ($schemaManager->listTableNames() as $tableName) {
+foreach ($schemaManager->listTables() as $table) {
+    $tableName = $table->getName();
     $className = $targetNamespace . "Table\\" . $tableName;
     
     $class = new gossi\codegen\model\PhpClass($className);
@@ -48,12 +49,41 @@ foreach ($schemaManager->listTableNames() as $tableName) {
     }
 
     $querybuilder = $conn->createQueryBuilder();
+
+    $class->setMethod(PhpMethod::create("connect")->setStatic(true)->setBody('return new \\PDO("' . $connectionParams['url'] . '");'));
     
     $class->setMethod(PhpMethod::create("fetchAll")->setStatic(true)->setBody(
-        '$connection = new \\PDO("' . $connectionParams['url'] . '");' . PHP_EOL .
+        '$connection = self::connect();' . PHP_EOL .
         '$statement = $connection->query("' . $querybuilder->select($columns)->from($tableName) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $className) . '", [$connection]);' . PHP_EOL .
         'return $statement->fetchAll();'
     ));
+    
+    $foreignKeys = $table->getForeignKeys();
+    foreach ($foreignKeys as $foreignKeyIdentifier => $foreignKey) {
+        $words = explode('_', $foreignKeyIdentifier);
+        $camelCased = array_map('ucfirst', $words);
+        $foreignKeyMethodIdentifier = join('', $camelCased);
+
+        $foreignKeyMethod = PhpMethod::create("fetchBy" . $foreignKeyMethodIdentifier);
+        $foreignKeyMethod->setStatic(true);
+        
+        $foreignKeyMapParameters = $foreignKeyWhere = [];
+        foreach ($foreignKey->getLocalColumns() as $foreignKeyColumnName) {
+            $foreignKeyMethod->addSimpleParameter($foreignKeyColumnName, "string");
+            $foreignKeyWhere[] = $foreignKeyColumnName . ' = :' . $foreignKeyColumnName;
+            $foreignKeyMapParameters[] = '$statement->bindParam(":' . $foreignKeyColumnName . '", $' . $foreignKeyColumnName . ', \\PDO::PARAM_STR);';
+        }
+        
+        $foreignKeyMethod->setBody(
+            '$connection = self::connect();' . PHP_EOL .
+            '$statement = $connection->prepare("' . $querybuilder->select($columns)->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $className) . '", [$connection]);' . PHP_EOL .
+            join(PHP_EOL . "\t", $foreignKeyMapParameters) . PHP_EOL .
+            'return $statement->fetchAll();'
+            );
+        
+        
+        $class->setMethod($foreignKeyMethod);
+    }
     
     $generator = new CodeGenerator();
     
