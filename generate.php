@@ -5,6 +5,7 @@ use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
 use gossi\codegen\model\PhpParameter;
 use phootwork\file\Directory;
+use ActiveRecord\Table;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -34,7 +35,11 @@ $schemaManager = $conn->getSchemaManager();
 
 foreach ($schemaManager->listTables() as $table) {
     $tableName = $table->getName();
-    $className = $targetNamespace . "Table\\" . $tableName;
+    
+    $tableDescriptor = new Table($tableName);
+    $classDescription = $tableDescriptor->describe();
+    
+    $className = $targetNamespace . "Table\\" . $classDescription['identifier'];
     
     $class = new gossi\codegen\model\PhpClass($className);
     $class->setFinal(true);
