@@ -5,8 +5,10 @@ namespace ActiveRecord;
 class TableTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testSelect_When_Default_Expect_AllWildcard()
+    public function testMakeClass_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        
+        $table = new Table('MyTable');
+        $classDescription = $table->describe();
+        $this->assertEquals($classDescription['identifier'], 'MyTable');
     }
 }
