@@ -36,7 +36,7 @@ $schemaManager = $conn->getSchemaManager();
 foreach ($schemaManager->listTables() as $table) {
     $tableName = $table->getName();
     
-    $tableDescriptor = new Table($tableName);
+    $tableDescriptor = new Table($table);
     $classDescription = $tableDescriptor->describe($targetNamespace . "Table");
     
     $class = new gossi\codegen\model\PhpClass($classDescription['identifier']);

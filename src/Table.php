@@ -3,10 +3,14 @@ namespace ActiveRecord;
 
 final class Table
 {
+    /**
+     * 
+     * @var \Doctrine\DBAL\Schema\Table
+     */
     private $identifier;
     
-    public function __construct(String $identifier) {
-        $this->identifier = $identifier;
+    public function __construct(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) {
+        $this->dbalSchemaTable = $dbalSchemaTable;
     }
     
     public function describe($namespace) : array {
@@ -15,7 +19,7 @@ final class Table
         }
 
         return [
-            'identifier' => $namespace . $this->identifier
+            'identifier' => $namespace . $this->dbalSchemaTable->getName()
         ];
     }
     
