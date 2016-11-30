@@ -11,4 +11,11 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $classDescription = $table->describe();
         $this->assertEquals($classDescription['identifier'], 'MyTable');
     }
+
+    public function testMakeClass_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
+    {
+        $table = new Table('MyTable2');
+        $classDescription = $table->describe();
+        $this->assertEquals($classDescription['identifier'], 'MyTable2');
+    }
 }

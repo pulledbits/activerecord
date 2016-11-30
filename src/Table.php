@@ -11,7 +11,7 @@ final class Table
     
     public function describe() : array {
         return [
-            'identifier' => 'MyTable'
+            'identifier' => $this->identifier
         ];
     }
     
