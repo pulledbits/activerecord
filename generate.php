@@ -39,10 +39,10 @@ foreach ($schemaManager->listTables() as $table) {
     $tableDescriptor = new Table($tableName);
     $classDescription = $tableDescriptor->describe();
     
-    $className = $targetNamespace . "Table\\" . $classDescription['identifier'];
-    
-    $class = new gossi\codegen\model\PhpClass($className);
+    $class = new gossi\codegen\model\PhpClass($targetNamespace . "Table\\" . $classDescription['identifier']);
     $class->setFinal(true);
+    
+    $escapedClassName = str_replace("\\", "\\\\", $class->getQualifiedName());
     
     $class->setProperty(PhpProperty::create("connection")->setType("\PDO"));
     $class->setMethod(PhpMethod::create("__construct")->setParameters([PhpParameter::create("connection")->setType("\\PDO")])->setBody('$this->connection = $connection;'));
@@ -59,7 +59,7 @@ foreach ($schemaManager->listTables() as $table) {
     
     $class->setMethod(PhpMethod::create("fetchAll")->setStatic(true)->setBody(
         '$connection = self::connect();' . PHP_EOL .
-        '$statement = $connection->query("' . $querybuilder->select($columns)->from($tableName) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $className) . '", [$connection]);' . PHP_EOL .
+        '$statement = $connection->query("' . $querybuilder->select($columns)->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
         'return $statement->fetchAll();'
     ));
     
@@ -81,7 +81,7 @@ foreach ($schemaManager->listTables() as $table) {
         
         $foreignKeyMethod->setBody(
             '$connection = self::connect();' . PHP_EOL .
-            '$statement = $connection->prepare("' . $querybuilder->select($columns)->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $className) . '", [$connection]);' . PHP_EOL .
+            '$statement = $connection->prepare("' . $querybuilder->select($columns)->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL . "\t", $foreignKeyMapParameters) . PHP_EOL .
             'return $statement->fetchAll();'
             );
