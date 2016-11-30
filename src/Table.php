@@ -9,9 +9,13 @@ final class Table
         $this->identifier = $identifier;
     }
     
-    public function describe() : array {
+    public function describe($namespace) : array {
+        if (substr($namespace, -1) != "\\") {
+            $namespace .= "\\";
+        }
+
         return [
-            'identifier' => $this->identifier
+            'identifier' => $namespace . $this->identifier
         ];
     }
     

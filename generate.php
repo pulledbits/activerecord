@@ -37,9 +37,9 @@ foreach ($schemaManager->listTables() as $table) {
     $tableName = $table->getName();
     
     $tableDescriptor = new Table($tableName);
-    $classDescription = $tableDescriptor->describe();
+    $classDescription = $tableDescriptor->describe($targetNamespace . "Table");
     
-    $class = new gossi\codegen\model\PhpClass($targetNamespace . "Table\\" . $classDescription['identifier']);
+    $class = new gossi\codegen\model\PhpClass($classDescription['identifier']);
     $class->setFinal(true);
     
     $escapedClassName = str_replace("\\", "\\\\", $class->getQualifiedName());
