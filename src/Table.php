@@ -7,7 +7,7 @@ final class Table
      * 
      * @var \Doctrine\DBAL\Schema\Table
      */
-    private $identifier;
+    private $dbalSchemaTable;
     
     public function __construct(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) {
         $this->dbalSchemaTable = $dbalSchemaTable;
@@ -17,9 +17,10 @@ final class Table
         if (substr($namespace, -1) != "\\") {
             $namespace .= "\\";
         }
-
+        
         return [
-            'identifier' => $namespace . $this->dbalSchemaTable->getName()
+            'identifier' => $namespace . $this->dbalSchemaTable->getName(),
+            'columns' => array_keys($this->dbalSchemaTable->getColumns())
         ];
     }
     
