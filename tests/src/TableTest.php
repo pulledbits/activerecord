@@ -59,8 +59,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         });
         $classDescription = $table->describe('\\Database\\Table');
-        $this->assertEquals($classDescription['columns'][0], 'id');
-        $this->assertEquals($classDescription['columns'][1], 'name');
-        $this->assertEquals($classDescription['columns'][2], 'height');
+        $this->assertEquals($classDescription['properties'][0], 'id');
+        $this->assertEquals($classDescription['properties'][1], 'name');
+        $this->assertEquals($classDescription['properties'][2], 'height');
     }
 }
