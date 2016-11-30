@@ -47,10 +47,8 @@ foreach ($schemaManager->listTables() as $table) {
     $class->setProperty(PhpProperty::create("connection")->setType("\PDO"));
     $class->setMethod(PhpMethod::create("__construct")->setParameters([PhpParameter::create("connection")->setType("\\PDO")])->setBody('$this->connection = $connection;'));
     
-    $columns = [];
-    foreach ($schemaManager->listTableColumns($tableName) as $columnName => $column) {
+    foreach ($classDescription['columns'] as $columnName) {
         $class->setProperty(PhpProperty::create($columnName));
-        $columns[] = $columnName;
     }
 
     $querybuilder = $conn->createQueryBuilder();
@@ -59,7 +57,7 @@ foreach ($schemaManager->listTables() as $table) {
     
     $class->setMethod(PhpMethod::create("fetchAll")->setStatic(true)->setBody(
         '$connection = self::connect();' . PHP_EOL .
-        '$statement = $connection->query("' . $querybuilder->select($columns)->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
+        '$statement = $connection->query("' . $querybuilder->select($classDescription['columns'])->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
         'return $statement->fetchAll();'
     ));
     
@@ -81,7 +79,7 @@ foreach ($schemaManager->listTables() as $table) {
         
         $foreignKeyMethod->setBody(
             '$connection = self::connect();' . PHP_EOL .
-            '$statement = $connection->prepare("' . $querybuilder->select($columns)->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
+            '$statement = $connection->prepare("' . $querybuilder->select($classDescription['columns'])->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL . "\t", $foreignKeyMapParameters) . PHP_EOL .
             'return $statement->fetchAll();'
             );
