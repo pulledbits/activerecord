@@ -63,11 +63,11 @@ foreach ($schemaManager->listTables() as $table) {
         }
         
         $method->setBody(
-            '$statement = $this->connection->prepare("' . $query . '", \\PDO::FETCH_CLASS, "' . $class->getName() . '", [$connection]);' . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $query . '");' . PHP_EOL .
             join(PHP_EOL, array_map(function($methodParameter) {
                 return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
             }, $methodDescription['parameters'])) . PHP_EOL .
-            'return $statement->fetchAll();'
+            'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $class->getName() . '", [$connection]);'
             );
         
         
