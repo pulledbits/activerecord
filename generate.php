@@ -4,7 +4,6 @@ use gossi\codegen\model\PhpProperty;
 use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
 use gossi\codegen\model\PhpParameter;
-use phootwork\file\Directory;
 use ActiveRecord\SourceTable;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -46,13 +45,8 @@ foreach ($schemaManager->listTables() as $table) {
     $constructor = PhpMethod::create("__construct");
     $constructor->addSimpleParameter("connection", '\\PDO');
     $class->setMethod($constructor);
-    
-    $constructorBody = ['$this->connection = $connection;'];
-    foreach ($classDescription['properties'] as $propertyIdentifier => $value) {
-        $class->setProperty(PhpProperty::create($propertyIdentifier));
-        $constructorBody[] = '$this->' . $propertyIdentifier . ' = ' . var_export($value, true) . ';';
-    }
-    $constructor->setBody(join(PHP_EOL, $constructorBody));
+
+    $constructor->setBody('$this->connection = $connection;');
 
     $querybuilder = $conn->createQueryBuilder();
     $foreignKeys = $table->getForeignKeys();
