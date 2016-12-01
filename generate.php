@@ -54,28 +54,28 @@ foreach ($schemaManager->listTables() as $table) {
 
     $querybuilder = $conn->createQueryBuilder();
     $foreignKeys = $table->getForeignKeys();
-    foreach ($classDescription['methods'] as $methodIdentifier => $method) {
-        $foreignKeyMethod = PhpMethod::create($methodIdentifier);
-        $foreignKeyMethod->setParameters(array_map(function($methodParameter) {
+    foreach ($classDescription['methods'] as $methodIdentifier => $methodDescription) {
+        $method = PhpMethod::create($methodIdentifier);
+        $method->setParameters(array_map(function($methodParameter) {
             return PhpParameter::create($methodParameter)->setType('string'); 
-        }, $method['parameters']));
+        }, $methodDescription['parameters']));
         
-        $query = $querybuilder->select($method['query'][1]['fields']);
-        $query->from($method['query'][1]['from']);
-        if (strlen($method['query'][1]['where']) > 0) {
-            $query->where($method['query'][1]['where']);
+        $query = $querybuilder->select($methodDescription['query'][1]['fields']);
+        $query->from($methodDescription['query'][1]['from']);
+        if (strlen($methodDescription['query'][1]['where']) > 0) {
+            $query->where($methodDescription['query'][1]['where']);
         }
         
-        $foreignKeyMethod->setBody(
+        $method->setBody(
             '$statement = $this->connection->prepare("' . $query . '", \\PDO::FETCH_CLASS, "' . $class->getName() . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL, array_map(function($methodParameter) {
                 return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
-            }, $method['parameters'])) . PHP_EOL .
+            }, $methodDescription['parameters'])) . PHP_EOL .
             'return $statement->fetchAll();'
             );
         
         
-        $class->setMethod($foreignKeyMethod);
+        $class->setMethod($method);
     }
     
     $generator = new CodeGenerator();
