@@ -1,12 +1,12 @@
 <?php
 namespace ActiveRecord;
 
-class TableTest extends \PHPUnit_Framework_TestCase
+class SourceTableTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -22,7 +22,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -38,7 +38,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_DifferingTableName_Expect_FetchAllMethod()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -57,7 +57,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -83,7 +83,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
