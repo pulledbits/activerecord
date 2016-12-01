@@ -30,7 +30,9 @@ final class Table
         
         return [
             'identifier' => $namespace . $this->dbalSchemaTable->getName(),
-            'properties' => array_keys($this->dbalSchemaTable->getColumns()),
+            'properties' => [
+                'columns' => array_keys($this->dbalSchemaTable->getColumns())
+            ],
             'methods' => $methods
         ];
     }
