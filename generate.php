@@ -45,7 +45,9 @@ foreach ($schemaManager->listTables() as $table) {
     $escapedClassName = str_replace("\\", "\\\\", $class->getQualifiedName());
     
     $class->setProperty(PhpProperty::create("connection")->setType("\PDO"));
-    $class->setMethod(PhpMethod::create("__construct")->setParameters([PhpParameter::create("connection")->setType("\\PDO")])->setBody('$this->connection = $connection;'));
+    $constructor = $class->setMethod(PhpMethod::create("__construct"));
+    $constructor->setParameters([PhpParameter::create("connection")->setType("\\PDO")]);
+    $constructor->setBody('$this->connection = $connection;');
     
     foreach ($classDescription['properties'] as $propertyIdentifier => $value) {
         $class->setProperty(PhpProperty::create($propertyIdentifier));
