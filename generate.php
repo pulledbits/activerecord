@@ -58,10 +58,8 @@ foreach ($schemaManager->listTables() as $table) {
     $foreignKeys = $table->getForeignKeys();
     foreach ($classDescription['methods'] as $methodIdentifier => $method) {
         $foreignKeyMethod = PhpMethod::create($methodIdentifier);
-        
-        $foreignKeyMapParameters = [];
         $foreignKeyMethod->setParameters(array_map(function($methodParameter) {
-            return PhpParameter::create($methodParameter); 
+            return PhpParameter::create($methodParameter)->setType('string'); 
         }, $method['parameters']));
         
         $query = $querybuilder->select($method['query'][1]['fields']);
