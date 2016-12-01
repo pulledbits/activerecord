@@ -11,9 +11,23 @@ namespace ActiveRecord;
 
 class Table
 {
+    /**
+     * @var \PDO
+     */
+    private $connection;
+
+    /**
+     * @var string
+     */
+    private $identifier;
+
+    public function __construct(\PDO $connection, string $identifier) {
+        $this->connection = $connection;
+        $this->identifier = $identifier;
+    }
+
     public function select(string $fields) {
-        return [
-            (object)['id' => 1]
-        ];
+        $statement = $this->connection->prepare('SELECT ' . $fields . ' FROM ' . $this->identifier);
+        return $statement->fetchAll();
     }
 }
