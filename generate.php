@@ -62,19 +62,15 @@ foreach ($schemaManager->listTables() as $table) {
     ));
     
     $foreignKeys = $table->getForeignKeys();
-    foreach ($foreignKeys as $foreignKeyIdentifier => $foreignKey) {
-        $words = explode('_', $foreignKeyIdentifier);
-        $camelCased = array_map('ucfirst', $words);
-        $foreignKeyMethodIdentifier = join('', $camelCased);
-
-        $foreignKeyMethod = PhpMethod::create("fetchBy" . $foreignKeyMethodIdentifier);
+    foreach ($classDescription['methods'] as $methodIdentifier => $method) {
+        $foreignKeyMethod = PhpMethod::create($methodIdentifier);
         $foreignKeyMethod->setStatic(true);
         
         $foreignKeyMapParameters = $foreignKeyWhere = [];
-        foreach ($foreignKey->getLocalColumns() as $foreignKeyColumnName) {
-            $foreignKeyMethod->addSimpleParameter($foreignKeyColumnName, "string");
-            $foreignKeyWhere[] = $foreignKeyColumnName . ' = :' . $foreignKeyColumnName;
-            $foreignKeyMapParameters[] = '$statement->bindParam(":' . $foreignKeyColumnName . '", $' . $foreignKeyColumnName . ', \\PDO::PARAM_STR);';
+        foreach ($method['parameters'] as $methodParameter) {
+            $foreignKeyMethod->addSimpleParameter($methodParameter, "string");
+            $foreignKeyWhere[] = $methodParameter . ' = :' . $methodParameter;
+            $foreignKeyMapParameters[] = '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
         }
         
         $foreignKeyMethod->setBody(
