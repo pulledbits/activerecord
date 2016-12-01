@@ -55,25 +55,25 @@ foreach ($schemaManager->listTables() as $table) {
     }
 
     $querybuilder = $conn->createQueryBuilder();
-    
-    $class->setMethod(PhpMethod::create("fetchAll")->setBody(
-        '$statement = $this->connection->prepare("' . $querybuilder->select('*')->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
-        'return $statement->fetchAll();'
-    ));
-    
     $foreignKeys = $table->getForeignKeys();
     foreach ($classDescription['methods'] as $methodIdentifier => $method) {
         $foreignKeyMethod = PhpMethod::create($methodIdentifier);
         
         $foreignKeyMapParameters = [];
-        foreach ($method['parameters'] as $methodParameter) {
-            $foreignKeyMethod->addSimpleParameter($methodParameter, "string");
-            $foreignKeyMapParameters[] = '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
+        $foreignKeyMethod->setParameters(array_map(function($methodParameter) {
+            return PhpParameter::create($methodParameter); 
+        }, $method['parameters']));
+        
+        $query = $querybuilder->select($method['query'][1]['fields'])->from($method['query'][1]['from']);
+        if (strlen($method['query'][1]['where']) > 0) {
+            $query->where($method['query'][1]['where']);
         }
         
         $foreignKeyMethod->setBody(
-            '$statement = $this->connection->prepare("' . $querybuilder->select($method['query'][1]['fields'])->from($method['query'][1]['from'])->where($method['query'][1]['where']) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
-            join(PHP_EOL, $foreignKeyMapParameters) . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $query . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
+            join(PHP_EOL, array_map(function($methodParameter) {
+                return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
+            }, $method['parameters'])) . PHP_EOL .
             'return $statement->fetchAll();'
             );
         
