@@ -45,12 +45,14 @@ foreach ($schemaManager->listTables() as $table) {
     $class->setProperty(PhpProperty::create("connection")->setType('\\PDO'));
     $constructor = PhpMethod::create("__construct");
     $constructor->addSimpleParameter("connection", '\\PDO');
-    $constructor->setBody('$this->connection = $connection;');
     $class->setMethod($constructor);
     
+    $constructorBody = ['$this->connection = $connection;'];
     foreach ($classDescription['properties'] as $propertyIdentifier => $value) {
         $class->setProperty(PhpProperty::create($propertyIdentifier));
+        $constructorBody[] = '$this->' . $propertyIdentifier . ' = ' . var_export($value, true) . ';';
     }
+    $constructor->setBody(join(PHP_EOL, $constructorBody));
 
     $querybuilder = $conn->createQueryBuilder();
     $foreignKeys = $table->getForeignKeys();
