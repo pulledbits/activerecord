@@ -64,7 +64,8 @@ foreach ($schemaManager->listTables() as $table) {
             return PhpParameter::create($methodParameter); 
         }, $method['parameters']));
         
-        $query = $querybuilder->select($method['query'][1]['fields'])->from($method['query'][1]['from']);
+        $query = $querybuilder->select($method['query'][1]['fields']);
+        $query->from($method['query'][1]['from']);
         if (strlen($method['query'][1]['where']) > 0) {
             $query->where($method['query'][1]['where']);
         }
