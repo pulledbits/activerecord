@@ -20,23 +20,22 @@ class TableTest extends \PHPUnit_Framework_TestCase
             public function prepare($statement, $options = NULL) {
                 if ($statement != "SELECT * FROM MyTable") {
                     return null;
-                } else {
-                    return new class extends \PDOStatement {
-                        public function __construct(){}
-                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
-                            return [
-                                new class() {
-                                    public function __get($property) {
-                                        if ($property === 'id') {
-                                            return 2;
-                                        }
-                                        return null;
-                                    }
-                                }
-                            ];
-                        }
-                    };
                 }
+                return new class extends \PDOStatement {
+                    public function __construct(){}
+                    public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
+                        return [
+                            new class() {
+                                public function __get($property) {
+                                    if ($property === 'id') {
+                                        return 2;
+                                    }
+                                    return null;
+                                }
+                            }
+                        ];
+                    }
+                };
             }
         };
 
