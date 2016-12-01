@@ -24,7 +24,14 @@ final class Table
             $camelCased = array_map('ucfirst', $words);
             $foreignKeyMethodIdentifier = join('', $camelCased);
             $methods["fetchBy" . $foreignKeyMethodIdentifier] = [
-                'parameters' => $foreignKey->getLocalColumns()
+                'parameters' => $foreignKey->getLocalColumns(),
+                'query' => ['SELECT', [
+                    'fields' => '*',
+                    'from' => $this->dbalSchemaTable->getName(),
+                    'where' => join(' AND ', array_map(function($methodParameter) {
+                        return $methodParameter . ' = :' . $methodParameter;
+                    }, $foreignKey->getLocalColumns()))
+                ]]
             ];
         }
         
