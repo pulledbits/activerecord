@@ -18,7 +18,15 @@ final class Table
             $namespace .= "\\";
         }
         
-        $methods = [];
+        $methods = [
+            'fetchAll' => [
+                'parameters' => [],
+                'query' => ['SELECT', [
+                    'fields' => '*',
+                    'from' => $this->dbalSchemaTable->getName()
+                ]]
+            ]
+        ];
         foreach ($this->dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
             $camelCased = array_map('ucfirst', $words);

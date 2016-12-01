@@ -19,7 +19,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $classDescription = $table->describe('\\Database\\Table');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable');
     }
-
+    
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
         $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
@@ -34,6 +34,25 @@ class TableTest extends \PHPUnit_Framework_TestCase
         });
         $classDescription = $table->describe('\\Database\\Table');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable2');
+    }
+
+    public function testDescribe_When_DifferingTableName_Expect_FetchAllMethod()
+    {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+
+            public function __construct()
+            {}
+
+            public function getName()
+            {
+                return 'MyTable2';
+            }
+        });
+        $classDescription = $table->describe('\\Database\\Table');
+        $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable2');
+        $this->assertEquals($classDescription['methods']['fetchAll']['query'][0], 'SELECT');
+        $this->assertEquals($classDescription['methods']['fetchAll']['query'][1]['fields'], '*');
+        $this->assertEquals($classDescription['methods']['fetchAll']['query'][1]['from'], 'MyTable2');
     }
 
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
