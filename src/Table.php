@@ -13,11 +13,15 @@ final class Table
         $this->dbalSchemaTable = $dbalSchemaTable;
     }
     
-    private function describeQueryMethod(array $parameters, array $query) {
+    private function describeQueryMethod(array $parameters, array $query) : array {
         return [
             'parameters' => $parameters,
             'query' => $query
         ];
+    }
+    
+    private function describeQuery(string $queryType, array $query) : array {
+        return [$queryType, $query];
     }
     
     public function describe($namespace) : array {
@@ -26,22 +30,22 @@ final class Table
         }
         
         $methods = [
-            'fetchAll' => $this->describeQueryMethod([], ['SELECT', [
+            'fetchAll' => $this->describeQueryMethod([], $this->describeQuery('SELECT', [
                 'fields' => '*',
                 'from' => $this->dbalSchemaTable->getName()
-            ]])
+            ]))
         ];
         foreach ($this->dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
             $camelCased = array_map('ucfirst', $words);
             $foreignKeyMethodIdentifier = join('', $camelCased);
-            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($foreignKey->getLocalColumns(), ['SELECT', [
+            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($foreignKey->getLocalColumns(), $this->describeQuery('SELECT', [
                 'fields' => '*',
                 'from' => $this->dbalSchemaTable->getName(),
                 'where' => join(' AND ', array_map(function($methodParameter) {
                     return $methodParameter . ' = :' . $methodParameter;
                 }, $foreignKey->getLocalColumns()))
-            ]]);
+            ]));
         }
         
         return [
