@@ -47,14 +47,14 @@ foreach ($schemaManager->listTables() as $table) {
     $class->setProperty(PhpProperty::create("connection")->setType("\PDO"));
     $class->setMethod(PhpMethod::create("__construct")->setParameters([PhpParameter::create("connection")->setType("\\PDO")])->setBody('$this->connection = $connection;'));
     
-    foreach ($classDescription['properties'] as $propertyIdentifier) {
+    foreach ($classDescription['properties'] as $propertyIdentifier => $value) {
         $class->setProperty(PhpProperty::create($propertyIdentifier));
     }
 
     $querybuilder = $conn->createQueryBuilder();
     
     $class->setMethod(PhpMethod::create("fetchAll")->setBody(
-        '$statement = $this->connection->query("' . $querybuilder->select($classDescription['properties'])->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
+        '$statement = $this->connection->query("' . $querybuilder->select('*')->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
         'return $statement->fetchAll();'
     ));
     
@@ -70,7 +70,7 @@ foreach ($schemaManager->listTables() as $table) {
         }
         
         $foreignKeyMethod->setBody(
-            '$statement = $this->connection->prepare("' . $querybuilder->select($classDescription['properties'])->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $querybuilder->select('*')->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL . "\t", $foreignKeyMapParameters) . PHP_EOL .
             'return $statement->fetchAll();'
             );
