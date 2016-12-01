@@ -17,14 +17,12 @@ class TableTest extends \PHPUnit_Framework_TestCase
     public function testSelect_When_AllFields_ExpectAllRecords() {
         $pdo = new class extends \PDO {
             public function __construct(){}
-
             public function prepare($statement, $options = NULL) {
                 if ($statement != "SELECT * FROM MyTable") {
                     return null;
                 } else {
                     return new class extends \PDOStatement {
                         public function __construct(){}
-
                         public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
                             return [
                                 new class() {
