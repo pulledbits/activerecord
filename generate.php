@@ -22,6 +22,10 @@ $tablesDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'table';
 if (file_exists($tablesDirectory) == false) {
     mkdir($tablesDirectory);
 }
+$recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'record';
+if (file_exists($recordsDirectory) == false) {
+    mkdir($recordsDirectory);
+}
 
 $config = new \Doctrine\DBAL\Configuration();
 //..
@@ -30,51 +34,112 @@ $connectionParams = array(
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
+function createMethod(string $identifier, array $parameters, string $body) {
+    $method = PhpMethod::create($identifier);
+    foreach ($parameters as $methodParameterIdentifier => $methodParameterType) {
+        $method->addParameter(PhpParameter::create($methodParameterIdentifier)->setType($methodParameterType));
+    }
+    $method->setBody($body);
+    return $method;
+}
+
+function generatePDOStatementBindParam(array $methodParameters) {
+    return join(PHP_EOL, array_map(function($methodParameter) {
+        return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
+    }, $methodParameters)) . PHP_EOL;
+}
+
+
 $schemaManager = $conn->getSchemaManager();
+$generator = new CodeGenerator();
 
 foreach ($schemaManager->listTables() as $table) {
     $tableName = $table->getName();
     
-    $tableDescriptor = new SourceTable($table);
-    $classDescription = $tableDescriptor->describe($targetNamespace . "Table");
+    $sourceTable = new SourceTable($table);
+    $tableClassDescription = $sourceTable->describe($targetNamespace . "Table");
+    $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
+    $tableClass->setFinal(true);
     
-    $class = new gossi\codegen\model\PhpClass($classDescription['identifier']);
-    $class->setFinal(true);
-    
-    $class->setProperty(PhpProperty::create("connection")->setType('\\PDO'));
-    $constructor = PhpMethod::create("__construct");
-    $constructor->addSimpleParameter("connection", '\\PDO');
-    $class->setMethod($constructor);
+    $tableClass->setProperty(PhpProperty::create("connection")->setType('\\PDO')->setVisibility('private'));
+    $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '$this->connection = $connection;'));
 
-    $constructor->setBody('$this->connection = $connection;');
+    $tableFQIdentifier = '\\' . $tableClass->getQualifiedName();
 
-    $querybuilder = $conn->createQueryBuilder();
+    $recordClass = new gossi\codegen\model\PhpClass($targetNamespace . "Record\\" . $tableName);
+    $recordClass->setFinal(true);
+
+    $recordClass->setProperty(PhpProperty::create("_table")->setType($tableFQIdentifier)->setVisibility('private'));
+    $defaultUpdateValues = [];
+    $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
+    $tableClassUpdateParameters = [];
+    foreach ($tableClassDescription['properties']['columns'] as $columnIdentifier) {
+        $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
+        $recordClassDefaultUpdateValues[] = '$this->' . $columnIdentifier;
+        $tableClassUpdateParameters[$columnIdentifier] = "string";
+        $tableClassUpdateQuery->set($columnIdentifier, ':' . $columnIdentifier);
+    }
+
+    $recordClass->setMethod(createMethod("__construct", ["table" => $tableFQIdentifier], '$this->_table = $table;'));
+
+    $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters,
+        '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");' . PHP_EOL .
+        '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);' . PHP_EOL . // TODO: make pk_id variable
+        generatePDOStatementBindParam($tableClassDescription['properties']['columns']) . PHP_EOL .
+        '$statement->execute();' . PHP_EOL .
+        'return $statement->rowCount();'
+    ));
+    $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'],
+        'if (property_exists($this, $property)) {' . PHP_EOL .
+        '$this->$property = $value;' . PHP_EOL .
+        '$this->_table->update(' . join(',',$recordClassDefaultUpdateValues) . ');' . PHP_EOL .
+        '}'
+    ));
+
     $foreignKeys = $table->getForeignKeys();
-    foreach ($classDescription['methods'] as $methodIdentifier => $methodDescription) {
-        $method = PhpMethod::create($methodIdentifier);
-        $method->setParameters(array_map(function($methodParameter) {
-            return PhpParameter::create($methodParameter)->setType('string'); 
-        }, $methodDescription['parameters']));
-        
+    foreach ($tableClassDescription['methods'] as $methodIdentifier => $methodDescription) {
+        $tableClassFKMethod = PhpMethod::create($methodIdentifier);
+
+        $tableClassFKMethodArguments = [];
+        foreach ($methodDescription['parameters'] as $methodParameter) {
+            $tableClassFKMethod->addParameter(PhpParameter::create($methodParameter)->setType('string'));
+            $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
+        }
+
+
+        $querybuilder = $conn->createQueryBuilder();
         $query = $querybuilder->select($methodDescription['query'][1]['fields']);
         $query->from($methodDescription['query'][1]['from']);
         if (strlen($methodDescription['query'][1]['where']) > 0) {
             $query->where($methodDescription['query'][1]['where']);
         }
         
-        $method->setBody(
-            '$statement = $this->connection->prepare("' . $query . '");' . PHP_EOL .
-            join(PHP_EOL, array_map(function($methodParameter) {
-                return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
-            }, $methodDescription['parameters'])) . PHP_EOL .
-            'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $class->getName() . '", [$connection]);'
+        $tableClassFKMethod->setBody(
+            '$statement = $this->connection->prepare("' . $query->getSQL() . '");' . PHP_EOL .
+            '$statement->execute();' . PHP_EOL .
+            generatePDOStatementBindParam($methodDescription['parameters']) .
+            'return $statement->fetchAll(\\PDO::FETCH_CLASS, "\\' . $recordClass->getQualifiedName() . '", [$this]);'
             );
-        
-        
-        $class->setMethod($method);
+
+        $tableClass->setMethod($tableClassFKMethod);
+
+        $recordClassFKMethod = PhpMethod::create($methodIdentifier);
+        $recordClassFKMethod->setBody(
+            'return $this->_table->' . $methodIdentifier . '(' . join(', ', $tableClassFKMethodArguments) . ');'
+        );
+        $recordClass->setMethod($recordClassFKMethod);
+
     }
-    
-    $generator = new CodeGenerator();
-    
-    file_put_contents($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($class));
+    file_put_contents($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($tableClass));
+    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
 }
+
+// test activiteit
+require $tablesDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
+require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
+$table = new \Database\Table\activiteit(new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+$record = $table->fetchAll()[0];
+$record->inhoud = uniqid();
+
+print_r($table->fetchAll()[0]);
+echo 'Done';
