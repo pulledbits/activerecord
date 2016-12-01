@@ -57,7 +57,7 @@ foreach ($schemaManager->listTables() as $table) {
     $querybuilder = $conn->createQueryBuilder();
     
     $class->setMethod(PhpMethod::create("fetchAll")->setBody(
-        '$statement = $this->connection->query("' . $querybuilder->select('*')->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
+        '$statement = $this->connection->prepare("' . $querybuilder->select('*')->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
         'return $statement->fetchAll();'
     ));
     
