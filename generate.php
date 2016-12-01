@@ -74,7 +74,7 @@ foreach ($schemaManager->listTables() as $table) {
         
         $foreignKeyMethod->setBody(
             '$statement = $this->connection->prepare("' . $querybuilder->select('*')->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
-            join(PHP_EOL . "\t", $foreignKeyMapParameters) . PHP_EOL .
+            join(PHP_EOL, $foreignKeyMapParameters) . PHP_EOL .
             'return $statement->fetchAll();'
             );
         
