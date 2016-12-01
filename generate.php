@@ -65,15 +65,14 @@ foreach ($schemaManager->listTables() as $table) {
     foreach ($classDescription['methods'] as $methodIdentifier => $method) {
         $foreignKeyMethod = PhpMethod::create($methodIdentifier);
         
-        $foreignKeyMapParameters = $foreignKeyWhere = [];
+        $foreignKeyMapParameters = [];
         foreach ($method['parameters'] as $methodParameter) {
             $foreignKeyMethod->addSimpleParameter($methodParameter, "string");
-            $foreignKeyWhere[] = $methodParameter . ' = :' . $methodParameter;
             $foreignKeyMapParameters[] = '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
         }
         
         $foreignKeyMethod->setBody(
-            '$statement = $this->connection->prepare("' . $querybuilder->select('*')->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $querybuilder->select($method['query'][1]['fields'])->from($method['query'][1]['from'])->where($method['query'][1]['where']) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL, $foreignKeyMapParameters) . PHP_EOL .
             'return $statement->fetchAll();'
             );
