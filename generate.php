@@ -52,19 +52,15 @@ foreach ($schemaManager->listTables() as $table) {
     }
 
     $querybuilder = $conn->createQueryBuilder();
-
-    $class->setMethod(PhpMethod::create("connect")->setStatic(true)->setBody('return new \\PDO("' . $connectionParams['url'] . '");'));
     
-    $class->setMethod(PhpMethod::create("fetchAll")->setStatic(true)->setBody(
-        '$connection = self::connect();' . PHP_EOL .
-        '$statement = $connection->query("' . $querybuilder->select($classDescription['properties'])->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
+    $class->setMethod(PhpMethod::create("fetchAll")->setBody(
+        '$statement = $this->connection->query("' . $querybuilder->select($classDescription['properties'])->from($tableName) . '", \\PDO::FETCH_CLASS, "' . $escapedClassName . '", [$connection]);' . PHP_EOL .
         'return $statement->fetchAll();'
     ));
     
     $foreignKeys = $table->getForeignKeys();
     foreach ($classDescription['methods'] as $methodIdentifier => $method) {
         $foreignKeyMethod = PhpMethod::create($methodIdentifier);
-        $foreignKeyMethod->setStatic(true);
         
         $foreignKeyMapParameters = $foreignKeyWhere = [];
         foreach ($method['parameters'] as $methodParameter) {
@@ -74,8 +70,7 @@ foreach ($schemaManager->listTables() as $table) {
         }
         
         $foreignKeyMethod->setBody(
-            '$connection = self::connect();' . PHP_EOL .
-            '$statement = $connection->prepare("' . $querybuilder->select($classDescription['properties'])->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $querybuilder->select($classDescription['properties'])->from($tableName)->where(join(' AND ', $foreignKeyWhere)) . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL . "\t", $foreignKeyMapParameters) . PHP_EOL .
             'return $statement->fetchAll();'
             );
