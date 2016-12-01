@@ -13,34 +13,35 @@ final class Table
         $this->dbalSchemaTable = $dbalSchemaTable;
     }
     
+    private function describeQueryMethod(array $parameters, array $query) {
+        return [
+            'parameters' => $parameters,
+            'query' => $query
+        ];
+    }
+    
     public function describe($namespace) : array {
         if (substr($namespace, -1) != "\\") {
             $namespace .= "\\";
         }
         
         $methods = [
-            'fetchAll' => [
-                'parameters' => [],
-                'query' => ['SELECT', [
-                    'fields' => '*',
-                    'from' => $this->dbalSchemaTable->getName()
-                ]]
-            ]
+            'fetchAll' => $this->describeQueryMethod([], ['SELECT', [
+                'fields' => '*',
+                'from' => $this->dbalSchemaTable->getName()
+            ]])
         ];
         foreach ($this->dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
             $camelCased = array_map('ucfirst', $words);
             $foreignKeyMethodIdentifier = join('', $camelCased);
-            $methods["fetchBy" . $foreignKeyMethodIdentifier] = [
-                'parameters' => $foreignKey->getLocalColumns(),
-                'query' => ['SELECT', [
-                    'fields' => '*',
-                    'from' => $this->dbalSchemaTable->getName(),
-                    'where' => join(' AND ', array_map(function($methodParameter) {
-                        return $methodParameter . ' = :' . $methodParameter;
-                    }, $foreignKey->getLocalColumns()))
-                ]]
-            ];
+            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($foreignKey->getLocalColumns(), ['SELECT', [
+                'fields' => '*',
+                'from' => $this->dbalSchemaTable->getName(),
+                'where' => join(' AND ', array_map(function($methodParameter) {
+                    return $methodParameter . ' = :' . $methodParameter;
+                }, $foreignKey->getLocalColumns()))
+            ]]);
         }
         
         return [
