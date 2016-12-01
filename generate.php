@@ -42,8 +42,6 @@ foreach ($schemaManager->listTables() as $table) {
     $class = new gossi\codegen\model\PhpClass($classDescription['identifier']);
     $class->setFinal(true);
     
-    $escapedClassName = str_replace("\\", "\\\\", $class->getQualifiedName());
-    
     $class->setProperty(PhpProperty::create("connection")->setType('\\PDO'));
     $constructor = PhpMethod::create("__construct");
     $constructor->addSimpleParameter("connection", '\\PDO');
@@ -69,7 +67,7 @@ foreach ($schemaManager->listTables() as $table) {
         }
         
         $foreignKeyMethod->setBody(
-            '$statement = $this->connection->prepare("' . $query . '", \\PDO::FETCH_CLASS, "' . str_replace("\\", "\\\\", $escapedClassName) . '", [$connection]);' . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $query . '", \\PDO::FETCH_CLASS, "' . $class->getName() . '", [$connection]);' . PHP_EOL .
             join(PHP_EOL, array_map(function($methodParameter) {
                 return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
             }, $method['parameters'])) . PHP_EOL .
