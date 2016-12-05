@@ -9,10 +9,12 @@
 namespace ActiveRecord;
 
 
-class Schema
+class SourceSchema
 {
-    public function query(string $query, array $parameters)
+    public function describe()
     {
-        return [1];
+        return [
+            'classes' => [1]
+        ];
     }
 }

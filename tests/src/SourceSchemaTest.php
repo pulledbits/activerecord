@@ -6,23 +6,22 @@
  * Time: 12:36
  */
 
-namespace src;
-
-
-use ActiveRecord\Schema;
+namespace ActiveRecord;
 
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testQuery_When_QueryAndParametersSupplied_Expect_ResultSet()
+    public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
-        $schema = new Schema();
-        $resultset = $schema->query('SELECT * FROM activiteit WHERE id = :id', [
-            'id' => 1
-        ]);
+        $schema = new SourceSchema(new class() extends \Doctrine\DBAL\Schema {
+            public function __construct()
+            {}
+        });
 
-        $this->assertCount(1, $resultset);
+        $schemaDescription = $schema->describe();
+
+        $this->assertCount(1, $schemaDescription['classes']);
     }
 
 }
