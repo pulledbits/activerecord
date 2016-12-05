@@ -28,8 +28,8 @@ class SourceSchema
         $classes = [];
 
         foreach ($this->schemaManager->listTables() as $table) {
-            $tableName = $table->getName();
-            $classes[$tableName] = ['identifier' => $tableName];
+            $sourceTable = new SourceTable($table);
+            $classes[$table->getName()] = $sourceTable->describe('');
         }
 
         return [
