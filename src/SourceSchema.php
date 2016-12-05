@@ -23,13 +23,13 @@ class SourceSchema
         $this->schemaManager = $schemaManager;
     }
 
-    public function describe()
+    public function describe(string $namespace)
     {
         $classes = [];
 
         foreach ($this->schemaManager->listTables() as $table) {
             $sourceTable = new SourceTable($table);
-            $classes[$table->getName()] = $sourceTable->describe('');
+            $classes[$table->getName()] = $sourceTable->describe($namespace . '\\Table');
         }
 
         return [

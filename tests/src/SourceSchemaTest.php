@@ -30,10 +30,10 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         });
 
-        $schemaDescription = $schema->describe();
+        $schemaDescription = $schema->describe('\\Database');
 
         $this->assertCount(1, $schemaDescription['classes']);
-        $this->assertEquals('\\MyTable', $schemaDescription['classes']['MyTable']['identifier']);
+        $this->assertEquals('\\Database\\Table\\MyTable', $schemaDescription['classes']['MyTable']['identifier']);
     }
 
 }

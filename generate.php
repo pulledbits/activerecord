@@ -13,9 +13,6 @@ if ($_SERVER['argc'] < 3) {
 }
 
 $targetNamespace = $_SERVER['argv'][1];
-if (substr($targetNamespace, -1) != "\\") {
-    $targetNamespace .= "\\";
-}
 
 $targetDirectory = $_SERVER['argv'][2];
 $tablesDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'table';
@@ -50,14 +47,12 @@ function generatePDOStatementBindParam(array $methodParameters) {
 }
 
 
-$schemaManager = $conn->getSchemaManager();
+$sourceSchema = new \ActiveRecord\SourceSchema($conn->getSchemaManager());
 $generator = new CodeGenerator();
 
-foreach ($schemaManager->listTables() as $table) {
-    $tableName = $table->getName();
-    
-    $sourceTable = new SourceTable($table);
-    $tableClassDescription = $sourceTable->describe($targetNamespace . "Table");
+$schemaDescription = $sourceSchema->describe($targetNamespace);
+
+foreach ($schemaDescription['classes'] as $tableName => $tableClassDescription) {
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
     $tableClass->setFinal(true);
     
@@ -66,7 +61,7 @@ foreach ($schemaManager->listTables() as $table) {
 
     $tableFQIdentifier = '\\' . $tableClass->getQualifiedName();
 
-    $recordClass = new gossi\codegen\model\PhpClass($targetNamespace . "Record\\" . $tableName);
+    $recordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $tableName);
     $recordClass->setFinal(true);
 
     $recordClass->setProperty(PhpProperty::create("_table")->setType($tableFQIdentifier)->setVisibility('private'));
@@ -96,7 +91,6 @@ foreach ($schemaManager->listTables() as $table) {
         '}'
     ));
 
-    $foreignKeys = $table->getForeignKeys();
     foreach ($tableClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $tableClassFKMethod = PhpMethod::create($methodIdentifier);
 
@@ -114,7 +108,7 @@ foreach ($schemaManager->listTables() as $table) {
             $query->where($methodDescription['query'][1]['where']);
         }
 
-        $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . "Record\\" . $methodDescription['query'][1]['from']);
+        $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
         $tableClassFKMethod->setBody(
             '$statement = $this->connection->prepare("' . $query->getSQL() . '");' . PHP_EOL .
             '$statement->execute();' . PHP_EOL .
