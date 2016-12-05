@@ -59,7 +59,7 @@ $schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $schemaClass->setMethod(createMethod('execute' . $tableName . 'Statement', ['statement' => '\\PDOStatement'],
         '$statement->execute();' . PHP_EOL .
-        'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [new ' . $tableClassDescription['identifier'] . '($this->connection), $this]);'
+        'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [new ' . $tableClassDescription['identifier'] . '($this->connection, $this)]);'
     ));
 
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
@@ -123,8 +123,7 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
         $tableClassFKMethod->setBody(
             '$statement = $this->connection->prepare("' . $query->getSQL() . '");' . PHP_EOL .
             generatePDOStatementBindParam($methodDescription['parameters']) .
-            '$statement->execute();' . PHP_EOL .
-            'return $statement->fetchAll(\\PDO::FETCH_CLASS, "\\' . $fkRecordClass->getQualifiedName() . '", [$this]);'
+            'return $this->schema->execute' . $methodDescription['query'][1]['from'] . 'Statement($statement);'
             );
 
         $tableClass->setMethod($tableClassFKMethod);
