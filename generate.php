@@ -61,7 +61,7 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
     $tableFQIdentifier = '\\' . $tableClass->getQualifiedName();
 
-    $recordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $tableName);
+    $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['record-identifier']);
     $recordClass->setFinal(true);
 
     $recordClass->setProperty(PhpProperty::create("_table")->setType($tableFQIdentifier)->setVisibility('private'));
