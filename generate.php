@@ -52,6 +52,8 @@ $generator = new CodeGenerator();
 
 $schemaDescription = $sourceSchema->describe($targetNamespace);
 
+$schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']);
+$schemaClass->setFinal(true);
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
     $tableClass->setFinal(true);
@@ -127,7 +129,10 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
 }
 
+file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', '<?php' . PHP_EOL . $generator->generate($schemaClass));
+
 // test activiteit
+require $targetDirectory  . DIRECTORY_SEPARATOR . 'Schema.php';
 require $tablesDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 $table = new \Database\Table\activiteit(new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
