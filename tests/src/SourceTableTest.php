@@ -16,7 +16,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
                 return 'MyTable';
             }
         });
-        $classDescription = $table->describe('\\Database\\Table');
+        $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable');
     }
     
@@ -32,7 +32,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
                 return 'MyTable2';
             }
         });
-        $classDescription = $table->describe('\\Database\\Table');
+        $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable2');
     }
 
@@ -48,7 +48,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
                 return 'MyTable2';
             }
         });
-        $classDescription = $table->describe('\\Database\\Table');
+        $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable2');
         $this->assertEquals($classDescription['methods']['fetchAll']['query'][0], 'SELECT');
         $this->assertEquals($classDescription['methods']['fetchAll']['query'][1]['fields'], '*');
@@ -75,7 +75,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
                 ];
             }
         });
-        $classDescription = $table->describe('\\Database\\Table');
+        $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['properties']['columns'][0], 'id');
         $this->assertEquals($classDescription['properties']['columns'][1], 'name');
         $this->assertEquals($classDescription['properties']['columns'][2], 'height');
@@ -133,7 +133,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
                 ];
             }
         });
-        $classDescription = $table->describe('\\Database\\Table');
+        $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'][0], 'role_id');
         
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][0], 'SELECT');

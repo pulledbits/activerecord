@@ -29,7 +29,7 @@ class SourceSchema
 
         foreach ($this->schemaManager->listTables() as $table) {
             $sourceTable = new SourceTable($table);
-            $tableClasses[$table->getName()] = $sourceTable->describe($namespace . '\\Table');
+            $tableClasses[$table->getName()] = $sourceTable->describe($namespace);
         }
 
         return [

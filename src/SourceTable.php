@@ -55,7 +55,7 @@ final class SourceTable
         }
         
         return [
-            'identifier' => $namespace . $this->dbalSchemaTable->getName(),
+            'identifier' => $namespace . 'Table\\' . $this->dbalSchemaTable->getName(),
             'properties' => [
                 'columns' => array_keys($this->dbalSchemaTable->getColumns())
             ],
