@@ -111,8 +111,8 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
         $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
         $tableClassFKMethod->setBody(
             '$statement = $this->connection->prepare("' . $query->getSQL() . '");' . PHP_EOL .
-            '$statement->execute();' . PHP_EOL .
             generatePDOStatementBindParam($methodDescription['parameters']) .
+            '$statement->execute();' . PHP_EOL .
             'return $statement->fetchAll(\\PDO::FETCH_CLASS, "\\' . $fkRecordClass->getQualifiedName() . '", [$this]);'
             );
 
