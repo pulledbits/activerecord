@@ -59,12 +59,10 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     $tableClass->setProperty(PhpProperty::create("connection")->setType('\\PDO')->setVisibility('private'));
     $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '$this->connection = $connection;'));
 
-    $tableFQIdentifier = '\\' . $tableClass->getQualifiedName();
-
     $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['record-identifier']);
     $recordClass->setFinal(true);
 
-    $recordClass->setProperty(PhpProperty::create("_table")->setType($tableFQIdentifier)->setVisibility('private'));
+    $recordClass->setProperty(PhpProperty::create("_table")->setType($tableClassDescription['identifier'])->setVisibility('private'));
     $defaultUpdateValues = [];
     $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
     $tableClassUpdateParameters = [];
@@ -75,7 +73,7 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
         $tableClassUpdateQuery->set($columnIdentifier, ':' . $columnIdentifier);
     }
 
-    $recordClass->setMethod(createMethod("__construct", ["table" => $tableFQIdentifier], '$this->_table = $table;'));
+    $recordClass->setMethod(createMethod("__construct", ["table" => $tableClassDescription['identifier']], '$this->_table = $table;'));
 
     $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters,
         '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");' . PHP_EOL .
