@@ -25,6 +25,10 @@ class SourceSchema
 
     public function describe(string $namespace)
     {
+        if (substr($namespace, -1) != "\\") {
+            $namespace .= "\\";
+        }
+
         $tableClasses = [];
 
         foreach ($this->schemaManager->listTables() as $table) {
@@ -33,6 +37,7 @@ class SourceSchema
         }
 
         return [
+            'identifier' => $namespace . 'Schema',
             'tableClasses' => $tableClasses
         ];
     }
