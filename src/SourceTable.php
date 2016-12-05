@@ -46,12 +46,13 @@ final class SourceTable
             $camelCased = array_map('ucfirst', $words);
             $foreignKeyMethodIdentifier = join('', $camelCased);
 
+            $fkLocalColumns = $foreignKey->getLocalColumns();
             $where = array_map(function($fkColumnName, $methodParameter) {
                 return $fkColumnName . ' = :' . $methodParameter;
-            }, $foreignKey->getForeignColumns(), $foreignKey->getLocalColumns());
+            }, $foreignKey->getForeignColumns(), $fkLocalColumns);
             $query = $this->describeQuerySelect('*', $foreignKey->getForeignTableName(), $where);
             
-            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($foreignKey->getLocalColumns(), $query);
+            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($fkLocalColumns, $query);
         }
         
         return [
