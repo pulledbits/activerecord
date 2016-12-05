@@ -97,13 +97,36 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
                 return [
                     'fk_othertable_role' => new class extends \Doctrine\DBAL\Schema\ForeignKeyConstraint {
                         public function __construct(){}
-                        public function getLocalColumns() {
+                        public function getForeignTableName()
+                        {
+                            return "OtherTable";
+                        }
+                        public function getForeignColumns() {
+                            return ['id'];
+                        }
+                        public function getLocalColumns()
+                        {
                             return ['role_id'];
                         }
                     },
-                    'fk_anothertable_role' => new class extends \Doctrine\DBAL\Schema\ForeignKeyConstraint {
-                        public function __construct(){}
-                        public function getLocalColumns() {
+                    'fk_anothertable_role' => new class extends \Doctrine\DBAL\Schema\ForeignKeyConstraint
+                    {
+                        public function __construct()
+                        {
+                        }
+
+                        public function getForeignTableName()
+                        {
+                            return "AntoherTable";
+                        }
+
+                        public function getForeignColumns()
+                        {
+                            return ['id', 'column_id'];
+                        }
+
+                        public function getLocalColumns()
+                        {
                             return ['role2_id', 'extra_column_id'];
                         }
                     }
@@ -115,13 +138,13 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][0], 'SELECT');
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['fields'], '*');
-        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['from'], 'MyTable2');
-        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['where'], 'role_id = :role_id');
+        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['from'], 'OtherTable');
+        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['where'], 'id = :role_id');
         
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters'][0], 'role2_id');
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters'][1], 'extra_column_id');
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['fields'], '*');
-        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['from'], 'MyTable2');
-        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['where'], 'role2_id = :role2_id AND extra_column_id = :extra_column_id');
+        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['from'], 'AntoherTable');
+        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['where'], 'id = :role2_id AND column_id = :extra_column_id');
     }
 }
