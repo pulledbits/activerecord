@@ -18,6 +18,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
         });
         $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Table\\MyTable');
+        $this->assertEquals($classDescription['record-identifier'], '\\Database\\Record\\MyTable');
     }
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
