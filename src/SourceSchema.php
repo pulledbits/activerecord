@@ -25,15 +25,15 @@ class SourceSchema
 
     public function describe(string $namespace)
     {
-        $classes = [];
+        $tableClasses = [];
 
         foreach ($this->schemaManager->listTables() as $table) {
             $sourceTable = new SourceTable($table);
-            $classes[$table->getName()] = $sourceTable->describe($namespace . '\\Table');
+            $tableClasses[$table->getName()] = $sourceTable->describe($namespace . '\\Table');
         }
 
         return [
-            'classes' => $classes
+            'tableClasses' => $tableClasses
         ];
     }
 }

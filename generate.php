@@ -52,7 +52,7 @@ $generator = new CodeGenerator();
 
 $schemaDescription = $sourceSchema->describe($targetNamespace);
 
-foreach ($schemaDescription['classes'] as $tableName => $tableClassDescription) {
+foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
     $tableClass->setFinal(true);
     
