@@ -54,12 +54,23 @@ $schemaDescription = $sourceSchema->describe($targetNamespace);
 
 $schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']);
 $schemaClass->setFinal(true);
+$schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '$this->connection = $connection;'));
+
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
+    $schemaClass->setMethod(createMethod('execute' . $tableName . 'Statement', ['statement' => '\\PDOStatement'],
+        '$statement->execute();' . PHP_EOL .
+        'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [new ' . $tableClassDescription['identifier'] . '($this->connection), $this]);'
+    ));
+
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
     $tableClass->setFinal(true);
     
     $tableClass->setProperty(PhpProperty::create("connection")->setType('\\PDO')->setVisibility('private'));
-    $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '$this->connection = $connection;'));
+    $tableClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
+    $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO', 'schema' => $schemaDescription['identifier']],
+        '$this->connection = $connection;' . PHP_EOL .
+        '$this->schema = $schema;'
+    ));
 
     $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['record-identifier']);
     $recordClass->setFinal(true);
@@ -135,7 +146,9 @@ file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', '<?php'
 require $targetDirectory  . DIRECTORY_SEPARATOR . 'Schema.php';
 require $tablesDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
-$table = new \Database\Table\activiteit(new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+$connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+$schema = new \Database\Schema($connection);
+$table = new \Database\Table\activiteit($connection, $schema);
 $record = $table->fetchAll()[0];
 $record->inhoud = uniqid();
 
