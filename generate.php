@@ -142,9 +142,9 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
         switch ($methodDescription['query'][0]) {
             case 'SELECT':
-                $tableClassFKMethodArguments = [];
+                $tableClassFKMethodParameters = $tableClassFKMethodArguments = [];
                 foreach ($methodDescription['parameters'] as $methodParameter) {
-                    $tableClassFKMethod->addParameter(PhpParameter::create($methodParameter)->setType('string'));
+                    $tableClassFKMethodParameters[$methodParameter] = 'string';
                     $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
                 }
 
@@ -152,16 +152,13 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
                 foreach ($methodDescription['query'][1]['where'] as $referencedColumnName => $parameterIdentifier) {
                     $whereParameters[] = '\'' . $referencedColumnName . '\' => $' . $parameterIdentifier;
                 }
-                $tableClassFKMethod->setBody(
-                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [' . PHP_EOL . join(',' . PHP_EOL, $whereParameters) . PHP_EOL . ']);' . PHP_EOL);
+                $tableClass->setMethod(createMethod($methodIdentifier, $tableClassFKMethodParameters,
+                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [' . PHP_EOL . join(',' . PHP_EOL, $whereParameters) . PHP_EOL . ']);'
+                ));
 
-                $tableClass->setMethod($tableClassFKMethod);
-
-                $recordClassFKMethod = PhpMethod::create($methodIdentifier);
-                $recordClassFKMethod->setBody(
+                $recordClass->setMethod(createMethod($methodIdentifier, [],
                     'return $this->_table->' . $methodIdentifier . '(' . join(', ', $tableClassFKMethodArguments) . ');'
-                );
-                $recordClass->setMethod($recordClassFKMethod);
+                ));
                 break;
         }
 
