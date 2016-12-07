@@ -30,6 +30,8 @@ $connectionParams = array(
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
+$generator = new CodeGenerator();
+
 function createMethod(string $identifier, array $parameters, array $body) {
     $method = PhpMethod::create($identifier);
     foreach ($parameters as $methodParameterIdentifier => $methodParameterType) {
@@ -47,6 +49,10 @@ function createMethod(string $identifier, array $parameters, array $body) {
     return $method;
 }
 
+function createPHPFile(string $filename, string $code) {
+    file_put_contents($filename, '<?php' . PHP_EOL . $code);
+}
+
 function generatePDOStatementBindParam(array $methodParameters) {
     return join(PHP_EOL, array_map(function($methodParameter) {
         return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
@@ -55,7 +61,6 @@ function generatePDOStatementBindParam(array $methodParameters) {
 
 
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
-$generator = new CodeGenerator();
 
 $schemaDescription = $sourceSchema->describe($targetNamespace);
 
@@ -162,8 +167,8 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
         }
 
     }
-    file_put_contents($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($tableClass));
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
+    createPHPFile($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($tableClass));
+    createPHPFile($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($recordClass));
 }
 
 
@@ -174,7 +179,7 @@ $schemaClass->setMethod(createMethod('executeStatement', ['tableIdentifier' => '
     '}'
 ])->setVisibility('private'));
 
-file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', '<?php' . PHP_EOL . $generator->generate($schemaClass));
+createPHPFile($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', $generator->generate($schemaClass));
 
 // test activiteit
 require $targetDirectory  . DIRECTORY_SEPARATOR . 'Schema.php';
