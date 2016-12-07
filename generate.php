@@ -152,8 +152,12 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
                 }
 
                 $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
+                $whereParameters = [];
+                foreach ($methodDescription['query'][1]['where'] as $referencedColumnName => $parameterIdentifier) {
+                    $whereParameters[] = '\'' . $referencedColumnName . '\' => $' . $parameterIdentifier;
+                }
                 $tableClassFKMethod->setBody(
-                    'return $this->schema->' . $methodDescription['query'][1]['from'] . '()->select(' . var_export(array_map(function($namedParameter) { return '$' . $namedParameter; }, $methodDescription['query'][1]['where']), true) . ');' . PHP_EOL);
+                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [' . PHP_EOL . join(',' . PHP_EOL, $whereParameters) . PHP_EOL . ']);' . PHP_EOL);
 
                 $tableClass->setMethod($tableClassFKMethod);
 
