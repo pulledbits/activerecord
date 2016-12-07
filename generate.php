@@ -34,7 +34,15 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 function createMethod(string $identifier, array $parameters, string $body) {
     $method = PhpMethod::create($identifier);
     foreach ($parameters as $methodParameterIdentifier => $methodParameterType) {
-        $method->addParameter(PhpParameter::create($methodParameterIdentifier)->setType($methodParameterType));
+        $byReference = false;
+        if (substr($methodParameterIdentifier,0,1) === '&') {
+            $byReference = true;
+            $methodParameterIdentifier = substr($methodParameterIdentifier,1);
+        }
+        $parameter = PhpParameter::create($methodParameterIdentifier);
+        $parameter->setType($methodParameterType);
+        $parameter->setPassedByReference($byReference);
+        $method->addParameter($parameter);
     }
     $method->setBody($body);
     return $method;
@@ -59,7 +67,10 @@ $schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $schemaClass->setMethod(createMethod('execute' . $tableName . 'Statement', ['statement' => '\\PDOStatement'],
         '$statement->execute();' . PHP_EOL .
-        'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [new ' . $tableClassDescription['identifier'] . '($this->connection, $this)]);'
+        'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [$this->' . $tableName . '()]);'
+    ));
+    $schemaClass->setMethod(createMethod($tableName, [],
+        'return new ' . $tableClassDescription['identifier'] . '($this->connection, $this);'
     ));
 
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
@@ -80,10 +91,16 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
     $tableClassUpdateParameters = [];
     foreach ($tableClassDescription['properties']['columns'] as $columnIdentifier) {
+        $tableClass->setMethod(createMethod('where' . $columnIdentifier . 'Equals', ["&namedParameter" => 'string'],
+            '$namedParameter = ":" . uniqid();' . PHP_EOL .
+	        'return "' . $columnIdentifier .' = " . $namedParameter;'
+        ));
+
         $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
         $recordClassDefaultUpdateValues[] = '$this->' . $columnIdentifier;
         $tableClassUpdateParameters[$columnIdentifier] = "string";
         $tableClassUpdateQuery->set($columnIdentifier, ':' . $columnIdentifier);
+
     }
 
     $recordClass->setMethod(createMethod("__construct", ["table" => $tableClassDescription['identifier']], '$this->_table = $table;'));
