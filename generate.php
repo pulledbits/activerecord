@@ -105,6 +105,24 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
     $recordClass->setMethod(createMethod("__construct", ["table" => $tableClassDescription['identifier']], '$this->_table = $table;'));
 
+
+    $tableClass->setMethod(createMethod("select", ['whereParameters' => 'array'],
+        '$namedParameters = $where = [];' . PHP_EOL .
+        'foreach ($whereParameters as $localColumn => $value) {' . PHP_EOL .
+        '   $namedParameter = uniqid();' . PHP_EOL .
+        '   $namedParameters[$namedParameter] = $value;' . PHP_EOL .
+        '   $where[] = $localColumn . " = :" . $namedParameter;' . PHP_EOL .
+        '}' . PHP_EOL .
+        '$query = "SELECT * FROM ' . $tableName . '";' . PHP_EOL .
+        'if (count($where) > 0) {' . PHP_EOL .
+        '   $query .= " WHERE " . join(" AND ", $where);' . PHP_EOL .
+        '}' . PHP_EOL .
+        '$statement = $this->connection->prepare($query);' . PHP_EOL .
+        'foreach ($namedParameters as $namedParameter => $value) {' . PHP_EOL .
+        '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);' . PHP_EOL . // TODO: make pk_id variable
+        '}' . PHP_EOL .
+        'return $this->schema->execute' . $tableName . 'Statement($statement);'
+    ));
     $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters,
         '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");' . PHP_EOL .
         '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);' . PHP_EOL . // TODO: make pk_id variable
@@ -122,31 +140,27 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     foreach ($tableClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $tableClassFKMethod = PhpMethod::create($methodIdentifier);
 
-        $tableClassFKMethodArguments = [];
-        foreach ($methodDescription['parameters'] as $methodParameter) {
-            $tableClassFKMethod->addParameter(PhpParameter::create($methodParameter)->setType('string'));
-            $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
+        switch ($methodDescription['query'][0]) {
+            case 'SELECT':
+                $tableClassFKMethodArguments = [];
+                foreach ($methodDescription['parameters'] as $methodParameter) {
+                    $tableClassFKMethod->addParameter(PhpParameter::create($methodParameter)->setType('string'));
+                    $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
+                }
+
+                $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
+                $tableClassFKMethod->setBody(
+                    'return $this->schema->' . $methodDescription['query'][1]['from'] . '()->select(' . var_export(array_map(function($namedParameter) { return '$' . $namedParameter; }, $methodDescription['query'][1]['where']), true) . ');' . PHP_EOL);
+
+                $tableClass->setMethod($tableClassFKMethod);
+
+                $recordClassFKMethod = PhpMethod::create($methodIdentifier);
+                $recordClassFKMethod->setBody(
+                    'return $this->_table->' . $methodIdentifier . '(' . join(', ', $tableClassFKMethodArguments) . ');'
+                );
+                $recordClass->setMethod($recordClassFKMethod);
+                break;
         }
-
-        $query = 'SELECT ' . $methodDescription['query'][1]['fields'] . ' FROM ' . $methodDescription['query'][1]['from'];
-        if (strlen($methodDescription['query'][1]['where']) > 0) {
-            $query .= ' WHERE ' . $methodDescription['query'][1]['where'];
-        }
-
-        $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
-        $tableClassFKMethod->setBody(
-            '$statement = $this->connection->prepare("' . $query . '");' . PHP_EOL .
-            generatePDOStatementBindParam($methodDescription['parameters']) .
-            'return $this->schema->execute' . $methodDescription['query'][1]['from'] . 'Statement($statement);'
-            );
-
-        $tableClass->setMethod($tableClassFKMethod);
-
-        $recordClassFKMethod = PhpMethod::create($methodIdentifier);
-        $recordClassFKMethod->setBody(
-            'return $this->_table->' . $methodIdentifier . '(' . join(', ', $tableClassFKMethodArguments) . ');'
-        );
-        $recordClass->setMethod($recordClassFKMethod);
 
     }
     file_put_contents($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($tableClass));
