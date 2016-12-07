@@ -109,9 +109,9 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     $tableClass->setMethod(createMethod("select", ['whereParameters' => 'array'],
         '$namedParameters = $where = [];' . PHP_EOL .
         'foreach ($whereParameters as $localColumn => $value) {' . PHP_EOL .
-        '   $namedParameter = uniqid();' . PHP_EOL .
-        '   $namedParameters[$namedParameter] = $value;' . PHP_EOL .
-        '   $where[] = $localColumn . " = :" . $namedParameter;' . PHP_EOL .
+        '    $namedParameter = null;' . PHP_EOL .
+        '    $where[] = $this->{"where" . $localColumn . "Equals"}($namedParameter);' . PHP_EOL .
+        '    $namedParameters[$namedParameter] = $value;' . PHP_EOL .
         '}' . PHP_EOL .
         '$query = "SELECT * FROM ' . $tableName . '";' . PHP_EOL .
         'if (count($where) > 0) {' . PHP_EOL .
