@@ -68,7 +68,7 @@ $schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', '
     '$namedParameters = $where = [];' . PHP_EOL .
     'foreach ($whereParameters as $localColumn => $value) {' . PHP_EOL .
     '    $namedParameter = null;' . PHP_EOL .
-    '    $where[] = $this->{$tableIdentifier}()->{"where" . $localColumn . "Equals"}($namedParameter);' . PHP_EOL .
+    '    $where[] = $this->whereEquals($localColumn, $namedParameter);' . PHP_EOL .
     '    $namedParameters[$namedParameter] = $value;' . PHP_EOL .
     '}' . PHP_EOL .
     '$query = "SELECT * FROM " . $tableIdentifier;' . PHP_EOL .
@@ -80,6 +80,10 @@ $schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', '
     '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);' . PHP_EOL .
     '}' . PHP_EOL .
     'return $this->{"execute" . $tableIdentifier . "Statement"}($statement);'
+));
+$schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "string", "&namedParameter" => 'string'],
+    '$namedParameter = ":" . uniqid();' . PHP_EOL .
+    'return $columnIdentifier . " = " . $namedParameter;'
 ));
 
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
@@ -109,11 +113,6 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
     $tableClassUpdateParameters = [];
     foreach ($tableClassDescription['properties']['columns'] as $columnIdentifier) {
-        $tableClass->setMethod(createMethod('where' . $columnIdentifier . 'Equals', ["&namedParameter" => 'string'],
-            '$namedParameter = ":" . uniqid();' . PHP_EOL .
-	        'return "' . $columnIdentifier .' = " . $namedParameter;'
-        ));
-
         $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
         $recordClassDefaultUpdateValues[] = '$this->' . $columnIdentifier;
         $tableClassUpdateParameters[$columnIdentifier] = "string";
