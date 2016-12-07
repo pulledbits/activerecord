@@ -30,7 +30,7 @@ $connectionParams = array(
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
-function createMethod(string $identifier, array $parameters, string $body) {
+function createMethod(string $identifier, array $parameters, array $body) {
     $method = PhpMethod::create($identifier);
     foreach ($parameters as $methodParameterIdentifier => $methodParameterType) {
         $byReference = false;
@@ -43,7 +43,7 @@ function createMethod(string $identifier, array $parameters, string $body) {
         $parameter->setPassedByReference($byReference);
         $method->addParameter($parameter);
     }
-    $method->setBody($body);
+    $method->setBody(join(PHP_EOL, $body));
     return $method;
 }
 
@@ -61,29 +61,29 @@ $schemaDescription = $sourceSchema->describe($targetNamespace);
 
 $schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']);
 $schemaClass->setFinal(true);
-$schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '$this->connection = $connection;'));
+$schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], ['$this->connection = $connection;']));
 
-$schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', 'whereParameters' => 'array'],
-    '$namedParameters = $where = [];' . PHP_EOL .
-    'foreach ($whereParameters as $localColumn => $value) {' . PHP_EOL .
-    '    $namedParameter = null;' . PHP_EOL .
-    '    $where[] = $this->whereEquals($localColumn, $namedParameter);' . PHP_EOL .
-    '    $namedParameters[$namedParameter] = $value;' . PHP_EOL .
-    '}' . PHP_EOL .
-    '$query = "SELECT * FROM " . $tableIdentifier;' . PHP_EOL .
-    'if (count($where) > 0) {' . PHP_EOL .
-    '   $query .= " WHERE " . join(" AND ", $where);' . PHP_EOL .
-    '}' . PHP_EOL .
-    '$statement = $this->connection->prepare($query);' . PHP_EOL .
-    'foreach ($namedParameters as $namedParameter => $value) {' . PHP_EOL .
-    '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);' . PHP_EOL .
-    '}' . PHP_EOL .
+$schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', 'whereParameters' => 'array'], [
+    '$namedParameters = $where = [];',
+    'foreach ($whereParameters as $localColumn => $value) {',
+    '    $namedParameter = null;',
+    '    $where[] = $this->whereEquals($localColumn, $namedParameter);',
+    '    $namedParameters[$namedParameter] = $value;',
+    '}',
+    '$query = "SELECT * FROM " . $tableIdentifier;',
+    'if (count($where) > 0) {',
+    '   $query .= " WHERE " . join(" AND ", $where);',
+    '}',
+    '$statement = $this->connection->prepare($query);',
+    'foreach ($namedParameters as $namedParameter => $value) {',
+    '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);',
+    '}',
     'return $this->executeStatement($tableIdentifier, $statement);'
-));
-$schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "string", "&namedParameter" => 'string'],
-    '$namedParameter = ":" . uniqid();' . PHP_EOL .
+]));
+$schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "string", "&namedParameter" => 'string'], [
+    '$namedParameter = ":" . uniqid();',
     'return $columnIdentifier . " = " . $namedParameter;'
-));
+]));
 
 $executeCases = [];
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
@@ -96,10 +96,10 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     
     $tableClass->setProperty(PhpProperty::create("connection")->setType('\\PDO')->setVisibility('private'));
     $tableClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
-    $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO', 'schema' => $schemaDescription['identifier']],
-        '$this->connection = $connection;' . PHP_EOL .
+    $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO', 'schema' => $schemaDescription['identifier']], [
+        '$this->connection = $connection;',
         '$this->schema = $schema;'
-    ));
+    ]));
 
     $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['record-identifier']);
     $recordClass->setFinal(true);
@@ -117,34 +117,33 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
     }
 
-    $recordClass->setMethod(createMethod("__construct", ["table" => $tableClassDescription['identifier']], '$this->_table = $table;'));
+    $recordClass->setMethod(createMethod("__construct", ["table" => $tableClassDescription['identifier']], ['$this->_table = $table;']));
 
 
-    $tableClass->setMethod(createMethod("select", ['whereParameters' => 'array'],
+    $tableClass->setMethod(createMethod("select", ['whereParameters' => 'array'], [
         'return $this->schema->select("' . $tableName . '", $whereParameters);'
-    ));
-    $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters,
-        '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");' . PHP_EOL .
-        '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);' . PHP_EOL . // TODO: make pk_id variable
-        generatePDOStatementBindParam($tableClassDescription['properties']['columns']) . PHP_EOL .
-        '$statement->execute();' . PHP_EOL .
+    ]));
+    $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters, [
+        '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");',
+        '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);', // TODO: make pk_id variable
+        generatePDOStatementBindParam($tableClassDescription['properties']['columns']),
+        '$statement->execute();',
         'return $statement->rowCount();'
-    ));
-    $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'],
-        'if (property_exists($this, $property)) {' . PHP_EOL .
-        '$this->$property = $value;' . PHP_EOL .
-        '$this->_table->update(' . join(',',$recordClassDefaultUpdateValues) . ');' . PHP_EOL .
+    ]));
+    $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'], [
+        'if (property_exists($this, $property)) {',
+        '$this->$property = $value;',
+        '$this->_table->update(' . join(',',$recordClassDefaultUpdateValues) . ');',
         '}'
-    ));
+    ]));
 
     foreach ($tableClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $tableClassFKMethod = PhpMethod::create($methodIdentifier);
 
         switch ($methodDescription['query'][0]) {
             case 'SELECT':
-                $tableClassFKMethodParameters = $tableClassFKMethodArguments = [];
-                foreach ($methodDescription['parameters'] as $methodParameter) {
-                    $tableClassFKMethodParameters[$methodParameter] = 'string';
+                $tableClassFKMethodArguments = [];
+                foreach ($methodDescription['parameters'] as $methodParameter => $type) {
                     $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
                 }
 
@@ -152,13 +151,13 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
                 foreach ($methodDescription['query'][1]['where'] as $referencedColumnName => $parameterIdentifier) {
                     $whereParameters[] = '\'' . $referencedColumnName . '\' => $' . $parameterIdentifier;
                 }
-                $tableClass->setMethod(createMethod($methodIdentifier, $tableClassFKMethodParameters,
-                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [' . PHP_EOL . join(',' . PHP_EOL, $whereParameters) . PHP_EOL . ']);'
-                ));
+                $tableClass->setMethod(createMethod($methodIdentifier, $methodDescription['parameters'], [
+                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
+                ]));
 
-                $recordClass->setMethod(createMethod($methodIdentifier, [],
+                $recordClass->setMethod(createMethod($methodIdentifier, [], [
                     'return $this->_table->' . $methodIdentifier . '(' . join(', ', $tableClassFKMethodArguments) . ');'
-                ));
+                ]));
                 break;
         }
 
@@ -168,12 +167,12 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 }
 
 
-$schemaClass->setMethod(createMethod('executeStatement', ['tableIdentifier' => 'string', 'statement' => '\\PDOStatement'],
-        '$statement->execute();' . PHP_EOL .
-        'switch ($tableIdentifier) {' . PHP_EOL .
-            join (PHP_EOL, $executeCases) .
-        '}'
-    )->setVisibility('private'));
+$schemaClass->setMethod(createMethod('executeStatement', ['tableIdentifier' => 'string', 'statement' => '\\PDOStatement'], [
+    '$statement->execute();',
+    'switch ($tableIdentifier) {',
+        join (PHP_EOL, $executeCases) .
+    '}'
+])->setVisibility('private'));
 
 file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', '<?php' . PHP_EOL . $generator->generate($schemaClass));
 
