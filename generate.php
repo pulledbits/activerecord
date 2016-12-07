@@ -79,21 +79,18 @@ $schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', '
     'foreach ($namedParameters as $namedParameter => $value) {' . PHP_EOL .
     '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);' . PHP_EOL .
     '}' . PHP_EOL .
-    'return $this->{"execute" . $tableIdentifier . "Statement"}($statement);'
+    'return $this->executeStatement($tableIdentifier, $statement);'
 ));
 $schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "string", "&namedParameter" => 'string'],
     '$namedParameter = ":" . uniqid();' . PHP_EOL .
     'return $columnIdentifier . " = " . $namedParameter;'
 ));
 
+$executeCases = [];
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
-    $schemaClass->setMethod(createMethod('execute' . $tableName . 'Statement', ['statement' => '\\PDOStatement'],
-        '$statement->execute();' . PHP_EOL .
-        'return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [$this->' . $tableName . '()]);'
-    ));
-    $schemaClass->setMethod(createMethod($tableName, [],
-        'return new ' . $tableClassDescription['identifier'] . '($this->connection, $this);'
-    ));
+    $executeCases[] = 'case "'. $tableName .'":' . PHP_EOL .
+        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [new ' . $tableClassDescription['identifier'] . '($this->connection, $this)]);'
+    ;
 
     $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
     $tableClass->setFinal(true);
@@ -172,6 +169,14 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     file_put_contents($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($tableClass));
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
 }
+
+
+$schemaClass->setMethod(createMethod('executeStatement', ['tableIdentifier' => 'string', 'statement' => '\\PDOStatement'],
+        '$statement->execute();' . PHP_EOL .
+        'switch ($tableIdentifier) {' . PHP_EOL .
+            join (PHP_EOL, $executeCases) .
+        '}'
+    )->setVisibility('private'));
 
 file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', '<?php' . PHP_EOL . $generator->generate($schemaClass));
 
