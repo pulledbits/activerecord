@@ -6,15 +6,15 @@
  * Time: 12:45
  */
 
-namespace ActiveRecord;
+namespace ActiveRecord\Source;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
-class SourceSchema
+class Schema
 {
     /**
-     * @var Doctrine\DBAL\Schema\AbstractSchemaManager
+     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
      */
     private $schemaManager;
 
@@ -32,7 +32,7 @@ class SourceSchema
         $tableClasses = [];
 
         foreach ($this->schemaManager->listTables() as $table) {
-            $sourceTable = new SourceTable($table);
+            $sourceTable = new Table($table);
             $tableClasses[$table->getName()] = $sourceTable->describe($namespace);
         }
 

@@ -1,12 +1,12 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\Source;
 
-class SourceTableTest extends \PHPUnit_Framework_TestCase
+class TableTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -23,7 +23,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
-        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -39,7 +39,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_DifferingTableName_Expect_FetchAllMethod()
     {
-        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -58,7 +58,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
-        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -84,7 +84,7 @@ class SourceTableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
     {
-        $table = new SourceTable(new class() extends \Doctrine\DBAL\Schema\Table {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}

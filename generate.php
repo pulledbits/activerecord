@@ -4,7 +4,6 @@ use gossi\codegen\model\PhpProperty;
 use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
 use gossi\codegen\model\PhpParameter;
-use ActiveRecord\SourceTable;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -55,7 +54,7 @@ function generatePDOStatementBindParam(array $methodParameters) {
 }
 
 
-$sourceSchema = new \ActiveRecord\SourceSchema($conn->getSchemaManager());
+$sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 $generator = new CodeGenerator();
 
 $schemaDescription = $sourceSchema->describe($targetNamespace);
@@ -109,6 +108,7 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     $defaultUpdateValues = [];
     $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
     $tableClassUpdateParameters = [];
+    $recordClassDefaultUpdateValues = [];
     foreach ($tableClassDescription['properties']['columns'] as $columnIdentifier) {
         $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
         $recordClassDefaultUpdateValues[] = '$this->' . $columnIdentifier;

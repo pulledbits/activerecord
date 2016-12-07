@@ -6,7 +6,7 @@
  * Time: 12:36
  */
 
-namespace ActiveRecord;
+namespace ActiveRecord\Source;
 
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
@@ -14,7 +14,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
-        $schema = new SourceSchema(new class() extends \Doctrine\DBAL\Schema\MySqlSchemaManager {
+        $schema = new Schema(new class() extends \Doctrine\DBAL\Schema\MySqlSchemaManager {
             public function __construct() {}
 
             public function listTables() {

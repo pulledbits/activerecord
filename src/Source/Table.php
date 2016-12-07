@@ -1,7 +1,7 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\Source;
 
-final class SourceTable
+final class Table
 {
     /**
      * 
