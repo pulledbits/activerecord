@@ -151,7 +151,6 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
                     $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
                 }
 
-                $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
                 $whereParameters = [];
                 foreach ($methodDescription['query'][1]['where'] as $referencedColumnName => $parameterIdentifier) {
                     $whereParameters[] = '\'' . $referencedColumnName . '\' => $' . $parameterIdentifier;
