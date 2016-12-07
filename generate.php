@@ -128,17 +128,14 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
             $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
         }
 
-
-        $querybuilder = $conn->createQueryBuilder();
-        $query = $querybuilder->select($methodDescription['query'][1]['fields']);
-        $query->from($methodDescription['query'][1]['from']);
+        $query = 'SELECT ' . $methodDescription['query'][1]['fields'] . ' FROM ' . $methodDescription['query'][1]['from'];
         if (strlen($methodDescription['query'][1]['where']) > 0) {
-            $query->where($methodDescription['query'][1]['where']);
+            $query .= ' WHERE ' . $methodDescription['query'][1]['where'];
         }
 
         $fkRecordClass = new gossi\codegen\model\PhpClass($targetNamespace . '\\Record\\' . $methodDescription['query'][1]['from']);
         $tableClassFKMethod->setBody(
-            '$statement = $this->connection->prepare("' . $query->getSQL() . '");' . PHP_EOL .
+            '$statement = $this->connection->prepare("' . $query . '");' . PHP_EOL .
             generatePDOStatementBindParam($methodDescription['parameters']) .
             'return $this->schema->execute' . $methodDescription['query'][1]['from'] . 'Statement($statement);'
             );
