@@ -27,7 +27,7 @@ final class SourceTable
         return $this->describeQuery('SELECT', [
             'fields' => $fields,
             'from' => $from,
-            'where' => join(' AND ', $where)
+            'where' => $where
         ]);
     }
     
@@ -47,9 +47,7 @@ final class SourceTable
             $foreignKeyMethodIdentifier = join('', $camelCased);
 
             $fkLocalColumns = $foreignKey->getLocalColumns();
-            $where = array_map(function($fkColumnName, $methodParameter) {
-                return $fkColumnName . ' = :' . $methodParameter;
-            }, $foreignKey->getForeignColumns(), $fkLocalColumns);
+            $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
             $query = $this->describeQuerySelect('*', $foreignKey->getForeignTableName(), $where);
             
             $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($fkLocalColumns, $query);
