@@ -64,6 +64,24 @@ $schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']
 $schemaClass->setFinal(true);
 $schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], '$this->connection = $connection;'));
 
+$schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', 'whereParameters' => 'array'],
+    '$namedParameters = $where = [];' . PHP_EOL .
+    'foreach ($whereParameters as $localColumn => $value) {' . PHP_EOL .
+    '    $namedParameter = null;' . PHP_EOL .
+    '    $where[] = $this->{$tableIdentifier}()->{"where" . $localColumn . "Equals"}($namedParameter);' . PHP_EOL .
+    '    $namedParameters[$namedParameter] = $value;' . PHP_EOL .
+    '}' . PHP_EOL .
+    '$query = "SELECT * FROM " . $tableIdentifier;' . PHP_EOL .
+    'if (count($where) > 0) {' . PHP_EOL .
+    '   $query .= " WHERE " . join(" AND ", $where);' . PHP_EOL .
+    '}' . PHP_EOL .
+    '$statement = $this->connection->prepare($query);' . PHP_EOL .
+    'foreach ($namedParameters as $namedParameter => $value) {' . PHP_EOL .
+    '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);' . PHP_EOL .
+    '}' . PHP_EOL .
+    'return $this->{"execute" . $tableIdentifier . "Statement"}($statement);'
+));
+
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $schemaClass->setMethod(createMethod('execute' . $tableName . 'Statement', ['statement' => '\\PDOStatement'],
         '$statement->execute();' . PHP_EOL .
@@ -107,21 +125,7 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
 
     $tableClass->setMethod(createMethod("select", ['whereParameters' => 'array'],
-        '$namedParameters = $where = [];' . PHP_EOL .
-        'foreach ($whereParameters as $localColumn => $value) {' . PHP_EOL .
-        '    $namedParameter = null;' . PHP_EOL .
-        '    $where[] = $this->{"where" . $localColumn . "Equals"}($namedParameter);' . PHP_EOL .
-        '    $namedParameters[$namedParameter] = $value;' . PHP_EOL .
-        '}' . PHP_EOL .
-        '$query = "SELECT * FROM ' . $tableName . '";' . PHP_EOL .
-        'if (count($where) > 0) {' . PHP_EOL .
-        '   $query .= " WHERE " . join(" AND ", $where);' . PHP_EOL .
-        '}' . PHP_EOL .
-        '$statement = $this->connection->prepare($query);' . PHP_EOL .
-        'foreach ($namedParameters as $namedParameter => $value) {' . PHP_EOL .
-        '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);' . PHP_EOL . // TODO: make pk_id variable
-        '}' . PHP_EOL .
-        'return $this->schema->execute' . $tableName . 'Statement($statement);'
+        'return $this->schema->select("' . $tableName . '", $whereParameters);'
     ));
     $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters,
         '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");' . PHP_EOL .
