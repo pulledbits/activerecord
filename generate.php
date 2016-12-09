@@ -89,10 +89,10 @@ $schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "stri
 $executeCases = [];
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $executeCases[] = 'case "'. $tableName .'":' . PHP_EOL .
-        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [$this]);'
+        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['identifier'] . '", [$this]);'
     ;
 
-    $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['record-identifier']);
+    $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
     $recordClass->setFinal(true);
 
     $defaultUpdateValues = [];
