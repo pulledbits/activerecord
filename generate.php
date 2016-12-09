@@ -49,12 +49,6 @@ function createPHPFile(string $filename, string $code) {
     file_put_contents($filename, '<?php' . PHP_EOL . $code);
 }
 
-function generatePDOStatementBindParam(array $methodParameters) {
-    return join(PHP_EOL, array_map(function($methodParameter) {
-        return '$statement->bindParam(":' . $methodParameter . '", $' . $methodParameter . ', \\PDO::PARAM_STR);';
-    }, $methodParameters)) . PHP_EOL;
-}
-
 
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 
@@ -77,9 +71,35 @@ $schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', '
     '}',
     '$statement = $this->connection->prepare($query);',
     'foreach ($namedParameters as $namedParameter => $value) {',
-    '    $statement->bindParam(":" . $namedParameter, $value, \\PDO::PARAM_STR);',
+    '    $statement->bindParam($namedParameter, $value, \\PDO::PARAM_STR);',
     '}',
     'return $this->executeStatement($tableIdentifier, $statement);'
+]));
+$schemaClass->setMethod(createMethod("update", ['tableIdentifier' => "string", 'setParameters' => "array", 'whereParameters' => 'array'], [
+    '$namedParameters = [];',
+    '$set = [];',
+    'foreach ($setParameters as $localColumn => $value) {',
+    '    $namedParameter = null;',
+    '    $set[] = $this->whereEquals($localColumn, $namedParameter);',
+    '    $namedParameters[$namedParameter] = $value;',
+    '}',
+    '$where = [];',
+    'foreach ($whereParameters as $localColumn => $value) {',
+    '    $namedParameter = null;',
+    '    $where[] = $this->whereEquals($localColumn, $namedParameter);',
+    '    $namedParameters[$namedParameter] = $value;',
+    '}',
+    '$query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $set);',
+    'if (count($where) > 0) {',
+    '   $query .= " WHERE " . join(" AND ", $where);',
+    '}',
+
+    '$statement = $this->connection->prepare($query);',
+    'foreach ($namedParameters as $namedParameter => $value) {',
+    '    $statement->bindParam($namedParameter, $value, is_null($value) ? \\PDO::PARAM_NULL : \\PDO::PARAM_STR);',
+    '}',
+    '$statement->execute();',
+    'return $statement->rowCount();'
 ]));
 $schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "string", "&namedParameter" => 'string'], [
     '$namedParameter = ":" . uniqid();',
@@ -95,32 +115,19 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);
 
-    $defaultUpdateValues = [];
-    $recordClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
-    $recordClassUpdateParameters = [];
     $recordClassDefaultUpdateValues = [];
     foreach ($recordClassDescription['properties']['columns'] as $columnIdentifier) {
         $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
-        $recordClassDefaultUpdateValues[] = '$this->' . $columnIdentifier;
-        $recordClassUpdateParameters[$columnIdentifier] = "string";
-        $recordClassUpdateQuery->set($columnIdentifier, ':' . $columnIdentifier);
-
+        $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
     }
 
     $recordClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
     $recordClass->setMethod(createMethod("__construct", ["schema" => $schemaDescription['identifier']], ['$this->schema = $schema;']));
 
-    $schemaClass->setMethod(createMethod("update" . $tableName, $recordClassUpdateParameters, [
-        '$statement = $this->connection->prepare("' . $recordClassUpdateQuery->where('id = :pk_id')->getSQL() . '");',
-        '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);', // TODO: make pk_id variable
-        generatePDOStatementBindParam($recordClassDescription['properties']['columns']),
-        '$statement->execute();',
-        'return $statement->rowCount();'
-    ]));
     $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'], [
         'if (property_exists($this, $property)) {',
         '$this->$property = $value;',
-        '$this->schema->update' . $tableName . '(' . join(',',$recordClassDefaultUpdateValues) . ');',
+        '$this->schema->update("' . $tableName . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
         '}'
     ]));
 
