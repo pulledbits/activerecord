@@ -14,10 +14,6 @@ if ($_SERVER['argc'] < 3) {
 $targetNamespace = $_SERVER['argv'][1];
 
 $targetDirectory = $_SERVER['argv'][2];
-$tablesDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'table';
-if (file_exists($tablesDirectory) == false) {
-    mkdir($tablesDirectory);
-}
 $recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'record';
 if (file_exists($recordsDirectory) == false) {
     mkdir($recordsDirectory);
@@ -93,23 +89,12 @@ $schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "stri
 $executeCases = [];
 foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
     $executeCases[] = 'case "'. $tableName .'":' . PHP_EOL .
-        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [new ' . $tableClassDescription['identifier'] . '($this->connection, $this)]);'
+        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['record-identifier'] . '", [$this]);'
     ;
-
-    $tableClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
-    $tableClass->setFinal(true);
-    
-    $tableClass->setProperty(PhpProperty::create("connection")->setType('\\PDO')->setVisibility('private'));
-    $tableClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
-    $tableClass->setMethod(createMethod("__construct", ["connection" => '\\PDO', 'schema' => $schemaDescription['identifier']], [
-        '$this->connection = $connection;',
-        '$this->schema = $schema;'
-    ]));
 
     $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['record-identifier']);
     $recordClass->setFinal(true);
 
-    $recordClass->setProperty(PhpProperty::create("_table")->setType($tableClassDescription['identifier'])->setVisibility('private'));
     $defaultUpdateValues = [];
     $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
     $tableClassUpdateParameters = [];
@@ -122,13 +107,10 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
     }
 
-    $recordClass->setMethod(createMethod("__construct", ["table" => $tableClassDescription['identifier']], ['$this->_table = $table;']));
+    $recordClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
+    $recordClass->setMethod(createMethod("__construct", ["schema" => $schemaDescription['identifier']], ['$this->schema = $schema;']));
 
-
-    $tableClass->setMethod(createMethod("select", ['whereParameters' => 'array'], [
-        'return $this->schema->select("' . $tableName . '", $whereParameters);'
-    ]));
-    $tableClass->setMethod(createMethod("update", $tableClassUpdateParameters, [
+    $schemaClass->setMethod(createMethod("update" . $tableName, $tableClassUpdateParameters, [
         '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");',
         '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);', // TODO: make pk_id variable
         generatePDOStatementBindParam($tableClassDescription['properties']['columns']),
@@ -138,7 +120,7 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
     $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'], [
         'if (property_exists($this, $property)) {',
         '$this->$property = $value;',
-        '$this->_table->update(' . join(',',$recordClassDefaultUpdateValues) . ');',
+        '$this->schema->update' . $tableName . '(' . join(',',$recordClassDefaultUpdateValues) . ');',
         '}'
     ]));
 
@@ -147,27 +129,17 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
 
         switch ($methodDescription['query'][0]) {
             case 'SELECT':
-                $tableClassFKMethodArguments = [];
-                foreach ($methodDescription['parameters'] as $methodParameter => $type) {
-                    $tableClassFKMethodArguments[] = '$this->' . $methodParameter;
-                }
-
                 $whereParameters = [];
                 foreach ($methodDescription['query'][1]['where'] as $referencedColumnName => $parameterIdentifier) {
-                    $whereParameters[] = '\'' . $referencedColumnName . '\' => $' . $parameterIdentifier;
+                    $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
                 }
-                $tableClass->setMethod(createMethod($methodIdentifier, $methodDescription['parameters'], [
-                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
-                ]));
-
                 $recordClass->setMethod(createMethod($methodIdentifier, [], [
-                    'return $this->_table->' . $methodIdentifier . '(' . join(', ', $tableClassFKMethodArguments) . ');'
+                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
                 ]));
                 break;
         }
 
     }
-    createPHPFile($tablesDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($tableClass));
     createPHPFile($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($recordClass));
 }
 
@@ -183,13 +155,12 @@ createPHPFile($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', $generator-
 
 // test activiteit
 require $targetDirectory  . DIRECTORY_SEPARATOR . 'Schema.php';
-require $tablesDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 $connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 $schema = new \Database\Schema($connection);
-$table = new \Database\Table\activiteit($connection, $schema);
-$record = $table->fetchAll()[0];
+$record = $schema->select("activiteit", [])[0];
+//print_r($record->inhoud);
 $record->inhoud = uniqid();
 
-print_r($table->fetchAll()[0]);
+print_r($schema->select("activiteit", [])[0]);
 echo 'Done';
