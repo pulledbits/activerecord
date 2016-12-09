@@ -33,7 +33,7 @@ class Schema
 
         foreach ($this->schemaManager->listTables() as $table) {
             $sourceTable = new Table($table);
-            $tableClasses[$table->getName()] = $sourceTable->describe($namespace);
+            $tableClasses[$table->getName()] = $sourceTable->describe($namespace . 'Record\\' );
         }
 
         return [

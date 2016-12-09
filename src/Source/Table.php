@@ -59,8 +59,7 @@ final class Table
         }
         
         return [
-            'identifier' => $namespace . 'Table\\' . $this->dbalSchemaTable->getName(),
-            'record-identifier' => $namespace . 'Record\\' . $this->dbalSchemaTable->getName(),
+            'identifier' => $namespace . $this->dbalSchemaTable->getName(),
 
             'properties' => [
                 'columns' => array_keys($this->dbalSchemaTable->getColumns())
