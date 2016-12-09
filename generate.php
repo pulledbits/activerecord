@@ -87,33 +87,33 @@ $schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "stri
 ]));
 
 $executeCases = [];
-foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescription) {
+foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $executeCases[] = 'case "'. $tableName .'":' . PHP_EOL .
-        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $tableClassDescription['identifier'] . '", [$this]);'
+        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $recordClassDescription['identifier'] . '", [$this]);'
     ;
 
-    $recordClass = new gossi\codegen\model\PhpClass($tableClassDescription['identifier']);
+    $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);
 
     $defaultUpdateValues = [];
-    $tableClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
-    $tableClassUpdateParameters = [];
+    $recordClassUpdateQuery = $conn->createQueryBuilder()->update($tableName);
+    $recordClassUpdateParameters = [];
     $recordClassDefaultUpdateValues = [];
-    foreach ($tableClassDescription['properties']['columns'] as $columnIdentifier) {
+    foreach ($recordClassDescription['properties']['columns'] as $columnIdentifier) {
         $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
         $recordClassDefaultUpdateValues[] = '$this->' . $columnIdentifier;
-        $tableClassUpdateParameters[$columnIdentifier] = "string";
-        $tableClassUpdateQuery->set($columnIdentifier, ':' . $columnIdentifier);
+        $recordClassUpdateParameters[$columnIdentifier] = "string";
+        $recordClassUpdateQuery->set($columnIdentifier, ':' . $columnIdentifier);
 
     }
 
     $recordClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
     $recordClass->setMethod(createMethod("__construct", ["schema" => $schemaDescription['identifier']], ['$this->schema = $schema;']));
 
-    $schemaClass->setMethod(createMethod("update" . $tableName, $tableClassUpdateParameters, [
-        '$statement = $this->connection->prepare("' . $tableClassUpdateQuery->where('id = :pk_id')->getSQL() . '");',
+    $schemaClass->setMethod(createMethod("update" . $tableName, $recordClassUpdateParameters, [
+        '$statement = $this->connection->prepare("' . $recordClassUpdateQuery->where('id = :pk_id')->getSQL() . '");',
         '$statement->bindParam(":pk_id", $id, \\PDO::PARAM_STR);', // TODO: make pk_id variable
-        generatePDOStatementBindParam($tableClassDescription['properties']['columns']),
+        generatePDOStatementBindParam($recordClassDescription['properties']['columns']),
         '$statement->execute();',
         'return $statement->rowCount();'
     ]));
@@ -124,8 +124,8 @@ foreach ($schemaDescription['tableClasses'] as $tableName => $tableClassDescript
         '}'
     ]));
 
-    foreach ($tableClassDescription['methods'] as $methodIdentifier => $methodDescription) {
-        $tableClassFKMethod = PhpMethod::create($methodIdentifier);
+    foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
+        $recordClassFKMethod = PhpMethod::create($methodIdentifier);
 
         switch ($methodDescription['query'][0]) {
             case 'SELECT':

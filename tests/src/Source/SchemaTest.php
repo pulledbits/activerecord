@@ -34,8 +34,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertEquals('\\Database\\Schema', $schemaDescription['identifier']);
-        $this->assertCount(1, $schemaDescription['tableClasses']);
-        $this->assertEquals('\\Database\\Record\\MyTable', $schemaDescription['tableClasses']['MyTable']['identifier']);
+        $this->assertCount(1, $schemaDescription['recordClasses']);
+        $this->assertEquals('\\Database\\Record\\MyTable', $schemaDescription['recordClasses']['MyTable']['identifier']);
     }
 
 }

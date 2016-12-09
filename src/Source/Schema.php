@@ -29,16 +29,16 @@ class Schema
             $namespace .= "\\";
         }
 
-        $tableClasses = [];
+        $recordClasses = [];
 
         foreach ($this->schemaManager->listTables() as $table) {
             $sourceTable = new Table($table);
-            $tableClasses[$table->getName()] = $sourceTable->describe($namespace . 'Record\\' );
+            $recordClasses[$table->getName()] = $sourceTable->describe($namespace . 'Record\\' );
         }
 
         return [
             'identifier' => $namespace . 'Schema',
-            'tableClasses' => $tableClasses
+            'recordClasses' => $recordClasses
         ];
     }
 }
