@@ -58,24 +58,26 @@ $schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']
 $schemaClass->setFinal(true);
 $schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], ['$this->connection = $connection;']));
 
-$schemaClass->setMethod(createMethod("select", ['tableIdentifier' => 'string', 'whereParameters' => 'array'], [
+$schemaClass->setMethod(createMethod("select", ['recordClassIdentifier' => 'string', 'whereParameters' => 'array'], [
     '$namedParameters = $where = [];',
     'foreach ($whereParameters as $localColumn => $value) {',
     '    $namedParameter = null;',
     '    $where[] = $this->whereEquals($localColumn, $namedParameter);',
     '    $namedParameters[$namedParameter] = $value;',
     '}',
-    '$query = "SELECT * FROM " . $tableIdentifier;',
+    '$query = "SELECT * FROM " . join("", array_slice(explode("\\\\", $recordClassIdentifier), -1));',
     'if (count($where) > 0) {',
     '   $query .= " WHERE " . join(" AND ", $where);',
     '}',
+    'echo $query;',
     '$statement = $this->connection->prepare($query);',
     'foreach ($namedParameters as $namedParameter => $value) {',
     '    $statement->bindParam($namedParameter, $value, \\PDO::PARAM_STR);',
     '}',
-    'return $this->executeStatement($tableIdentifier, $statement);'
+    '$statement->execute();',
+    'return $statement->fetchAll(\\PDO::FETCH_CLASS, $recordClassIdentifier, [$this]);'
 ]));
-$schemaClass->setMethod(createMethod("update", ['tableIdentifier' => "string", 'setParameters' => "array", 'whereParameters' => 'array'], [
+$schemaClass->setMethod(createMethod("update", ['recordClassIdentifier' => "string", 'setParameters' => "array", 'whereParameters' => 'array'], [
     '$namedParameters = [];',
     '$set = [];',
     'foreach ($setParameters as $localColumn => $value) {',
@@ -89,7 +91,7 @@ $schemaClass->setMethod(createMethod("update", ['tableIdentifier' => "string", '
     '    $where[] = $this->whereEquals($localColumn, $namedParameter);',
     '    $namedParameters[$namedParameter] = $value;',
     '}',
-    '$query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $set);',
+    '$query = "UPDATE " . join("", array_slice(explode("\\\\", $recordClassIdentifier), -1)) . " SET " . join(", ", $set);',
     'if (count($where) > 0) {',
     '   $query .= " WHERE " . join(" AND ", $where);',
     '}',
@@ -106,12 +108,7 @@ $schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "stri
     'return $columnIdentifier . " = " . $namedParameter;'
 ]));
 
-$executeCases = [];
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
-    $executeCases[] = 'case "'. $tableName .'":' . PHP_EOL .
-        '    return $statement->fetchAll(\\PDO::FETCH_CLASS, "' . $recordClassDescription['identifier'] . '", [$this]);'
-    ;
-
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);
 
@@ -127,7 +124,7 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'], [
         'if (property_exists($this, $property)) {',
         '$this->$property = $value;',
-        '$this->schema->update("' . $tableName . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
+        '$this->schema->update(__CLASS__, [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
         '}'
     ]));
 
@@ -141,7 +138,7 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
                     $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
                 }
                 $recordClass->setMethod(createMethod($methodIdentifier, [], [
-                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
+                    'return $this->schema->select(__NAMESPACE__ . "\\' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
                 ]));
                 break;
         }
@@ -150,14 +147,6 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     createPHPFile($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($recordClass));
 }
 
-
-$schemaClass->setMethod(createMethod('executeStatement', ['tableIdentifier' => 'string', 'statement' => '\\PDOStatement'], [
-    '$statement->execute();',
-    'switch ($tableIdentifier) {',
-        join (PHP_EOL, $executeCases) .
-    '}'
-])->setVisibility('private'));
-
 createPHPFile($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', $generator->generate($schemaClass));
 
 // test activiteit
@@ -165,9 +154,9 @@ require $targetDirectory  . DIRECTORY_SEPARATOR . 'Schema.php';
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 $connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 $schema = new \Database\Schema($connection);
-$record = $schema->select("activiteit", [])[0];
+$record = $schema->select($targetNamespace . "\\Record\\activiteit", [])[0];
 //print_r($record->inhoud);
 $record->inhoud = uniqid();
 
-print_r($schema->select("activiteit", [])[0]);
+print_r($schema->select($targetNamespace . "\\Record\\activiteit", [])[0]);
 echo 'Done';
