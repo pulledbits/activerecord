@@ -72,9 +72,9 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 $connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 $schema = new \ActiveRecord\Schema($targetNamespace, $connection);
-$record = $schema->select("activiteit", [])[0];
+$record = $schema->select("activiteit", ['_id' => 'id', '_inhoud' => 'inhoud'], [])[0];
 //print_r($record->inhoud);
 $record->inhoud = uniqid();
 
-print_r($schema->select("activiteit", [])[0]);
+print_r($schema->select("activiteit", ['_id' => 'id', '_inhoud' => 'inhoud'], [])[0]);
 echo 'Done';
