@@ -14,7 +14,7 @@ if ($_SERVER['argc'] < 3) {
 $targetNamespace = $_SERVER['argv'][1];
 
 $targetDirectory = $_SERVER['argv'][2];
-$recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'record';
+$recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'Record';
 if (file_exists($recordsDirectory) == false) {
     mkdir($recordsDirectory);
 }
