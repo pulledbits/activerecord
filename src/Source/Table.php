@@ -28,11 +28,7 @@ final class Table
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
             $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
         }
-        return $this->describeQuery('SELECT', [
-            'fields' => $fields,
-            'from' => $from,
-            'where' => $whereParameters
-        ]);
+        return ['return $this->schema->select("' . $from . '", [', join(',' . PHP_EOL, $whereParameters), ']);'];
     }
     
     public function describe($namespace) : array {
