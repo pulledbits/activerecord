@@ -43,7 +43,9 @@ final class Table
         ];
 
         $recordClassDefaultUpdateValues = [];
-        $properties = [];
+        $properties = [
+            'schema' => '\ActiveRecord\Schema'
+        ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties[$columnIdentifier] = 'string';
             $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
