@@ -53,10 +53,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
             {
                 return 'MyTable2';
             }
+            public function getColumns()
+            {
+                return [
+                    'id' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
+                ];
+            }
         });
         $classDescription = $table->describe('\\Database\\Record');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
-        $this->assertEquals($classDescription['methods']['fetchAll']['body'][0], 'return $this->schema->select("MyTable2", [');
+        $this->assertEquals($classDescription['methods']['fetchAll']['body'][0], 'return $this->schema->select("MyTable2", [\'_id\' => \'id\'], [');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][1], '');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][2], ']);');
     }
@@ -172,13 +178,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $classDescription = $table->describe('\\Database');
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
 
-        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['body'][0], 'return $this->schema->select("OtherTable", [');
+        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['body'][0], 'return $this->schema->select("OtherTable", [\'_id\' => \'id\'], [');
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['body'][1], join(',' . PHP_EOL, ['\'id\' => $this->role_id']));
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['body'][2], ']);');
 
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters'], []);
 
-        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['body'][0], 'return $this->schema->select("AntoherTable", [');
+        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['body'][0], 'return $this->schema->select("AntoherTable", [\'_id\' => \'id\', \'_column_id\' => \'column_id\'], [');
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['body'][1], join(',' . PHP_EOL, ['\'id\' => $this->role2_id', '\'column_id\' => $this->extra_column_id']));
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['body'][2], ']);');
     }

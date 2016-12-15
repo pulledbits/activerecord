@@ -20,12 +20,18 @@ final class Table
         ];
     }
 
-    private function describeBodySelect(string $fields, string $from, array $where) : array {
+    private function describeBodySelect(array $fields, string $from, array $where) : array {
+        $aliassedFields = [];
+        foreach ($fields as $fieldIdentifier) {
+            $aliassedFields[] = '\'_' . $fieldIdentifier . '\' => \'' . $fieldIdentifier . '\'';
+        }
+
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
             $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
         }
-        return ['return $this->schema->select("' . $from . '", [', join(',' . PHP_EOL, $whereParameters), ']);'];
+
+        return ['return $this->schema->select("' . $from . '", [' . join(', ', $aliassedFields) . '], [', join(',' . PHP_EOL, $whereParameters), ']);'];
     }
     
     public function describe($namespace) : array {
@@ -39,7 +45,7 @@ final class Table
         
         $methods = [
             '__construct' => $this->describeMethod(["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
-            'fetchAll' => $this->describeMethod([], $this->describeBodySelect('*', $tableIdentifier, []))
+            'fetchAll' => $this->describeMethod([], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
         ];
 
         $recordClassDefaultUpdateValues = [];
@@ -66,7 +72,7 @@ final class Table
             $fkLocalColumns = $foreignKey->getLocalColumns();
 
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
-            $query = $this->describeBodySelect('*', $foreignKey->getForeignTableName(), $where);
+            $query = $this->describeBodySelect($foreignKey->getForeignColumns(), $foreignKey->getForeignTableName(), $where);
             
             $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod([], $query);
         }
