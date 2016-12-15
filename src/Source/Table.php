@@ -38,6 +38,7 @@ final class Table
         $tableIdentifier = $this->dbalSchemaTable->getName();
         
         $methods = [
+            '__construct' => $this->describeMethod(["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
             'fetchAll' => $this->describeMethod([], $this->describeBodySelect('*', $tableIdentifier, []))
         ];
 

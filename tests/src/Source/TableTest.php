@@ -18,6 +18,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
         });
         $classDescription = $table->describe('\\Database\\Record');
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
+
+        $this->assertEquals($classDescription['methods']['__construct']['parameters']['schema'], '\ActiveRecord\Schema');
+        $this->assertEquals($classDescription['methods']['__construct']['body'][0], '$this->schema = $schema;');
+
     }
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
