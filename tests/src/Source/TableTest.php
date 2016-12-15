@@ -106,9 +106,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         });
         $classDescription = $table->describe('\\Database\\Record');
-        $this->assertEquals($classDescription['properties']['columns'][0], 'id');
-        $this->assertEquals($classDescription['properties']['columns'][1], 'name');
-        $this->assertEquals($classDescription['properties']['columns'][2], 'height');
+        $this->assertEquals($classDescription['properties']['id'], 'string');
+        $this->assertEquals($classDescription['properties']['name'], 'string');
+        $this->assertEquals($classDescription['properties']['height'], 'string');
     }
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()

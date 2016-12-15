@@ -42,7 +42,9 @@ final class Table
         ];
 
         $recordClassDefaultUpdateValues = [];
+        $properties = [];
         foreach ($columnIdentifiers as $columnIdentifier) {
+            $properties[$columnIdentifier] = 'string';
             $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
         }
 
@@ -69,9 +71,7 @@ final class Table
         return [
             'identifier' => $namespace . $tableIdentifier,
 
-            'properties' => [
-                'columns' => $columnIdentifiers
-            ],
+            'properties' => $properties,
             'methods' => $methods
         ];
     }
