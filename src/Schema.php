@@ -45,10 +45,10 @@ class Schema
         return [$sql, $namedParameters];
     }
 
-    public function select(string $tableIdentifer, array $whereParameters)
+    public function select(string $tableIdentifer, array $fields, array $whereParameters)
     {
         list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
-        $query = "SELECT * FROM " . $tableIdentifer;
+        $query = "SELECT " . join(', ', $fields) . " FROM " . $tableIdentifer;
         if (count($where) > 0) {
            $query .= " WHERE " . join(" AND ", $where);
         }

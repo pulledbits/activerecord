@@ -19,7 +19,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             public function __construct() {}
 
             public function prepare($query, $options = null) {
-                if ($query === 'SELECT * FROM activiteit') {
+                if ($query === 'SELECT name FROM activiteit') {
                     return new class extends \PDOStatement {
                         public function __construct() {}
                         public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
@@ -38,7 +38,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         });
 
-        $records = $schema->select('activiteit', []);
+        $records = $schema->select('activiteit', ['name'], []);
 
         $this->assertCount(5, $records);
     }
@@ -49,7 +49,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             public function __construct() {}
 
             public function prepare($query, $options = null) {
-                if (preg_match('/SELECT \* FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
+                if (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
                     return new class extends \PDOStatement {
                         public function __construct() {}
                         public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
@@ -71,7 +71,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         });
 
-        $records = $schema->select('activiteit', ['name' => 'foo']);
+        $records = $schema->select('activiteit', ['name'], ['name' => 'foo']);
 
         $this->assertCount(3, $records);
     }
@@ -82,7 +82,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             public function __construct() {}
 
             public function prepare($query, $options = null) {
-                if (preg_match('/SELECT \* FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
+                if (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
                     return new class extends \PDOStatement {
                         public function __construct() {}
                         public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
@@ -102,7 +102,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         });
 
-        $records = $schema->select('activiteit', ['name' => 'foo', 'id' => '1']);
+        $records = $schema->select('activiteit', ['name'], ['name' => 'foo', 'id' => '1']);
 
         $this->assertCount(1, $records);
     }
