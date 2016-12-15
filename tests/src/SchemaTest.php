@@ -19,7 +19,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             public function __construct() {}
 
             public function prepare($query, $options = null) {
-                if ($query === 'SELECT id, name FROM activiteit') {
+                if ($query === 'SELECT id AS _id, name FROM activiteit') {
                     return new class extends \PDOStatement {
                         public function __construct() {}
                         public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
@@ -38,7 +38,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         });
 
-        $records = $schema->select('activiteit', ['id', 'name'], []);
+        $records = $schema->select('activiteit', ['_id' => 'id', 'name'], []);
 
         $this->assertCount(5, $records);
     }

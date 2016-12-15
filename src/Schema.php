@@ -48,7 +48,16 @@ class Schema
     public function select(string $tableIdentifer, array $fields, array $whereParameters)
     {
         list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
-        $query = "SELECT " . join(', ', $fields) . " FROM " . $tableIdentifer;
+
+        $preparedFields = [];
+        foreach ($fields as $fieldAlias => $columnIdentifier) {
+            if (is_numeric($fieldAlias)) {
+                $preparedFields[] = $columnIdentifier;
+            } else {
+                $preparedFields[] = $columnIdentifier . ' AS ' . $fieldAlias;
+            }
+        }
+        $query = "SELECT " . join(', ', $preparedFields) . " FROM " . $tableIdentifer;
         if (count($where) > 0) {
            $query .= " WHERE " . join(" AND ", $where);
         }
