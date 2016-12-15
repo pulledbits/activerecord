@@ -43,7 +43,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(5, $records);
     }
 
-    public function testSelect_When_WhereSpecificParameterSupplied_Expect_ThreeRecords()
+    public function testSelect_When_SpecificWhereParameterSupplied_Expect_ThreeRecords()
     {
         $schema = new Schema('\Database', new class extends \PDO {
             public function __construct() {}
@@ -76,4 +76,34 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $records);
     }
 
+    public function testSelect_When_MultipleWhereParametersSupplied_Expect_OneRecord()
+    {
+        $schema = new Schema('\Database', new class extends \PDO {
+            public function __construct() {}
+
+            public function prepare($query, $options = null) {
+                if (preg_match('/SELECT \* FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
+                    return new class extends \PDOStatement {
+                        public function __construct() {}
+                        public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                        {
+
+                        }
+
+                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
+                            if ($how === \PDO::FETCH_CLASS && $class_name === '\Database\Record\activiteit') {
+                                return [
+                                    new class {}
+                                ];
+                            }
+                        }
+                    };
+                }
+            }
+        });
+
+        $records = $schema->select('activiteit', ['name' => 'foo', 'id' => '1']);
+
+        $this->assertCount(1, $records);
+    }
 }
