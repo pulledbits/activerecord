@@ -75,10 +75,7 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     ]));
 
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
-        $recordClassFKMethod = PhpMethod::create($methodIdentifier);
-
         $recordClass->setMethod(createMethod($methodIdentifier, $methodDescription['parameters'], $methodDescription['body']));
-
     }
     createPHPFile($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($recordClass));
 }
