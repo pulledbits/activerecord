@@ -28,7 +28,7 @@ final class Table
 
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
-            $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
+            $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->_' . $parameterIdentifier;
         }
 
         return ['return $this->schema->select("' . $from . '", [' . join(', ', $aliassedFields) . '], [', join(',' . PHP_EOL, $whereParameters), ']);'];
@@ -54,13 +54,13 @@ final class Table
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties['_' . $columnIdentifier] = 'string';
-            $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
+            $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->_' . $columnIdentifier;
         }
 
         $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',
             '$this->$property = $value;',
-            '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
+            '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->_id]);',
             '}'
         ]);
 
