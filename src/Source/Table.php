@@ -53,7 +53,7 @@ final class Table
             'schema' => '\ActiveRecord\Schema'
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
-            $properties[$columnIdentifier] = 'string';
+            $properties['_' . $columnIdentifier] = 'string';
             $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
         }
 
