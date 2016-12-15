@@ -54,12 +54,6 @@ $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 
 $schemaDescription = $sourceSchema->describe($targetNamespace);
 
-$schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']);
-$schemaClass->setParentClassName('\ActiveRecord\Schema');
-$schemaClass->setFinal(true);
-$schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], ['$this->connection2 = $connection; parent::__construct("' . $targetNamespace . '", $connection);']));
-
-
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);
@@ -70,13 +64,13 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
         $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
     }
 
-    $recordClass->setProperty(PhpProperty::create("schema")->setType($schemaDescription['identifier'])->setVisibility('private'));
-    $recordClass->setMethod(createMethod("__construct", ["schema" => $schemaDescription['identifier']], ['$this->schema = $schema;']));
+    $recordClass->setProperty(PhpProperty::create("schema")->setType('\ActiveRecord\Schema')->setVisibility('private'));
+    $recordClass->setMethod(createMethod("__construct", ["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']));
 
     $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'], [
         'if (property_exists($this, $property)) {',
         '$this->$property = $value;',
-        '$this->schema->update(__CLASS__, [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
+        '$this->schema->update("' . $tableName . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
         '}'
     ]));
 
@@ -90,7 +84,7 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
                     $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
                 }
                 $recordClass->setMethod(createMethod($methodIdentifier, [], [
-                    'return $this->schema->select(__NAMESPACE__ . "\\' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
+                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
                 ]));
                 break;
         }
@@ -99,16 +93,13 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     createPHPFile($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($recordClass));
 }
 
-createPHPFile($targetDirectory . DIRECTORY_SEPARATOR . 'Schema.php', $generator->generate($schemaClass));
-
 // test activiteit
-require $targetDirectory  . DIRECTORY_SEPARATOR . 'Schema.php';
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
 $connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
-$schema = new \Database\Schema($connection);
-$record = $schema->select($targetNamespace . "\\Record\\activiteit", [])[0];
+$schema = new \ActiveRecord\Schema($targetNamespace, $connection);
+$record = $schema->select("activiteit", [])[0];
 //print_r($record->inhoud);
 $record->inhoud = uniqid();
 
-print_r($schema->select($targetNamespace . "\\Record\\activiteit", [])[0]);
+print_r($schema->select("activiteit", [])[0]);
 echo 'Done';
