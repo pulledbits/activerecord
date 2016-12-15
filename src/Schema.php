@@ -26,55 +26,48 @@ class Schema
         $this->connection = $connection;
     }
 
-    public function select(string $tableIdentifer, array $whereParameters)
+    private function prepare(string $query, array $namedParameters) : \PDOStatement
     {
-        $namedParameters = $where = [];
-        foreach ($whereParameters as $localColumn => $value) {
-            $namedParameter = '';
-            $where[] = $this->whereEquals($localColumn, $namedParameter);
-            $namedParameters[$namedParameter] = $value;
-        }
-        $query = "SELECT * FROM " . $tableIdentifer;
-        if (count($where) > 0) {
-           $query .= " WHERE " . join(" AND ", $where);
-        }
         $statement = $this->connection->prepare($query);
         foreach ($namedParameters as $namedParameter => $value) {
             $statement->bindParam($namedParameter, $value, \PDO::PARAM_STR);
         }
+        return $statement;
+    }
+
+    private function prepareParameters(string $type, array $parameters) {
+        $namedParameters = $sql = [];
+        foreach ($parameters as $localColumn => $value) {
+            $namedParameter = ":" . sha1($type . '_' . $localColumn);
+            $sql[] = $localColumn . " = " . $namedParameter;
+            $namedParameters[$namedParameter] = $value;
+        }
+        return [$sql, $namedParameters];
+    }
+
+    public function select(string $tableIdentifer, array $whereParameters)
+    {
+        list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
+        $query = "SELECT * FROM " . $tableIdentifer;
+        if (count($where) > 0) {
+           $query .= " WHERE " . join(" AND ", $where);
+        }
+        $statement = $this->prepare($query, $namedParameters);
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\Record\\' . $tableIdentifer, [$this]);
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
-        $namedParameters = [];
-        $set = [];
-        foreach ($setParameters as $localColumn => $value) {
-            $namedParameter = '';
-            $set[] = $this->whereEquals($localColumn, $namedParameter);
-            $namedParameters[$namedParameter] = $value;
-        }
-        $where = [];
-        foreach ($whereParameters as $localColumn => $value) {
-            $namedParameter = '';
-            $where[] = $this->whereEquals($localColumn, $namedParameter);
-            $namedParameters[$namedParameter] = $value;
-        }
+        list($set, $setNamedParameters) = $this->prepareParameters('set', $setParameters);
+        list($where, $whereNamedParameters) = $this->prepareParameters('where', $whereParameters);
+
         $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set);
         if (count($where) > 0) {
            $query .= " WHERE " . join(" AND ", $where);
         }
-        
-        $statement = $this->connection->prepare($query);
-        foreach ($namedParameters as $namedParameter => $value) {
-            $statement->bindParam($namedParameter, $value, is_null($value) ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
-        }
+
+        $statement = $this->prepare($query, array_merge($setNamedParameters, $whereNamedParameters));
         $statement->execute();
         return $statement->rowCount();
-    }
-
-    private function whereEquals(string $columnIdentifier, string &$namedParameter) {
-        $namedParameter = ":" . uniqid();
-        return $columnIdentifier . " = " . $namedParameter;
     }
 }
