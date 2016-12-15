@@ -62,8 +62,6 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
         $recordClass->setProperty(PhpProperty::create($propertyIdentifier)->setType($propertyType)->setVisibility('private'));
     }
 
-    $recordClass->setProperty(PhpProperty::create("schema")->setType('\ActiveRecord\Schema')->setVisibility('private'));
-
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $recordClass->setMethod(createMethod($methodIdentifier, $methodDescription['parameters'], $methodDescription['body']));
     }
