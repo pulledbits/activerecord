@@ -77,13 +77,7 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $recordClassFKMethod = PhpMethod::create($methodIdentifier);
 
-        switch ($methodDescription['query'][0]) {
-            case 'SELECT':
-                $recordClass->setMethod(createMethod($methodIdentifier, [], [
-                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $methodDescription['query'][1]['where']), ']);'
-                ]));
-                break;
-        }
+        $recordClass->setMethod(createMethod($methodIdentifier, $methodDescription['parameters'], $methodDescription['body']));
 
     }
     createPHPFile($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', $generator->generate($recordClass));

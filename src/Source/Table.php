@@ -45,14 +45,10 @@ final class Table
 
             $fkLocalColumns = $foreignKey->getLocalColumns();
 
-            $parameters = [];
-            foreach ($fkLocalColumns as $fkLocalColumn) {
-                $parameters[$fkLocalColumn] = 'string';
-            }
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
             $query = $this->describeBodySelect('*', $foreignKey->getForeignTableName(), $where);
             
-            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod($parameters, $query);
+            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod([], $query);
         }
         
         return [
