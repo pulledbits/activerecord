@@ -32,12 +32,27 @@ final class Table
         if (substr($namespace, -1) != "\\") {
             $namespace .= "\\";
         }
-        
+
+        $columnIdentifiers = array_keys($this->dbalSchemaTable->getColumns());
+
         $tableIdentifier = $this->dbalSchemaTable->getName();
         
         $methods = [
             'fetchAll' => $this->describeMethod([], $this->describeBodySelect('*', $tableIdentifier, []))
         ];
+
+        $recordClassDefaultUpdateValues = [];
+        foreach ($columnIdentifiers as $columnIdentifier) {
+            $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
+        }
+
+        $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [
+            'if (property_exists($this, $property)) {',
+            '$this->$property = $value;',
+            '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
+            '}'
+        ]);
+
         foreach ($this->dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
             $camelCased = array_map('ucfirst', $words);
@@ -52,10 +67,10 @@ final class Table
         }
         
         return [
-            'identifier' => $namespace . $this->dbalSchemaTable->getName(),
+            'identifier' => $namespace . $tableIdentifier,
 
             'properties' => [
-                'columns' => array_keys($this->dbalSchemaTable->getColumns())
+                'columns' => $columnIdentifiers
             ],
             'methods' => $methods
         ];

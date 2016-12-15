@@ -55,6 +55,36 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][2], ']);');
     }
 
+    public function testDescribe_When_Default_Expect___setMethod()
+    {
+        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+
+            public function __construct()
+            {}
+
+            public function getName()
+            {
+                return 'MyTable';
+            }
+            public function getColumns()
+            {
+                return [
+                    'id' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
+                ];
+            }
+        });
+        $classDescription = $table->describe('\\Database\\Record');
+        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
+
+        $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
+        $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
+
+        $this->assertEquals($classDescription['methods']['__set']['body'][0], 'if (property_exists($this, $property)) {');
+        $this->assertEquals($classDescription['methods']['__set']['body'][1], '$this->$property = $value;');
+        $this->assertEquals($classDescription['methods']['__set']['body'][2], '$this->schema->update("MyTable", [' . join(',' . PHP_EOL, ['\'id\' => $this->id']) . '], ["id" => $this->id]);');
+        $this->assertEquals($classDescription['methods']['__set']['body'][3], '}');
+    }
+
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
         $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
