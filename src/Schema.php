@@ -46,6 +46,33 @@ class Schema
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\Record\\' . $tableIdentifer, [$this]);
     }
 
+    public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
+        $namedParameters = [];
+        $set = [];
+        foreach ($setParameters as $localColumn => $value) {
+            $namedParameter = '';
+            $set[] = $this->whereEquals($localColumn, $namedParameter);
+            $namedParameters[$namedParameter] = $value;
+        }
+        $where = [];
+        foreach ($whereParameters as $localColumn => $value) {
+            $namedParameter = null;
+            $where[] = $this->whereEquals($localColumn, $namedParameter);
+            $namedParameters[$namedParameter] = $value;
+        }
+        $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set);
+        if (count($where) > 0) {
+           $query .= " WHERE " . join(" AND ", $where);
+        }
+        
+        $statement = $this->connection->prepare($query);
+        foreach ($namedParameters as $namedParameter => $value) {
+            $statement->bindParam($namedParameter, $value, is_null($value) ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+        }
+        $statement->execute();
+        return $statement->rowCount();
+    }
+
     private function whereEquals(string $columnIdentifier, string &$namedParameter) {
         $namedParameter = ":" . uniqid();
         return $columnIdentifier . " = " . $namedParameter;

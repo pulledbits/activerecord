@@ -106,4 +106,25 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $records);
     }
+
+
+    public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
+    {
+        $schema = new Schema('\Database', new class extends \PDO {
+            public function __construct() {}
+
+            public function prepare($query, $options = null) {
+                if (preg_match('/UPDATE activiteit SET name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                    return new class extends \PDOStatement {
+                        public function __construct() {}
+                        public function rowCount() {
+                            return 5;
+                        }
+                    };
+                }
+            }
+        });
+
+        $this->assertEquals(5, $schema->update('activiteit', ['name' => 'newName'], []));
+    }
 }
