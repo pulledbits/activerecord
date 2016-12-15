@@ -79,12 +79,8 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
 
         switch ($methodDescription['query'][0]) {
             case 'SELECT':
-                $whereParameters = [];
-                foreach ($methodDescription['query'][1]['where'] as $referencedColumnName => $parameterIdentifier) {
-                    $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
-                }
                 $recordClass->setMethod(createMethod($methodIdentifier, [], [
-                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $whereParameters), ']);'
+                    'return $this->schema->select("' . $methodDescription['query'][1]['from'] . '", [', join(',' . PHP_EOL, $methodDescription['query'][1]['where']), ']);'
                 ]));
                 break;
         }

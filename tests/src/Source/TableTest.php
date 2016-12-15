@@ -139,13 +139,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][0], 'SELECT');
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['fields'], '*');
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['from'], 'OtherTable');
-        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['where']['id'], 'role_id');
+        $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['query'][1]['where'][0], '\'id\' => $this->role_id');
         
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters']['role2_id'], 'string');
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters']['extra_column_id'], 'string');
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['fields'], '*');
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['from'], 'AntoherTable');
-        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['where']['id'], 'role2_id');
-        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['where']['column_id'], 'extra_column_id');
+        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['where'][0], '\'id\' => $this->role2_id');
+        $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['query'][1]['where'][1], '\'column_id\' => $this->extra_column_id');
     }
 }

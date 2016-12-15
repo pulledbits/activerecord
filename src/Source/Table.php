@@ -24,10 +24,14 @@ final class Table
         return [$queryType, $query];
     }
     private function describeQuerySelect(string $fields, string $from, array $where) : array {
+        $whereParameters = [];
+        foreach ($where as $referencedColumnName => $parameterIdentifier) {
+            $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
+        }
         return $this->describeQuery('SELECT', [
             'fields' => $fields,
             'from' => $from,
-            'where' => $where
+            'where' => $whereParameters
         ]);
     }
     
