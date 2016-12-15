@@ -55,58 +55,10 @@ $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 $schemaDescription = $sourceSchema->describe($targetNamespace);
 
 $schemaClass = new gossi\codegen\model\PhpClass($schemaDescription['identifier']);
+$schemaClass->setParentClassName('\ActiveRecord\Schema');
 $schemaClass->setFinal(true);
-$schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], ['$this->connection = $connection;']));
+$schemaClass->setMethod(createMethod("__construct", ["connection" => '\\PDO'], ['$this->connection2 = $connection; parent::__construct("' . $targetNamespace . '", $connection);']));
 
-$schemaClass->setMethod(createMethod("select", ['recordClassIdentifier' => 'string', 'whereParameters' => 'array'], [
-    '$namedParameters = $where = [];',
-    'foreach ($whereParameters as $localColumn => $value) {',
-    '    $namedParameter = null;',
-    '    $where[] = $this->whereEquals($localColumn, $namedParameter);',
-    '    $namedParameters[$namedParameter] = $value;',
-    '}',
-    '$query = "SELECT * FROM " . join("", array_slice(explode("\\\\", $recordClassIdentifier), -1));',
-    'if (count($where) > 0) {',
-    '   $query .= " WHERE " . join(" AND ", $where);',
-    '}',
-    'echo $query;',
-    '$statement = $this->connection->prepare($query);',
-    'foreach ($namedParameters as $namedParameter => $value) {',
-    '    $statement->bindParam($namedParameter, $value, \\PDO::PARAM_STR);',
-    '}',
-    '$statement->execute();',
-    'return $statement->fetchAll(\\PDO::FETCH_CLASS, $recordClassIdentifier, [$this]);'
-]));
-$schemaClass->setMethod(createMethod("update", ['recordClassIdentifier' => "string", 'setParameters' => "array", 'whereParameters' => 'array'], [
-    '$namedParameters = [];',
-    '$set = [];',
-    'foreach ($setParameters as $localColumn => $value) {',
-    '    $namedParameter = null;',
-    '    $set[] = $this->whereEquals($localColumn, $namedParameter);',
-    '    $namedParameters[$namedParameter] = $value;',
-    '}',
-    '$where = [];',
-    'foreach ($whereParameters as $localColumn => $value) {',
-    '    $namedParameter = null;',
-    '    $where[] = $this->whereEquals($localColumn, $namedParameter);',
-    '    $namedParameters[$namedParameter] = $value;',
-    '}',
-    '$query = "UPDATE " . join("", array_slice(explode("\\\\", $recordClassIdentifier), -1)) . " SET " . join(", ", $set);',
-    'if (count($where) > 0) {',
-    '   $query .= " WHERE " . join(" AND ", $where);',
-    '}',
-
-    '$statement = $this->connection->prepare($query);',
-    'foreach ($namedParameters as $namedParameter => $value) {',
-    '    $statement->bindParam($namedParameter, $value, is_null($value) ? \\PDO::PARAM_NULL : \\PDO::PARAM_STR);',
-    '}',
-    '$statement->execute();',
-    'return $statement->rowCount();'
-]));
-$schemaClass->setMethod(createMethod('whereEquals', ["columnIdentifier" => "string", "&namedParameter" => 'string'], [
-    '$namedParameter = ":" . uniqid();',
-    'return $columnIdentifier . " = " . $namedParameter;'
-]));
 
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);

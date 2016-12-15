@@ -56,7 +56,7 @@ class Schema
         }
         $where = [];
         foreach ($whereParameters as $localColumn => $value) {
-            $namedParameter = null;
+            $namedParameter = '';
             $where[] = $this->whereEquals($localColumn, $namedParameter);
             $namedParameters[$namedParameter] = $value;
         }

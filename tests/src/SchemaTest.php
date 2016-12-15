@@ -114,7 +114,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             public function __construct() {}
 
             public function prepare($query, $options = null) {
-                if (preg_match('/UPDATE activiteit SET name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                if (preg_match('/UPDATE activiteit SET name = (?<namedSet1>:(\w+))/', $query, $match) === 1) {
                     return new class extends \PDOStatement {
                         public function __construct() {}
                         public function rowCount() {
@@ -126,5 +126,25 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         });
 
         $this->assertEquals(5, $schema->update('activiteit', ['name' => 'newName'], []));
+    }
+
+    public function testUpdate_When_SpecificWhereParameterSupplied_Expect_ThreeUpdates()
+    {
+        $schema = new Schema('\Database', new class extends \PDO {
+            public function __construct() {}
+
+            public function prepare($query, $options = null) {
+                if (preg_match('/UPDATE activiteit SET name = (?<namedSet1>:(\w+)) WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                    return new class extends \PDOStatement {
+                        public function __construct() {}
+                        public function rowCount() {
+                            return 3;
+                        }
+                    };
+                }
+            }
+        });
+
+        $this->assertEquals(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName']));
     }
 }
