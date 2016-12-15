@@ -30,7 +30,7 @@ class Schema
     {
         $namedParameters = $where = [];
         foreach ($whereParameters as $localColumn => $value) {
-            $namedParameter = null;
+            $namedParameter = '';
             $where[] = $this->whereEquals($localColumn, $namedParameter);
             $namedParameters[$namedParameter] = $value;
         }
@@ -44,5 +44,10 @@ class Schema
         }
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\Record\\' . $tableIdentifer, [$this]);
+    }
+
+    private function whereEquals(string $columnIdentifier, string &$namedParameter) {
+        $namedParameter = ":" . uniqid();
+        return $columnIdentifier . " = " . $namedParameter;
     }
 }

@@ -9,6 +9,8 @@
 namespace ActiveRecord;
 
 
+use PDO;
+
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
     public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
@@ -39,6 +41,39 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $records = $schema->select('activiteit', []);
 
         $this->assertCount(5, $records);
+    }
+
+    public function testSelect_When_WhereSpecificParameterSupplied_Expect_ThreeRecords()
+    {
+        $schema = new Schema('\Database', new class extends \PDO {
+            public function __construct() {}
+
+            public function prepare($query, $options = null) {
+                if (preg_match('/SELECT \* FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
+                    return new class extends \PDOStatement {
+                        public function __construct() {}
+                        public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                        {
+
+                        }
+
+                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
+                            if ($how === \PDO::FETCH_CLASS && $class_name === '\Database\Record\activiteit') {
+                                return [
+                                    new class {},
+                                    new class {},
+                                    new class {},
+                                ];
+                            }
+                        }
+                    };
+                }
+            }
+        });
+
+        $records = $schema->select('activiteit', ['name' => 'foo']);
+
+        $this->assertCount(3, $records);
     }
 
 }
