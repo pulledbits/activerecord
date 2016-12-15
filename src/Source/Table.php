@@ -13,17 +13,14 @@ final class Table
         $this->dbalSchemaTable = $dbalSchemaTable;
     }
     
-    private function describeQueryMethod(array $parameters, array $query) : array {
+    private function describeMethod(array $parameters, array $body) : array {
         return [
             'parameters' => $parameters,
-            'query' => $query
+            'body' => $body
         ];
     }
-    
-    private function describeQuery(string $queryType, array $query) : array {
-        return [$queryType, $query];
-    }
-    private function describeQuerySelect(string $fields, string $from, array $where) : array {
+
+    private function describeBodySelect(string $fields, string $from, array $where) : array {
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
             $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $parameterIdentifier;
@@ -39,7 +36,7 @@ final class Table
         $tableIdentifier = $this->dbalSchemaTable->getName();
         
         $methods = [
-            'fetchAll' => $this->describeQueryMethod([], $this->describeQuerySelect('*', $tableIdentifier, []))
+            'fetchAll' => $this->describeMethod([], $this->describeBodySelect('*', $tableIdentifier, []))
         ];
         foreach ($this->dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
@@ -53,9 +50,9 @@ final class Table
                 $parameters[$fkLocalColumn] = 'string';
             }
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
-            $query = $this->describeQuerySelect('*', $foreignKey->getForeignTableName(), $where);
+            $query = $this->describeBodySelect('*', $foreignKey->getForeignTableName(), $where);
             
-            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeQueryMethod($parameters, $query);
+            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod($parameters, $query);
         }
         
         return [
