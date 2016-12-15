@@ -58,21 +58,12 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);
 
-    $recordClassDefaultUpdateValues = [];
-    foreach ($recordClassDescription['properties']['columns'] as $columnIdentifier) {
-        $recordClass->setProperty(PhpProperty::create($columnIdentifier)->setType('string')->setVisibility('private'));
-        $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $columnIdentifier;
+    foreach ($recordClassDescription['properties'] as $propertyIdentifier => $propertyType) {
+        $recordClass->setProperty(PhpProperty::create($propertyIdentifier)->setType($propertyType)->setVisibility('private'));
     }
 
     $recordClass->setProperty(PhpProperty::create("schema")->setType('\ActiveRecord\Schema')->setVisibility('private'));
     $recordClass->setMethod(createMethod("__construct", ["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']));
-
-    $recordClass->setMethod(createMethod("__set", ["property" => 'string', "value" => 'string'], [
-        'if (property_exists($this, $property)) {',
-        '$this->$property = $value;',
-        '$this->schema->update("' . $tableName . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->id]);',
-        '}'
-    ]));
 
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $recordClass->setMethod(createMethod($methodIdentifier, $methodDescription['parameters'], $methodDescription['body']));
