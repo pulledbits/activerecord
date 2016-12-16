@@ -37,7 +37,6 @@ class Schema
         }
 
         return [
-            'identifier' => $namespace . 'Schema',
             'recordClasses' => $recordClasses
         ];
     }
