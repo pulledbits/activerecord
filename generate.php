@@ -11,7 +11,7 @@ if ($_SERVER['argc'] < 3) {
     exit('please enter destination namespace and path');
 }
 
-$targetNamespace = $_SERVER['argv'][1];
+$targetNamespace = $_SERVER['argv'][1] . '\\Record';
 
 $targetDirectory = $_SERVER['argv'][2];
 $recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'Record';
@@ -28,7 +28,7 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 $generator = new CodeGenerator();
 
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
-$schemaDescription = $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace . '\\Record\\'));
+$schemaDescription = $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace));
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);
