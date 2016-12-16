@@ -72,7 +72,7 @@ class Schema
         $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
         $statement = $this->prepare($query, $insertNamedParameters);
         $statement->execute();
-        return $this->select($tableIdentifer, array_keys($insertValues), $values)[0];
+        return $statement->rowCount();
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {

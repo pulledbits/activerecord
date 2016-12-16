@@ -219,29 +219,14 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 if (preg_match('/INSERT INTO activiteit \(name\) VALUES \((?<namedSet1>:(\w+))\)/', $query, $match) === 1) {
                     return new class extends \PDOStatement {
                         public function __construct() {}
-                    };
-                } elseif (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
-                    return new class extends \PDOStatement {
-                        public function __construct() {}
-                        public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
-                        {
-
-                        }
-
-                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL) {
-                            if ($how === \PDO::FETCH_CLASS && $class_name === '\Database\Record\activiteit') {
-                                return [
-                                    new class {
-                                        private $name = 'newName';
-                                    }
-                                ];
-                            }
+                        public function rowCount() {
+                            return 1;
                         }
                     };
                 }
             }
         });
 
-        $this->assertObjectHasAttribute('name', $schema->insert('activiteit', ['name' => 'newName']));
+        $this->assertEquals(1, $schema->insert('activiteit', ['name' => 'newName']));
     }
 }
