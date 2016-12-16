@@ -23,12 +23,12 @@ final class Table
     private function describeBodySelect(array $fields, string $from, array $where) : array {
         $aliassedFields = [];
         foreach ($fields as $fieldIdentifier) {
-            $aliassedFields[] = '\'_' . $fieldIdentifier . '\' => \'' . $fieldIdentifier . '\'';
+            $aliassedFields[] = $this->makeArrayMapping('_' . $fieldIdentifier, '\'' . $fieldIdentifier . '\'');
         }
 
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
-            $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($parameterIdentifier);
+            $whereParameters[] = $this->makeArrayMapping($referencedColumnName, '$this->' . $this->makePropertyIdentifierFromColumnIdentifier($parameterIdentifier));
         }
 
         return ['return $this->schema->select("' . $from . '", [' . join(', ', $aliassedFields) . '], [', join(',' . PHP_EOL, $whereParameters), ']);'];
@@ -38,8 +38,8 @@ final class Table
         return '_' . $columnIdentifier;
     }
 
-    private function makeColumnToPropertyMapping(string $columnIdentifier) : string {
-        return '\'' . $columnIdentifier . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier);
+    private function makeArrayMapping(string $keyIdentifier, string $variableIdentifier) : string {
+        return '\'' . $keyIdentifier . '\' => ' . $variableIdentifier;
     }
     
     public function describe($namespace) : array {
@@ -63,13 +63,13 @@ final class Table
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = 'string';
-            $defaultUpdateValues[] = $this->makeColumnToPropertyMapping($columnIdentifier);
+            $defaultUpdateValues[] = $this->makeArrayMapping($columnIdentifier, '$this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier));
 
             if ($this->dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $this->dbalSchemaTable->getPrimaryKeyColumns())) {
                 $primaryKeyDefaultValue[] = '_' . $columnIdentifier;
-                $primaryKeyWhere[] = $this->makeColumnToPropertyMapping($columnIdentifier);
+                $primaryKeyWhere[] = $this->makeArrayMapping($columnIdentifier, '$this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier));
             }
         }
 
@@ -92,7 +92,6 @@ final class Table
             $foreignKeyMethodIdentifier = join('', $camelCased);
 
             $fkLocalColumns = $foreignKey->getLocalColumns();
-            var_dump($foreignKey->getColumns());
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
             $query = $this->describeBodySelect($foreignKey->getForeignColumns(), $foreignKey->getForeignTableName(), $where);
             
