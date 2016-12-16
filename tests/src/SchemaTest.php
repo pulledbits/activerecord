@@ -167,4 +167,25 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName']));
     }
+
+
+    public function testDelete_When_Default_Expect_True()
+    {
+        $schema = new Schema('\Database\Record', new class extends \PDO {
+            public function __construct() {}
+
+            public function prepare($query, $options = null) {
+                if (preg_match('/DELETE FROM activiteit WHERE name = (?<namedSet1>:(\w+))/', $query, $match) === 1) {
+                    return new class extends \PDOStatement {
+                        public function __construct() {}
+                        public function rowCount() {
+                            return 1;
+                        }
+                    };
+                }
+            }
+        });
+
+        $this->assertEquals(1, $schema->delete('activiteit', ['name' => 'newName']));
+    }
 }

@@ -79,4 +79,17 @@ class Schema
         $statement->execute();
         return $statement->rowCount();
     }
+
+    public function delete(string $tableIdentifer, array $whereParameters) {
+        list($where, $whereNamedParameters) = $this->prepareParameters('where', $whereParameters);
+
+        $query = "DELETE FROM " . $tableIdentifer;
+        if (count($where) > 0) {
+            $query .= " WHERE " . join(" AND ", $where);
+        }
+
+        $statement = $this->prepare($query, $whereNamedParameters);
+        $statement->execute();
+        return $statement->rowCount();
+    }
 }
