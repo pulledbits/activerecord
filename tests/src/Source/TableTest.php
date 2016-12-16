@@ -109,7 +109,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
 
         $this->assertEquals('if (property_exists($this, $property)) {', $classDescription['methods']['__set']['body'][0]);
-        $this->assertEquals('$this->$property = $value;', $classDescription['methods']['__set']['body'][1]);
+        $this->assertEquals('$this->{\'_\' . $property} = $value;', $classDescription['methods']['__set']['body'][1]);
         $this->assertEquals('$this->schema->update("MyTable", [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate', '\'address\' => $this->_address']) . '], [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate']) . ']);', $classDescription['methods']['__set']['body'][2]);
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
     }

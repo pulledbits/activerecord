@@ -91,7 +91,7 @@ final class Table
 
         $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',
-            '$this->$property = $value;',
+            '$this->{\'_\' . $property} = $value;',
             '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'
         ]);
