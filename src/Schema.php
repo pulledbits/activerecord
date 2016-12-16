@@ -39,7 +39,7 @@ class Schema
         $namedParameters = $sql = [];
         foreach ($parameters as $localColumn => $value) {
             $namedParameter = ":" . sha1($type . '_' . $localColumn);
-            $sql[] = $localColumn . " = " . $namedParameter;
+            $sql[$localColumn] = $localColumn . " = " . $namedParameter;
             $namedParameters[$namedParameter] = $value;
         }
         return [$sql, $namedParameters];
@@ -64,6 +64,15 @@ class Schema
         $statement = $this->prepare($query, $namedParameters);
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\' . $tableIdentifer, [$this]);
+    }
+
+    public function insert(string $tableIdentifer, array $values) {
+        list($insertValues, $insertNamedParameters) = $this->prepareParameters('values', $values);
+
+        $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
+        $statement = $this->prepare($query, $insertNamedParameters);
+        $statement->execute();
+        return $this->select($tableIdentifer, array_keys($insertValues), $values)[0];
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
