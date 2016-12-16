@@ -6,8 +6,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
-
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
             public function __construct()
             {}
 
@@ -15,8 +14,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
             {
                 return 'MyTable';
             }
-        });
-        $classDescription = $table->describe('\\Database\\Record');
+        };
+
+        $table = new Table();
+        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['properties']['schema'], '\ActiveRecord\Schema');
@@ -29,7 +30,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -38,14 +39,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
             {
                 return 'MyTable2';
             }
-        });
-        $classDescription = $table->describe('\\Database\\Record');
+        };
+
+        $table = new Table();
+        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
 
     public function testDescribe_When_DifferingTableName_Expect_FetchAllMethod()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -60,8 +63,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     'id' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
                 ];
             }
-        });
-        $classDescription = $table->describe('\\Database\\Record');
+        };
+
+        $table = new Table();
+        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][0], 'return $this->schema->select("MyTable2", [\'_id\' => \'id\'], [');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][1], '');
@@ -70,7 +75,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect___setMethod()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -94,8 +99,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     'address' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
                 ];
             }
-        });
-        $classDescription = $table->describe('\\Database\\Record');
+        };
+
+        $table = new Table();
+        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
@@ -109,7 +116,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -132,8 +139,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     'height' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
                 ];
             }
-        });
-        $classDescription = $table->describe('\\Database\\Record');
+        };
+
+        $table = new Table();
+        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
 
         $this->assertEquals('array', $classDescription['properties']['primaryKey']);
         $this->assertEquals('$this->primaryKey = [\'_id\'];', $classDescription['methods']['__construct']['body'][1]);
@@ -145,7 +154,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
     {
-        $table = new Table(new class() extends \Doctrine\DBAL\Schema\Table {
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
 
             public function __construct()
             {}
@@ -193,8 +202,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     }
                 ];
             }
-        });
-        $classDescription = $table->describe('\\Database');
+        };
+
+        $table = new Table();
+        $classDescription = $table->describe('\\Database', $dbalTable);
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
 
         $this->assertEquals('return $this->schema->select("OtherTable", [\'_id\' => \'id\'], [', $classDescription['methods']['fetchByFkOthertableRole']['body'][0]);

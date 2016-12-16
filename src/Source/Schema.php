@@ -31,9 +31,9 @@ class Schema
 
         $recordClasses = [];
 
+        $sourceTable = new Table();
         foreach ($this->schemaManager->listTables() as $table) {
-            $sourceTable = new Table($table);
-            $recordClasses[$table->getName()] = $sourceTable->describe($namespace . 'Record\\' );
+            $recordClasses[$table->getName()] = $sourceTable->describe($namespace . 'Record\\', $table);
         }
 
         return [

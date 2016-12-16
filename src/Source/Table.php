@@ -3,16 +3,6 @@ namespace ActiveRecord\Source;
 
 final class Table
 {
-    /**
-     * 
-     * @var \Doctrine\DBAL\Schema\Table
-     */
-    private $dbalSchemaTable;
-    
-    public function __construct(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) {
-        $this->dbalSchemaTable = $dbalSchemaTable;
-    }
-    
     private function describeMethod(array $parameters, array $body) : array {
         return [
             'parameters' => $parameters,
@@ -48,14 +38,14 @@ final class Table
         return $this->makeArrayMappingToProperty($columnIdentifier, $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier));
     }
     
-    public function describe($namespace) : array {
+    public function describe($namespace, \Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
         if (substr($namespace, -1) != "\\") {
             $namespace .= "\\";
         }
 
-        $columnIdentifiers = array_keys($this->dbalSchemaTable->getColumns());
+        $columnIdentifiers = array_keys($dbalSchemaTable->getColumns());
 
-        $tableIdentifier = $this->dbalSchemaTable->getName();
+        $tableIdentifier = $dbalSchemaTable->getName();
 
         $methods = [
             '__construct' => $this->describeMethod(["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
@@ -71,9 +61,9 @@ final class Table
             $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = 'string';
             $defaultUpdateValues[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
 
-            if ($this->dbalSchemaTable->hasPrimaryKey() === false) {
+            if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
-            } elseif (in_array($columnIdentifier, $this->dbalSchemaTable->getPrimaryKeyColumns())) {
+            } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {
                 $primaryKeyDefaultValue[] = '_' . $columnIdentifier;
                 $primaryKeyWhere[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
             }
@@ -92,7 +82,7 @@ final class Table
             '}'
         ]);
 
-        foreach ($this->dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
+        foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
             $camelCased = array_map('ucfirst', $words);
             $foreignKeyMethodIdentifier = join('', $camelCased);
