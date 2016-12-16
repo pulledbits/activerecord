@@ -114,6 +114,43 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
     }
 
+    public function testDescribe_When_Default_Expect_DeleteMethod()
+    {
+        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
+
+            public function __construct()
+            {}
+
+            public function getName()
+            {
+                return 'MyTable';
+            }
+
+            public function hasPrimaryKey() {
+                return true;
+            }
+            public function getPrimaryKeyColumns() {
+                return ['name', 'birthdate'];
+            }
+            public function getColumns()
+            {
+                return [
+                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
+                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
+                    'address' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
+                ];
+            }
+        };
+
+        $table = new Table('\\Database\\Record');
+        $classDescription = $table->describe($dbalTable);
+
+        $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
+        $this->assertEquals('return $this->schema->delete("MyTable", [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate']) . ']);', $classDescription['methods']['delete']['body'][0]);
+
+
+    }
+
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
         $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {

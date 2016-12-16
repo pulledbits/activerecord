@@ -96,6 +96,10 @@ final class Table
             '}'
         ]);
 
+        $methods['delete'] = $this->describeMethod([], [
+            'return $this->schema->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'
+        ]);
+
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $words = explode('_', $foreignKeyIdentifier);
             $camelCased = array_map('ucfirst', $words);
