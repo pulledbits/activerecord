@@ -37,6 +37,10 @@ final class Table
     private function makePropertyIdentifierFromColumnIdentifier(string $columnIdentifier) : string {
         return '_' . $columnIdentifier;
     }
+
+    private function makeColumnToPropertyMapping(string $columnIdentifier) : string {
+        return '\'' . $columnIdentifier . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier);
+    }
     
     public function describe($namespace) : array {
         if (substr($namespace, -1) != "\\") {
@@ -59,13 +63,13 @@ final class Table
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = 'string';
-            $defaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier);
+            $defaultUpdateValues[] = $this->makeColumnToPropertyMapping($columnIdentifier);
 
             if ($this->dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $this->dbalSchemaTable->getPrimaryKeyColumns())) {
                 $properties['primaryKey'][] = '_' . $columnIdentifier;
-                $primaryKeyWhere[] = '\'' . $columnIdentifier . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier);
+                $primaryKeyWhere[] = $this->makeColumnToPropertyMapping($columnIdentifier);
             }
         }
 
