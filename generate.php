@@ -28,7 +28,7 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 $generator = new CodeGenerator();
 
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
-$schemaDescription = $sourceSchema->describe($targetNamespace);
+$schemaDescription = $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace . '\\Record\\'));
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setFinal(true);

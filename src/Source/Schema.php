@@ -23,15 +23,9 @@ class Schema
         $this->schemaManager = $schemaManager;
     }
 
-    public function describe(string $namespace)
+    public function describe(Table $sourceTable)
     {
-        if (substr($namespace, -1) != "\\") {
-            $namespace .= "\\";
-        }
-
         $recordClasses = [];
-
-        $sourceTable = new Table($namespace . 'Record\\');
         foreach ($this->schemaManager->listTables() as $table) {
             $recordClasses[$table->getName()] = $sourceTable->describe($table);
         }

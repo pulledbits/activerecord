@@ -30,7 +30,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         });
 
-        $schemaDescription = $schema->describe('\\Database');
+        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
 
 
         $this->assertCount(1, $schemaDescription['recordClasses']);
