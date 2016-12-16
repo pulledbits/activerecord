@@ -28,10 +28,14 @@ final class Table
 
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
-            $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->_' . $parameterIdentifier;
+            $whereParameters[] = '\'' . $referencedColumnName . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($parameterIdentifier);
         }
 
         return ['return $this->schema->select("' . $from . '", [' . join(', ', $aliassedFields) . '], [', join(',' . PHP_EOL, $whereParameters), ']);'];
+    }
+
+    private function makePropertyIdentifierFromColumnIdentifier(string $columnIdentifier) : string {
+        return '_' . $columnIdentifier;
     }
     
     public function describe($namespace) : array {
@@ -48,19 +52,27 @@ final class Table
             'fetchAll' => $this->describeMethod([], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
         ];
 
-        $recordClassDefaultUpdateValues = [];
+        $primaryKeyWhere = $defaultUpdateValues = [];
         $properties = [
+            'primaryKey' => [],
             'schema' => '\ActiveRecord\Schema'
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
-            $properties['_' . $columnIdentifier] = 'string';
-            $recordClassDefaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->_' . $columnIdentifier;
+            $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = 'string';
+            $defaultUpdateValues[] = '\'' . $columnIdentifier . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier);
+
+            if ($this->dbalSchemaTable->hasPrimaryKey() === false) {
+                // no primary key
+            } elseif (in_array($columnIdentifier, $this->dbalSchemaTable->getPrimaryKeyColumns())) {
+                $properties['primaryKey'][] = '_' . $columnIdentifier;
+                $primaryKeyWhere[] = '\'' . $columnIdentifier . '\' => $this->' . $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier);
+            }
         }
 
         $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',
             '$this->$property = $value;',
-            '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $recordClassDefaultUpdateValues) . '], ["id" => $this->_id]);',
+            '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'
         ]);
 

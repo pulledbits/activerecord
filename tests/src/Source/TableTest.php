@@ -78,10 +78,19 @@ class TableTest extends \PHPUnit_Framework_TestCase
             {
                 return 'MyTable';
             }
+
+            public function hasPrimaryKey() {
+                return true;
+            }
+            public function getPrimaryKeyColumns() {
+                return ['name', 'birthdate'];
+            }
             public function getColumns()
             {
                 return [
-                    'id' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
+                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
+                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
+                    'address' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
                 ];
             }
         });
@@ -93,7 +102,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('if (property_exists($this, $property)) {', $classDescription['methods']['__set']['body'][0]);
         $this->assertEquals('$this->$property = $value;', $classDescription['methods']['__set']['body'][1]);
-        $this->assertEquals('$this->schema->update("MyTable", [' . join(',' . PHP_EOL, ['\'id\' => $this->_id']) . '], ["id" => $this->_id]);', $classDescription['methods']['__set']['body'][2]);
+        $this->assertEquals('$this->schema->update("MyTable", [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate', '\'address\' => $this->_address']) . '], [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate']) . ']);', $classDescription['methods']['__set']['body'][2]);
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
     }
 
@@ -108,6 +117,12 @@ class TableTest extends \PHPUnit_Framework_TestCase
             {
                 return 'MyTable2';
             }
+            public function hasPrimaryKey() {
+                return true;
+            }
+            public function getPrimaryKeyColumns() {
+                return ['id'];
+            }
             public function getColumns()
             {
                 return [
@@ -118,9 +133,12 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         });
         $classDescription = $table->describe('\\Database\\Record');
-        $this->assertEquals($classDescription['properties']['_id'], 'string');
-        $this->assertEquals($classDescription['properties']['_name'], 'string');
-        $this->assertEquals($classDescription['properties']['_height'], 'string');
+
+        $this->assertEquals(['_id'], $classDescription['properties']['primaryKey']);
+
+        $this->assertEquals('string', $classDescription['properties']['_id']);
+        $this->assertEquals('string', $classDescription['properties']['_name']);
+        $this->assertEquals('string', $classDescription['properties']['_height']);
     }
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
@@ -161,7 +179,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
                         {
                             return "AntoherTable";
                         }
-
                         public function getForeignColumns()
                         {
                             return ['id', 'column_id'];
