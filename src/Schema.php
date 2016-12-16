@@ -63,7 +63,7 @@ class Schema
         }
         $statement = $this->prepare($query, $namedParameters);
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\Record\\' . $tableIdentifer, [$this]);
+        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\' . $tableIdentifer, [$this]);
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {

@@ -15,7 +15,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 {
     public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
     {
-        $schema = new Schema('\Database', new class extends \PDO {
+        $schema = new Schema('\Database\Record', new class extends \PDO {
             public function __construct() {}
 
             public function prepare($query, $options = null) {
@@ -45,7 +45,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testSelect_When_SpecificWhereParameterSupplied_Expect_ThreeRecords()
     {
-        $schema = new Schema('\Database', new class extends \PDO {
+        $schema = new Schema('\Database\Record', new class extends \PDO {
             public function __construct() {}
 
             public function prepare($query, $options = null) {
@@ -78,7 +78,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testSelect_When_MultipleWhereParametersSupplied_Expect_OneRecord()
     {
-        $schema = new Schema('\Database', new class extends \PDO {
+        $schema = new Schema('\Database\Record', new class extends \PDO {
             public function __construct() {}
 
             public function prepare($query, $options = null) {
@@ -110,7 +110,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
     {
-        $schema = new Schema('\Database', new class extends \PDO {
+        $schema = new Schema('\Database\Record', new class extends \PDO {
             public function __construct() {}
 
             public function prepare($query, $options = null) {
