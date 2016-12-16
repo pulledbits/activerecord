@@ -95,6 +95,9 @@ final class Table
             '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'
         ]);
+        $methods['__get'] = $this->describeMethod(["property" => 'string'], [
+            'return $this->{\'_\' . $property};'
+        ]);
 
         $methods['delete'] = $this->describeMethod([], [
             'return $this->schema->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'
