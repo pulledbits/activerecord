@@ -3,6 +3,20 @@ namespace ActiveRecord\Source;
 
 final class Table
 {
+
+    /**
+     * @var string
+     */
+    private $namespace;
+
+    /**
+     * Table constructor.
+     */
+    public function __construct(string $namespace)
+    {
+        $this->namespace = $namespace;
+    }
+
     private function describeMethod(array $parameters, array $body) : array {
         return [
             'parameters' => $parameters,
@@ -38,9 +52,9 @@ final class Table
         return $this->makeArrayMappingToProperty($columnIdentifier, $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier));
     }
     
-    public function describe($namespace, \Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
-        if (substr($namespace, -1) != "\\") {
-            $namespace .= "\\";
+    public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
+        if (substr($this->namespace, -1) != "\\") {
+            $this->namespace .= "\\";
         }
 
         $columnIdentifiers = array_keys($dbalSchemaTable->getColumns());
@@ -95,7 +109,7 @@ final class Table
         }
         
         return [
-            'identifier' => $namespace . $tableIdentifier,
+            'identifier' => $this->namespace . $tableIdentifier,
 
             'properties' => $properties,
             'methods' => $methods

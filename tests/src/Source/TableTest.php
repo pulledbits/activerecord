@@ -16,8 +16,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $table = new Table();
-        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
+        $table = new Table('\\Database\\Record');
+        $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['properties']['schema'], '\ActiveRecord\Schema');
@@ -41,8 +41,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $table = new Table();
-        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
+        $table = new Table('\\Database\\Record');
+        $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
 
@@ -65,8 +65,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $table = new Table();
-        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
+        $table = new Table('\\Database\\Record');
+        $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][0], 'return $this->schema->select("MyTable2", [\'_id\' => \'id\'], [');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][1], '');
@@ -101,8 +101,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $table = new Table();
-        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
+        $table = new Table('\\Database\\Record');
+        $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
@@ -141,8 +141,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $table = new Table();
-        $classDescription = $table->describe('\\Database\\Record', $dbalTable);
+        $table = new Table('\\Database\\Record');
+        $classDescription = $table->describe($dbalTable);
 
         $this->assertEquals('array', $classDescription['properties']['primaryKey']);
         $this->assertEquals('$this->primaryKey = [\'_id\'];', $classDescription['methods']['__construct']['body'][1]);
@@ -204,8 +204,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $table = new Table();
-        $classDescription = $table->describe('\\Database', $dbalTable);
+        $table = new Table('\\Database');
+        $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
 
         $this->assertEquals('return $this->schema->select("OtherTable", [\'_id\' => \'id\'], [', $classDescription['methods']['fetchByFkOthertableRole']['body'][0]);
