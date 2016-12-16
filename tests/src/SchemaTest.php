@@ -169,7 +169,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testDelete_When_Default_Expect_True()
+    public function testDelete_When_SingleParameter_Expect_One()
     {
         $schema = new Schema('\Database\Record', new class extends \PDO {
             public function __construct() {}
@@ -188,4 +188,26 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $schema->delete('activiteit', ['name' => 'newName']));
     }
+
+
+    public function testDelete_When_MultipleParameters_Expect_Five()
+    {
+        $schema = new Schema('\Database\Record', new class extends \PDO {
+            public function __construct() {}
+
+            public function prepare($query, $options = null) {
+                if (preg_match('/DELETE FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
+                    return new class extends \PDOStatement {
+                        public function __construct() {}
+                        public function rowCount() {
+                            return 5;
+                        }
+                    };
+                }
+            }
+        });
+
+        $this->assertEquals(5, $schema->delete('activiteit', ['id' => '1', 'name' => 'newName']));
+    }
+
 }
