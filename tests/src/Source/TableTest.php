@@ -23,6 +23,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($classDescription['methods']['__construct']['parameters']['schema'], '\ActiveRecord\Schema');
         $this->assertEquals($classDescription['methods']['__construct']['body'][0], '$this->schema = $schema;');
+        $this->assertEquals('$this->primaryKey = [];', $classDescription['methods']['__construct']['body'][1]);
 
     }
     
@@ -134,7 +135,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
         });
         $classDescription = $table->describe('\\Database\\Record');
 
-        $this->assertEquals(['_id'], $classDescription['properties']['primaryKey']);
+        $this->assertEquals('array', $classDescription['properties']['primaryKey']);
+        $this->assertEquals('$this->primaryKey = [\'_id\'];', $classDescription['methods']['__construct']['body'][1]);
 
         $this->assertEquals('string', $classDescription['properties']['_id']);
         $this->assertEquals('string', $classDescription['properties']['_name']);

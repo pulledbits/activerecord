@@ -50,15 +50,15 @@ final class Table
         $columnIdentifiers = array_keys($this->dbalSchemaTable->getColumns());
 
         $tableIdentifier = $this->dbalSchemaTable->getName();
-        
+
         $methods = [
             '__construct' => $this->describeMethod(["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
             'fetchAll' => $this->describeMethod([], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
         ];
 
-        $primaryKeyWhere = $defaultUpdateValues = [];
+        $primaryKeyDefaultValue = $primaryKeyWhere = $defaultUpdateValues = [];
         $properties = [
-            'primaryKey' => [],
+            'primaryKey' => 'array',
             'schema' => '\ActiveRecord\Schema'
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
@@ -68,9 +68,15 @@ final class Table
             if ($this->dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $this->dbalSchemaTable->getPrimaryKeyColumns())) {
-                $properties['primaryKey'][] = '_' . $columnIdentifier;
+                $primaryKeyDefaultValue[] = '_' . $columnIdentifier;
                 $primaryKeyWhere[] = $this->makeColumnToPropertyMapping($columnIdentifier);
             }
+        }
+
+        if (count($primaryKeyDefaultValue) === 0) {
+            $methods['__construct']['body'][] = '$this->primaryKey = [];';
+        } else {
+            $methods['__construct']['body'][] = '$this->primaryKey = [\'' . join(',', $primaryKeyDefaultValue) . '\'];';
         }
 
         $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [
@@ -86,7 +92,7 @@ final class Table
             $foreignKeyMethodIdentifier = join('', $camelCased);
 
             $fkLocalColumns = $foreignKey->getLocalColumns();
-
+            var_dump($foreignKey->getColumns());
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
             $query = $this->describeBodySelect($foreignKey->getForeignColumns(), $foreignKey->getForeignTableName(), $where);
             
