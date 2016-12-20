@@ -26,6 +26,11 @@ class Schema
         $this->connection = $connection;
     }
 
+    public function transformColumnToProperty($columnIdentifier)
+    {
+        return '_' . $columnIdentifier;
+    }
+
     private function prepare(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
