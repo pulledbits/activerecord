@@ -49,6 +49,19 @@ namespace ActiveRecord {
             $this->assertEquals("_id", $schema->transformColumnToProperty('id'));
         }
 
+        public function testTransformTableIdentifierToRecordClassIdentifier_When_TableIdentifierSupplied_Expect_TableIdPrefixedWithTargetNamespace()
+        {
+
+            $schema = new Table('\Test\Record', new class extends \PDO
+            {
+                public function __construct()
+                {
+                }
+            });
+
+            $this->assertEquals('\Test\Record\activiteit', $schema->transformTableIdentifierToRecordClassIdentifier('activiteit'));
+        }
+
         public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
         {
             $schema = new Table('\Test\Record', new class extends \PDO

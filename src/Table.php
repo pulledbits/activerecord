@@ -33,6 +33,10 @@ class Table
         return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
     }
 
+    public function transformTableIdentifierToRecordClassIdentifier($tableIdentfier) {
+        return $this->targetNamespace . '\\' . $tableIdentfier;
+    }
+
     private function prepare(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
