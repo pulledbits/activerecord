@@ -89,12 +89,12 @@ final class Table
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',
-            '$this->{\'_\' . $property} = $value;',
+            '$this->{$this->schema->transformColumnToProperty($property)} = $value;',
             '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'
         ]);
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
-            'return $this->{\'_\' . $property};'
+            'return $this->{$this->schema->transformColumnToProperty($property)};'
         ]);
 
         $methods['delete'] = $this->describeMethod(false, [], [

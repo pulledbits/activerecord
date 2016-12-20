@@ -111,7 +111,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($classDescription['methods']['__set']['static']);
 
         $this->assertEquals('if (property_exists($this, $property)) {', $classDescription['methods']['__set']['body'][0]);
-        $this->assertEquals('$this->{\'_\' . $property} = $value;', $classDescription['methods']['__set']['body'][1]);
+        $this->assertEquals('$this->{$this->schema->transformColumnToProperty($property)} = $value;', $classDescription['methods']['__set']['body'][1]);
         $this->assertEquals('$this->schema->update("MyTable", [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate', '\'address\' => $this->_address']) . '], [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate']) . ']);', $classDescription['methods']['__set']['body'][2]);
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
     }
@@ -151,7 +151,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['__get']['parameters']['property'], 'string');
         $this->assertFalse($classDescription['methods']['__get']['static']);
 
-        $this->assertEquals('return $this->{\'_\' . $property};', $classDescription['methods']['__get']['body'][0]);
+        $this->assertEquals('return $this->{$this->schema->transformColumnToProperty($property)};', $classDescription['methods']['__get']['body'][0]);
     }
 
     public function testDescribe_When_Default_Expect_DeleteMethod()
