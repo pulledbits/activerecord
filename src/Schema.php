@@ -72,7 +72,11 @@ class Schema
         $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
         $statement = $this->prepare($query, $insertNamedParameters);
         $statement->execute();
-        return $statement->rowCount();
+
+        $propertyIdentifiers = array_map(function($columnIdentifier) { return '_' . $columnIdentifier; }, array_keys($values));
+
+        $recordClassIdentifier = $this->targetNamespace . '\\' . $tableIdentifer;
+        return $this->select($tableIdentifer, array_combine($propertyIdentifiers, array_keys($values)), $recordClassIdentifier::wherePrimaryKey($values))[0];
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
