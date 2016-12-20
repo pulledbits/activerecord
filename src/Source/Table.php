@@ -40,9 +40,6 @@ final class Table
     private function makeArrayMappingToProperty(string $keyIdentifier, string $propertyIdentifier) {
         return $this->makeArrayMapping($keyIdentifier, '$this->__get(\'' . $propertyIdentifier . '\')');
     }
-    private function makeArrayMappingFromColumnToProperty(string $columnIdentifier) {
-        return $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
-    }
     
     public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
         if (substr($this->namespace, -1) != "\\") {
@@ -64,13 +61,13 @@ final class Table
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties['_' . $columnIdentifier] = ['string', ['static' => false, 'value' => null]];
-            $defaultUpdateValues[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
+            $defaultUpdateValues[] = $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
 
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {
                 $primaryKeyDefaultValue[] = $columnIdentifier;
-                $primaryKeyWhere[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
+                $primaryKeyWhere[] = $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
             }
         }
         $methods['wherePrimaryKey'] = $this->describeMethod(true, ['values' => 'array'], [
