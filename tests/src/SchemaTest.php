@@ -46,7 +46,7 @@ namespace ActiveRecord {
 
                 public function prepare($query, $options = null)
                 {
-                    if ($query === 'SELECT id AS _id, name FROM activiteit') {
+                    if ($query === 'SELECT id AS _id, name AS _name FROM activiteit') {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -80,7 +80,7 @@ namespace ActiveRecord {
                 }
             });
 
-            $records = $schema->select('activiteit', ['_id' => 'id', 'name'], []);
+            $records = $schema->select('activiteit', ['id', 'name'], []);
 
             $this->assertCount(5, $records);
         }
@@ -95,7 +95,7 @@ namespace ActiveRecord {
 
                 public function prepare($query, $options = null)
                 {
-                    if (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
+                    if (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -143,7 +143,7 @@ namespace ActiveRecord {
 
                 public function prepare($query, $options = null)
                 {
-                    if (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
+                    if (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()

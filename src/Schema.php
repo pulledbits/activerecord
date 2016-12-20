@@ -45,17 +45,13 @@ class Schema
         return [$sql, $namedParameters];
     }
 
-    public function select(string $tableIdentifer, array $fields, array $whereParameters)
+    public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
     {
         list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
 
         $preparedFields = [];
-        foreach ($fields as $fieldAlias => $columnIdentifier) {
-            if (is_numeric($fieldAlias)) {
-                $preparedFields[] = $columnIdentifier;
-            } else {
-                $preparedFields[] = $columnIdentifier . ' AS ' . $fieldAlias;
-            }
+        foreach ($columnIdentifiers as $fieldAlias => $columnIdentifier) {
+            $preparedFields[] = $columnIdentifier . ' AS _' . $columnIdentifier;
         }
         $query = "SELECT " . join(', ', $preparedFields) . " FROM " . $tableIdentifer;
         if (count($where) > 0) {
