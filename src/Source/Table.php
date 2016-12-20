@@ -28,7 +28,7 @@ final class Table
     private function describeBodySelect(array $fields, string $from, array $where) : array {
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
-            $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $this->makePropertyIdentifierFromColumnIdentifier($parameterIdentifier));
+            $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $parameterIdentifier);
         }
 
         return ['return $this->schema->select("' . $from . '", [\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
@@ -42,10 +42,10 @@ final class Table
         return '\'' . $keyIdentifier . '\' => ' . $variableIdentifier;
     }
     private function makeArrayMappingToProperty(string $keyIdentifier, string $propertyIdentifier) {
-        return $this->makeArrayMapping($keyIdentifier, '$this->' . $propertyIdentifier);
+        return $this->makeArrayMapping($keyIdentifier, '$this->__get(\'' . $propertyIdentifier . '\')');
     }
     private function makeArrayMappingFromColumnToProperty(string $columnIdentifier) {
-        return $this->makeArrayMappingToProperty($columnIdentifier, $this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier));
+        return $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
     }
     
     public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
