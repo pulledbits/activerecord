@@ -11,6 +11,8 @@ namespace ActiveRecord;
 
 class Schema
 {
+    const COLUMN_PROPERTY_ESCAPE = '_';
+
     /**
      * @var string
      */
@@ -28,7 +30,7 @@ class Schema
 
     public function transformColumnToProperty($columnIdentifier)
     {
-        return '_' . $columnIdentifier;
+        return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
     }
 
     private function prepare(string $query, array $namedParameters) : \PDOStatement
@@ -43,7 +45,7 @@ class Schema
     private function prepareParameters(string $type, array $parameters) {
         $namedParameters = $sql = [];
         foreach ($parameters as $localColumn => $value) {
-            $namedParameter = ":" . sha1($type . '_' . $localColumn);
+            $namedParameter = ":" . sha1($type . $this->transformColumnToProperty($localColumn));
             $sql[$localColumn] = $localColumn . " = " . $namedParameter;
             $namedParameters[$namedParameter] = $value;
         }
@@ -56,7 +58,7 @@ class Schema
 
         $preparedFields = [];
         foreach ($columnIdentifiers as $fieldAlias => $columnIdentifier) {
-            $preparedFields[] = $columnIdentifier . ' AS _' . $columnIdentifier;
+            $preparedFields[] = $columnIdentifier . ' AS ' . $this->transformColumnToProperty($columnIdentifier);
         }
         $query = "SELECT " . join(', ', $preparedFields) . " FROM " . $tableIdentifer;
         if (count($where) > 0) {
