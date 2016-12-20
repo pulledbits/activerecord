@@ -34,12 +34,12 @@ namespace ActiveRecord {
 
     use PDO;
 
-    class SchemaTest extends \PHPUnit_Framework_TestCase
+    class TableTest extends \PHPUnit_Framework_TestCase
     {
         public function testTransformColumnToProperty_When_ColumnIdentifierSupplied_Expect_ColumnIdPrefixedWithUnderscore()
         {
 
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -51,7 +51,7 @@ namespace ActiveRecord {
 
         public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
         {
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -100,7 +100,7 @@ namespace ActiveRecord {
 
         public function testSelect_When_SpecificWhereParameterSupplied_Expect_ThreeRecords()
         {
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -148,7 +148,7 @@ namespace ActiveRecord {
 
         public function testSelect_When_MultipleWhereParametersSupplied_Expect_OneRecord()
         {
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -191,7 +191,7 @@ namespace ActiveRecord {
 
         public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
         {
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -220,7 +220,7 @@ namespace ActiveRecord {
 
         public function testUpdate_When_SpecificWhereParameterSupplied_Expect_ThreeUpdates()
         {
-            $schema = new Schema('\Database', new class extends \PDO
+            $schema = new Table('\Database', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -249,7 +249,7 @@ namespace ActiveRecord {
 
         public function testUpdate_When_MultipleWhereParameterSupplied_Expect_ThreeUpdates()
         {
-            $schema = new Schema('\Database', new class extends \PDO
+            $schema = new Table('\Database', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -279,7 +279,7 @@ namespace ActiveRecord {
 
         public function testDelete_When_SingleParameter_Expect_One()
         {
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -309,7 +309,7 @@ namespace ActiveRecord {
 
         public function testDelete_When_MultipleParameters_Expect_Five()
         {
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -339,7 +339,7 @@ namespace ActiveRecord {
         public function testInsert_When_NoWhereParametersSupplied_Expect_InsertedRecord()
         {
 
-            $schema = new Schema('\Test\Record', new class extends \PDO
+            $schema = new Table('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {

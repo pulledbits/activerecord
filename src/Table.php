@@ -9,7 +9,7 @@
 namespace ActiveRecord;
 
 
-class Schema
+class Table
 {
     const COLUMN_PROPERTY_ESCAPE = '_';
 
