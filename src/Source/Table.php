@@ -17,8 +17,9 @@ final class Table
         $this->namespace = $namespace;
     }
 
-    private function describeMethod(array $parameters, array $body) : array {
+    private function describeMethod(bool $static, array $parameters, array $body) : array {
         return [
+            'static' => $static,
             'parameters' => $parameters,
             'body' => $body
         ];
@@ -62,13 +63,13 @@ final class Table
         $tableIdentifier = $dbalSchemaTable->getName();
 
         $methods = [
-            '__construct' => $this->describeMethod(["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
-            'fetchAll' => $this->describeMethod([], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
+            '__construct' => $this->describeMethod(false, ["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
+            'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, [])),
+            'primaryKey' => $this->describeMethod(true, [], [])
         ];
 
         $primaryKeyDefaultValue = $primaryKeyWhere = $defaultUpdateValues = [];
         $properties = [
-            'primaryKey' => ['array', ['static' => true, 'value' => []]],
             'schema' => ['\ActiveRecord\Schema', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
@@ -78,22 +79,23 @@ final class Table
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {
-                $properties['primaryKey'][1]['value'][] = '_' . $columnIdentifier;
+                $primaryKeyDefaultValue[] = '_' . $columnIdentifier;
                 $primaryKeyWhere[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
             }
         }
+        $methods['primaryKey']['body'][] = 'return [\''.join('\', \'', $primaryKeyDefaultValue).'\'];';
 
-        $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [
+        $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',
             '$this->{\'_\' . $property} = $value;',
             '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'
         ]);
-        $methods['__get'] = $this->describeMethod(["property" => 'string'], [
+        $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
             'return $this->{\'_\' . $property};'
         ]);
 
-        $methods['delete'] = $this->describeMethod([], [
+        $methods['delete'] = $this->describeMethod(false, [], [
             'return $this->schema->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'
         ]);
 
@@ -106,7 +108,7 @@ final class Table
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
             $query = $this->describeBodySelect($foreignKey->getForeignColumns(), $foreignKey->getForeignTableName(), $where);
             
-            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod([], $query);
+            $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod(false, [], $query);
         }
         
         return [

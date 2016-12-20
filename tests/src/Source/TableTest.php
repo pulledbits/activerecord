@@ -23,6 +23,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['\ActiveRecord\Schema', ['static' => false, 'value' => null]], $classDescription['properties']['schema']);
 
         $this->assertEquals('\ActiveRecord\Schema', $classDescription['methods']['__construct']['parameters']['schema']);
+        $this->assertFalse($classDescription['methods']['__construct']['static']);
         $this->assertEquals('$this->schema = $schema;', $classDescription['methods']['__construct']['body'][0]);
 
     }
@@ -67,6 +68,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
+        $this->assertFalse($classDescription['methods']['fetchAll']['static']);
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][0], 'return $this->schema->select("MyTable2", [\'_id\' => \'id\'], [');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][1], '');
         $this->assertEquals($classDescription['methods']['fetchAll']['body'][2], ']);');
@@ -106,6 +108,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
         $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
+        $this->assertFalse($classDescription['methods']['__set']['static']);
 
         $this->assertEquals('if (property_exists($this, $property)) {', $classDescription['methods']['__set']['body'][0]);
         $this->assertEquals('$this->{\'_\' . $property} = $value;', $classDescription['methods']['__set']['body'][1]);
@@ -146,6 +149,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['methods']['__get']['parameters']['property'], 'string');
+        $this->assertFalse($classDescription['methods']['__get']['static']);
 
         $this->assertEquals('return $this->{\'_\' . $property};', $classDescription['methods']['__get']['body'][0]);
     }
@@ -182,6 +186,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $classDescription = $table->describe($dbalTable);
 
         $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
+        $this->assertFalse($classDescription['methods']['delete']['static']);
         $this->assertEquals('return $this->schema->delete("MyTable", [' . join(',' . PHP_EOL, ['\'name\' => $this->_name', '\'birthdate\' => $this->_birthdate']) . ']);', $classDescription['methods']['delete']['body'][0]);
 
 
@@ -217,7 +222,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
 
-        $this->assertEquals(['array', ['static' => true, 'value' => ['_id']]], $classDescription['properties']['primaryKey']);
+        $this->assertEquals($classDescription['methods']['primaryKey']['parameters'], []);
+        $this->assertTrue($classDescription['methods']['primaryKey']['static']);
+        $this->assertEquals('return [\'_id\'];', $classDescription['methods']['primaryKey']['body'][0]);
 
         $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_id']);
         $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_name']);
@@ -279,12 +286,14 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $table = new Table('\\Database');
         $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
+        $this->assertFalse($classDescription['methods']['fetchByFkOthertableRole']['static']);
 
         $this->assertEquals('return $this->schema->select("OtherTable", [\'_id\' => \'id\'], [', $classDescription['methods']['fetchByFkOthertableRole']['body'][0]);
         $this->assertEquals(join(',' . PHP_EOL, ['\'id\' => $this->_role_id']), $classDescription['methods']['fetchByFkOthertableRole']['body'][1]);
         $this->assertEquals(']);', $classDescription['methods']['fetchByFkOthertableRole']['body'][2]);
 
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters'], []);
+        $this->assertFalse($classDescription['methods']['fetchByFkAnothertableRole']['static']);
 
         $this->assertEquals('return $this->schema->select("AntoherTable", [\'_id\' => \'id\', \'_column_id\' => \'column_id\'], [', $classDescription['methods']['fetchByFkAnothertableRole']['body'][0]);
         $this->assertEquals(join(',' . PHP_EOL, ['\'id\' => $this->_role2_id', '\'column_id\' => $this->_extra_column_id']), $classDescription['methods']['fetchByFkAnothertableRole']['body'][1]);
