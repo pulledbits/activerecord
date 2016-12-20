@@ -34,10 +34,6 @@ final class Table
         return ['return $this->schema->select("' . $from . '", [\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
     }
 
-    private function makePropertyIdentifierFromColumnIdentifier(string $columnIdentifier) : string {
-        return '_' . $columnIdentifier;
-    }
-
     private function makeArrayMapping(string $keyIdentifier, string $variableIdentifier) : string {
         return '\'' . $keyIdentifier . '\' => ' . $variableIdentifier;
     }
@@ -67,7 +63,7 @@ final class Table
             'schema' => ['\ActiveRecord\Schema', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
-            $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = ['string', ['static' => false, 'value' => null]];
+            $properties['_' . $columnIdentifier] = ['string', ['static' => false, 'value' => null]];
             $defaultUpdateValues[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
 
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
