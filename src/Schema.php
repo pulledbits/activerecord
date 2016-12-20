@@ -69,10 +69,8 @@ class Schema
         $statement = $this->prepare($query, $insertNamedParameters);
         $statement->execute();
 
-        $propertyIdentifiers = array_map(function($columnIdentifier) { return '_' . $columnIdentifier; }, array_keys($values));
-
         $recordClassIdentifier = $this->targetNamespace . '\\' . $tableIdentifer;
-        return $this->select($tableIdentifer, array_combine($propertyIdentifiers, array_keys($values)), $recordClassIdentifier::wherePrimaryKey($values))[0];
+        return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values))[0];
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {

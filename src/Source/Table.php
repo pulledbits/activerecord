@@ -26,17 +26,12 @@ final class Table
     }
 
     private function describeBodySelect(array $fields, string $from, array $where) : array {
-        $aliassedFields = [];
-        foreach ($fields as $fieldIdentifier) {
-            $aliassedFields[] = $this->makeArrayMapping('_' . $fieldIdentifier, '\'' . $fieldIdentifier . '\'');
-        }
-
         $whereParameters = [];
         foreach ($where as $referencedColumnName => $parameterIdentifier) {
             $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $this->makePropertyIdentifierFromColumnIdentifier($parameterIdentifier));
         }
 
-        return ['return $this->schema->select("' . $from . '", [' . join(', ', $aliassedFields) . '], [', join(',' . PHP_EOL, $whereParameters), ']);'];
+        return ['return $this->schema->select("' . $from . '", [\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
     }
 
     private function makePropertyIdentifierFromColumnIdentifier(string $columnIdentifier) : string {
