@@ -68,25 +68,19 @@ final class Table
 
         $primaryKeyDefaultValue = $primaryKeyWhere = $defaultUpdateValues = [];
         $properties = [
-            'primaryKey' => 'array',
-            'schema' => '\ActiveRecord\Schema'
+            'primaryKey' => ['array', ['static' => true, 'value' => []]],
+            'schema' => ['\ActiveRecord\Schema', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
-            $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = 'string';
+            $properties[$this->makePropertyIdentifierFromColumnIdentifier($columnIdentifier)] = ['string', ['static' => false, 'value' => null]];
             $defaultUpdateValues[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
 
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {
-                $primaryKeyDefaultValue[] = '_' . $columnIdentifier;
+                $properties['primaryKey'][1]['value'][] = '_' . $columnIdentifier;
                 $primaryKeyWhere[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
             }
-        }
-
-        if (count($primaryKeyDefaultValue) === 0) {
-            $methods['__construct']['body'][] = '$this->primaryKey = [];';
-        } else {
-            $methods['__construct']['body'][] = '$this->primaryKey = [\'' . join(',', $primaryKeyDefaultValue) . '\'];';
         }
 
         $methods['__set'] = $this->describeMethod(["property" => 'string', "value" => 'string'], [

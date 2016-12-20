@@ -20,11 +20,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $classDescription = $table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
-        $this->assertEquals($classDescription['properties']['schema'], '\ActiveRecord\Schema');
+        $this->assertEquals(['\ActiveRecord\Schema', ['static' => false, 'value' => null]], $classDescription['properties']['schema']);
 
-        $this->assertEquals($classDescription['methods']['__construct']['parameters']['schema'], '\ActiveRecord\Schema');
-        $this->assertEquals($classDescription['methods']['__construct']['body'][0], '$this->schema = $schema;');
-        $this->assertEquals('$this->primaryKey = [];', $classDescription['methods']['__construct']['body'][1]);
+        $this->assertEquals('\ActiveRecord\Schema', $classDescription['methods']['__construct']['parameters']['schema']);
+        $this->assertEquals('$this->schema = $schema;', $classDescription['methods']['__construct']['body'][0]);
 
     }
     
@@ -218,12 +217,11 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
 
-        $this->assertEquals('array', $classDescription['properties']['primaryKey']);
-        $this->assertEquals('$this->primaryKey = [\'_id\'];', $classDescription['methods']['__construct']['body'][1]);
+        $this->assertEquals(['array', ['static' => true, 'value' => ['_id']]], $classDescription['properties']['primaryKey']);
 
-        $this->assertEquals('string', $classDescription['properties']['_id']);
-        $this->assertEquals('string', $classDescription['properties']['_name']);
-        $this->assertEquals('string', $classDescription['properties']['_height']);
+        $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_id']);
+        $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_name']);
+        $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_height']);
     }
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
