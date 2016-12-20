@@ -28,12 +28,13 @@ class Table
         $this->connection = $connection;
     }
 
-    private function prepare(string $query, array $namedParameters) : \PDOStatement
+    private function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
         foreach ($namedParameters as $namedParameter => $value) {
             $statement->bindParam($namedParameter, $value, \PDO::PARAM_STR);
         }
+        $statement->execute();
         return $statement;
     }
 
@@ -59,8 +60,7 @@ class Table
         if (count($where) > 0) {
            $query .= " WHERE " . join(" AND ", $where);
         }
-        $statement = $this->prepare($query, $namedParameters);
-        $statement->execute();
+        $statement = $this->execute($query, $namedParameters);
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
     }
 
@@ -68,8 +68,7 @@ class Table
         list($insertValues, $insertNamedParameters) = $this->prepareParameters('values', $values);
 
         $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
-        $statement = $this->prepare($query, $insertNamedParameters);
-        $statement->execute();
+        $statement = $this->execute($query, $insertNamedParameters);
 
         $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
         return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values))[0];
@@ -84,8 +83,7 @@ class Table
            $query .= " WHERE " . join(" AND ", $where);
         }
 
-        $statement = $this->prepare($query, array_merge($setNamedParameters, $whereNamedParameters));
-        $statement->execute();
+        $statement = $this->execute($query, array_merge($setNamedParameters, $whereNamedParameters));
         return $statement->rowCount();
     }
 
@@ -97,8 +95,7 @@ class Table
             $query .= " WHERE " . join(" AND ", $where);
         }
 
-        $statement = $this->prepare($query, $whereNamedParameters);
-        $statement->execute();
+        $statement = $this->execute($query, $whereNamedParameters);
         return $statement->rowCount();
     }
 }
