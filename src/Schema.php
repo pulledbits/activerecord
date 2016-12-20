@@ -23,9 +23,9 @@ class Schema
      */
     private $connection;
 
-    public function __construct(string $targetNamespace, \PDO $connection) {
+    public function __construct(string $targetNamespace/*, \PDO $connection*/) {
         $this->targetNamespace = $targetNamespace;
-        $this->connection = $connection;
+        //$this->connection = $connection;
     }
 
     public function transformColumnToProperty($columnIdentifier)

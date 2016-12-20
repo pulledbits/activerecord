@@ -14,27 +14,18 @@ class Table
     const COLUMN_PROPERTY_ESCAPE = '_';
 
     /**
-     * @var string
+     * @var \ActiveRecord\Schema
      */
-    private $targetNamespace;
+    private $schema;
 
     /**
      * @var \PDO
      */
     private $connection;
 
-    public function __construct(string $targetNamespace, \PDO $connection) {
-        $this->targetNamespace = $targetNamespace;
+    public function __construct(Schema $schema, \PDO $connection) {
+        $this->schema = $schema;
         $this->connection = $connection;
-    }
-
-    public function transformColumnToProperty($columnIdentifier)
-    {
-        return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
-    }
-
-    public function transformTableIdentifierToRecordClassIdentifier($tableIdentfier) {
-        return $this->targetNamespace . '\\' . $tableIdentfier;
     }
 
     private function prepare(string $query, array $namedParameters) : \PDOStatement
@@ -49,7 +40,7 @@ class Table
     private function prepareParameters(string $type, array $parameters) {
         $namedParameters = $sql = [];
         foreach ($parameters as $localColumn => $value) {
-            $namedParameter = ":" . sha1($type . $this->transformColumnToProperty($localColumn));
+            $namedParameter = ":" . sha1($type . $this->schema->transformColumnToProperty($localColumn));
             $sql[$localColumn] = $localColumn . " = " . $namedParameter;
             $namedParameters[$namedParameter] = $value;
         }
@@ -62,7 +53,7 @@ class Table
 
         $preparedFields = [];
         foreach ($columnIdentifiers as $fieldAlias => $columnIdentifier) {
-            $preparedFields[] = $columnIdentifier . ' AS ' . $this->transformColumnToProperty($columnIdentifier);
+            $preparedFields[] = $columnIdentifier . ' AS ' . $this->schema->transformColumnToProperty($columnIdentifier);
         }
         $query = "SELECT " . join(', ', $preparedFields) . " FROM " . $tableIdentifer;
         if (count($where) > 0) {
@@ -70,7 +61,7 @@ class Table
         }
         $statement = $this->prepare($query, $namedParameters);
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
+        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
     }
 
     public function insert(string $tableIdentifer, array $values) {
@@ -80,7 +71,7 @@ class Table
         $statement = $this->prepare($query, $insertNamedParameters);
         $statement->execute();
 
-        $recordClassIdentifier = $this->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
+        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
         return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values))[0];
     }
 

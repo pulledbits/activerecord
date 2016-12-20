@@ -36,35 +36,10 @@ namespace ActiveRecord {
 
     class TableTest extends \PHPUnit_Framework_TestCase
     {
-        public function testTransformColumnToProperty_When_ColumnIdentifierSupplied_Expect_ColumnIdPrefixedWithUnderscore()
-        {
-
-            $schema = new Table('\Test\Record', new class extends \PDO
-            {
-                public function __construct()
-                {
-                }
-            });
-
-            $this->assertEquals("_id", $schema->transformColumnToProperty('id'));
-        }
-
-        public function testTransformTableIdentifierToRecordClassIdentifier_When_TableIdentifierSupplied_Expect_TableIdPrefixedWithTargetNamespace()
-        {
-
-            $schema = new Table('\Test\Record', new class extends \PDO
-            {
-                public function __construct()
-                {
-                }
-            });
-
-            $this->assertEquals('\Test\Record\activiteit', $schema->transformTableIdentifierToRecordClassIdentifier('activiteit'));
-        }
 
         public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
         {
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -113,7 +88,7 @@ namespace ActiveRecord {
 
         public function testSelect_When_SpecificWhereParameterSupplied_Expect_ThreeRecords()
         {
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -161,7 +136,7 @@ namespace ActiveRecord {
 
         public function testSelect_When_MultipleWhereParametersSupplied_Expect_OneRecord()
         {
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -204,7 +179,7 @@ namespace ActiveRecord {
 
         public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
         {
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -233,7 +208,7 @@ namespace ActiveRecord {
 
         public function testUpdate_When_SpecificWhereParameterSupplied_Expect_ThreeUpdates()
         {
-            $schema = new Table('\Database', new class extends \PDO
+            $schema = new Table(new Schema('\Database'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -262,7 +237,7 @@ namespace ActiveRecord {
 
         public function testUpdate_When_MultipleWhereParameterSupplied_Expect_ThreeUpdates()
         {
-            $schema = new Table('\Database', new class extends \PDO
+            $schema = new Table(new Schema('\Database'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -292,7 +267,7 @@ namespace ActiveRecord {
 
         public function testDelete_When_SingleParameter_Expect_One()
         {
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -322,7 +297,7 @@ namespace ActiveRecord {
 
         public function testDelete_When_MultipleParameters_Expect_Five()
         {
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
@@ -352,7 +327,7 @@ namespace ActiveRecord {
         public function testInsert_When_NoWhereParametersSupplied_Expect_InsertedRecord()
         {
 
-            $schema = new Table('\Test\Record', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record'), new class extends \PDO
             {
                 public function __construct()
                 {
