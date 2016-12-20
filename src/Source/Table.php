@@ -64,8 +64,7 @@ final class Table
 
         $methods = [
             '__construct' => $this->describeMethod(false, ["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
-            'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, [])),
-            'primaryKey' => $this->describeMethod(true, [], [])
+            'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
         ];
 
         $primaryKeyDefaultValue = $primaryKeyWhere = $defaultUpdateValues = [];
@@ -79,11 +78,19 @@ final class Table
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {
-                $primaryKeyDefaultValue[] = '_' . $columnIdentifier;
+                $primaryKeyDefaultValue[] = $columnIdentifier;
                 $primaryKeyWhere[] = $this->makeArrayMappingFromColumnToProperty($columnIdentifier);
             }
         }
-        $methods['primaryKey']['body'][] = 'return [\''.join('\', \'', $primaryKeyDefaultValue).'\'];';
+        $methods['wherePrimaryKey'] = $this->describeMethod(true, ['values' => 'array'], [
+            '$wherePrimaryKey = [];',
+            'foreach ([\''.join('\', \'', $primaryKeyDefaultValue).'\'] as $primaryKeyColumnIdentifier) {',
+            '    if (array_key_exists($values, $primaryKeyColumnIdentifier)) {',
+            '        $wherePrimaryKey[$primaryKeyColumnIdentifier] = $values[$primaryKeyColumnIdentifier];',
+            '    }',
+            '}',
+            'return $wherePrimaryKey;'
+        ]);
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',

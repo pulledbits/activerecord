@@ -222,9 +222,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
 
-        $this->assertEquals($classDescription['methods']['primaryKey']['parameters'], []);
-        $this->assertTrue($classDescription['methods']['primaryKey']['static']);
-        $this->assertEquals('return [\'_id\'];', $classDescription['methods']['primaryKey']['body'][0]);
+        $this->assertEquals('array', $classDescription['methods']['wherePrimaryKey']['parameters']['values']);
+        $this->assertTrue($classDescription['methods']['wherePrimaryKey']['static']);
+
+        $this->assertEquals('$wherePrimaryKey = [];', $classDescription['methods']['wherePrimaryKey']['body'][0]);
+        $this->assertEquals('foreach ([\'id\'] as $primaryKeyColumnIdentifier) {', $classDescription['methods']['wherePrimaryKey']['body'][1]);
+        $this->assertEquals('    if (array_key_exists($values, $primaryKeyColumnIdentifier)) {', $classDescription['methods']['wherePrimaryKey']['body'][2]);
+        $this->assertEquals('        $wherePrimaryKey[$primaryKeyColumnIdentifier] = $values[$primaryKeyColumnIdentifier];', $classDescription['methods']['wherePrimaryKey']['body'][3]);
+        $this->assertEquals('    }', $classDescription['methods']['wherePrimaryKey']['body'][4]);
+        $this->assertEquals('}', $classDescription['methods']['wherePrimaryKey']['body'][5]);
+        $this->assertEquals('return $wherePrimaryKey;', $classDescription['methods']['wherePrimaryKey']['body'][6]);
 
         $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_id']);
         $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_name']);

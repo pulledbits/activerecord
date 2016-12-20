@@ -36,16 +36,29 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
 
     foreach ($recordClassDescription['properties'] as $propertyIdentifier => $propertyType) {
         $property = PhpProperty::create($propertyIdentifier);
-        $property->setType($propertyType);
-        $property->setVisibility('private');
+        $property->setType($propertyType[0]);
+        if ($propertyType[1]['static']) {
+            $property->setStatic(true);
+        } else {
+            $property->setVisibility('private');
+        }
+        if (is_scalar($propertyType[1]['value'])) {
+            $property->setValue($propertyType[1]['value']);
+        } else {
+            $property->setExpression(var_export($propertyType[1]['value'], true));
+        }
         $recordClass->setProperty($property);
     }
 
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $method = PhpMethod::create($methodIdentifier);
+        if ($methodDescription['static']) {
+            $method->setStatic(true);
+        }
         foreach ($methodDescription['parameters'] as $methodParameterIdentifier => $methodParameterType) {
             $parameter = PhpParameter::create($methodParameterIdentifier);
             $parameter->setType($methodParameterType);
+
             $method->addParameter($parameter);
         }
         $method->setBody(join(PHP_EOL, $methodDescription['body']));
