@@ -18,24 +18,8 @@ class Table
      */
     private $schema;
 
-    /**
-     * @var \PDO
-     */
-    private $connection;
-
-    public function __construct(Schema $schema, \PDO $connection) {
+    public function __construct(Schema $schema) {
         $this->schema = $schema;
-        $this->connection = $connection;
-    }
-
-    private function execute(string $query, array $namedParameters) : \PDOStatement
-    {
-        $statement = $this->connection->prepare($query);
-        foreach ($namedParameters as $namedParameter => $value) {
-            $statement->bindParam($namedParameter, $value, \PDO::PARAM_STR);
-        }
-        $statement->execute();
-        return $statement;
     }
 
     private function prepareParameters(string $type, array $parameters) {
@@ -60,7 +44,7 @@ class Table
         if (count($where) > 0) {
            $query .= " WHERE " . join(" AND ", $where);
         }
-        $statement = $this->execute($query, $namedParameters);
+        $statement = $this->schema->execute($query, $namedParameters);
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
     }
 
@@ -68,7 +52,7 @@ class Table
         list($insertValues, $insertNamedParameters) = $this->prepareParameters('values', $values);
 
         $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
-        $statement = $this->execute($query, $insertNamedParameters);
+        $statement = $this->schema->execute($query, $insertNamedParameters);
 
         $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
         return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values))[0];
@@ -83,7 +67,7 @@ class Table
            $query .= " WHERE " . join(" AND ", $where);
         }
 
-        $statement = $this->execute($query, array_merge($setNamedParameters, $whereNamedParameters));
+        $statement = $this->schema->execute($query, array_merge($setNamedParameters, $whereNamedParameters));
         return $statement->rowCount();
     }
 
@@ -95,7 +79,7 @@ class Table
             $query .= " WHERE " . join(" AND ", $where);
         }
 
-        $statement = $this->execute($query, $whereNamedParameters);
+        $statement = $this->schema->execute($query, $whereNamedParameters);
         return $statement->rowCount();
     }
 }

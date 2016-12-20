@@ -23,9 +23,9 @@ class Schema
      */
     private $connection;
 
-    public function __construct(string $targetNamespace/*, \PDO $connection*/) {
+    public function __construct(string $targetNamespace, \PDO $connection) {
         $this->targetNamespace = $targetNamespace;
-        //$this->connection = $connection;
+        $this->connection = $connection;
     }
 
     public function transformColumnToProperty($columnIdentifier)
@@ -35,5 +35,15 @@ class Schema
 
     public function transformTableIdentifierToRecordClassIdentifier($tableIdentfier) {
         return $this->targetNamespace . '\\' . $tableIdentfier;
+    }
+
+    public function execute(string $query, array $namedParameters) : \PDOStatement
+    {
+        $statement = $this->connection->prepare($query);
+        foreach ($namedParameters as $namedParameter => $value) {
+            $statement->bindParam($namedParameter, $value, \PDO::PARAM_STR);
+        }
+        $statement->execute();
+        return $statement;
     }
 }

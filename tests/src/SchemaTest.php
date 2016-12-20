@@ -36,4 +36,53 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('\Test\Record\activiteit', $schema->transformTableIdentifierToRecordClassIdentifier('activiteit'));
     }
+
+    public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
+    {
+        $schema = new Schema('\Test\Record', new class extends \PDO
+        {
+            public function __construct()
+            {
+            }
+
+            public function prepare($query, $options = null)
+            {
+                if ($query === 'SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1') {
+                    return new class extends \PDOStatement
+                    {
+                        public function __construct()
+                        {
+                        }
+
+                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                        {
+                            if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                return [
+                                    new class
+                                    {
+                                    },
+                                    new class
+                                    {
+                                    },
+                                    new class
+                                    {
+                                    },
+                                    new class
+                                    {
+                                    },
+                                    new class
+                                    {
+                                    },
+                                ];
+                            }
+                        }
+                    };
+                }
+            }
+        });
+
+        $statement = $schema->execute('SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1', [':param1' => '1']);
+
+        $this->assertCount(5, $statement->fetchAll(\PDO::FETCH_CLASS, '\Test\Record\activiteit'));
+    }
 }
