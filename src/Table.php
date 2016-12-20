@@ -70,7 +70,7 @@ class Table
         }
         $statement = $this->prepare($query, $namedParameters);
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->targetNamespace . '\\' . $tableIdentifer, [$this]);
+        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
     }
 
     public function insert(string $tableIdentifer, array $values) {
@@ -80,7 +80,7 @@ class Table
         $statement = $this->prepare($query, $insertNamedParameters);
         $statement->execute();
 
-        $recordClassIdentifier = $this->targetNamespace . '\\' . $tableIdentifer;
+        $recordClassIdentifier = $this->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
         return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values))[0];
     }
 
