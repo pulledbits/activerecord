@@ -65,6 +65,21 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(["id AS _id"], $schema->prepareFields(['id']));
     }
 
+    public function testMakeWhereCondition_When_NoColumnIdentifiersAndValuesSupplied_Expect_NoProperSQLWhereConditionAndNamedParameters()
+    {
+
+        $schema = new Schema('\Test\Record', new class extends \PDO
+        {
+            public function __construct()
+            {
+            }
+        });
+
+        $namedParameters = [];
+        $this->assertEquals("", $schema->makeWhereCondition([], $namedParameters));
+        $this->assertCount(0, $namedParameters);
+    }
+
     public function testMakeWhereCondition_When_ColumnIdentifiersAndValuesSupplied_Expect_ProperSQLWhereConditionAndNamedParameters()
     {
 
