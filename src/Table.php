@@ -22,19 +22,9 @@ class Table
         $this->schema = $schema;
     }
 
-    private function prepareParameters(string $type, array $parameters) {
-        $namedParameters = $sql = [];
-        foreach ($parameters as $localColumn => $value) {
-            $namedParameter = ":" . sha1($type . '_' . $localColumn);
-            $sql[$localColumn] = $localColumn . " = " . $namedParameter;
-            $namedParameters[$namedParameter] = $value;
-        }
-        return [$sql, $namedParameters];
-    }
-
     public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
     {
-        list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
+        list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
 
         $preparedFields = [];
         foreach ($columnIdentifiers as $fieldAlias => $columnIdentifier) {
@@ -49,7 +39,7 @@ class Table
     }
 
     public function insert(string $tableIdentifer, array $values) {
-        list($insertValues, $insertNamedParameters) = $this->prepareParameters('values', $values);
+        list($insertValues, $insertNamedParameters) = $this->schema->prepareParameters('values', $values);
 
         $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
         $statement = $this->schema->execute($query, $insertNamedParameters);
@@ -59,8 +49,8 @@ class Table
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
-        list($set, $setNamedParameters) = $this->prepareParameters('set', $setParameters);
-        list($where, $whereNamedParameters) = $this->prepareParameters('where', $whereParameters);
+        list($set, $setNamedParameters) = $this->schema->prepareParameters('set', $setParameters);
+        list($where, $whereNamedParameters) = $this->schema->prepareParameters('where', $whereParameters);
 
         $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set);
         if (count($where) > 0) {
@@ -73,7 +63,7 @@ class Table
     }
 
     public function delete(string $tableIdentifer, array $whereParameters) {
-        list($where, $whereNamedParameters) = $this->prepareParameters('where', $whereParameters);
+        list($where, $whereNamedParameters) = $this->schema->prepareParameters('where', $whereParameters);
 
         $query = "DELETE FROM " . $tableIdentifer;
         if (count($where) > 0) {
