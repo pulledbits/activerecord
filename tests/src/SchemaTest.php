@@ -65,6 +65,25 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(["id AS _id"], $schema->prepareFields(['id']));
     }
 
+    public function testMakeWhereCondition_When_ColumnIdentifiersAndValuesSupplied_Expect_ProperSQLWhereConditionAndNamedParameters()
+    {
+
+        $schema = new Schema('\Test\Record', new class extends \PDO
+        {
+            public function __construct()
+            {
+            }
+        });
+
+        $namedParameterId = ':' . sha1('where_id');
+        $namedParameterName = ':' . sha1('where_name');
+
+        $namedParameters = [];
+        $this->assertEquals(" WHERE id = $namedParameterId AND name = $namedParameterName", $schema->makeWhereCondition(['id' => '1', 'name' => 'MYName'], $namedParameters));
+        $this->assertEquals('1', $namedParameters[$namedParameterId]);
+        $this->assertEquals('MYName', $namedParameters[$namedParameterName]);
+    }
+
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $schema = new Schema('\Test\Record', new class extends \PDO
