@@ -37,6 +37,21 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('\Test\Record\activiteit', $schema->transformTableIdentifierToRecordClassIdentifier('activiteit'));
     }
 
+    public function testPrepareParameters_When_ColumnIdentifiersSupplied_Expect_ColumnIdPrefixedWithUnderscore()
+    {
+
+        $schema = new Schema('\Test\Record', new class extends \PDO
+        {
+            public function __construct()
+            {
+            }
+        });
+
+        $namedParameter = ':' . sha1('where_id');
+
+        $this->assertEquals([["id" => "id = " . $namedParameter],[$namedParameter => '1']], $schema->prepareParameters('where', ['id' => '1']));
+    }
+
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $schema = new Schema('\Test\Record', new class extends \PDO

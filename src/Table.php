@@ -25,7 +25,7 @@ class Table
     private function prepareParameters(string $type, array $parameters) {
         $namedParameters = $sql = [];
         foreach ($parameters as $localColumn => $value) {
-            $namedParameter = ":" . sha1($type . $this->schema->transformColumnToProperty($localColumn));
+            $namedParameter = ":" . sha1($type . '_' . $localColumn);
             $sql[$localColumn] = $localColumn . " = " . $namedParameter;
             $namedParameters[$namedParameter] = $value;
         }

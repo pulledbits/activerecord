@@ -37,6 +37,16 @@ class Schema
         return $this->targetNamespace . '\\' . $tableIdentfier;
     }
 
+    public function prepareParameters(string $type, array $parameters) {
+        $namedParameters = $sql = [];
+        foreach ($parameters as $localColumn => $value) {
+            $namedParameter = ":" . sha1($type . '_' . $localColumn);
+            $sql[$localColumn] = $localColumn . " = " . $namedParameter;
+            $namedParameters[$namedParameter] = $value;
+        }
+        return [$sql, $namedParameters];
+    }
+
     public function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
