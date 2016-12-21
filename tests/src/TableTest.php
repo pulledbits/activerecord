@@ -357,11 +357,6 @@ namespace ActiveRecord {
                             public function __construct()
                             {
                             }
-
-                            public function rowCount()
-                            {
-                                return 1;
-                            }
                         };
                     } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
@@ -409,11 +404,6 @@ namespace ActiveRecord {
                         {
                             public function __construct()
                             {
-                            }
-
-                            public function rowCount()
-                            {
-                                return 5;
                             }
                         };
                     } elseif (preg_match('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
@@ -474,11 +464,6 @@ namespace ActiveRecord {
                         {
                             public function __construct()
                             {
-                            }
-
-                            public function rowCount()
-                            {
-                                return 1;
                             }
                         };
                     } elseif (preg_match('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
