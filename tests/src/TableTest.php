@@ -193,22 +193,52 @@ namespace ActiveRecord {
                             public function __construct()
                             {
                             }
-
-                            public function rowCount()
+                        };
+                    } elseif (preg_match('/SELECT name AS _name FROM activiteit/', $query, $match) === 1) {
+                        return new class extends \PDOStatement
+                        {
+                            public function __construct()
                             {
-                                return 5;
+                            }
+
+                            public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                            {
+
+                            }
+
+                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                            {
+                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                    return [
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        }
+                                    ];
+                                }
                             }
                         };
                     }
                 }
             }));
 
-            $this->assertEquals(5, $schema->update('activiteit', ['name' => 'newName'], []));
+            $this->assertCount(5, $schema->update('activiteit', ['name' => 'newName'], []));
         }
 
         public function testUpdate_When_SpecificWhereParameterSupplied_Expect_ThreeUpdates()
         {
-            $schema = new Table(new Schema('\Database', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -222,22 +252,46 @@ namespace ActiveRecord {
                             public function __construct()
                             {
                             }
-
-                            public function rowCount()
+                        };
+                    } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
+                        return new class extends \PDOStatement
+                        {
+                            public function __construct()
                             {
-                                return 3;
+                            }
+
+                            public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                            {
+
+                            }
+
+                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                            {
+                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                    return [
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        }
+                                    ];
+                                }
                             }
                         };
                     }
                 }
             }));
 
-            $this->assertEquals(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName', 'id' => '1']));
+            $this->assertCount(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName', 'id' => '1']));
         }
 
         public function testUpdate_When_MultipleWhereParameterSupplied_Expect_ThreeUpdates()
         {
-            $schema = new Table(new Schema('\Database', new class extends \PDO
+            $schema = new Table(new Schema('\Test\Record', new class extends \PDO
             {
                 public function __construct()
                 {
@@ -251,17 +305,41 @@ namespace ActiveRecord {
                             public function __construct()
                             {
                             }
-
-                            public function rowCount()
+                        };
+                    } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                        return new class extends \PDOStatement
+                        {
+                            public function __construct()
                             {
-                                return 3;
+                            }
+
+                            public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                            {
+
+                            }
+
+                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                            {
+                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                    return [
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        }
+                                    ];
+                                }
                             }
                         };
                     }
                 }
             }));
 
-            $this->assertEquals(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName']));
+            $this->assertCount(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName']));
         }
 
 

@@ -67,8 +67,9 @@ class Table
            $query .= " WHERE " . join(" AND ", $where);
         }
 
-        $statement = $this->schema->execute($query, array_merge($setNamedParameters, $whereNamedParameters));
-        return $statement->rowCount();
+        $this->schema->execute($query, array_merge($setNamedParameters, $whereNamedParameters));
+
+        return $this->select($tableIdentifer, array_keys($setParameters), $whereParameters);
     }
 
     public function delete(string $tableIdentifer, array $whereParameters) {
