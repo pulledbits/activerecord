@@ -47,6 +47,14 @@ class Schema
         return [$sql, $namedParameters];
     }
 
+    public function prepareFields(array $fields) {
+        $preparedFields = [];
+        foreach ($fields as $fieldAlias => $columnIdentifier) {
+            $preparedFields[] = $columnIdentifier . ' AS ' . $this->transformColumnToProperty($columnIdentifier);
+        }
+        return $preparedFields;
+    }
+
     public function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);

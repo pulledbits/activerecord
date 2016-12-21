@@ -52,6 +52,19 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([["id" => "id = " . $namedParameter],[$namedParameter => '1']], $schema->prepareParameters('where', ['id' => '1']));
     }
 
+    public function testPrepareFields_When_ColumnIdentifiersSupplied_Expect_ColumnsAliassedAsColumnIdsPrefixedWithUnderscore()
+    {
+
+        $schema = new Schema('\Test\Record', new class extends \PDO
+        {
+            public function __construct()
+            {
+            }
+        });
+
+        $this->assertEquals(["id AS _id"], $schema->prepareFields(['id']));
+    }
+
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $schema = new Schema('\Test\Record', new class extends \PDO
