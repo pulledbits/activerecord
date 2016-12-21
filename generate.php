@@ -68,12 +68,12 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
 }
 
 // test activiteit
-require $recordsDirectory  . DIRECTORY_SEPARATOR . 'activiteit.php';
+require $recordsDirectory  . DIRECTORY_SEPARATOR . 'blok.php';
 $connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
-$schema = new \ActiveRecord\Table($targetNamespace, $connection);
-$record = $schema->select("activiteit", ['_id' => 'id', '_inhoud' => 'inhoud'], [])[0];
-//print_r($record->inhoud);
-$record->inhoud = uniqid();
-
-print_r($schema->select("activiteit", ['_id' => 'id', '_inhoud' => 'inhoud'], [])[0]);
+$table = new \ActiveRecord\Table(new \ActiveRecord\Schema($targetNamespace, $connection));
+$record = $table->insert("blok", ['collegejaar' => '1415', 'nummer' => '1'], [])[0];
+assert($record->nummer === '1');
+$record->nummer = '2';
+assert($record->nummer === $table->select("blok", ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer);
+assert(count($record->delete()) > 1);
 echo 'Done';
