@@ -26,11 +26,7 @@ class Table
     {
         list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
 
-        $preparedFields = [];
-        foreach ($columnIdentifiers as $fieldAlias => $columnIdentifier) {
-            $preparedFields[] = $columnIdentifier . ' AS ' . $this->schema->transformColumnToProperty($columnIdentifier);
-        }
-        $query = "SELECT " . join(', ', $preparedFields) . " FROM " . $tableIdentifer;
+        $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer;
         if (count($where) > 0) {
            $query .= " WHERE " . join(" AND ", $where);
         }
