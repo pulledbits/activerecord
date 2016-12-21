@@ -449,7 +449,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertEquals('newName', $schema->insert('activiteit', ['id' => '1', 'name' => 'newName'])->name);
+            $this->assertEquals('newName', $schema->insert('activiteit', ['id' => '1', 'name' => 'newName'])[0]->name);
         }
     }
 }

@@ -55,7 +55,7 @@ class Table
         $statement = $this->schema->execute($query, $insertNamedParameters);
 
         $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
-        return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values))[0];
+        return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values));
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
