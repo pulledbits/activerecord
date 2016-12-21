@@ -22,14 +22,18 @@ class Table
         $this->schema = $schema;
     }
 
+    private function makeWhereCondition(array $whereParameters, array &$namedParameters) {
+        list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
+        if (count($where) === 0) {
+            return "";
+        }
+        return " WHERE " . join(" AND ", $where);
+    }
+
     public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
     {
-        list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
-
-        $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer;
-        if (count($where) > 0) {
-           $query .= " WHERE " . join(" AND ", $where);
-        }
+        $namedParameters = [];
+        $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer . $this->makeWhereCondition($whereParameters, $namedParameters);
         $statement = $this->schema->execute($query, $namedParameters);
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
     }
@@ -45,30 +49,23 @@ class Table
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
-        list($set, $setNamedParameters) = $this->schema->prepareParameters('set', $setParameters);
-        list($where, $whereNamedParameters) = $this->schema->prepareParameters('where', $whereParameters);
+        list($set, $namedParameters) = $this->schema->prepareParameters('set', $setParameters);
 
-        $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set);
-        if (count($where) > 0) {
-           $query .= " WHERE " . join(" AND ", $where);
-        }
+        $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set) . $this->makeWhereCondition($whereParameters, $namedParameters);
 
-        $this->schema->execute($query, array_merge($setNamedParameters, $whereNamedParameters));
+        $this->schema->execute($query, $namedParameters);
 
         return $this->select($tableIdentifer, array_keys($setParameters), $whereParameters);
     }
 
     public function delete(string $tableIdentifer, array $whereParameters) {
-        list($where, $whereNamedParameters) = $this->schema->prepareParameters('where', $whereParameters);
+        $namedParameters = [];
+        $query = "DELETE FROM " . $tableIdentifer . $this->makeWhereCondition($whereParameters, $namedParameters);
 
-        $query = "DELETE FROM " . $tableIdentifer;
-        if (count($where) > 0) {
-            $query .= " WHERE " . join(" AND ", $where);
-        }
 
         $records = $this->select($tableIdentifer, array_keys($whereParameters), $whereParameters);
 
-        $statement = $this->schema->execute($query, $whereNamedParameters);
+        $statement = $this->schema->execute($query, $namedParameters);
 
         return $records;
     }
