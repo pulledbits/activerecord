@@ -81,9 +81,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $records = $schema->select('activiteit', ['id', 'name'], []);
-
-            $this->assertCount(5, $records);
+            $this->assertCount(5, $schema->select('activiteit', ['id', 'name'], []));
         }
 
         public function testSelect_When_SpecificWhereParameterSupplied_Expect_ThreeRecords()
@@ -365,11 +363,34 @@ namespace ActiveRecord {
                                 return 1;
                             }
                         };
+                    } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                        return new class extends \PDOStatement
+                        {
+                            public function __construct()
+                            {
+                            }
+
+                            public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                            {
+
+                            }
+
+                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                            {
+                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                    return [
+                                        new class
+                                        {
+                                        }
+                                    ];
+                                }
+                            }
+                        };
                     }
                 }
             }));
 
-            $this->assertEquals(1, $schema->delete('activiteit', ['name' => 'newName']));
+            $this->assertCount(1, $schema->delete('activiteit', ['name' => 'newName']));
         }
 
 
@@ -395,11 +416,46 @@ namespace ActiveRecord {
                                 return 5;
                             }
                         };
+                    } elseif (preg_match('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
+                        return new class extends \PDOStatement
+                        {
+                            public function __construct()
+                            {
+                            }
+
+                            public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+                            {
+
+                            }
+
+                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                            {
+                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                    return [
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        },
+                                        new class
+                                        {
+                                        }
+                                    ];
+                                }
+                            }
+                        };
                     }
                 }
             }));
 
-            $this->assertEquals(5, $schema->delete('activiteit', ['id' => '1', 'name' => 'newName']));
+            $this->assertCount(5, $schema->delete('activiteit', ['id' => '1', 'name' => 'newName']));
         }
 
         public function testInsert_When_NoWhereParametersSupplied_Expect_InsertedRecord()

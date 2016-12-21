@@ -80,7 +80,10 @@ class Table
             $query .= " WHERE " . join(" AND ", $where);
         }
 
+        $records = $this->select($tableIdentifer, array_keys($whereParameters), $whereParameters);
+
         $statement = $this->schema->execute($query, $whereNamedParameters);
-        return $statement->rowCount();
+
+        return $records;
     }
 }
