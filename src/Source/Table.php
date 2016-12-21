@@ -31,7 +31,7 @@ final class Table
             $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $parameterIdentifier);
         }
 
-        return ['return $this->schema->select("' . $from . '", [\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
+        return ['return $this->table->select("' . $from . '", [\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
     }
 
     private function makeArrayMapping(string $keyIdentifier, string $variableIdentifier) : string {
@@ -51,13 +51,13 @@ final class Table
         $tableIdentifier = $dbalSchemaTable->getName();
 
         $methods = [
-            '__construct' => $this->describeMethod(false, ["schema" => '\ActiveRecord\Schema'], ['$this->schema = $schema;']),
+            '__construct' => $this->describeMethod(false, ["table" => '\ActiveRecord\Table'], ['$this->table = $table;']),
             'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
         ];
 
         $primaryKeyDefaultValue = $primaryKeyWhere = $defaultUpdateValues = [];
         $properties = [
-            'schema' => ['\ActiveRecord\Schema', ['static' => false, 'value' => null]]
+            'table' => ['\ActiveRecord\Table', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties['_' . $columnIdentifier] = ['string', ['static' => false, 'value' => null]];
@@ -73,7 +73,7 @@ final class Table
         $methods['wherePrimaryKey'] = $this->describeMethod(true, ['values' => 'array'], [
             '$wherePrimaryKey = [];',
             'foreach ([\''.join('\', \'', $primaryKeyDefaultValue).'\'] as $primaryKeyColumnIdentifier) {',
-            '    if (array_key_exists($values, $primaryKeyColumnIdentifier)) {',
+            '    if (array_key_exists($primaryKeyColumnIdentifier, $values)) {',
             '        $wherePrimaryKey[$primaryKeyColumnIdentifier] = $values[$primaryKeyColumnIdentifier];',
             '    }',
             '}',
@@ -82,16 +82,16 @@ final class Table
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',
-            '$this->{$this->schema->transformColumnToProperty($property)} = $value;',
-            '$this->schema->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
+            '$this->{$this->table->transformColumnToProperty($property)} = $value;',
+            '$this->table->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'
         ]);
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
-            'return $this->{$this->schema->transformColumnToProperty($property)};'
+            'return $this->{$this->table->transformColumnToProperty($property)};'
         ]);
 
         $methods['delete'] = $this->describeMethod(false, [], [
-            'return $this->schema->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'
+            'return $this->table->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'
         ]);
 
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
