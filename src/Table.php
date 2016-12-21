@@ -22,18 +22,10 @@ class Table
         $this->schema = $schema;
     }
 
-    private function makeWhereCondition(array $whereParameters, array &$namedParameters) {
-        list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
-        if (count($where) === 0) {
-            return "";
-        }
-        return " WHERE " . join(" AND ", $where);
-    }
-
     public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
     {
         $namedParameters = [];
-        $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer . $this->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
         $statement = $this->schema->execute($query, $namedParameters);
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
     }
@@ -51,7 +43,7 @@ class Table
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
         list($set, $namedParameters) = $this->schema->prepareParameters('set', $setParameters);
 
-        $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set) . $this->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set) . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
 
         $this->schema->execute($query, $namedParameters);
 
@@ -60,7 +52,7 @@ class Table
 
     public function delete(string $tableIdentifer, array $whereParameters) {
         $namedParameters = [];
-        $query = "DELETE FROM " . $tableIdentifer . $this->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "DELETE FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
 
 
         $records = $this->select($tableIdentifer, array_keys($whereParameters), $whereParameters);
