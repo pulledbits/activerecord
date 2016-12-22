@@ -27,7 +27,12 @@ class Table
         $namedParameters = [];
         $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
         $statement = $this->schema->execute($query, $namedParameters);
-        return $statement->fetchAll(\PDO::FETCH_CLASS, $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer), [$this]);
+
+        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
+        $table = $this;
+        return array_map(function(array $values) use ($recordClassIdentifier, $table) {
+            return new $recordClassIdentifier($table, $values);
+        }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function insert(string $tableIdentifer, array $values) {

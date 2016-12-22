@@ -21,6 +21,10 @@ namespace Test\Record {
         {
             // TODO: Implement fetchAll() method.
         }
+
+        public function __get($property) {
+            return 'newName';
+        }
     }
 }
 
@@ -51,23 +55,13 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
+                                        [],
+                                        [],
+                                        [],
+                                        [],
+                                        [],
                                     ];
                                 }
                             }
@@ -103,17 +97,11 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
+                                        [],
+                                        [],
+                                        [],
                                     ];
                                 }
                             }
@@ -151,11 +139,9 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        }
+                                        [],
                                     ];
                                 }
                             }
@@ -201,23 +187,13 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        }
+                                        [],
+                                        [],
+                                        [],
+                                        [],
+                                        [],
                                     ];
                                 }
                             }
@@ -260,17 +236,11 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        }
+                                        [],
+                                        [],
+                                        [],
                                     ];
                                 }
                             }
@@ -313,17 +283,11 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        }
+                                        [],
+                                        [],
+                                        [],
                                     ];
                                 }
                             }
@@ -367,11 +331,9 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        }
+                                        [],
                                     ];
                                 }
                             }
@@ -415,23 +377,13 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        },
-                                        new class
-                                        {
-                                        }
+                                        [],
+                                        [],
+                                        [],
+                                        [],
+                                        [],
                                     ];
                                 }
                             }
@@ -470,13 +422,12 @@ namespace ActiveRecord {
 
                             public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                             {
-                                if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                                if ($how === \PDO::FETCH_ASSOC) {
                                     return [
-                                        new class
-                                        {
-                                            public $id = '1';
-                                            public $name = 'newName';
-                                        }
+                                        [
+                                            'id' => '1',
+                                            'name' => 'newName'
+                                        ]
                                     ];
                                 }
                             }

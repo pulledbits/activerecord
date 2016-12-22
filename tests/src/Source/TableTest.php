@@ -23,8 +23,12 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['\ActiveRecord\Table', ['static' => false, 'value' => null]], $classDescription['properties']['table']);
 
         $this->assertEquals('\ActiveRecord\Table', $classDescription['methods']['__construct']['parameters']['table']);
+        $this->assertEquals('array', $classDescription['methods']['__construct']['parameters']['values']);
         $this->assertFalse($classDescription['methods']['__construct']['static']);
         $this->assertEquals('$this->table = $table;', $classDescription['methods']['__construct']['body'][0]);
+        $this->assertEquals('foreach ($values as $columnIdentifier => $value) {', $classDescription['methods']['__construct']['body'][1]);
+        $this->assertEquals('    $this->{\'_\' . $columnIdentifier} = $value;', $classDescription['methods']['__construct']['body'][2]);
+        $this->assertEquals('}', $classDescription['methods']['__construct']['body'][3]);
 
     }
     
