@@ -70,15 +70,6 @@ final class Table
                 $primaryKeyWhere[] = $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
             }
         }
-        $methods['wherePrimaryKey'] = $this->describeMethod(true, ['values' => 'array'], [
-            '$wherePrimaryKey = [];',
-            'foreach ([\''.join('\', \'', $primaryKeyDefaultValue).'\'] as $primaryKeyColumnIdentifier) {',
-            '    if (array_key_exists($primaryKeyColumnIdentifier, $values)) {',
-            '        $wherePrimaryKey[$primaryKeyColumnIdentifier] = $values[$primaryKeyColumnIdentifier];',
-            '    }',
-            '}',
-            'return $wherePrimaryKey;'
-        ]);
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $property)) {',

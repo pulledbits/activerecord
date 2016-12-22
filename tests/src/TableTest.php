@@ -21,11 +21,6 @@ namespace Test\Record {
         {
             // TODO: Implement fetchAll() method.
         }
-
-        static function wherePrimaryKey(array $values)
-        {
-            return ['id' => $values['id'], 'name' => $values['name']];
-        }
     }
 }
 
