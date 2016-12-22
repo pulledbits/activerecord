@@ -22,6 +22,11 @@ class Table
         $this->schema = $schema;
     }
 
+    public function transformColumnToProperty($columnIdentifier)
+    {
+        return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
+    }
+
     public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
     {
         $namedParameters = [];

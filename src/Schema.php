@@ -11,8 +11,6 @@ namespace ActiveRecord;
 
 class Schema
 {
-    const COLUMN_PROPERTY_ESCAPE = '_';
-
     /**
      * @var string
      */
@@ -26,11 +24,6 @@ class Schema
     public function __construct(string $targetNamespace, \PDO $connection) {
         $this->targetNamespace = $targetNamespace;
         $this->connection = $connection;
-    }
-
-    public function transformColumnToProperty($columnIdentifier)
-    {
-        return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
     }
 
     public function transformTableIdentifierToRecordClassIdentifier($tableIdentfier) {
