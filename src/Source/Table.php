@@ -54,7 +54,7 @@ final class Table
             '__construct' => $this->describeMethod(false, ["table" => '\ActiveRecord\Table', "values" => 'array'], [
                 '$this->table = $table;',
                 'foreach ($values as $columnIdentifier => $value) {',
-                '    $this->{\'_\' . $columnIdentifier} = $value;',
+                '    $this->{$this->table->transformColumnToProperty($columnIdentifier)} = $value;',
                 '}'
             ]),
             'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))

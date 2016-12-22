@@ -47,14 +47,6 @@ class Schema
         return [$sql, $namedParameters];
     }
 
-    public function prepareFields(array $fields) {
-        $preparedFields = [];
-        foreach ($fields as $fieldAlias => $columnIdentifier) {
-            $preparedFields[] = $columnIdentifier . ' AS ' . $this->transformColumnToProperty($columnIdentifier);
-        }
-        return $preparedFields;
-    }
-
     public function makeWhereCondition(array $whereParameters, array &$namedParameters) {
         list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
         if (count($where) === 0) {
