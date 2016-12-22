@@ -77,7 +77,7 @@ final class Table
         }
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
-            'if (property_exists($this, $property)) {',
+            'if (property_exists($this, $this->table->transformColumnToProperty($property))) {',
             '$this->{$this->table->transformColumnToProperty($property)} = $value;',
             '$this->table->update("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $defaultUpdateValues) . '], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
             '}'

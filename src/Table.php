@@ -48,11 +48,12 @@ class Table
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
-        list($set, $namedParameters) = $this->schema->prepareParameters('set', $setParameters);
+        list($set, $setNamedParameters) = $this->schema->prepareParameters('set', $setParameters);
 
+        $namedParameters = [];
         $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set) . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
 
-        $this->schema->execute($query, $namedParameters);
+        $this->schema->execute($query, array_merge($setNamedParameters, $namedParameters));
 
         return $this->select($tableIdentifer, array_keys($setParameters), $whereParameters);
     }
