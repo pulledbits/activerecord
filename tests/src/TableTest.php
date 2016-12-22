@@ -46,7 +46,7 @@ namespace ActiveRecord {
 
                 public function prepare($query, $options = null)
                 {
-                    if ($query === 'SELECT id AS _id, name AS _name FROM activiteit') {
+                    if ($query === 'SELECT id, name FROM activiteit') {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -83,7 +83,7 @@ namespace ActiveRecord {
 
                 public function prepare($query, $options = null)
                 {
-                    if (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
+                    if (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -125,7 +125,7 @@ namespace ActiveRecord {
 
                 public function prepare($query, $options = null)
                 {
-                    if (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
+                    if (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -173,7 +173,7 @@ namespace ActiveRecord {
                             {
                             }
                         };
-                    } elseif (preg_match('/SELECT name AS _name FROM activiteit/', $query, $match) === 1) {
+                    } elseif (preg_match('/SELECT name FROM activiteit/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -222,7 +222,7 @@ namespace ActiveRecord {
                             {
                             }
                         };
-                    } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
+                    } elseif (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -269,7 +269,7 @@ namespace ActiveRecord {
                             {
                             }
                         };
-                    } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                    } elseif (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -317,7 +317,7 @@ namespace ActiveRecord {
                             {
                             }
                         };
-                    } elseif (preg_match('/SELECT name AS _name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
+                    } elseif (preg_match('/SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -363,7 +363,7 @@ namespace ActiveRecord {
                             {
                             }
                         };
-                    } elseif (preg_match('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
+                    } elseif (preg_match('/SELECT id, name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()
@@ -413,7 +413,7 @@ namespace ActiveRecord {
                             {
                             }
                         };
-                    } elseif (preg_match('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
+                    } elseif (preg_match('/SELECT id, name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))/', $query, $match) === 1) {
                         return new class extends \PDOStatement
                         {
                             public function __construct()

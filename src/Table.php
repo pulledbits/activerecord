@@ -25,7 +25,7 @@ class Table
     public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
     {
         $namedParameters = [];
-        $query = "SELECT " . join(', ', $this->schema->prepareFields($columnIdentifiers)) . " FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
         $statement = $this->schema->execute($query, $namedParameters);
 
         $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
