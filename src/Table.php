@@ -32,12 +32,9 @@ class Table
 
     public function insert(string $tableIdentifer, array $values) {
         list($insertValues, $insertNamedParameters) = $this->schema->prepareParameters('values', $values);
-
         $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
         $statement = $this->schema->execute($query, $insertNamedParameters);
-
-        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
-        return $this->select($tableIdentifer, array_keys($values), $recordClassIdentifier::wherePrimaryKey($values));
+        return $this->select($tableIdentifer, array_keys($values), $values);
     }
 
     public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
