@@ -8,27 +8,14 @@
 
 namespace ActiveRecord\Source;
 
-
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
-        $schema = new Schema(new class() extends \Doctrine\DBAL\Schema\MySqlSchemaManager {
-            public function __construct() {}
-
-            public function listTables() {
-                return [
-                    new class extends \Doctrine\DBAL\Schema\Table
-                    {
-                        public function __construct() {}
-                        public function getName() {
-                            return 'MyTable';
-                        }
-                    }
-                ];
-            }
-        });
+        $schema = createMockSchema([
+            'MyTable' => []
+        ]);
 
         $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
 
