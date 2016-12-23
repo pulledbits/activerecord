@@ -6,6 +6,7 @@ function createMockTable(string $tableIdentifier, array $columns) {
 
         private $tableIdentifier;
         private $primaryKey;
+        private $foreignKeys;
         private $columns;
 
         public function __construct(string $tableIdentifier, array $columns)
@@ -13,11 +14,31 @@ function createMockTable(string $tableIdentifier, array $columns) {
             $this->tableIdentifier = $tableIdentifier;
             $this->columns = [];
             $this->primaryKey = [];
+            $foreignKeys = [];
             foreach ($columns as $columnIdentifier => $column) {
                 $this->columns[$columnIdentifier] = new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}};
                 if ($column['primaryKey']) {
                     $this->primaryKey[] = $columnIdentifier;
                 }
+                if (array_key_exists('references', $column)) {
+                    foreach ($column['references'] as $foreignKeyIdentifier => $foreignKey) {
+                        if (array_key_exists($foreignKeyIdentifier, $foreignKeys) === false) {
+                            $foreignKeys[$foreignKeyIdentifier] = [
+                                'table' => $foreignKey[0],
+                                'columns' => [],
+                                'foreignColumns' => []
+                            ];
+                        }
+
+                        $foreignKeys[$foreignKeyIdentifier]['columns'][] = $columnIdentifier;
+                        $foreignKeys[$foreignKeyIdentifier]['foreignColumns'][] = $foreignKey[1];
+                    }
+                }
+            }
+
+            $this->foreignKeys = [];
+            foreach ($foreignKeys as $foreignKeyIdentifier => $foreignKey) {
+                $this->foreignKeys[$foreignKeyIdentifier] = new \Doctrine\DBAL\Schema\ForeignKeyConstraint($foreignKey['columns'], $foreignKey['table'], $foreignKey['foreignColumns'], $foreignKeyIdentifier);
             }
 
         }
@@ -35,6 +56,10 @@ function createMockTable(string $tableIdentifier, array $columns) {
         }
         public function getPrimaryKeyColumns() {
             return $this->primaryKey;
+        }
+        public function getForeignKeys()
+        {
+            return $this->foreignKeys;
         }
     };
 }
@@ -182,55 +207,26 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable2';
-            }
-            public function getForeignKeys()
-            {
-                return [
-                    'fk_othertable_role' => new class extends \Doctrine\DBAL\Schema\ForeignKeyConstraint {
-                        public function __construct(){}
-                        public function getForeignTableName()
-                        {
-                            return "OtherTable";
-                        }
-                        public function getForeignColumns() {
-                            return ['id'];
-                        }
-                        public function getLocalColumns()
-                        {
-                            return ['role_id'];
-                        }
-                    },
-                    'fk_anothertable_role' => new class extends \Doctrine\DBAL\Schema\ForeignKeyConstraint
-                    {
-                        public function __construct()
-                        {
-                        }
-
-                        public function getForeignTableName()
-                        {
-                            return "AntoherTable";
-                        }
-                        public function getForeignColumns()
-                        {
-                            return ['id', 'column_id'];
-                        }
-
-                        public function getLocalColumns()
-                        {
-                            return ['role2_id', 'extra_column_id'];
-                        }
-                    }
-                ];
-            }
-        };
+        $dbalTable = createMockTable('MyTable2', [
+            'role_id' => [
+                'primaryKey' => true,
+                'references' => [
+                    'fk_othertable_role' => ['OtherTable', 'id']
+                ]
+            ],
+            'role2_id' => [
+                'primaryKey' => false,
+                'references' => [
+                    'fk_anothertable_role' => ['AntoherTable', 'id']
+                ]
+            ],
+            'extra_column_id' => [
+                'primaryKey' => false,
+                'references' => [
+                    'fk_anothertable_role' => ['AntoherTable', 'column_id']
+                ]
+            ],
+        ]);
 
         $table = new Table('\\Database');
         $classDescription = $table->describe($dbalTable);
