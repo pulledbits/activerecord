@@ -67,34 +67,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
 
-    public function testDescribe_When_DifferingTableName_Expect_FetchAllMethod()
-    {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable2';
-            }
-            public function getColumns()
-            {
-                return [
-                    'id' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
-                ];
-            }
-        };
-
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($dbalTable);
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
-        $this->assertFalse($classDescription['methods']['fetchAll']['static']);
-        $this->assertEquals('return $this->table->select("MyTable2", [\'id\'], [', $classDescription['methods']['fetchAll']['body'][0]);
-        $this->assertEquals($classDescription['methods']['fetchAll']['body'][1], '');
-        $this->assertEquals($classDescription['methods']['fetchAll']['body'][2], ']);');
-    }
-
     public function testDescribe_When_Default_Expect___setMethod()
     {
         $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {

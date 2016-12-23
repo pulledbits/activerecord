@@ -56,8 +56,7 @@ final class Table
                 'foreach ($values as $columnIdentifier => $value) {',
                 '    $this->{$this->table->transformColumnToProperty($columnIdentifier)} = $value;',
                 '}'
-            ]),
-            'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
+            ])
         ];
 
         $primaryKeyWhere = [];

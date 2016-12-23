@@ -15,13 +15,6 @@ namespace Test\Record {
             // TODO: Implement delete() method.
         }
 
-        /**
-         */
-        public function fetchAll()
-        {
-            // TODO: Implement fetchAll() method.
-        }
-
         public function __get($property) {
             return 'newName';
         }
