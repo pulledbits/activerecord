@@ -79,7 +79,7 @@ final class Table
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (property_exists($this, $this->table->transformColumnToProperty($property))) {',
             '$this->{$this->table->transformColumnToProperty($property)} = $value;',
-            '$this->table->update("' . $tableIdentifier . '", [$property => $this->__get($property)], [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);',
+            '$this->table->update("' . $tableIdentifier . '", [$property => $this->__get($property)], $this->primaryKey());',
             '}'
         ]);
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
@@ -91,7 +91,7 @@ final class Table
 
 
         $methods['delete'] = $this->describeMethod(false, [], [
-            'return $this->table->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'
+            'return $this->table->delete("' . $tableIdentifier . '", $this->primaryKey());'
         ]);
 
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
