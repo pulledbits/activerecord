@@ -44,6 +44,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('}', $classDescription['methods']['__construct']['body'][3]);
 
 
+        $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
         $this->assertEquals('return [\'name\' => $this->__get(\'name\'), \'birthdate\' => $this->__get(\'birthdate\')];', $classDescription['methods']['primaryKey']['body'][0]);
 
     }

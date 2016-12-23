@@ -85,7 +85,7 @@ final class Table
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
             'return $this->{$this->table->transformColumnToProperty($property)};'
         ]);
-        $methods['primaryKey'] = $this->describeMethod(false, ["property" => 'string'], [
+        $methods['primaryKey'] = $this->describeMethod(false, [], [
             'return [' . join(', ', $primaryKeyWhere) . '];'
         ]);
 
