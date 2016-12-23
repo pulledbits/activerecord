@@ -85,6 +85,10 @@ final class Table
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
             'return $this->{$this->table->transformColumnToProperty($property)};'
         ]);
+        $methods['primaryKey'] = $this->describeMethod(false, ["property" => 'string'], [
+            'return [' . join(', ', $primaryKeyWhere) . '];'
+        ]);
+
 
         $methods['delete'] = $this->describeMethod(false, [], [
             'return $this->table->delete("' . $tableIdentifier . '", [' . join(',' . PHP_EOL, $primaryKeyWhere) . ']);'

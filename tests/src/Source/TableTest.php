@@ -14,6 +14,19 @@ class TableTest extends \PHPUnit_Framework_TestCase
             {
                 return 'MyTable';
             }
+            public function getColumns()
+            {
+                return [
+                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
+                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
+                ];
+            }
+            public function hasPrimaryKey() {
+                return true;
+            }
+            public function getPrimaryKeyColumns() {
+                return ['name', 'birthdate'];
+            }
         };
 
         $table = new Table('\\Database\\Record');
@@ -29,6 +42,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foreach ($values as $columnIdentifier => $value) {', $classDescription['methods']['__construct']['body'][1]);
         $this->assertEquals('    $this->{$this->table->transformColumnToProperty($columnIdentifier)} = $value;', $classDescription['methods']['__construct']['body'][2]);
         $this->assertEquals('}', $classDescription['methods']['__construct']['body'][3]);
+
+
+        $this->assertEquals('return [\'name\' => $this->__get(\'name\'), \'birthdate\' => $this->__get(\'birthdate\')];', $classDescription['methods']['primaryKey']['body'][0]);
 
     }
     
