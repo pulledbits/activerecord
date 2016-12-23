@@ -1,75 +1,12 @@
 <?php
 namespace ActiveRecord\Source;
 
-function createMockTable(string $tableIdentifier, array $columns) {
-    return new class($tableIdentifier, $columns) extends \Doctrine\DBAL\Schema\Table {
-
-        private $tableIdentifier;
-        private $primaryKey;
-        private $foreignKeys;
-        private $columns;
-
-        public function __construct(string $tableIdentifier, array $columns)
-        {
-            $this->tableIdentifier = $tableIdentifier;
-            $this->columns = [];
-            $this->primaryKey = [];
-            $foreignKeys = [];
-            foreach ($columns as $columnIdentifier => $column) {
-                $this->columns[$columnIdentifier] = new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}};
-                if ($column['primaryKey']) {
-                    $this->primaryKey[] = $columnIdentifier;
-                }
-                if (array_key_exists('references', $column)) {
-                    foreach ($column['references'] as $foreignKeyIdentifier => $foreignKey) {
-                        if (array_key_exists($foreignKeyIdentifier, $foreignKeys) === false) {
-                            $foreignKeys[$foreignKeyIdentifier] = [
-                                'table' => $foreignKey[0],
-                                'columns' => [],
-                                'foreignColumns' => []
-                            ];
-                        }
-
-                        $foreignKeys[$foreignKeyIdentifier]['columns'][] = $columnIdentifier;
-                        $foreignKeys[$foreignKeyIdentifier]['foreignColumns'][] = $foreignKey[1];
-                    }
-                }
-            }
-
-            $this->foreignKeys = [];
-            foreach ($foreignKeys as $foreignKeyIdentifier => $foreignKey) {
-                $this->foreignKeys[$foreignKeyIdentifier] = new \Doctrine\DBAL\Schema\ForeignKeyConstraint($foreignKey['columns'], $foreignKey['table'], $foreignKey['foreignColumns'], $foreignKeyIdentifier);
-            }
-
-        }
-
-        public function getName()
-        {
-            return $this->tableIdentifier;
-        }
-        public function getColumns()
-        {
-            return $this->columns;
-        }
-        public function hasPrimaryKey() {
-            return count($this->primaryKey) > 0;
-        }
-        public function getPrimaryKeyColumns() {
-            return $this->primaryKey;
-        }
-        public function getForeignKeys()
-        {
-            return $this->foreignKeys;
-        }
-    };
-}
-
 class TableTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        $dbalTable = createMockTable('MyTable', [
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -100,7 +37,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
-        $dbalTable = createMockTable('MyTable2', []);
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
@@ -109,7 +46,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect___setMethod()
     {
-        $dbalTable = createMockTable('MyTable', [
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -137,7 +74,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect___getMethod()
     {
-        $dbalTable = createMockTable('MyTable', [
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -161,7 +98,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect_DeleteMethod()
     {
-        $dbalTable = createMockTable('MyTable', [
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -185,7 +122,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
-        $dbalTable = createMockTable('MyTable2', [
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', [
             'id' => [
                 'primaryKey' => true
             ],
@@ -207,7 +144,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
     {
-        $dbalTable = createMockTable('MyTable2', [
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', [
             'role_id' => [
                 'primaryKey' => true,
                 'references' => [
