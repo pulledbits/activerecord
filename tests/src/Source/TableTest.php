@@ -1,33 +1,57 @@
 <?php
 namespace ActiveRecord\Source;
 
+function createMockTable(string $tableIdentifier, array $columns) {
+    return new class($tableIdentifier, $columns) extends \Doctrine\DBAL\Schema\Table {
+
+        private $tableIdentifier;
+        private $primaryKey;
+        private $columns;
+
+        public function __construct(string $tableIdentifier, array $columns)
+        {
+            $this->tableIdentifier = $tableIdentifier;
+            $this->columns = [];
+            $this->primaryKey = [];
+            foreach ($columns as $columnIdentifier => $column) {
+                $this->columns[$columnIdentifier] = new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}};
+                if ($column['primaryKey']) {
+                    $this->primaryKey[] = $columnIdentifier;
+                }
+            }
+
+        }
+
+        public function getName()
+        {
+            return $this->tableIdentifier;
+        }
+        public function getColumns()
+        {
+            return $this->columns;
+        }
+        public function hasPrimaryKey() {
+            return count($this->primaryKey) > 0;
+        }
+        public function getPrimaryKeyColumns() {
+            return $this->primaryKey;
+        }
+    };
+}
+
 class TableTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable';
-            }
-            public function getColumns()
-            {
-                return [
-                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
-                ];
-            }
-            public function hasPrimaryKey() {
-                return true;
-            }
-            public function getPrimaryKeyColumns() {
-                return ['name', 'birthdate'];
-            }
-        };
+        $dbalTable = createMockTable('MyTable', [
+            'name' => [
+                'primaryKey' => true
+            ],
+            'birthdate' => [
+                'primaryKey' => true
+            ]
+        ]);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
@@ -51,16 +75,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable2';
-            }
-        };
+        $dbalTable = createMockTable('MyTable2', []);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
@@ -69,31 +84,17 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect___setMethod()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable';
-            }
-
-            public function hasPrimaryKey() {
-                return true;
-            }
-            public function getPrimaryKeyColumns() {
-                return ['name', 'birthdate'];
-            }
-            public function getColumns()
-            {
-                return [
-                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'address' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
-                ];
-            }
-        };
+        $dbalTable = createMockTable('MyTable', [
+            'name' => [
+                'primaryKey' => true
+            ],
+            'birthdate' => [
+                'primaryKey' => true
+            ],
+            'address' => [
+                'primaryKey' => false
+            ]
+        ]);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
@@ -111,31 +112,17 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect___getMethod()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable';
-            }
-
-            public function hasPrimaryKey() {
-                return true;
-            }
-            public function getPrimaryKeyColumns() {
-                return ['name', 'birthdate'];
-            }
-            public function getColumns()
-            {
-                return [
-                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'address' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
-                ];
-            }
-        };
+        $dbalTable = createMockTable('MyTable', [
+            'name' => [
+                'primaryKey' => true
+            ],
+            'birthdate' => [
+                'primaryKey' => true
+            ],
+            'address' => [
+                'primaryKey' => false
+            ]
+        ]);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
@@ -149,31 +136,17 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect_DeleteMethod()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable';
-            }
-
-            public function hasPrimaryKey() {
-                return true;
-            }
-            public function getPrimaryKeyColumns() {
-                return ['name', 'birthdate'];
-            }
-            public function getColumns()
-            {
-                return [
-                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'birthdate' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'address' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
-                ];
-            }
-        };
+        $dbalTable = createMockTable('MyTable', [
+            'name' => [
+                'primaryKey' => true
+            ],
+            'birthdate' => [
+                'primaryKey' => true
+            ],
+            'address' => [
+                'primaryKey' => false
+            ]
+        ]);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
@@ -187,30 +160,17 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
     {
-        $dbalTable = new class() extends \Doctrine\DBAL\Schema\Table {
-
-            public function __construct()
-            {}
-
-            public function getName()
-            {
-                return 'MyTable2';
-            }
-            public function hasPrimaryKey() {
-                return true;
-            }
-            public function getPrimaryKeyColumns() {
-                return ['id'];
-            }
-            public function getColumns()
-            {
-                return [
-                    'id' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'name' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}},
-                    'height' => new class extends \Doctrine\DBAL\Schema\Column {public function __construct(){}}
-                ];
-            }
-        };
+        $dbalTable = createMockTable('MyTable2', [
+            'id' => [
+                'primaryKey' => true
+            ],
+            'name' => [
+                'primaryKey' => false
+            ],
+            'height' => [
+                'primaryKey' => false
+            ]
+        ]);
 
         $table = new Table('\\Database\\Record');
         $classDescription = $table->describe($dbalTable);
