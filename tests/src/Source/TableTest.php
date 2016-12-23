@@ -116,7 +116,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('if (property_exists($this, $this->table->transformColumnToProperty($property))) {', $classDescription['methods']['__set']['body'][0]);
         $this->assertEquals('$this->{$this->table->transformColumnToProperty($property)} = $value;', $classDescription['methods']['__set']['body'][1]);
-        $this->assertEquals('$this->table->update("MyTable", [' . join(',' . PHP_EOL, ['\'name\' => $this->__get(\'name\')', '\'birthdate\' => $this->__get(\'birthdate\')', '\'address\' => $this->__get(\'address\')']) . '], [' . join(',' . PHP_EOL, ['\'name\' => $this->__get(\'name\')', '\'birthdate\' => $this->__get(\'birthdate\')']) . ']);', $classDescription['methods']['__set']['body'][2]);
+        $this->assertEquals('$this->table->update("MyTable", [$property => $this->__get($property)], [' . join(',' . PHP_EOL, ['\'name\' => $this->__get(\'name\')', '\'birthdate\' => $this->__get(\'birthdate\')']) . ']);', $classDescription['methods']['__set']['body'][2]);
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
     }
 
