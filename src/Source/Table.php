@@ -60,18 +60,15 @@ final class Table
             'fetchAll' => $this->describeMethod(false, [], $this->describeBodySelect($columnIdentifiers, $tableIdentifier, []))
         ];
 
-        $primaryKeyDefaultValue = $primaryKeyWhere = $defaultUpdateValues = [];
+        $primaryKeyWhere = [];
         $properties = [
             'table' => ['\ActiveRecord\Table', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties['_' . $columnIdentifier] = ['string', ['static' => false, 'value' => null]];
-            $defaultUpdateValues[] = $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
-
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {
-                $primaryKeyDefaultValue[] = $columnIdentifier;
                 $primaryKeyWhere[] = $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
             }
         }
