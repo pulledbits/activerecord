@@ -63,7 +63,6 @@ final class Table
             'values' => ['array', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
-            $properties['_' . $columnIdentifier] = ['string', ['static' => false, 'value' => null]];
             if ($dbalSchemaTable->hasPrimaryKey() === false) {
                 // no primary key
             } elseif (in_array($columnIdentifier, $dbalSchemaTable->getPrimaryKeyColumns())) {

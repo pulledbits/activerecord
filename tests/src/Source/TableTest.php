@@ -118,28 +118,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
 
     }
-
-    public function testDescribe_When_ColumnsAvailable_Expect_ArrayWithClassColumns()
-    {
-        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', [
-            'id' => [
-                'primaryKey' => true
-            ],
-            'name' => [
-                'primaryKey' => false
-            ],
-            'height' => [
-                'primaryKey' => false
-            ]
-        ]);
-
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($dbalTable);
-
-        $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_id']);
-        $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_name']);
-        $this->assertEquals(['string', ['static' => false, 'value' => null]], $classDescription['properties']['_height']);
-    }
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
     {
