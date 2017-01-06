@@ -93,7 +93,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
                         public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
                         {
-                            if ($how === \PDO::FETCH_CLASS && $class_name === '\Test\Record\activiteit') {
+                            if ($how === \PDO::FETCH_ASSOC) {
                                 return [
                                     new class
                                     {
@@ -120,6 +120,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $statement = $schema->execute('SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1', [':param1' => '1']);
 
-        $this->assertCount(5, $statement->fetchAll(\PDO::FETCH_CLASS, '\Test\Record\activiteit'));
+        $this->assertCount(5, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 }
