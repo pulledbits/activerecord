@@ -8,7 +8,7 @@ $applicationBootstrap();
 
 
 function createMockSchema(array $tables) {
-    return new Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager {
+    return new \ActiveRecord\Source\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager {
 
         private $tables;
 

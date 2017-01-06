@@ -13,7 +13,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
-        $schema = createMockSchema([
+        $schema = \ActiveRecord\Test\createMockSchema([
             'MyTable' => []
         ]);
 
