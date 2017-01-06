@@ -15,12 +15,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testTransformTableIdentifierToRecordClassIdentifier_When_TableIdentifierSupplied_Expect_TableIdPrefixedWithTargetNamespace()
     {
 
-        $schema = new Schema('\Test\Record', new class extends \PDO
-        {
-            public function __construct()
-            {
-            }
-        });
+        $schema = new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('', []));
 
         $this->assertEquals('\Test\Record\activiteit', $schema->transformTableIdentifierToRecordClassIdentifier('activiteit'));
     }
@@ -28,12 +23,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testPrepareParameters_When_ColumnIdentifiersSupplied_Expect_ColumnIdPrefixedWithUnderscore()
     {
 
-        $schema = new Schema('\Test\Record', new class extends \PDO
-        {
-            public function __construct()
-            {
-            }
-        });
+        $schema = new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('', []));
 
         $namedParameter = ':' . sha1('where_id');
 
@@ -43,12 +33,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testMakeWhereCondition_When_NoColumnIdentifiersAndValuesSupplied_Expect_NoProperSQLWhereConditionAndNamedParameters()
     {
 
-        $schema = new Schema('\Test\Record', new class extends \PDO
-        {
-            public function __construct()
-            {
-            }
-        });
+        $schema = new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('', []));
 
         $namedParameters = [];
         $this->assertEquals("", $schema->makeWhereCondition([], $namedParameters));
@@ -58,12 +43,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testMakeWhereCondition_When_ColumnIdentifiersAndValuesSupplied_Expect_ProperSQLWhereConditionAndNamedParameters()
     {
 
-        $schema = new Schema('\Test\Record', new class extends \PDO
-        {
-            public function __construct()
-            {
-            }
-        });
+        $schema = new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('', []));
 
         $namedParameterId = ':' . sha1('where_id');
         $namedParameterName = ':' . sha1('where_name');
@@ -77,21 +57,11 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $schema = new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1/', [
-                new class
-                {
-                },
-                new class
-                {
-                },
-                new class
-                {
-                },
-                new class
-                {
-                },
-                new class
-                {
-                },
+                [],
+                [],
+                [],
+                [],
+                []
             ]
         ));
 
