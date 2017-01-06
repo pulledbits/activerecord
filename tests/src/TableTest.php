@@ -14,6 +14,9 @@ namespace Test\Record {
         {
         }
 
+        public function __set($property, $value) {
+        }
+
         public function __get($property) {
             return 'newName';
         }
@@ -24,6 +27,9 @@ namespace Test\Record {
          */
         public function delete()
         {
+        }
+
+        public function __set($property, $value) {
         }
 
         public function __get($property) {

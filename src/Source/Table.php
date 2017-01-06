@@ -98,7 +98,7 @@ final class Table
         
         return [
             'identifier' => $this->namespace . $tableIdentifier,
-
+            'interfaces' => ['\\ActiveRecord\\WritableRecord'],
             'properties' => $properties,
             'methods' => $methods
         ];
