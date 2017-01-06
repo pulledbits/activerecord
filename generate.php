@@ -71,10 +71,10 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
 require $recordsDirectory  . DIRECTORY_SEPARATOR . 'blok.php';
 $connection = new \PDO('mysql:dbname=teach', 'teach', 'teach', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 $table = new \ActiveRecord\Table(new \ActiveRecord\Schema($targetNamespace, $connection));
-assert(count($table->select("blok", ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0);
+assert(count($table->select("blok", ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');
 $record = $table->insert("blok", ['collegejaar' => '1415', 'nummer' => '1'], [])[0];
-assert($record->nummer === '1');
+assert($record->nummer === '1', 'record is properly initialized');
 $record->nummer = '2';
-assert($record->nummer === $table->select("blok", ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer);
-assert(count($record->delete()) > 1);
+assert($record->nummer === $table->select("blok", ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer, 'record is properly updated');
+assert(count($record->delete()) > 1, 'delete confirms removal');
 echo 'Done';
