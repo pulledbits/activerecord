@@ -19,6 +19,19 @@ namespace Test\Record {
             return 'newName';
         }
     }
+    class thema implements \ActiveRecord\Record {
+
+        /**
+         */
+        public function delete()
+        {
+            // TODO: Implement delete() method.
+        }
+
+        public function __get($property) {
+            return 'newName';
+        }
+    }
 }
 
 namespace ActiveRecord {
@@ -160,6 +173,42 @@ namespace ActiveRecord {
             $this->assertCount(1, $records);
         }
 
+        public function testSelectFrom_When_NoWhereParametersSupplied_Expect_FiveRecords()
+        {
+            $schema = new Table('thema', new Schema('\Test\Record', new class extends \PDO
+            {
+                public function __construct()
+                {
+                }
+
+                public function prepare($query, $options = null)
+                {
+                    if ($query === 'SELECT id, name FROM activiteit') {
+                        return new class extends \PDOStatement
+                        {
+                            public function __construct()
+                            {
+                            }
+
+                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                            {
+                                if ($how === \PDO::FETCH_ASSOC) {
+                                    return [
+                                        [],
+                                        [],
+                                        [],
+                                        [],
+                                        [],
+                                    ];
+                                }
+                            }
+                        };
+                    }
+                }
+            }));
+
+            $this->assertCount(5, $schema->selectFrom('activiteit', ['id', 'name'], []));
+        }
 
         public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
         {

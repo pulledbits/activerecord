@@ -46,6 +46,19 @@ class Table
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
+    {
+        $namedParameters = [];
+        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $statement = $this->schema->execute($query, $namedParameters);
+
+        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
+        $table = $this;
+        return array_map(function(array $values) use ($recordClassIdentifier, $table) {
+            return new $recordClassIdentifier($table, $values);
+        }, $statement->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
     public function insert(array $values) {
         list($insertValues, $insertNamedParameters) = $this->schema->prepareParameters('values', $values);
         $query = "INSERT INTO " . $this->identifier . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
