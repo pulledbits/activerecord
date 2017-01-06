@@ -31,7 +31,7 @@ $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 $schemaDescription = $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace));
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
-    $recordClass->setInterfaces(['\ActiveRecord\WritableRecord']);
+    $recordClass->setInterfaces($recordClassDescription['interfaces']);
     $recordClass->setFinal(true);
 
     foreach ($recordClassDescription['properties'] as $propertyIdentifier => $propertyType) {
