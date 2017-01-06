@@ -37,7 +37,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $namedParameter = ':' . sha1('where_id');
 
-        $this->assertEquals([["id" => "id = " . $namedParameter],[$namedParameter => '1']], $schema->prepareParameters('where', ['id' => '1']));
+        $this->assertEquals([["id" => "id = " . $namedParameter], [$namedParameter => '1']], $schema->prepareParameters('where', ['id' => '1']));
     }
 
     public function testMakeWhereCondition_When_NoColumnIdentifiersAndValuesSupplied_Expect_NoProperSQLWhereConditionAndNamedParameters()
@@ -77,22 +77,22 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $schema = new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('/SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1/', [
-                                    new class
-                                    {
-                                    },
-                                    new class
-                                    {
-                                    },
-                                    new class
-                                    {
-                                    },
-                                    new class
-                                    {
-                                    },
-                                    new class
-                                    {
-                                    },
-                                ]
+                new class
+                {
+                },
+                new class
+                {
+                },
+                new class
+                {
+                },
+                new class
+                {
+                },
+                new class
+                {
+                },
+            ]
         ));
 
         $statement = $schema->execute('SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1', [':param1' => '1']);
