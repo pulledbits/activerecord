@@ -65,10 +65,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
         $this->assertFalse($classDescription['methods']['__set']['static']);
 
-        $this->assertEquals('if (array_key_exists($property, $this->values)) {', $classDescription['methods']['__set']['body'][0]);
+        $this->assertEquals('if (count($this->table->update([$property => $this->__get($property)], $this->primaryKey())) > 0) {', $classDescription['methods']['__set']['body'][0]);
         $this->assertEquals('$this->values[$property] = $value;', $classDescription['methods']['__set']['body'][1]);
-        $this->assertEquals('$this->table->update([$property => $this->__get($property)], $this->primaryKey());', $classDescription['methods']['__set']['body'][2]);
-        $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
+        $this->assertEquals('}', $classDescription['methods']['__set']['body'][2]);
     }
 
     public function testDescribe_When_Default_Expect___getMethod()

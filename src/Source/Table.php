@@ -62,9 +62,8 @@ final class Table
         }
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
-            'if (array_key_exists($property, $this->values)) {',
+            'if (count($this->table->update([$property => $this->__get($property)], $this->primaryKey())) > 0) {',
             '$this->values[$property] = $value;',
-            '$this->table->update([$property => $this->__get($property)], $this->primaryKey());',
             '}'
         ]);
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
