@@ -25,15 +25,6 @@ final class Table
         ];
     }
 
-    private function describeBodySelect(array $fields, string $from, array $where) : array {
-        $whereParameters = [];
-        foreach ($where as $referencedColumnName => $parameterIdentifier) {
-            $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $parameterIdentifier);
-        }
-
-        return ['return $this->table->select([\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
-    }
-
     private function makeArrayMapping(string $keyIdentifier, string $variableIdentifier) : string {
         return '\'' . $keyIdentifier . '\' => ' . $variableIdentifier;
     }
@@ -95,7 +86,13 @@ final class Table
 
             $fkLocalColumns = $foreignKey->getLocalColumns();
             $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
-            $query = $this->describeBodySelect($foreignKey->getForeignColumns(), $foreignKey->getForeignTableName(), $where);
+
+            $whereParameters = [];
+            foreach ($where as $referencedColumnName => $parameterIdentifier) {
+                $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $parameterIdentifier);
+            }
+
+            $query = ['return $this->table->selectFrom("' . $foreignKey->getForeignTableName() . '", [\'' . join('\', \'', $foreignKey->getForeignColumns()) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
             
             $methods["fetchBy" . $foreignKeyMethodIdentifier] = $this->describeMethod(false, [], $query);
         }

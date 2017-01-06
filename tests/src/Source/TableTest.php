@@ -147,14 +147,14 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
         $this->assertFalse($classDescription['methods']['fetchByFkOthertableRole']['static']);
 
-        $this->assertEquals('return $this->table->select([\'id\'], [', $classDescription['methods']['fetchByFkOthertableRole']['body'][0]);
+        $this->assertEquals('return $this->table->selectFrom("OtherTable", [\'id\'], [', $classDescription['methods']['fetchByFkOthertableRole']['body'][0]);
         $this->assertEquals(join(',' . PHP_EOL, ['\'id\' => $this->__get(\'role_id\')']), $classDescription['methods']['fetchByFkOthertableRole']['body'][1]);
         $this->assertEquals(']);', $classDescription['methods']['fetchByFkOthertableRole']['body'][2]);
 
         $this->assertEquals($classDescription['methods']['fetchByFkAnothertableRole']['parameters'], []);
         $this->assertFalse($classDescription['methods']['fetchByFkAnothertableRole']['static']);
 
-        $this->assertEquals('return $this->table->select([\'id\', \'column_id\'], [', $classDescription['methods']['fetchByFkAnothertableRole']['body'][0]);
+        $this->assertEquals('return $this->table->selectFrom("AntoherTable", [\'id\', \'column_id\'], [', $classDescription['methods']['fetchByFkAnothertableRole']['body'][0]);
         $this->assertEquals(join(',' . PHP_EOL, ['\'id\' => $this->__get(\'role2_id\')', '\'column_id\' => $this->__get(\'extra_column_id\')']), $classDescription['methods']['fetchByFkAnothertableRole']['body'][1]);
         $this->assertEquals(']);', $classDescription['methods']['fetchByFkAnothertableRole']['body'][2]);
     }
