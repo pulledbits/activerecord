@@ -134,7 +134,7 @@ function createMockPDO(string $query, array $results) {
     };
 }
 
-function createMockPDOMultiple(array $queries) {
+function createMockPDOMultiple(array $queries) : \PDO {
     return new class($queries) extends \PDO
     {
 

@@ -31,19 +31,12 @@ namespace Test\Record {
 
 namespace ActiveRecord {
 
-    use PDO;
-
     class TableTest extends \PHPUnit_Framework_TestCase
     {
         public function testTransformColumnToProperty_When_ColumnIdentifierSupplied_Expect_ColumnIdPrefixedWithUnderscore()
         {
 
-            $table = new Table('activiteit', new Schema('\Test\Record', new class extends \PDO
-            {
-                public function __construct()
-                {
-                }
-            }));
+            $table = new Table('activiteit', new Schema('\Test\Record', \ActiveRecord\Test\createMockPDO('', [])));
 
             $this->assertEquals("_id", $table->transformColumnToProperty('id'));
         }
