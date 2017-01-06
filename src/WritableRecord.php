@@ -3,7 +3,7 @@
 namespace ActiveRecord;
 
 
-interface WritableRecord {
+interface WritableRecord extends ReadableRecord {
 
     /**
      * @return \ActiveRecord\WritableRecord[]
