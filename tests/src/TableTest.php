@@ -21,16 +21,7 @@ namespace Test\Record {
             return 'newName';
         }
     }
-    class thema implements \ActiveRecord\WritableRecord {
-
-        /**
-         */
-        public function delete()
-        {
-        }
-
-        public function __set($property, $value) {
-        }
+    class thema implements \ActiveRecord\ReadableRecord {
 
         public function __get($property) {
             return 'newName';
