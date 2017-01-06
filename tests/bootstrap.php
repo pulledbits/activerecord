@@ -94,3 +94,80 @@ function createMockTable(string $tableIdentifier, array $columns) {
         }
     };
 }
+
+
+
+function createMockPDO(string $query, array $results) {
+    return new class($query, $results) extends \PDO
+    {
+
+        private $query;
+        private $results;
+
+        public function __construct(string $query, array $results)
+        {
+            $this->query = $query;
+            $this->results = $results;
+        }
+
+        public function prepare($query, $options = null)
+        {
+            if (preg_match($this->query, $query, $match) === 1) {
+                return new class($this->results) extends \PDOStatement
+                {
+                    private $results;
+
+                    public function __construct(array $results)
+                    {
+                        $this->results = $results;
+                    }
+
+                    public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                    {
+                        if ($how === \PDO::FETCH_ASSOC) {
+                            return $this->results;
+                        }
+                    }
+                };
+            }
+        }
+    };
+}
+
+function createMockPDOMultiple(array $queries) {
+    return new class($queries) extends \PDO
+    {
+
+        private $queries;
+        private $results;
+
+        public function __construct(array $queries)
+        {
+            $this->queries = $queries;
+        }
+
+        public function prepare($query, $options = null)
+        {
+            foreach ($this->queries as $expectedQuery => $results) {
+                if (preg_match($expectedQuery, $query, $match) === 1) {
+                    return new class($results) extends \PDOStatement
+                    {
+                        private $results;
+
+                        public function __construct(array $results)
+                        {
+                            $this->results = $results;
+                        }
+
+                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+                        {
+                            if ($how === \PDO::FETCH_ASSOC) {
+                                return $this->results;
+                            }
+                        }
+                    };
+                }
+            }
+        }
+    };
+}
