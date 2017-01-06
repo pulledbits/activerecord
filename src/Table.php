@@ -16,9 +16,15 @@ class Table
     /**
      * @var \ActiveRecord\Schema
      */
+    private $identifier;
+
+    /**
+     * @var \ActiveRecord\Schema
+     */
     private $schema;
 
-    public function __construct(Schema $schema) {
+    public function __construct(string $identifier, Schema $schema) {
+        $this->identifier = $identifier;
         $this->schema = $schema;
     }
 
