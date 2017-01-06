@@ -75,7 +75,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertCount(5, $schema->select('activiteit', ['id', 'name'], []));
+            $this->assertCount(5, $schema->select(['id', 'name'], []));
         }
 
         public function testSelect_When_SpecificWhereParameterSupplied_Expect_ThreeRecords()
@@ -115,7 +115,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $records = $schema->select('activiteit', ['name'], ['name' => 'foo']);
+            $records = $schema->select(['name'], ['name' => 'foo']);
 
             $this->assertCount(3, $records);
         }
@@ -155,7 +155,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $records = $schema->select('activiteit', ['name'], ['name' => 'foo', 'id' => '1']);
+            $records = $schema->select(['name'], ['name' => 'foo', 'id' => '1']);
 
             $this->assertCount(1, $records);
         }
@@ -207,7 +207,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertCount(5, $schema->update('activiteit', ['name' => 'newName'], []));
+            $this->assertCount(5, $schema->update(['name' => 'newName'], []));
         }
 
         public function testUpdate_When_SpecificWhereParameterSupplied_Expect_ThreeUpdates()
@@ -254,7 +254,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertCount(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName', 'id' => '1']));
+            $this->assertCount(3, $schema->update(['name' => 'newName'], ['name' => 'oldName', 'id' => '1']));
         }
 
         public function testUpdate_When_MultipleWhereParameterSupplied_Expect_ThreeUpdates()
@@ -301,7 +301,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertCount(3, $schema->update('activiteit', ['name' => 'newName'], ['name' => 'oldName']));
+            $this->assertCount(3, $schema->update(['name' => 'newName'], ['name' => 'oldName']));
         }
 
 
@@ -347,7 +347,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertCount(1, $schema->delete('activiteit', ['name' => 'newName']));
+            $this->assertCount(1, $schema->delete(['name' => 'newName']));
         }
 
 
@@ -397,7 +397,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertCount(5, $schema->delete('activiteit', ['id' => '1', 'name' => 'newName']));
+            $this->assertCount(5, $schema->delete(['id' => '1', 'name' => 'newName']));
         }
 
         public function testInsert_When_NoWhereParametersSupplied_Expect_InsertedRecord()
@@ -441,7 +441,7 @@ namespace ActiveRecord {
                 }
             }));
 
-            $this->assertEquals('newName', $schema->insert('activiteit', ['id' => '1', 'name' => 'newName'])[0]->name);
+            $this->assertEquals('newName', $schema->insert(['id' => '1', 'name' => 'newName'])[0]->name);
         }
     }
 }

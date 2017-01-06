@@ -33,43 +33,43 @@ class Table
         return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
     }
 
-    public function select(string $tableIdentifer, array $columnIdentifiers, array $whereParameters)
+    public function select(array $columnIdentifiers, array $whereParameters)
     {
         $namedParameters = [];
-        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $this->identifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
         $statement = $this->schema->execute($query, $namedParameters);
 
-        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifer);
+        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
         $table = $this;
         return array_map(function(array $values) use ($recordClassIdentifier, $table) {
             return new $recordClassIdentifier($table, $values);
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
-    public function insert(string $tableIdentifer, array $values) {
+    public function insert(array $values) {
         list($insertValues, $insertNamedParameters) = $this->schema->prepareParameters('values', $values);
-        $query = "INSERT INTO " . $tableIdentifer . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
+        $query = "INSERT INTO " . $this->identifier . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
         $statement = $this->schema->execute($query, $insertNamedParameters);
-        return $this->select($tableIdentifer, array_keys($values), $values);
+        return $this->select(array_keys($values), $values);
     }
 
-    public function update(string $tableIdentifer, array $setParameters, array $whereParameters) {
+    public function update(array $setParameters, array $whereParameters) {
         list($set, $setNamedParameters) = $this->schema->prepareParameters('set', $setParameters);
 
         $namedParameters = [];
-        $query = "UPDATE " . $tableIdentifer . " SET " . join(", ", $set) . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "UPDATE " . $this->identifier . " SET " . join(", ", $set) . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
 
         $this->schema->execute($query, array_merge($setNamedParameters, $namedParameters));
 
-        return $this->select($tableIdentifer, array_keys($setParameters), $whereParameters);
+        return $this->select(array_keys($setParameters), $whereParameters);
     }
 
-    public function delete(string $tableIdentifer, array $whereParameters) {
+    public function delete(array $whereParameters) {
         $namedParameters = [];
-        $query = "DELETE FROM " . $tableIdentifer . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "DELETE FROM " . $this->identifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
 
 
-        $records = $this->select($tableIdentifer, array_keys($whereParameters), $whereParameters);
+        $records = $this->select(array_keys($whereParameters), $whereParameters);
 
         $statement = $this->schema->execute($query, $namedParameters);
 

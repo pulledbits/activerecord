@@ -31,7 +31,7 @@ final class Table
             $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $parameterIdentifier);
         }
 
-        return ['return $this->table->select("' . $from . '", [\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
+        return ['return $this->table->select([\'' . join('\', \'', $fields) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
     }
 
     private function makeArrayMapping(string $keyIdentifier, string $variableIdentifier) : string {
@@ -73,7 +73,7 @@ final class Table
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
             'if (array_key_exists($property, $this->values)) {',
             '$this->values[$property] = $value;',
-            '$this->table->update("' . $tableIdentifier . '", [$property => $this->__get($property)], $this->primaryKey());',
+            '$this->table->update([$property => $this->__get($property)], $this->primaryKey());',
             '}'
         ]);
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
@@ -85,7 +85,7 @@ final class Table
 
 
         $methods['delete'] = $this->describeMethod(false, [], [
-            'return $this->table->delete("' . $tableIdentifier . '", $this->primaryKey());'
+            'return $this->table->delete($this->primaryKey());'
         ]);
 
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
