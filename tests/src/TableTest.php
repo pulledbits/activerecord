@@ -12,7 +12,6 @@ namespace Test\Record {
          */
         public function delete()
         {
-            // TODO: Implement delete() method.
         }
 
         public function __get($property) {
@@ -25,7 +24,6 @@ namespace Test\Record {
          */
         public function delete()
         {
-            // TODO: Implement delete() method.
         }
 
         public function __get($property) {
