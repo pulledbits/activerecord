@@ -53,15 +53,14 @@ final class Table
         $methods = [
             '__construct' => $this->describeMethod(false, ["table" => '\ActiveRecord\Table', "values" => 'array'], [
                 '$this->table = $table;',
-                'foreach ($values as $columnIdentifier => $value) {',
-                '    $this->{$this->table->transformColumnToProperty($columnIdentifier)} = $value;',
-                '}'
+                '$this->values = $values;'
             ])
         ];
 
         $primaryKeyWhere = [];
         $properties = [
-            'table' => ['\ActiveRecord\Table', ['static' => false, 'value' => null]]
+            'table' => ['\ActiveRecord\Table', ['static' => false, 'value' => null]],
+            'values' => ['array', ['static' => false, 'value' => null]]
         ];
         foreach ($columnIdentifiers as $columnIdentifier) {
             $properties['_' . $columnIdentifier] = ['string', ['static' => false, 'value' => null]];
@@ -73,13 +72,13 @@ final class Table
         }
 
         $methods['__set'] = $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
-            'if (property_exists($this, $this->table->transformColumnToProperty($property))) {',
-            '$this->{$this->table->transformColumnToProperty($property)} = $value;',
+            'if (array_key_exists($property, $this->values)) {',
+            '$this->values[$property] = $value;',
             '$this->table->update("' . $tableIdentifier . '", [$property => $this->__get($property)], $this->primaryKey());',
             '}'
         ]);
         $methods['__get'] = $this->describeMethod(false, ["property" => 'string'], [
-            'return $this->{$this->table->transformColumnToProperty($property)};'
+            'return $this->values[$property];'
         ]);
         $methods['primaryKey'] = $this->describeMethod(false, [], [
             'return [' . join(', ', $primaryKeyWhere) . '];'

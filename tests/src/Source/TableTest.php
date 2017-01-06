@@ -20,14 +20,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals(['\ActiveRecord\Table', ['static' => false, 'value' => null]], $classDescription['properties']['table']);
+        $this->assertEquals(['array', ['static' => false, 'value' => null]], $classDescription['properties']['values']);
 
         $this->assertEquals('\ActiveRecord\Table', $classDescription['methods']['__construct']['parameters']['table']);
         $this->assertEquals('array', $classDescription['methods']['__construct']['parameters']['values']);
         $this->assertFalse($classDescription['methods']['__construct']['static']);
         $this->assertEquals('$this->table = $table;', $classDescription['methods']['__construct']['body'][0]);
-        $this->assertEquals('foreach ($values as $columnIdentifier => $value) {', $classDescription['methods']['__construct']['body'][1]);
-        $this->assertEquals('    $this->{$this->table->transformColumnToProperty($columnIdentifier)} = $value;', $classDescription['methods']['__construct']['body'][2]);
-        $this->assertEquals('}', $classDescription['methods']['__construct']['body'][3]);
+        $this->assertEquals('$this->values = $values;', $classDescription['methods']['__construct']['body'][1]);
 
 
         $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
@@ -66,8 +65,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
         $this->assertFalse($classDescription['methods']['__set']['static']);
 
-        $this->assertEquals('if (property_exists($this, $this->table->transformColumnToProperty($property))) {', $classDescription['methods']['__set']['body'][0]);
-        $this->assertEquals('$this->{$this->table->transformColumnToProperty($property)} = $value;', $classDescription['methods']['__set']['body'][1]);
+        $this->assertEquals('if (array_key_exists($property, $this->values)) {', $classDescription['methods']['__set']['body'][0]);
+        $this->assertEquals('$this->values[$property] = $value;', $classDescription['methods']['__set']['body'][1]);
         $this->assertEquals('$this->table->update("MyTable", [$property => $this->__get($property)], $this->primaryKey());', $classDescription['methods']['__set']['body'][2]);
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][3]);
     }
@@ -93,7 +92,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['__get']['parameters']['property'], 'string');
         $this->assertFalse($classDescription['methods']['__get']['static']);
 
-        $this->assertEquals('return $this->{$this->table->transformColumnToProperty($property)};', $classDescription['methods']['__get']['body'][0]);
+        $this->assertEquals('return $this->values[$property];', $classDescription['methods']['__get']['body'][0]);
     }
 
     public function testDescribe_When_Default_Expect_DeleteMethod()
