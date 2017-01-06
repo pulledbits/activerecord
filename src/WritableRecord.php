@@ -3,10 +3,10 @@
 namespace ActiveRecord;
 
 
-interface Record {
+interface WritableRecord {
 
     /**
-     * @return \ActiveRecord\Record[]
+     * @return \ActiveRecord\WritableRecord[]
      */
     public function delete();
 

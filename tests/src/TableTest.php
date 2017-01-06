@@ -6,7 +6,7 @@
  * Time: 15:16
  */
 namespace Test\Record {
-    class activiteit implements \ActiveRecord\Record {
+    class activiteit implements \ActiveRecord\WritableRecord {
 
         /**
          */
@@ -18,7 +18,7 @@ namespace Test\Record {
             return 'newName';
         }
     }
-    class thema implements \ActiveRecord\Record {
+    class thema implements \ActiveRecord\WritableRecord {
 
         /**
          */
