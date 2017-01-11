@@ -33,8 +33,18 @@ class Table
         return $this->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
     }
 
+    private function prepareParameters(string $type, array $parameters) {
+        $namedParameters = $sql = [];
+        foreach ($parameters as $localColumn => $value) {
+            $namedParameter = ":" . sha1($type . '_' . $localColumn);
+            $sql[$localColumn] = $localColumn . " = " . $namedParameter;
+            $namedParameters[$namedParameter] = $value;
+        }
+        return [$sql, $namedParameters];
+    }
+
     private function makeWhereCondition(array $whereParameters, array &$namedParameters) {
-        list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
+        list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
         if (count($where) === 0) {
             return "";
         }
@@ -56,14 +66,14 @@ class Table
     }
 
     public function insert(array $values) {
-        list($insertValues, $namedParameters) = $this->schema->prepareParameters('values', $values);
+        list($insertValues, $namedParameters) = $this->prepareParameters('values', $values);
         $query = "INSERT INTO " . $this->identifier . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($namedParameters)) . ")";
         $this->schema->execute($query, $namedParameters);
         return $this->select(array_keys($values), $values);
     }
 
     public function update(array $setParameters, array $whereParameters) {
-        list($set, $setNamedParameters) = $this->schema->prepareParameters('set', $setParameters);
+        list($set, $setNamedParameters) = $this->prepareParameters('set', $setParameters);
 
         $namedParameters = [];
         $query = "UPDATE " . $this->identifier . " SET " . join(", ", $set) . $this->makeWhereCondition($whereParameters, $namedParameters);

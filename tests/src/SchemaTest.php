@@ -34,12 +34,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('\Test\Record\activiteit', $this->object->transformTableIdentifierToRecordClassIdentifier('activiteit'));
     }
 
-    public function testPrepareParameters_When_ColumnIdentifiersSupplied_Expect_ColumnIdPrefixedWithUnderscore()
-    {
-        $namedParameter = ':' . sha1('where_id');
-        $this->assertEquals([["id" => "id = " . $namedParameter], [$namedParameter => '1']], $this->object->prepareParameters('where', ['id' => '1']));
-    }
-
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $statement = $this->object->execute('SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1', [':param1' => '1']);
