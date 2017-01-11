@@ -28,11 +28,6 @@ class Table
         $this->schema = $schema;
     }
 
-    public function transformColumnToProperty($columnIdentifier)
-    {
-        return self::COLUMN_PROPERTY_ESCAPE . $columnIdentifier;
-    }
-
     public function select(array $columnIdentifiers, array $whereParameters)
     {
         return $this->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);

@@ -58,11 +58,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
         ])));
     }
 
-    public function testTransformColumnToProperty_When_ColumnIdentifierSupplied_Expect_ColumnIdPrefixedWithUnderscore()
-    {
-        $this->assertEquals("_id", $this->object->transformColumnToProperty('id'));
-    }
-
     public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
     {
         $records = $this->object->select(['id', 'name'], []);
