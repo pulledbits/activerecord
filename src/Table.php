@@ -33,23 +33,43 @@ class Table
         return $this->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
     }
 
-    private function prepareParameters(string $type, array $parameters) {
-        $namedParameters = $sql = [];
+    const PP_COLUMN = 'column';
+    const PP_VALUE = 'value';
+    const PP_SQL = 'sql';
+    const PP_PARAM = 'parameter';
+    const PP_PARAMS = 'parameters';
+
+    private function prepareParameters(array $parameters) {
+        $preparedParameters = [];
         foreach ($parameters as $localColumn => $value) {
-            $namedParameter = ":" . sha1($type . '_' . $localColumn);
-            $sql[$localColumn] = $localColumn . " = " . $namedParameter;
-            $namedParameters[$namedParameter] = $value;
+            $preparedParameters[] = [
+                self::PP_COLUMN => $localColumn,
+                self::PP_VALUE => $value,
+                self::PP_PARAM => ":" . uniqid()
+            ];
         }
-        return [$sql, $namedParameters];
+        return $preparedParameters;
     }
 
-    private function makeWhereCondition(array $whereParameters, array &$namedParameters) {
-        list($where, $namedWhereParameters) = $this->prepareParameters('where', $whereParameters);
-        $namedParameters = array_merge($namedParameters, $namedWhereParameters);
-        if (count($where) === 0) {
-            return "";
+    private function extract(string $type, array $preparedParameters) {
+        return array_map(function(array $preparedParameters) use ($type) { return $preparedParameters[$type]; }, $preparedParameters);
+    }
+    private function extractParameters(array $preparedParameters) {
+        return array_combine($this->extract(self::PP_PARAM, $preparedParameters), $this->extract(self::PP_VALUE, $preparedParameters));
+    }
+    private function extractParametersSQL(array $preparedParameters) {
+        return array_map(function($preparedParameter) { return $preparedParameter[self::PP_COLUMN] . " = " . $preparedParameter[self::PP_PARAM]; }, $preparedParameters);
+    }
+
+    private function makeWhereCondition(array $whereParameters) {
+        $preparedParameters = $this->prepareParameters($whereParameters);
+        if (count($preparedParameters) === 0) {
+            return [self::PP_SQL => '', self::PP_PARAMS => []];
         }
-        return " WHERE " . join(" AND ", $where);
+        return [
+            self::PP_SQL => " WHERE " . join(" AND ", $this->extractParametersSQL($preparedParameters)),
+            self::PP_PARAMS => $this->extractParameters($preparedParameters)
+        ];
     }
 
     private function fetchRecord($values) {
@@ -59,36 +79,28 @@ class Table
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        $namedParameters = [];
-        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier . $this->makeWhereCondition($whereParameters, $namedParameters);
-        $statement = $this->schema->execute($query, $namedParameters);
+        $where = $this->makeWhereCondition($whereParameters);
+        $statement = $this->schema->execute("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier . $where[self::PP_SQL], $where[self::PP_PARAMS]);
         return array_map(array($this, 'fetchRecord'), $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function insert(array $values) {
-        list($insertValues, $namedParameters) = $this->prepareParameters('values', $values);
-        $query = "INSERT INTO " . $this->identifier . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($namedParameters)) . ")";
-        $this->schema->execute($query, $namedParameters);
+        $preparedParameters = $this->prepareParameters($values);
+        $this->schema->execute("INSERT INTO " . $this->identifier . " (" . join(', ', $this->extract(self::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(self::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
         return $this->select(array_keys($values), $values);
     }
 
     public function update(array $setParameters, array $whereParameters) {
-        list($set, $namedParameters) = $this->prepareParameters('set', $setParameters);
-
-        $query = "UPDATE " . $this->identifier . " SET " . join(", ", $set) . $this->makeWhereCondition($whereParameters, $namedParameters);
-
-        $this->schema->execute($query, $namedParameters);
-
+        $preparedParameters = $this->prepareParameters($setParameters);
+        $where = $this->makeWhereCondition($whereParameters);
+        $this->schema->execute("UPDATE " . $this->identifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)) . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
         return $this->select(array_keys($setParameters), $whereParameters);
     }
 
     public function delete(array $whereParameters) {
         $records = $this->select(array_keys($whereParameters), $whereParameters);
-
-        $namedParameters = [];
-        $query = "DELETE FROM " . $this->identifier . $this->makeWhereCondition($whereParameters, $namedParameters);
-        $this->schema->execute($query, $namedParameters);
-
+        $where = $this->makeWhereCondition($whereParameters);
+        $this->schema->execute("DELETE FROM " . $this->identifier . $where[self::PP_SQL], $where[self::PP_PARAMS]);
         return $records;
     }
 }
