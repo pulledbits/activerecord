@@ -40,24 +40,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([["id" => "id = " . $namedParameter], [$namedParameter => '1']], $this->object->prepareParameters('where', ['id' => '1']));
     }
 
-    public function testMakeWhereCondition_When_NoColumnIdentifiersAndValuesSupplied_Expect_NoProperSQLWhereConditionAndNamedParameters()
-    {
-        $namedParameters = [];
-        $this->assertEquals("", $this->object->makeWhereCondition([], $namedParameters));
-        $this->assertCount(0, $namedParameters);
-    }
-
-    public function testMakeWhereCondition_When_ColumnIdentifiersAndValuesSupplied_Expect_ProperSQLWhereConditionAndNamedParameters()
-    {
-        $namedParameterId = ':' . sha1('where_id');
-        $namedParameterName = ':' . sha1('where_name');
-
-        $namedParameters = [];
-        $this->assertEquals(" WHERE id = $namedParameterId AND name = $namedParameterName", $this->object->makeWhereCondition(['id' => '1', 'name' => 'MYName'], $namedParameters));
-        $this->assertEquals('1', $namedParameters[$namedParameterId]);
-        $this->assertEquals('MYName', $namedParameters[$namedParameterName]);
-    }
-
     public function testExecute_When_WhenProperQueryWithNamedParametersSupplied_Expect_PDOStatementWithFiveRecords()
     {
         $statement = $this->object->execute('SELECT id AS _id, name AS _name FROM activiteit WHERE id = :param1', [':param1' => '1']);

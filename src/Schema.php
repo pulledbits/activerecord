@@ -39,15 +39,6 @@ class Schema
         }
         return [$sql, $namedParameters];
     }
-
-    public function makeWhereCondition(array $whereParameters, array &$namedParameters) {
-        list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
-        if (count($where) === 0) {
-            return "";
-        }
-        return " WHERE " . join(" AND ", $where);
-    }
-
     public function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);

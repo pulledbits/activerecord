@@ -33,10 +33,19 @@ class Table
         return $this->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
     }
 
+    private function makeWhereCondition(array $whereParameters, array &$namedParameters) {
+        list($where, $namedParameters) = $this->schema->prepareParameters('where', $whereParameters);
+        if (count($where) === 0) {
+            return "";
+        }
+        return " WHERE " . join(" AND ", $where);
+    }
+
+
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
         $namedParameters = [];
-        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier . $this->makeWhereCondition($whereParameters, $namedParameters);
         $statement = $this->schema->execute($query, $namedParameters);
 
         $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
@@ -57,7 +66,7 @@ class Table
         list($set, $setNamedParameters) = $this->schema->prepareParameters('set', $setParameters);
 
         $namedParameters = [];
-        $query = "UPDATE " . $this->identifier . " SET " . join(", ", $set) . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "UPDATE " . $this->identifier . " SET " . join(", ", $set) . $this->makeWhereCondition($whereParameters, $namedParameters);
 
         $this->schema->execute($query, array_merge($setNamedParameters, $namedParameters));
 
@@ -68,7 +77,7 @@ class Table
         $records = $this->select(array_keys($whereParameters), $whereParameters);
 
         $namedParameters = [];
-        $query = "DELETE FROM " . $this->identifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $query = "DELETE FROM " . $this->identifier . $this->makeWhereCondition($whereParameters, $namedParameters);
         $this->schema->execute($query, $namedParameters);
 
         return $records;
