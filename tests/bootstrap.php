@@ -69,7 +69,7 @@ namespace ActiveRecord\Test {
         });
     }
 
-    function createMockTable(string $tableIdentifier, array $columns)
+    function createMockTable(string $tableIdentifier, array $columns) : \Doctrine\DBAL\Schema\Table
     {
         return new class($tableIdentifier, $columns) extends \Doctrine\DBAL\Schema\Table
         {
@@ -145,6 +145,25 @@ namespace ActiveRecord\Test {
         };
     }
 
+    function createMockPDOStatement(array $results) {
+        return new class($results) extends \PDOStatement
+        {
+            private $results;
+
+            public function __construct(array $results)
+            {
+                $this->results = $results;
+            }
+
+            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+            {
+                if ($how === \PDO::FETCH_ASSOC) {
+                    return $this->results;
+                }
+            }
+        };
+    }
+
 
     function createMockPDO(string $query, array $results)
     {
@@ -163,22 +182,7 @@ namespace ActiveRecord\Test {
             public function prepare($query, $options = null)
             {
                 if (preg_match($this->query, $query, $match) === 1) {
-                    return new class($this->results) extends \PDOStatement
-                    {
-                        private $results;
-
-                        public function __construct(array $results)
-                        {
-                            $this->results = $results;
-                        }
-
-                        public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
-                        {
-                            if ($how === \PDO::FETCH_ASSOC) {
-                                return $this->results;
-                            }
-                        }
-                    };
+                    return createMockPDOStatement($this->results);
                 }
             }
         };
@@ -201,22 +205,7 @@ namespace ActiveRecord\Test {
             {
                 foreach ($this->queries as $expectedQuery => $results) {
                     if (preg_match($expectedQuery, $query, $match) === 1) {
-                        return new class($results) extends \PDOStatement
-                        {
-                            private $results;
-
-                            public function __construct(array $results)
-                            {
-                                $this->results = $results;
-                            }
-
-                            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
-                            {
-                                if ($how === \PDO::FETCH_ASSOC) {
-                                    return $this->results;
-                                }
-                            }
-                        };
+                        return createMockPDOStatement($results);
                     }
                 }
             }
