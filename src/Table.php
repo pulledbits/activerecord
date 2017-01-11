@@ -47,9 +47,9 @@ class Table
     }
 
     public function insert(array $values) {
-        list($insertValues, $insertNamedParameters) = $this->schema->prepareParameters('values', $values);
-        $query = "INSERT INTO " . $this->identifier . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($insertNamedParameters)) . ")";
-        $statement = $this->schema->execute($query, $insertNamedParameters);
+        list($insertValues, $namedParameters) = $this->schema->prepareParameters('values', $values);
+        $query = "INSERT INTO " . $this->identifier . " (" . join(', ', array_keys($insertValues)) . ") VALUES (" . join(', ', array_keys($namedParameters)) . ")";
+        $this->schema->execute($query, $namedParameters);
         return $this->select(array_keys($values), $values);
     }
 
@@ -65,13 +65,11 @@ class Table
     }
 
     public function delete(array $whereParameters) {
-        $namedParameters = [];
-        $query = "DELETE FROM " . $this->identifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
-
-
         $records = $this->select(array_keys($whereParameters), $whereParameters);
 
-        $statement = $this->schema->execute($query, $namedParameters);
+        $namedParameters = [];
+        $query = "DELETE FROM " . $this->identifier . $this->schema->makeWhereCondition($whereParameters, $namedParameters);
+        $this->schema->execute($query, $namedParameters);
 
         return $records;
     }
