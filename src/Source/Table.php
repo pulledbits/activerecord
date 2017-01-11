@@ -81,11 +81,8 @@ final class Table
         return $this->describeMethod(false, [], $query);
     }
 
-    private function makeArrayMapping(string $keyIdentifier, string $variableIdentifier) : string {
-        return '\'' . $keyIdentifier . '\' => ' . $variableIdentifier;
-    }
     private function makeArrayMappingToProperty(string $keyIdentifier, string $propertyIdentifier) {
-        return $this->makeArrayMapping($keyIdentifier, '$this->__get(\'' . $propertyIdentifier . '\')');
+        return '\'' . $keyIdentifier . '\' => ' . '$this->__get(\'' . $propertyIdentifier . '\')';
     }
 
     
