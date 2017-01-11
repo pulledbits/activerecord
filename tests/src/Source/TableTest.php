@@ -27,16 +27,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
     {
-        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable', [
-            'name' => [
-                'primaryKey' => true
-            ],
-            'birthdate' => [
-                'primaryKey' => true
-            ]
-        ]);
-
-        $classDescription = $this->table->describe($dbalTable);
+        $classDescription = $this->table->describe($this->createMyTable());
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
 
