@@ -44,7 +44,8 @@ class Table
     }
 
     private function makeWhereCondition(array $whereParameters, array &$namedParameters) {
-        list($where, $namedParameters) = $this->prepareParameters('where', $whereParameters);
+        list($where, $namedWhereParameters) = $this->prepareParameters('where', $whereParameters);
+        $namedParameters = array_merge($namedParameters, $namedWhereParameters);
         if (count($where) === 0) {
             return "";
         }
@@ -72,12 +73,11 @@ class Table
     }
 
     public function update(array $setParameters, array $whereParameters) {
-        list($set, $setNamedParameters) = $this->prepareParameters('set', $setParameters);
+        list($set, $namedParameters) = $this->prepareParameters('set', $setParameters);
 
-        $namedParameters = [];
         $query = "UPDATE " . $this->identifier . " SET " . join(", ", $set) . $this->makeWhereCondition($whereParameters, $namedParameters);
 
-        $this->schema->execute($query, array_merge($setNamedParameters, $namedParameters));
+        $this->schema->execute($query, $namedParameters);
 
         return $this->select(array_keys($setParameters), $whereParameters);
     }
