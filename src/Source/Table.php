@@ -37,7 +37,7 @@ final class Table
 
     private function describeSetterMethod() {
         return $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
-            'if (count($this->table->update([$property => $this->__get($property)], $this->primaryKey())) > 0) {',
+            'if (count($this->table->update([$property => $this->values[$property]], $this->primaryKey())) > 0) {',
             '$this->values[$property] = $value;',
             '}'
         ]);
@@ -74,7 +74,7 @@ final class Table
 
     private function makeArrayMappingToProperty(array $keyColumns, array $propertyColumns) : array {
         return array_map(function($keyIdentifier, $propertyIdentifier) {
-            return '\'' . $keyIdentifier . '\' => ' . '$this->__get(\'' . $propertyIdentifier . '\')';
+            return '\'' . $keyIdentifier . '\' => ' . '$this->values[\'' . $propertyIdentifier . '\']';
         }, $keyColumns, $propertyColumns);
     }
 
