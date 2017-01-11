@@ -11,8 +11,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->table = new Table('\\Database\\Record');
     }
 
-    private function createMyTable() : \Doctrine\DBAL\Schema\Table {
-        return \ActiveRecord\Test\createMockTable('MyTable', [
+    public function testDescribe_When_DefaultState_Expect_ClassDescription()
+    {
+        $classDescription = $this->table->describe(\ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -22,12 +23,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             'address' => [
                 'primaryKey' => false
             ]
-        ]);
-    }
-
-    public function testDescribe_When_DefaultState_Expect_ArrayWithClassIdentifier()
-    {
-        $classDescription = $this->table->describe($this->createMyTable());
+        ]));
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
 
@@ -44,36 +40,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
         $this->assertEquals('return [\'name\' => $this->__get(\'name\'), \'birthdate\' => $this->__get(\'birthdate\')];', $classDescription['methods']['primaryKey']['body'][0]);
 
-    }
-
-    public function testDescribe_When_Default_Expect___setMethod()
-    {
-        $classDescription = $this->table->describe($this->createMyTable());
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
-
         $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
         $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
         $this->assertFalse($classDescription['methods']['__set']['static']);
-
         $this->assertEquals('if (count($this->table->update([$property => $this->__get($property)], $this->primaryKey())) > 0) {', $classDescription['methods']['__set']['body'][0]);
         $this->assertEquals('$this->values[$property] = $value;', $classDescription['methods']['__set']['body'][1]);
         $this->assertEquals('}', $classDescription['methods']['__set']['body'][2]);
-    }
-
-    public function testDescribe_When_Default_Expect___getMethod()
-    {
-        $classDescription = $this->table->describe($this->createMyTable());
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['methods']['__get']['parameters']['property'], 'string');
         $this->assertFalse($classDescription['methods']['__get']['static']);
-
         $this->assertEquals('return $this->values[$property];', $classDescription['methods']['__get']['body'][0]);
-    }
-
-    public function testDescribe_When_Default_Expect_DeleteMethod()
-    {
-        $classDescription = $this->table->describe($this->createMyTable());
 
         $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
         $this->assertFalse($classDescription['methods']['delete']['static']);
