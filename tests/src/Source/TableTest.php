@@ -4,16 +4,16 @@ namespace ActiveRecord\Source;
 class TableTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $table;
+    private $object;
 
     protected function setUp()
     {
-        $this->table = new Table('\\Database\\Record');
+        $this->object = new Table('\\Database\\Record');
     }
 
     public function testDescribe_When_DefaultState_Expect_ClassDescription()
     {
-        $classDescription = $this->table->describe(\ActiveRecord\Test\createMockTable('MyTable', [
+        $classDescription = $this->object->describe(\ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -93,7 +93,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
     {
         $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
-        $classDescription = $this->table->describe($dbalTable);
+        $classDescription = $this->object->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
 }
