@@ -4,6 +4,13 @@ namespace ActiveRecord\Source;
 class TableTest extends \PHPUnit_Framework_TestCase
 {
 
+    private $table;
+
+    protected function setUp()
+    {
+        $this->table = new Table('\\Database\\Record');
+    }
+
     private function createMyTable() : \Doctrine\DBAL\Schema\Table {
         return \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
@@ -29,8 +36,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($dbalTable);
+        $classDescription = $this->table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
 
@@ -53,15 +59,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
     {
         $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
 
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($dbalTable);
+        $classDescription = $this->table->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
 
     public function testDescribe_When_Default_Expect___setMethod()
     {
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($this->createMyTable());
+        $classDescription = $this->table->describe($this->createMyTable());
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
@@ -75,8 +79,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect___getMethod()
     {
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($this->createMyTable());
+        $classDescription = $this->table->describe($this->createMyTable());
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
 
         $this->assertEquals($classDescription['methods']['__get']['parameters']['property'], 'string');
@@ -87,8 +90,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_Default_Expect_DeleteMethod()
     {
-        $table = new Table('\\Database\\Record');
-        $classDescription = $table->describe($this->createMyTable());
+        $classDescription = $this->table->describe($this->createMyTable());
 
         $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
         $this->assertFalse($classDescription['methods']['delete']['static']);
