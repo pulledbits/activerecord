@@ -22,7 +22,26 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ],
             'address' => [
                 'primaryKey' => false
-            ]
+            ],
+
+            'role_id' => [
+                'primaryKey' => false,
+                'references' => [
+                    'fk_othertable_role' => ['OtherTable', 'id']
+                ]
+            ],
+            'role2_id' => [
+                'primaryKey' => false,
+                'references' => [
+                    'fk_anothertable_role' => ['AntoherTable', 'id']
+                ]
+            ],
+            'extra_column_id' => [
+                'primaryKey' => false,
+                'references' => [
+                    'fk_anothertable_role' => ['AntoherTable', 'column_id']
+                ]
+            ],
         ]));
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
@@ -54,40 +73,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
         $this->assertFalse($classDescription['methods']['delete']['static']);
         $this->assertEquals('return $this->table->delete($this->primaryKey());', $classDescription['methods']['delete']['body'][0]);
-    }
-    
-    public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
-    {
-        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
-        $classDescription = $this->table->describe($dbalTable);
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
-    }
-    
-    public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
-    {
-        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', [
-            'role_id' => [
-                'primaryKey' => true,
-                'references' => [
-                    'fk_othertable_role' => ['OtherTable', 'id']
-                ]
-            ],
-            'role2_id' => [
-                'primaryKey' => false,
-                'references' => [
-                    'fk_anothertable_role' => ['AntoherTable', 'id']
-                ]
-            ],
-            'extra_column_id' => [
-                'primaryKey' => false,
-                'references' => [
-                    'fk_anothertable_role' => ['AntoherTable', 'column_id']
-                ]
-            ],
-        ]);
 
-        $table = new Table('\\Database');
-        $classDescription = $table->describe($dbalTable);
+
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
         $this->assertFalse($classDescription['methods']['fetchByFkOthertableRole']['static']);
 
@@ -101,5 +88,12 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('return $this->table->selectFrom("AntoherTable", [\'id\', \'column_id\'], [', $classDescription['methods']['fetchByFkAnothertableRole']['body'][0]);
         $this->assertEquals(join(',' . PHP_EOL, ['\'id\' => $this->__get(\'role2_id\')', '\'column_id\' => $this->__get(\'extra_column_id\')']), $classDescription['methods']['fetchByFkAnothertableRole']['body'][1]);
         $this->assertEquals(']);', $classDescription['methods']['fetchByFkAnothertableRole']['body'][2]);
+    }
+    
+    public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
+    {
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
+        $classDescription = $this->table->describe($dbalTable);
+        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
 }
