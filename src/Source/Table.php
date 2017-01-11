@@ -52,9 +52,7 @@ final class Table
     private function describePrimaryKeyMethod(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) {
         $primaryKeyWhere = [];
         if ($dbalSchemaTable->hasPrimaryKey()) {
-            foreach ($dbalSchemaTable->getPrimaryKeyColumns() as $columnIdentifier) {
-                $primaryKeyWhere[] = $this->makeArrayMappingToProperty($columnIdentifier, $columnIdentifier);
-            }
+            $primaryKeyWhere = $this->makeArrayMappingToProperty($dbalSchemaTable->getPrimaryKeyColumns(), $dbalSchemaTable->getPrimaryKeyColumns());
         }
         return $this->describeMethod(false, [], [
             'return [' . join(', ', $primaryKeyWhere) . '];'
@@ -69,20 +67,18 @@ final class Table
 
     private function describeFetchByFKMethod(\Doctrine\DBAL\Schema\ForeignKeyConstraint $foreignKey) {
         $fkLocalColumns = $foreignKey->getLocalColumns();
-        $where = array_combine($foreignKey->getForeignColumns(), $fkLocalColumns);
-
-        $whereParameters = [];
-        foreach ($where as $referencedColumnName => $parameterIdentifier) {
-            $whereParameters[] = $this->makeArrayMappingToProperty($referencedColumnName, $parameterIdentifier);
-        }
-
+        $whereParameters = $this->makeArrayMappingToProperty($foreignKey->getForeignColumns(), $fkLocalColumns);
         $query = ['return $this->table->selectFrom("' . $foreignKey->getForeignTableName() . '", [\'' . join('\', \'', $foreignKey->getForeignColumns()) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
 
         return $this->describeMethod(false, [], $query);
     }
 
-    private function makeArrayMappingToProperty(string $keyIdentifier, string $propertyIdentifier) {
-        return '\'' . $keyIdentifier . '\' => ' . '$this->__get(\'' . $propertyIdentifier . '\')';
+    private function makeArrayMappingToProperty(array $keyColumns, array $propertyColumns) : array {
+        $php = [];
+        foreach (array_combine($keyColumns, $propertyColumns) as $keyIdentifier => $propertyIdentifier) {
+            $php[] = '\'' . $keyIdentifier . '\' => ' . '$this->__get(\'' . $propertyIdentifier . '\')';
+        }
+        return $php;
     }
 
     
