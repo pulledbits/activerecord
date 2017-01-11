@@ -45,14 +45,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('return [\'name\' => $this->__get(\'name\'), \'birthdate\' => $this->__get(\'birthdate\')];', $classDescription['methods']['primaryKey']['body'][0]);
 
     }
-    
-    public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
-    {
-        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
-
-        $classDescription = $this->table->describe($dbalTable);
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
-    }
 
     public function testDescribe_When_Default_Expect___setMethod()
     {
@@ -86,8 +78,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
         $this->assertFalse($classDescription['methods']['delete']['static']);
         $this->assertEquals('return $this->table->delete($this->primaryKey());', $classDescription['methods']['delete']['body'][0]);
-
-
+    }
+    
+    public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
+    {
+        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
+        $classDescription = $this->table->describe($dbalTable);
+        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
     
     public function testDescribe_When_ForeignKeysAvailable_Expect_ArrayWithClassForeignKeys()
