@@ -66,19 +66,15 @@ final class Table
     }
 
     private function describeFetchByFKMethod(\Doctrine\DBAL\Schema\ForeignKeyConstraint $foreignKey) {
-        $fkLocalColumns = $foreignKey->getLocalColumns();
-        $whereParameters = $this->makeArrayMappingToProperty($foreignKey->getForeignColumns(), $fkLocalColumns);
+        $whereParameters = $this->makeArrayMappingToProperty($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns());
         $query = ['return $this->table->selectFrom("' . $foreignKey->getForeignTableName() . '", [\'' . join('\', \'', $foreignKey->getForeignColumns()) . '\'], [', join(',' . PHP_EOL, $whereParameters), ']);'];
-
         return $this->describeMethod(false, [], $query);
     }
 
     private function makeArrayMappingToProperty(array $keyColumns, array $propertyColumns) : array {
-        $php = [];
-        foreach (array_combine($keyColumns, $propertyColumns) as $keyIdentifier => $propertyIdentifier) {
-            $php[] = '\'' . $keyIdentifier . '\' => ' . '$this->__get(\'' . $propertyIdentifier . '\')';
-        }
-        return $php;
+        return array_map(function($keyIdentifier, $propertyIdentifier) {
+            return '\'' . $keyIdentifier . '\' => ' . '$this->__get(\'' . $propertyIdentifier . '\')';
+        }, $keyColumns, $propertyColumns);
     }
 
     
