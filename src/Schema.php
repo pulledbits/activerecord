@@ -30,7 +30,7 @@ class Schema
         return $this->targetNamespace . '\\' . $tableIdentfier;
     }
 
-    public function execute(string $query, array $namedParameters) : \PDOStatement
+    private function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
         foreach ($namedParameters as $namedParameter => $value) {
@@ -38,6 +38,12 @@ class Schema
         }
         $statement->execute();
         return $statement;
+    }
+
+    private function executeWhere(string $query, array $whereParameters) : \PDOStatement
+    {
+        $where = $this->makeWhereCondition($whereParameters);
+        return $this->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
     }
 
     const PP_COLUMN = 'column';
@@ -76,12 +82,6 @@ class Schema
             self::PP_SQL => " WHERE " . join(" AND ", $this->extractParametersSQL($preparedParameters)),
             self::PP_PARAMS => $this->extractParameters($preparedParameters)
         ];
-    }
-
-    public function executeWhere(string $query, array $whereParameters) : \PDOStatement
-    {
-        $where = $this->makeWhereCondition($whereParameters);
-        return $this->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
     }
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array
