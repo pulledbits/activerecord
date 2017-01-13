@@ -62,14 +62,12 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {
-        $statement = $this->object->updateWhere('activiteit', ['werkvorm' => 'My Name'], ['id' => '3']);
-        $this->assertEquals(1, $statement->rowCount());
+        $this->assertEquals(1, $this->object->updateWhere('activiteit', ['werkvorm' => 'My Name'], ['id' => '3']));
 
     }
 
     public function testInsertValue_When_DefaultState_Expect_SQLInsertQueryWithPreparedValues() {
-        $statement = $this->object->insertValues('activiteit', ['werkvorm' => 'My Name', 'id' => '3']);
-        $this->assertEquals(1, $statement->rowCount());
+        $this->assertEquals(1, $this->object->insertValues('activiteit', ['werkvorm' => 'My Name', 'id' => '3']));
     }
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {

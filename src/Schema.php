@@ -84,19 +84,21 @@ class Schema
         return $this->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
     }
 
-    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter)
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array
     {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
         return array_map($recordConverter, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
-    public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) {
+    public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
         $preparedParameters = $this->prepareParameters($setParameters);
-        return $this->executeWhere("UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);
+        $statement = $this->executeWhere("UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);
+        return $statement->rowCount();
     }
 
-    public function insertValues(string $tableIdentifier, array $values) {
+    public function insertValues(string $tableIdentifier, array $values) : int {
         $preparedParameters = $this->prepareParameters($values);
-        return $this->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
+        $statement = $this->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
+        return $statement->rowCount();
     }
 }
