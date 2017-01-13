@@ -102,7 +102,7 @@ class Schema
         return $statement->rowCount();
     }
 
-    public function deleteFrom(string $tableIdentifier, array $whereParameters) {
+    public function deleteFrom(string $tableIdentifier, array $whereParameters) : int {
         $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $whereParameters);
         return $statement->rowCount();
     }
