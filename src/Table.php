@@ -49,8 +49,7 @@ class Table
     }
 
     public function update(array $setParameters, array $whereParameters) {
-        $preparedParameters = $this->schema->prepareParameters($setParameters);
-        $this->schema->executeWhere("UPDATE " . $this->identifier . " SET " . join(", ", $this->schema->extractParametersSQL($preparedParameters)), $whereParameters);
+        $this->schema->updateWhere($this->identifier, $setParameters, $whereParameters);
         return $this->select(array_keys($setParameters), $whereParameters);
     }
 
