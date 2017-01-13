@@ -233,7 +233,7 @@ namespace ActiveRecord\Test {
                         return createMockPDOStatement($results);
                     }
                 }
-                return;
+                throw new \PHPUnit_Framework_AssertionFailedError('Unexpected query \'' . $query . '\'');
             }
         };
     }

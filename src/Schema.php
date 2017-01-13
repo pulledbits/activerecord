@@ -88,4 +88,9 @@ class Schema
         $preparedParameters = $this->prepareParameters($setParameters);
         return $this->executeWhere("UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);
     }
+
+    public function insertValues(string $tableIdentifier, array $values) {
+        $preparedParameters = $this->prepareParameters($values);
+        return $this->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
+    }
 }
