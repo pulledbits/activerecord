@@ -12,7 +12,7 @@ namespace ActiveRecord;
 class Table
 {
     /**
-     * @var \ActiveRecord\Schema
+     * @var string
      */
     private $identifier;
 
