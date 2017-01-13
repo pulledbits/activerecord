@@ -145,7 +145,16 @@ namespace ActiveRecord\Test {
         };
     }
 
-    function createMockPDOStatement(array $results) {
+    function createMockPDOStatement($results) {
+        if (is_array($results)) {
+            return createMockPDOStatementFetchAll($results);
+        } elseif (is_int($results)) {
+            return createMockPDOStatementRowCount($results);
+        }
+        return;
+    }
+
+    function createMockPDOStatementFetchAll(array $results) {
         return new class($results) extends \PDOStatement
         {
             private $results;
@@ -160,6 +169,23 @@ namespace ActiveRecord\Test {
                 if ($how === \PDO::FETCH_ASSOC) {
                     return $this->results;
                 }
+            }
+        };
+    }
+
+    function createMockPDOStatementRowCount(int $results) {
+        return new class($results) extends \PDOStatement
+        {
+            private $results;
+
+            public function __construct(int $results)
+            {
+                $this->results = $results;
+            }
+
+            public function rowCount()
+            {
+                return $this->results;
             }
         };
     }
@@ -194,7 +220,6 @@ namespace ActiveRecord\Test {
         {
 
             private $queries;
-            private $results;
 
             public function __construct(array $queries)
             {
@@ -208,6 +233,7 @@ namespace ActiveRecord\Test {
                         return createMockPDOStatement($results);
                     }
                 }
+                return;
             }
         };
     }

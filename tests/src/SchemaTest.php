@@ -29,7 +29,12 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ],
             '/^SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE werkvorm = :\w+$/' => [
                 []
-            ]
+            ],
+            '/^UPDATE activiteit SET werkvorm = :\w+ WHERE id = :\w+$/' => 1,
+            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+/' => [
+                [],
+                []
+            ],
         ]));
     }
 
@@ -48,6 +53,12 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testExecuteWhere_When_DefaultState_Expect_SQLQueryWithWhereStatementAndParameters() {
         $statement = $this->object->executeWhere('SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit', ['werkvorm' => 'My Name']);
         $this->assertCount(1, $statement->fetchAll(\PDO::FETCH_ASSOC));
+
+    }
+
+    public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {
+        $statement = $this->object->updateWhere('activiteit', ['werkvorm' => 'My Name'], ['id' => '3']);
+        $this->assertEquals(1, $statement->rowCount());
 
     }
 }

@@ -83,4 +83,9 @@ class Schema
         $where = $this->makeWhereCondition($whereParameters);
         return $this->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
     }
+
+    public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) {
+        $preparedParameters = $this->prepareParameters($setParameters);
+        return $this->executeWhere("UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);
+    }
 }
