@@ -11,8 +11,6 @@ namespace ActiveRecord;
 
 class Table
 {
-    const COLUMN_PROPERTY_ESCAPE = '_';
-
     /**
      * @var \ActiveRecord\Schema
      */
