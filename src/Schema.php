@@ -84,6 +84,12 @@ class Schema
         return $this->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
     }
 
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter)
+    {
+        $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
+        return array_map($recordConverter, $statement->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
     public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) {
         $preparedParameters = $this->prepareParameters($setParameters);
         return $this->executeWhere("UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);

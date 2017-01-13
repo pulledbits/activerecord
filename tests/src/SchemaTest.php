@@ -32,6 +32,14 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ],
             '/^UPDATE activiteit SET werkvorm = :\w+ WHERE id = :\w+$/' => 1,
             '/^INSERT INTO activiteit \(werkvorm, id\) VALUES \(:\w+, :\w+\)$/' => 1,
+            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+/' => [
+                [
+                    'werkvorm' => 'Bla'
+                ],
+                [],
+                [],
+                []
+            ],
         ]));
     }
 
@@ -62,5 +70,14 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testInsertValue_When_DefaultState_Expect_SQLInsertQueryWithPreparedValues() {
         $statement = $this->object->insertValues('activiteit', ['werkvorm' => 'My Name', 'id' => '3']);
         $this->assertEquals(1, $statement->rowCount());
+    }
+
+    public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
+        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(array $values) {
+            return (object)$values;
+        });
+
+        $this->assertCount(4, $records);
+        $this->assertEquals('Bla', $records[0]->werkvorm);
     }
 }
