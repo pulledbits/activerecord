@@ -101,4 +101,9 @@ class Schema
         $statement = $this->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
         return $statement->rowCount();
     }
+
+    public function deleteFrom(string $tableIdentifier, array $whereParameters) {
+        $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $whereParameters);
+        return $statement->rowCount();
+    }
 }

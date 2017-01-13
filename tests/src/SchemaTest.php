@@ -40,6 +40,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
+            '/^DELETE FROM activiteit WHERE id = :\w+$/' => 1,
         ]));
     }
 
@@ -77,5 +78,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(4, $records);
         $this->assertEquals('Bla', $records[0]->werkvorm);
+    }
+
+    public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
+        $this->assertEquals(1, $this->object->deleteFrom('activiteit', ['id' => '3']));
     }
 }
