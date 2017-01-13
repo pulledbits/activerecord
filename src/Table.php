@@ -43,8 +43,7 @@ class Table
     }
 
     public function insert(array $values) {
-        $preparedParameters = $this->schema->prepareParameters($values);
-        $this->schema->execute("INSERT INTO " . $this->identifier . " (" . join(', ', $this->schema->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->schema->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->schema->extractParameters($preparedParameters));
+        $this->schema->insertValues($this->identifier, $values);
         return $this->select(array_keys($values), $values);
     }
 
