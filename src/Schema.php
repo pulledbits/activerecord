@@ -84,8 +84,7 @@ class Schema
         ];
     }
 
-    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array
-    {
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
         return array_map($recordConverter, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
