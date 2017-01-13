@@ -31,15 +31,12 @@ class Table
         return $this->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
     }
 
-    private function fetchRecord($values) {
-        $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
-        return new $recordClassIdentifier($this, $values);
-    }
-
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        $statement = $this->schema->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
-        return array_map(array($this, 'fetchRecord'), $statement->fetchAll(\PDO::FETCH_ASSOC));
+        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(array $values) {
+            $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
+            return new $recordClassIdentifier($this, $values);
+        });
     }
 
     public function insert(array $values) {
