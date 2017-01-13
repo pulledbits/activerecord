@@ -59,17 +59,6 @@ class Table
         return array_map(function($preparedParameter) { return $preparedParameter[self::PP_COLUMN] . " = " . $preparedParameter[self::PP_PARAM]; }, $preparedParameters);
     }
 
-    private function makeWhereCondition(array $whereParameters) {
-        $preparedParameters = $this->prepareParameters($whereParameters);
-        if (count($preparedParameters) === 0) {
-            return [self::PP_SQL => '', self::PP_PARAMS => []];
-        }
-        return [
-            self::PP_SQL => " WHERE " . join(" AND ", $this->extractParametersSQL($preparedParameters)),
-            self::PP_PARAMS => $this->extractParameters($preparedParameters)
-        ];
-    }
-
     private function fetchRecord($values) {
         $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
         return new $recordClassIdentifier($this, $values);
@@ -77,8 +66,7 @@ class Table
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        $where = $this->makeWhereCondition($whereParameters);
-        $statement = $this->schema->execute("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier . $where[self::PP_SQL], $where[self::PP_PARAMS]);
+        $statement = $this->schema->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
         return array_map(array($this, 'fetchRecord'), $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
@@ -90,15 +78,13 @@ class Table
 
     public function update(array $setParameters, array $whereParameters) {
         $preparedParameters = $this->prepareParameters($setParameters);
-        $where = $this->makeWhereCondition($whereParameters);
-        $this->schema->execute("UPDATE " . $this->identifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)) . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
+        $this->schema->executeWhere("UPDATE " . $this->identifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);
         return $this->select(array_keys($setParameters), $whereParameters);
     }
 
     public function delete(array $whereParameters) {
         $records = $this->select(array_keys($whereParameters), $whereParameters);
-        $where = $this->makeWhereCondition($whereParameters);
-        $this->schema->execute("DELETE FROM " . $this->identifier . $where[self::PP_SQL], $where[self::PP_PARAMS]);
+        $this->schema->executeWhere("DELETE FROM " . $this->identifier , $whereParameters);
         return $records;
     }
 }
