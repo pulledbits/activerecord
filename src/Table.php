@@ -51,7 +51,7 @@ class Table
 
     public function delete(array $whereParameters) {
         $records = $this->select(array_keys($whereParameters), $whereParameters);
-        $this->schema->executeWhere("DELETE FROM " . $this->identifier , $whereParameters);
+        $this->schema->deleteFrom($this->identifier , $whereParameters);
         return $records;
     }
 }
