@@ -38,8 +38,7 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 $generator = new CodeGenerator();
 
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
-$schemaDescription = $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace));
-foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
+$sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($generator, $recordsDirectory) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setInterfaces($recordClassDescription['interfaces']);
     $recordClass->setTraits($recordClassDescription['traits']);
@@ -60,6 +59,6 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
         $recordClass->setMethod($method);
     }
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
-}
+});
 
 echo 'Done' . PHP_EOL;

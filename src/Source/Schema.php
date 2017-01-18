@@ -23,15 +23,10 @@ class Schema
         $this->schemaManager = $schemaManager;
     }
 
-    public function describe(Table $sourceTable)
+    public function describe(Table $sourceTable, \Closure $tableHandler)
     {
-        $recordClasses = [];
         foreach ($this->schemaManager->listTables() as $table) {
-            $recordClasses[$table->getName()] = $sourceTable->describe($table);
+            $tableHandler($table->getName(), $sourceTable->describe($table));
         }
-
-        return [
-            'recordClasses' => $recordClasses
-        ];
     }
 }

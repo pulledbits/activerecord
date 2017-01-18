@@ -17,11 +17,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'MyTable' => []
         ]);
 
-        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
-
-
-        $this->assertCount(1, $schemaDescription['recordClasses']);
-        $this->assertEquals('\\Database\\Record\\MyTable', $schemaDescription['recordClasses']['MyTable']['identifier']);
+        $called = false;
+        $schema->describe(new Table('\\Database\\Record'), function(string $tableName, array $tableDescription) use (&$called) {
+            $this->assertEquals('\\Database\\Record\\MyTable', $tableDescription['identifier']);
+            $this->assertEquals('MyTable', $tableName);
+            $called = true;
+        });
+        $this->assertTrue($called);
     }
 
 }
