@@ -45,6 +45,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         ]));
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
+        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\WritableTrait');
 
         $this->assertEquals(['\ActiveRecord\Table', ['static' => false, 'value' => null]], $classDescription['properties']['table']);
         $this->assertEquals(['array', ['static' => false, 'value' => null]], $classDescription['properties']['values']);

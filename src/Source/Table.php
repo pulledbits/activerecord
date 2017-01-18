@@ -96,6 +96,7 @@ final class Table
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
             'interfaces' => ['\\ActiveRecord\\WritableRecord'],
+            'traits' => ['\\ActiveRecord\\Record\\WritableTrait'],
             'properties' => [
                 'table' => ['\ActiveRecord\Table', ['static' => false, 'value' => null]],
                 'values' => ['array', ['static' => false, 'value' => null]]
