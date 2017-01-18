@@ -94,7 +94,9 @@ class Schema
 
     public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
         $preparedParameters = $this->prepareParameters($setParameters);
-        $statement = $this->executeWhere("UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters)), $whereParameters);
+        $query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters));
+        $where = $this->makeWhereCondition($whereParameters);
+        $statement = $this->execute($query . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
         return $statement->rowCount();
     }
 
