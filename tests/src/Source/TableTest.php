@@ -13,7 +13,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_DefaultState_Expect_ClassDescription()
     {
-        $classDescription = $this->object->describe(\ActiveRecord\Test\createMockTable('MyTable', [
+        $mockTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true
             ],
@@ -42,7 +42,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     'fk_anothertable_role' => ['AntoherTable', 'column_id']
                 ]
             ],
-        ]));
+        ]);
+
+        $classDescription = $this->object->describe($mockTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
         $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\WritableTrait');
