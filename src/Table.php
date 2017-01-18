@@ -28,15 +28,12 @@ class Table
 
     public function select(array $columnIdentifiers, array $whereParameters)
     {
-        return $this->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
+        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
     }
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(array $values) use ($tableIdentifier) {
-            $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifier);
-            return new $recordClassIdentifier($this, $values);
-        });
+        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters);
     }
 
     public function insert(array $values) {
