@@ -84,9 +84,16 @@ class Schema
         ];
     }
 
-    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array {
+    private function recordConverter(string $tableIdentifier) {
+        return function(array $values) use ($tableIdentifier) {
+            $recordClassIdentifier = $this->transformTableIdentifierToRecordClassIdentifier($tableIdentifier);
+            return new $recordClassIdentifier($this, $values);
+        };
+    }
+
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
-        return array_map($recordConverter, $statement->fetchAll(\PDO::FETCH_ASSOC));
+        return array_map($this->recordConverter($tableIdentifier), $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
