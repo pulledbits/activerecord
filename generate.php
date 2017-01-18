@@ -19,9 +19,19 @@ if (file_exists($recordsDirectory) == false) {
     mkdir($recordsDirectory);
 }
 
+if ($_SERVER['argc'] === 4) {
+    $dburl = $_SERVER['argv'][3];
+} else {
+    $dbhost = readline('Please enter database hostname: ');
+    $dbname = readline('Please enter database name on ' . $dbhost . ': ');
+    $dbuser = readline('Please enter username for ' . $dbname . ': ');
+    $dbpass = readline('Please enter password for ' . $dbuser . '@' . $dbhost . '/' . $dbname . ': ');
+    $dburl = 'mysql://' . $dbuser . ':' . $dbpass . '@' . $dbhost . '/' . $dbname;
+}
+
 $config = new \Doctrine\DBAL\Configuration();
 $connectionParams = array(
-    'url' => 'mysql://teach:teach@localhost/teach'
+    'url' => $dburl
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
@@ -67,4 +77,4 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
 }
 
-echo 'Done';
+echo 'Done' . PHP_EOL;
