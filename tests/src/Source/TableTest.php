@@ -47,34 +47,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
         $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\WritableTrait');
 
-        $this->assertEquals(['\ActiveRecord\Table', ['static' => false, 'value' => null]], $classDescription['properties']['table']);
-        $this->assertEquals(['array', ['static' => false, 'value' => null]], $classDescription['properties']['values']);
-
-        $this->assertEquals('\ActiveRecord\Table', $classDescription['methods']['__construct']['parameters']['table']);
-        $this->assertEquals('array', $classDescription['methods']['__construct']['parameters']['values']);
-        $this->assertFalse($classDescription['methods']['__construct']['static']);
-        $this->assertEquals('$this->table = $table;', $classDescription['methods']['__construct']['body'][0]);
-        $this->assertEquals('$this->values = $values;', $classDescription['methods']['__construct']['body'][1]);
-
 
         $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
         $this->assertEquals('return [\'name\' => $this->values[\'name\'], \'birthdate\' => $this->values[\'birthdate\']];', $classDescription['methods']['primaryKey']['body'][0]);
-
-        $this->assertEquals($classDescription['methods']['__set']['parameters']['property'], 'string');
-        $this->assertEquals($classDescription['methods']['__set']['parameters']['value'], 'string');
-        $this->assertFalse($classDescription['methods']['__set']['static']);
-        $this->assertEquals('if (count($this->table->update([$property => $this->values[$property]], $this->primaryKey())) > 0) {', $classDescription['methods']['__set']['body'][0]);
-        $this->assertEquals('$this->values[$property] = $value;', $classDescription['methods']['__set']['body'][1]);
-        $this->assertEquals('}', $classDescription['methods']['__set']['body'][2]);
-
-        $this->assertEquals($classDescription['methods']['__get']['parameters']['property'], 'string');
-        $this->assertFalse($classDescription['methods']['__get']['static']);
-        $this->assertEquals('return $this->values[$property];', $classDescription['methods']['__get']['body'][0]);
-
-        $this->assertEquals($classDescription['methods']['delete']['parameters'], []);
-        $this->assertFalse($classDescription['methods']['delete']['static']);
-        $this->assertEquals('return $this->table->delete($this->primaryKey());', $classDescription['methods']['delete']['body'][0]);
-
 
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
         $this->assertFalse($classDescription['methods']['fetchByFkOthertableRole']['static']);

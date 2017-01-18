@@ -28,27 +28,6 @@ final class Table
         ];
     }
 
-    private function describeConstructorMethod() : array {
-        return $this->describeMethod(false, ["table" => '\ActiveRecord\Table', "values" => 'array'], [
-            '$this->table = $table;',
-            '$this->values = $values;'
-        ]);
-    }
-
-    private function describeSetterMethod() {
-        return $this->describeMethod(false, ["property" => 'string', "value" => 'string'], [
-            'if (count($this->table->update([$property => $this->values[$property]], $this->primaryKey())) > 0) {',
-            '$this->values[$property] = $value;',
-            '}'
-        ]);
-    }
-
-    private function describeGetterMethod() {
-        return $this->describeMethod(false, ["property" => 'string'], [
-            'return $this->values[$property];'
-        ]);
-    }
-
     private function describePrimaryKeyMethod(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) {
         $primaryKeyWhere = [];
         if ($dbalSchemaTable->hasPrimaryKey()) {
@@ -56,12 +35,6 @@ final class Table
         }
         return $this->describeMethod(false, [], [
             'return [' . join(', ', $primaryKeyWhere) . '];'
-        ]);
-    }
-
-    private function describeDeleteMethod() {
-        return $this->describeMethod(false, [], [
-            'return $this->table->delete($this->primaryKey());'
         ]);
     }
 
@@ -81,11 +54,7 @@ final class Table
     
     public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
         $methods = [
-            '__construct' => $this->describeConstructorMethod(),
-            '__set' => $this->describeSetterMethod(),
-            '__get' => $this->describeGetterMethod(),
-            'primaryKey' => $this->describePrimaryKeyMethod($dbalSchemaTable),
-            'delete' => $this->describeDeleteMethod()
+            'primaryKey' => $this->describePrimaryKeyMethod($dbalSchemaTable)
         ];
 
 
@@ -97,10 +66,7 @@ final class Table
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
             'interfaces' => ['\\ActiveRecord\\WritableRecord'],
             'traits' => ['\\ActiveRecord\\Record\\WritableTrait'],
-            'properties' => [
-                'table' => ['\ActiveRecord\Table', ['static' => false, 'value' => null]],
-                'values' => ['array', ['static' => false, 'value' => null]]
-            ],
+            'properties' => [],
             'methods' => $methods
         ];
     }
