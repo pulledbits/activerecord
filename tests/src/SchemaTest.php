@@ -61,11 +61,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
         $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(array $values) {
+            $values['__CLASS__'] = 'activiteit';
             return (object)$values;
         });
 
         $this->assertCount(4, $records);
         $this->assertEquals('Bla', $records[0]->werkvorm);
+        $this->assertEquals('activiteit', $records[0]->__CLASS__);
     }
 
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
