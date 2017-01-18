@@ -83,7 +83,7 @@ class Schema
     private function recordConverter(string $tableIdentifier) {
         return function(array $values) use ($tableIdentifier) {
             $recordClassIdentifier = $this->targetNamespace . '\\' . $tableIdentifier;
-            return new $recordClassIdentifier($this, $values);
+            return new $recordClassIdentifier(new Table($tableIdentifier, $this), $values);
         };
     }
 

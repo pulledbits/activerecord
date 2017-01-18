@@ -2,6 +2,9 @@
 namespace Test\Record {
     class activiteit implements \ActiveRecord\WritableRecord
     {
+        public function __construct(\ActiveRecord\Table $table, array $values) {
+
+        }
 
         /**
          */
@@ -21,6 +24,9 @@ namespace Test\Record {
 
     class thema implements \ActiveRecord\ReadableRecord
     {
+        public function __construct(\ActiveRecord\Table $table, array $values) {
+
+        }
 
         public function __get($property)
         {
