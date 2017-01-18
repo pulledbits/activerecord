@@ -26,10 +26,6 @@ class Schema
         $this->connection = $connection;
     }
 
-    public function transformTableIdentifierToRecordClassIdentifier($tableIdentfier) {
-        return $this->targetNamespace . '\\' . $tableIdentfier;
-    }
-
     private function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
@@ -86,7 +82,7 @@ class Schema
 
     private function recordConverter(string $tableIdentifier) {
         return function(array $values) use ($tableIdentifier) {
-            $recordClassIdentifier = $this->transformTableIdentifierToRecordClassIdentifier($tableIdentifier);
+            $recordClassIdentifier = $this->targetNamespace . '\\' . $tableIdentifier;
             return new $recordClassIdentifier($this, $values);
         };
     }
