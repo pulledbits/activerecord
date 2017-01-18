@@ -42,6 +42,7 @@ $schemaDescription = $sourceSchema->describe(new \ActiveRecord\Source\Table($tar
 foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescription) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
     $recordClass->setInterfaces($recordClassDescription['interfaces']);
+    $recordClass->setTraits($recordClassDescription['traits']);
     $recordClass->setFinal(true);
 
     foreach ($recordClassDescription['properties'] as $propertyIdentifier => $propertyType) {
