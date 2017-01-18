@@ -66,7 +66,6 @@ final class Table
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
             'interfaces' => ['\\ActiveRecord\\WritableRecord'],
             'traits' => ['\\ActiveRecord\\Record\\WritableTrait'],
-            'properties' => [],
             'methods' => $methods
         ];
     }

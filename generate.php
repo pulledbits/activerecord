@@ -45,22 +45,6 @@ foreach ($schemaDescription['recordClasses'] as $tableName => $recordClassDescri
     $recordClass->setTraits($recordClassDescription['traits']);
     $recordClass->setFinal(true);
 
-    foreach ($recordClassDescription['properties'] as $propertyIdentifier => $propertyType) {
-        $property = PhpProperty::create($propertyIdentifier);
-        $property->setType($propertyType[0]);
-        if ($propertyType[1]['static']) {
-            $property->setStatic(true);
-        } else {
-            $property->setVisibility('private');
-        }
-        if (is_scalar($propertyType[1]['value'])) {
-            $property->setValue($propertyType[1]['value']);
-        } else {
-            $property->setExpression(var_export($propertyType[1]['value'], true));
-        }
-        $recordClass->setProperty($property);
-    }
-
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
         $method = PhpMethod::create($methodIdentifier);
         if ($methodDescription['static']) {
