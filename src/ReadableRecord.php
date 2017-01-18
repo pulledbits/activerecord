@@ -11,4 +11,6 @@ interface ReadableRecord {
      */
     public function __get($property);
 
+    public function primaryKey();
+
 }

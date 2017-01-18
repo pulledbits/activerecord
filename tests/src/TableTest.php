@@ -68,8 +68,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     'nummer' => '1',
                 ]
             ],
+            '/^UPDATE activiteit SET nummer = :\w+ WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+/' => 1,
             // SELECT AFTER UPDATE
-            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+ AND createdat = :\w+$/' => [
+            '/^SELECT nummer FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [
+                [
+                    'collegejaar' => '1415',
+                    'nummer' => '2',
+                ]
+            ],
+            // CONFIRM UPDATE SELECT
+            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+ AND createdat = :\w+/' => [
                 [
                     'collegejaar' => '1415',
                     'nummer' => '2',

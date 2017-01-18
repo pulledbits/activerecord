@@ -1,51 +1,24 @@
 <?php
 namespace Test\Record {
+
+    use ActiveRecord\Record\ReadableTrait;
+    use ActiveRecord\Record\WritableTrait;
+
     class activiteit implements \ActiveRecord\WritableRecord
     {
-        private $table;
-        private $values;
+        use WritableTrait;
 
-        public function __construct(\ActiveRecord\Table $table, array $values) {
-            $this->table = $table;
-            $this->values = $values;
-        }
-
-        /**
-         */
-        public function delete()
-        {
-            return $this->table->delete($this->values);
-        }
-
-        public function __set($property, $value)
-        {
-            $this->values[$property] = $value;
-        }
-
-        public function __get($property)
-        {
-            return $this->values[$property];
+        public function primaryKey() {
+            return $this->values;
         }
     }
 
     class thema implements \ActiveRecord\ReadableRecord
     {
-        private $table;
-        private $values;
+        use ReadableTrait;
 
-        public function __construct(\ActiveRecord\Table $table, array $values) {
-            $this->table = $table;
-            $this->values = $values;
-        }
-
-        public function __set($property, $value)
-        {
-            $this->values[$property] = $value;
-        }
-
-        public function __get($property)
-        {
-            return $this->values[$property];
+        public function primaryKey() {
+            return $this->values;
         }
     }
 }
