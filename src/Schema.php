@@ -48,7 +48,7 @@ class Schema
     const PP_PARAM = 'parameter';
     const PP_PARAMS = 'parameters';
 
-    public function prepareParameters(array $parameters) {
+    private function prepareParameters(array $parameters) {
         $preparedParameters = [];
         foreach ($parameters as $localColumn => $value) {
             $preparedParameters[] = [
@@ -59,13 +59,13 @@ class Schema
         }
         return $preparedParameters;
     }
-    public function extract(string $type, array $preparedParameters) {
+    private function extract(string $type, array $preparedParameters) {
         return array_map(function(array $preparedParameters) use ($type) { return $preparedParameters[$type]; }, $preparedParameters);
     }
-    public function extractParameters(array $preparedParameters) {
+    private function extractParameters(array $preparedParameters) {
         return array_combine($this->extract(self::PP_PARAM, $preparedParameters), $this->extract(self::PP_VALUE, $preparedParameters));
     }
-    public function extractParametersSQL(array $preparedParameters) {
+    private function extractParametersSQL(array $preparedParameters) {
         return array_map(function($preparedParameter) { return $preparedParameter[self::PP_COLUMN] . " = " . $preparedParameter[self::PP_PARAM]; }, $preparedParameters);
     }
 
