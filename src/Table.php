@@ -33,8 +33,8 @@ class Table
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(array $values) {
-            $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($this->identifier);
+        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(array $values) use ($tableIdentifier) {
+            $recordClassIdentifier = $this->schema->transformTableIdentifierToRecordClassIdentifier($tableIdentifier);
             return new $recordClassIdentifier($this, $values);
         });
     }

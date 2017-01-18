@@ -80,6 +80,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     {
         $records = $this->object->selectFrom('thema', ['id', 'name'], []);
         $this->assertCount(5, $records);
+        $this->assertInstanceOf('\Test\Record\thema', $records[0]);
     }
 
     public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
