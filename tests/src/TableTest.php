@@ -54,8 +54,45 @@ class TableTest extends \PHPUnit_Framework_TestCase
                 [],
                 [],
                 [],
-            ]
+            ],
+
+            // QUERIES FOR CRUD TEST
+            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+$/' => [],
+            '/INSERT INTO activiteit \(nummer, collegejaar\) VALUES \(:\w+, :\w+\)/' => [
+            ],
+            // SELECT AFTER INSERT
+            '/^SELECT nummer, collegejaar FROM activiteit WHERE nummer = :\w+ AND collegejaar = :\w+$/' => [
+                [
+                    'createdat' => date('Y-m-d'),
+                    'collegejaar' => '1415',
+                    'nummer' => '1',
+                ]
+            ],
+            // SELECT AFTER UPDATE
+            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+ AND createdat = :\w+$/' => [
+                [
+                    'collegejaar' => '1415',
+                    'nummer' => '2',
+                ]
+            ],
+            '/^DELETE FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [],
+            // SELECT AFTER DELETE
+            '/^SELECT createdat, collegejaar, nummer FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [
+                [
+                    'collegejaar' => '1415',
+                    'nummer' => '2',
+                ]
+            ],
         ])));
+    }
+
+    public function testCRUD_When_DefaultState_Expect_RecordCreatedSelectedUpdatedAndDeleted() {
+        $this->assertCount(0, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2']), 'no previous record exists');
+        $record = $this->object->insert(['nummer' => '1', 'collegejaar' => '1415'], [])[0];
+        $this->assertEquals('1', $record->nummer, 'record is properly initialized');
+        $record->nummer = '2';
+        $this->assertEquals($record->nummer, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2', 'createdat' => date('Y-m-d')])[0]->nummer, 'record is properly updated');
+        $this->assertCount(1, $record->delete(), 'delete confirms removal');
     }
 
     public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()

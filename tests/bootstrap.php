@@ -2,35 +2,50 @@
 namespace Test\Record {
     class activiteit implements \ActiveRecord\WritableRecord
     {
-        public function __construct(\ActiveRecord\Table $table, array $values) {
+        private $table;
+        private $values;
 
+        public function __construct(\ActiveRecord\Table $table, array $values) {
+            $this->table = $table;
+            $this->values = $values;
         }
 
         /**
          */
         public function delete()
         {
+            return $this->table->delete($this->values);
         }
 
         public function __set($property, $value)
         {
+            $this->values[$property] = $value;
         }
 
         public function __get($property)
         {
-            return 'newName';
+            return $this->values[$property];
         }
     }
 
     class thema implements \ActiveRecord\ReadableRecord
     {
-        public function __construct(\ActiveRecord\Table $table, array $values) {
+        private $table;
+        private $values;
 
+        public function __construct(\ActiveRecord\Table $table, array $values) {
+            $this->table = $table;
+            $this->values = $values;
+        }
+
+        public function __set($property, $value)
+        {
+            $this->values[$property] = $value;
         }
 
         public function __get($property)
         {
-            return 'newName';
+            return $this->values[$property];
         }
     }
 }

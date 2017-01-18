@@ -57,7 +57,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1']);
 
         $this->assertCount(4, $records);
-        $this->assertEquals('newName', $records[0]->werkvorm);
+        $this->assertEquals('Bla', $records[0]->werkvorm);
         $this->assertInstanceOf('\Test\Record\activiteit', $records[0]);
     }
 
