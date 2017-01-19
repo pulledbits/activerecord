@@ -16,10 +16,12 @@ namespace Test\Record {
     class thema implements \ActiveRecord\ReadableRecord
     {
         use ReadableTrait;
+    }
 
-        public function primaryKey() {
-            return $this->values;
-        }
+    class leerdoelenview implements \ActiveRecord\ReadableRecord
+    {
+        use ReadableTrait;
+
     }
 }
 

@@ -29,4 +29,7 @@ trait ReadableTrait {
         return $this->values[$property];
     }
 
+    public function primaryKey() {
+        return $this->values;
+    }
 }
