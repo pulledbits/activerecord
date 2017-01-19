@@ -4,7 +4,7 @@ namespace ActiveRecord\Record;
 trait ReadableTrait {
 
     /**
-     * @var \ActiveRecord\Table
+     * @var \ActiveRecord\Asset
      */
     private $table = NULL;
 
@@ -14,10 +14,10 @@ trait ReadableTrait {
     private $values = NULL;
 
     /**
-     * @param \ActiveRecord\Table $table
+     * @param \ActiveRecord\Asset $table
      * @param array $values
      */
-    public function __construct(\ActiveRecord\Schema\ReadableAsset $table, array $values) {
+    public function __construct(\ActiveRecord\Asset $table, array $values) {
         $this->table = $table;
         $this->values = $values;
     }

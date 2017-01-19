@@ -8,10 +8,7 @@
 
 namespace ActiveRecord;
 
-
-use ActiveRecord\Schema\WritableAsset;
-
-class Table implements WritableAsset
+class Asset
 {
     /**
      * @var string

@@ -1,16 +1,16 @@
 <?php
 namespace ActiveRecord;
 
-class TableTest extends \PHPUnit_Framework_TestCase
+class AssetTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Table
+     * @var Asset
      */
     private $object;
 
     protected function setUp()
     {
-        $this->object = new Table('activiteit', new Schema('\Test\Record', \ActiveRecord\Test\createMockPDOMultiple([
+        $this->object = new Asset('activiteit', new Schema('\Test\Record', \ActiveRecord\Test\createMockPDOMultiple([
             '/^SELECT id, name FROM activiteit$/' => [
                 [],
                 [],
