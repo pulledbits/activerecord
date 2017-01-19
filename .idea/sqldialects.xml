@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/Asset.php" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/src/Schema.php" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/Schema/Asset.php" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/tests/src/SchemaTest.php" dialect="MySQL" />
   </component>
 </project>

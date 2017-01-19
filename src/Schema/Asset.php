@@ -6,7 +6,7 @@
  * Time: 15:19
  */
 
-namespace ActiveRecord;
+namespace ActiveRecord\Schema;
 
 class Asset
 {
@@ -20,7 +20,7 @@ class Asset
      */
     private $schema;
 
-    public function __construct(string $identifier, Schema $schema) {
+    public function __construct(string $identifier, \ActiveRecord\Schema $schema) {
         $this->identifier = $identifier;
         $this->schema = $schema;
     }

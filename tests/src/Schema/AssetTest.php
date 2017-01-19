@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\Schema;
 
 class AssetTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,7 +10,7 @@ class AssetTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->object = new Asset('activiteit', new Schema('\Test\Record', \ActiveRecord\Test\createMockPDOMultiple([
+        $this->object = new Asset('activiteit', new \ActiveRecord\Schema('\Test\Record', \ActiveRecord\Test\createMockPDOMultiple([
             '/^SELECT id, name FROM activiteit$/' => [
                 [],
                 [],
