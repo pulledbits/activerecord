@@ -68,14 +68,14 @@ namespace ActiveRecord\Test {
         return new class($tableIdentifier, $columns) extends \Doctrine\DBAL\Schema\Table
         {
 
-            private $tableIdentifier;
+            private $identifier;
             private $primaryKey;
             private $foreignKeys;
             private $columns;
 
-            public function __construct(string $tableIdentifier, array $columns)
+            public function __construct(string $identifier, array $columns)
             {
-                $this->tableIdentifier = $tableIdentifier;
+                $this->identifier = $identifier;
                 $this->columns = [];
                 $this->primaryKey = [];
                 $foreignKeys = [];
@@ -114,7 +114,7 @@ namespace ActiveRecord\Test {
 
             public function getName()
             {
-                return $this->tableIdentifier;
+                return $this->identifier;
             }
 
             public function getColumns()
@@ -137,6 +137,11 @@ namespace ActiveRecord\Test {
                 return $this->foreignKeys;
             }
         };
+    }
+
+    function createMockView(string $identifier, string $sql) : \Doctrine\DBAL\Schema\View
+    {
+        return new \Doctrine\DBAL\Schema\View($identifier, $sql);
     }
 
     function createMockPDOStatement($results) {

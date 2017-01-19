@@ -28,11 +28,7 @@ final class Table
         ];
     }
 
-    private function describePrimaryKeyMethod(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) {
-        $primaryKeyWhere = [];
-        if ($dbalSchemaTable->hasPrimaryKey()) {
-            $primaryKeyWhere = $this->makeArrayMappingToProperty($dbalSchemaTable->getPrimaryKeyColumns(), $dbalSchemaTable->getPrimaryKeyColumns());
-        }
+    private function describePrimaryKeyMethod(array $primaryKeyWhere) {
         return $this->describeMethod(false, [], [
             'return [' . join(', ', $primaryKeyWhere) . '];'
         ]);
@@ -51,10 +47,28 @@ final class Table
         }, $keyColumns, $propertyColumns);
     }
 
-    
-    public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
+
+    /**
+     * Mimicks overloading
+     * @param \Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaAsset
+     * @return array
+     */
+    public function describe(\Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaAsset) : array {
+        if ($dbalSchemaAsset instanceof \Doctrine\DBAL\Schema\Table) {
+            return $this->describeTable($dbalSchemaAsset);
+        } elseif ($dbalSchemaAsset instanceof \Doctrine\DBAL\Schema\View) {
+            return $this->describeView($dbalSchemaAsset);
+        }
+    }
+
+    private function describeTable(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
+        $primaryKeyWhere = [];
+        if ($dbalSchemaTable->hasPrimaryKey()) {
+            $primaryKeyWhere = $this->makeArrayMappingToProperty($dbalSchemaTable->getPrimaryKeyColumns(), $dbalSchemaTable->getPrimaryKeyColumns());
+        }
+
         $methods = [
-            'primaryKey' => $this->describePrimaryKeyMethod($dbalSchemaTable)
+            'primaryKey' => $this->describePrimaryKeyMethod($primaryKeyWhere)
         ];
 
 
@@ -66,6 +80,19 @@ final class Table
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
             'interfaces' => ['\\ActiveRecord\\WritableRecord'],
             'traits' => ['\\ActiveRecord\\Record\\WritableTrait'],
+            'methods' => $methods
+        ];
+    }
+
+    private function describeView(\Doctrine\DBAL\Schema\View $dbalSchemaView) : array {
+        $methods = [
+            'primaryKey' => $this->describePrimaryKeyMethod([])
+        ];
+
+        return [
+            'identifier' => $this->namespace . $dbalSchemaView->getName(),
+            'interfaces' => ['\\ActiveRecord\\ReadableRecord'],
+            'traits' => ['\\ActiveRecord\\Record\\ReadableTrait'],
             'methods' => $methods
         ];
     }

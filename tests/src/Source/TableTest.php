@@ -74,4 +74,17 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $classDescription = $this->object->describe($dbalTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
     }
+
+    public function testDescribe_When_ViewUsed_Expect_ArrayWithReadableRecord()
+    {
+        $dbalView = \ActiveRecord\Test\createMockView('MyView', 'CREATE VIEW `MyView` AS
+  SELECT
+    `schema`.`MyTable`.`name`   AS `name`,
+    `schema`.`MyTable`.`birthdate` AS `birthdate`
+  FROM `teach`.`thema`;');
+        $classDescription = $this->object->describe($dbalView);
+        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyView');
+        $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\ReadableRecord');
+        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\ReadableTrait');
+    }
 }
