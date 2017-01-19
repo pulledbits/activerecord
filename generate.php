@@ -1,6 +1,5 @@
 <?php
 
-use gossi\codegen\model\PhpProperty;
 use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
 use gossi\codegen\model\PhpParameter;
