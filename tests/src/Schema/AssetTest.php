@@ -18,15 +18,15 @@ class AssetTest extends \PHPUnit_Framework_TestCase
                 [],
                 [],
             ],
-            '/DELETE FROM activiteit WHERE name = (?<namedSet1>:(\w+))/' => [],
-            '/^UPDATE activiteit SET name = (?<namedSet1>:(\w+)) WHERE name = (?<namedParameter1>:(\w+))$/' => [],
-            '/^SELECT name FROM activiteit WHERE name = (?<namedParameter>:(\w+))$/' => [
+            '/DELETE FROM activiteit WHERE name = :\w+/' => [],
+            '/^UPDATE activiteit SET name = :\w+ WHERE name = :\w+$/' => [],
+            '/^SELECT name FROM activiteit WHERE name = :\w+$/' => [
                 [],
                 [],
                 []
             ],
-            '/^UPDATE activiteit SET name = (?<namedSet1>:(\w+)) WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))$/' => [],
-            '/^SELECT name FROM activiteit WHERE name = (?<namedParameter1>:(\w+)) AND id = (?<namedParameter2>:(\w+))$/' => [
+            '/^UPDATE activiteit SET name = :\w+ WHERE name = :\w+ AND id = :\w+$/' => [],
+            '/^SELECT name FROM activiteit WHERE name = :\w+ AND id = :\w+$/' => [
                 [],
             ],
             '/^SELECT id, name FROM thema$/' => [
@@ -36,7 +36,7 @@ class AssetTest extends \PHPUnit_Framework_TestCase
                 [],
                 [],
             ],
-            '/^UPDATE activiteit SET name = (?<namedSet1>:(\w+))$/' => [],
+            '/^UPDATE activiteit SET name = :\w+$/' => [],
             '/^SELECT name FROM activiteit$/' => [
                 [],
                 [],
@@ -44,9 +44,9 @@ class AssetTest extends \PHPUnit_Framework_TestCase
                 [],
                 [],
             ],
-            '/^INSERT INTO activiteit \(id, name\) VALUES \((?<namedSet1>:(\w+)), (?<namedSet2>:(\w+))\)$/' => [],
-            '/^DELETE FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))$/' => [],
-            '/^SELECT id, name FROM activiteit WHERE id = (?<namedSet1>:(\w+)) AND name = (?<namedSet2>:(\w+))$/' => [
+            '/^INSERT INTO activiteit \(id, name\) VALUES \(:\w+, :\w+\)$/' => [],
+            '/^DELETE FROM activiteit WHERE id = :\w+ AND name = :\w+$/' => [],
+            '/^SELECT id, name FROM activiteit WHERE id = :\w+ AND name = :\w+$/' => [
                 [
                     'id' => '1',
                     'name' => 'newName'],

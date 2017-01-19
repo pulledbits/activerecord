@@ -60,5 +60,4 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
     }
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
 });
-
 echo 'Done' . PHP_EOL;
