@@ -17,7 +17,7 @@ trait ReadableTrait {
      * @param \ActiveRecord\Table $table
      * @param array $values
      */
-    public function __construct(\ActiveRecord\Table $table, array $values) {
+    public function __construct(\ActiveRecord\Schema\ReadableAsset $table, array $values) {
         $this->table = $table;
         $this->values = $values;
     }

@@ -4,6 +4,11 @@ namespace ActiveRecord\Record;
 trait WritableTrait {
     use ReadableTrait;
 
+    public function __construct(\ActiveRecord\Schema\WritableAsset $table, array $values) {
+        $this->table = $table;
+        $this->values = $values;
+    }
+
     /**
      * @param string $property
      * @param string $value
