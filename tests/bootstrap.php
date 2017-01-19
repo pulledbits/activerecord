@@ -36,29 +36,28 @@ namespace ActiveRecord\Test {
         {
 
             private $tables;
+            private $views;
 
             public function __construct(array $tables)
             {
+                $this->tables = $this->views = [];
                 foreach ($tables as $tableIdentifier => $columns) {
-                    $this->tables[] = \ActiveRecord\Test\createMockTable($tableIdentifier, $columns);
+                    if (is_array($columns)) {
+                        $this->tables[] = \ActiveRecord\Test\createMockTable($tableIdentifier, $columns);
+                    } elseif (is_string($columns)) {
+                        $this->views[] = \ActiveRecord\Test\createMockView($tableIdentifier, $columns);
+                    }
                 }
             }
 
             public function listTables()
             {
-                return [
-                    new class extends \Doctrine\DBAL\Schema\Table
-                    {
-                        public function __construct()
-                        {
-                        }
+                return $this->tables;
+            }
 
-                        public function getName()
-                        {
-                            return 'MyTable';
-                        }
-                    }
-                ];
+            public function listViews()
+            {
+                return $this->views;
             }
         });
     }

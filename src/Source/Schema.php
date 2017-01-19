@@ -25,7 +25,7 @@ class Schema
 
     public function describe(Table $sourceTable, \Closure $tableHandler)
     {
-        foreach ($this->schemaManager->listTables() as $table) {
+        foreach (array_merge($this->schemaManager->listTables(), $this->schemaManager->listViews()) as $table) {
             $tableHandler($table->getName(), $sourceTable->describe($table));
         }
     }
