@@ -63,7 +63,8 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
 namespace ' . $recordClass->getNamespace() . ';
 require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \ActiveRecord\Record($asset, array_slice_key($this->values, $this->metaRecord->identifier()), new ' . $recordClass->getName() . '(), $values);
+    $metaRecord = new ' . $recordClass->getName() . '();
+    return new \ActiveRecord\Record($asset, array_slice_key($values, $metaRecord->identifier()), $metaRecord->references(), $values);
 };');
 });
 

@@ -12,11 +12,11 @@ class AssetTest extends \PHPUnit_Framework_TestCase
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \ActiveRecord\Record($asset, $values, new \Test\Record\activiteit(), $values);
+    return new \ActiveRecord\Record($asset, $values, [], $values);
 };');
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'thema.php', '<?php
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \ActiveRecord\Record($asset, $values, new \Test\Record\thema(), $values);
+    return new \ActiveRecord\Record($asset, $values, [], $values);
 };');
 
         $this->object = new Asset('activiteit', new \ActiveRecord\Schema(new \ActiveRecord\RecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([

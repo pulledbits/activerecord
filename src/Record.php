@@ -18,6 +18,11 @@ class Record
     /**
      * @var array
      */
+    private $references = NULL;
+
+    /**
+     * @var array
+     */
     private $values = NULL;
 
     /**
@@ -30,13 +35,12 @@ class Record
      */
     private $metaRecord;
 
-    public function __construct(\ActiveRecord\Schema\Asset $asset, array $primaryKey, \ActiveRecord\MetaRecord $metaRecord, array $values)
+    public function __construct(\ActiveRecord\Schema\Asset $asset, array $primaryKey, array $references, array $values)
     {
         $this->asset = $asset;
         $this->primaryKey = $primaryKey;
+        $this->references = $references;
         $this->values = $values;
-
-        $this->metaRecord = $metaRecord;
     }
 
     /**
@@ -68,12 +72,11 @@ class Record
     public function __call(string $method, array $arguments)
     {
         if (substr($method, 0, 6) === 'fetchBy') {
-            $reference = $this->metaRecord->references()[substr($method, 6)];
+            $reference = $this->references[substr($method, 6)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
             return $this->asset->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
         }
-        return call_user_func_array([$this->metaRecord, $method], $arguments);
     }
 
 }
