@@ -29,8 +29,14 @@ final class Table
     }
 
     private function describePrimaryKeyMethod(array $primaryKeyWhere) {
+        if (count($primaryKeyWhere) === 0) {
+            $array = '[]';
+        } else {
+            $array = '[\'' . join('\', \'', $primaryKeyWhere) . '\']';
+        }
+
         return $this->describeMethod(false, [], [
-            'return [\'' . join('\', \'', $primaryKeyWhere) . '\'];'
+            'return ' . $array . ';'
         ]);
     }
 
