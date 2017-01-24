@@ -28,7 +28,6 @@ $record->nummer = '2';
 assert($record->nummer === $table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer, 'record is properly updated');
 assert(count($record->delete()) > 1, 'delete confirms removal');
 
-require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'leerdoelenview.class.php';
 $viewRecord = $schema->selectFrom("leerdoelenview", ['*'], [], function(\Closure $recordConfigurator) use ($schema) {
     return $recordConfigurator(new \ActiveRecord\Schema\Asset('leerdoelenview', $schema));
 });

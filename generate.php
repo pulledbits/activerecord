@@ -35,35 +35,9 @@ $connectionParams = array(
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
-$generator = new CodeGenerator();
-
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
-$sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($generator, $recordsDirectory) {
-    $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
-    $recordClass->setInterfaces($recordClassDescription['interfaces']);
-    $recordClass->setFinal(true);
-
-    foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
-        $method = PhpMethod::create($methodIdentifier);
-        if ($methodDescription['static']) {
-            $method->setStatic(true);
-        }
-        foreach ($methodDescription['parameters'] as $methodParameterIdentifier => $methodParameterType) {
-            $parameter = PhpParameter::create($methodParameterIdentifier);
-            $parameter->setType($methodParameterType);
-
-            $method->addParameter($parameter);
-        }
-        $method->setBody(join(PHP_EOL, $methodDescription['body']));
-        $recordClass->setMethod($method);
-    }
-    $classFilename = $tableName . '.class.php';
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $classFilename, '<?php' . PHP_EOL . $generator->generate($recordClass));
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php
-namespace ' . $recordClass->getNamespace() . ';
-require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
-return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    $metaRecord = new ' . $recordClass->getName() . '();
+$sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($recordsDirectory) {
+    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     return new \ActiveRecord\Record($asset, array_slice_key($values, '.var_export($recordClassDescription['recordIdentifier'], true).'), '.var_export($recordClassDescription['references'], true).', $values);
 };');
 });
