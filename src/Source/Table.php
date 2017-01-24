@@ -68,16 +68,14 @@ final class Table
         }
 
         return [
-            'identifier' => $this->namespace . $dbalSchemaTable->getName(),
-            'recordIdentifier' => $primaryKeyColumns,
+            'identifier' => $primaryKeyColumns,
             'references' => $references
         ];
     }
 
     private function describeView(\Doctrine\DBAL\Schema\View $dbalSchemaView) : array {
         return [
-            'identifier' => $this->namespace . $dbalSchemaView->getName(),
-            'recordIdentifier' => [],
+            'identifier' => [],
             'references' => []
         ];
     }

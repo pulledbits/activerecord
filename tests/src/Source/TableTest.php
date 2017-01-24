@@ -45,8 +45,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $classDescription = $this->object->describe($mockTable);
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
-        $this->assertEquals(['name', 'birthdate'], $classDescription['recordIdentifier']);
+        $this->assertEquals(['name', 'birthdate'], $classDescription['identifier']);
         $this->assertEquals([
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
@@ -63,13 +62,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ]
         ], $classDescription['references']);
     }
-    
-    public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
-    {
-        $dbalTable = \ActiveRecord\Test\createMockTable('MyTable2', []);
-        $classDescription = $this->object->describe($dbalTable);
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable2');
-    }
 
     public function testDescribe_When_ViewUsed_Expect_ArrayWithReadableRecord()
     {
@@ -79,6 +71,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     `schema`.`MyTable`.`birthdate` AS `birthdate`
   FROM `teach`.`thema`;');
         $classDescription = $this->object->describe($dbalView);
-        $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyView');
+        $this->assertEquals([], $classDescription['identifier']);
+        $this->assertEquals([], $classDescription['references']);
     }
 }
