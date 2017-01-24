@@ -34,20 +34,6 @@ final class Table
         ]);
     }
 
-    private function describeFetchByFKMethod(\Doctrine\DBAL\Schema\ForeignKeyConstraint $foreignKey) {
-        $fkColumns = $foreignKey->getForeignColumns();
-        return $this->describeMethod(false, [], [
-            'return $this->table->selectFrom("' . $foreignKey->getForeignTableName() . '", [\'' . join('\', \'', $fkColumns) . '\'], [', join(',' . PHP_EOL, $this->makeArrayMappingToProperty($fkColumns, $foreignKey->getLocalColumns())), ']);'
-        ]);
-    }
-
-    private function makeArrayMappingToProperty(array $keyColumns, array $propertyColumns) : array {
-        return array_map(function($keyIdentifier, $propertyIdentifier) {
-            return '\'' . $keyIdentifier . '\' => ' . '$this->values[\'' . $propertyIdentifier . '\']';
-        }, $keyColumns, $propertyColumns);
-    }
-
-
     /**
      * Mimicks overloading
      * @param \Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaAsset
@@ -67,15 +53,8 @@ final class Table
             $primaryKeyColumns = $dbalSchemaTable->getPrimaryKeyColumns();
         }
 
-        $methods = [
-            'primaryKey' => $this->describePrimaryKeyMethod($primaryKeyColumns)
-        ];
-
-
         $references = [];
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
-            $methods["fetchBy" . join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = $this->describeFetchByFKMethod($foreignKey);
-
             $references[join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = [
                 'table' => $foreignKey->getForeignTableName(),
                 'where' => array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns())
@@ -85,7 +64,11 @@ final class Table
         $referencesLines = explode(PHP_EOL, \var_export_short($references, true));
         $referencesLines[0] = 'return ' . $referencesLines[0];
         $referencesLines[count($referencesLines) - 1] .= ';';
-        $methods['references'] = $this->describeMethod(false, [], $referencesLines);
+
+        $methods = [
+            'primaryKey' => $this->describePrimaryKeyMethod($primaryKeyColumns),
+            'references' => $this->describeMethod(false, [], $referencesLines)
+        ];
         
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
