@@ -64,7 +64,7 @@ namespace ' . $recordClass->getNamespace() . ';
 require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     $metaRecord = new ' . $recordClass->getName() . '();
-    return new \ActiveRecord\Record($asset, array_slice_key($values, $metaRecord->identifier()), $metaRecord->references(), $values);
+    return new \ActiveRecord\Record($asset, array_slice_key($values, '.var_export($recordClassDescription['recordIdentifier'], true).'), '.var_export($recordClassDescription['references'], true).', $values);
 };');
 });
 
