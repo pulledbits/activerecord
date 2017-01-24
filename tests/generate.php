@@ -13,27 +13,10 @@ passthru($command);
 
 // test activiteit
 require dirname(__DIR__) . '/vendor/autoload.php';
-$blokConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'blok.php';
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
-$recordConfigurator = new class($targetNamespace . '\\Record') implements \ActiveRecord\RecordFactory {
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    public function __construct(string $namespace)
-    {
-        $this->namespace = $namespace;
-    }
-
-    function makeRecord(string $recordIdentifier, \ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
-    {
-        $classIdentifier =  $this->namespace . '\\' . $recordIdentifier;
-        return new $classIdentifier($asset, $values);
-    }
-};
+$recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.php';
 
 $schema = new \ActiveRecord\Schema($recordConfigurator, $connection);
 
