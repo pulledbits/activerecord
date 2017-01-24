@@ -46,8 +46,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $classDescription = $this->object->describe($mockTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
-        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\RecordTrait');
-
 
         $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
         $this->assertEquals('return [\'name\', \'birthdate\'];', $classDescription['methods']['primaryKey']['body'][0]);
@@ -86,6 +84,5 @@ class TableTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;');
         $classDescription = $this->object->describe($dbalView);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyView');
-        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\RecordTrait');
     }
 }

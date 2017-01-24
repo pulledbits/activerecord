@@ -40,7 +40,6 @@ $generator = new CodeGenerator();
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($generator, $recordsDirectory) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
-    $recordClass->setTraits($recordClassDescription['traits']);
     $recordClass->setFinal(true);
 
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {

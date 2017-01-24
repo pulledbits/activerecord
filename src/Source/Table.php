@@ -72,7 +72,6 @@ final class Table
         
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
-            'traits' => ['\\ActiveRecord\\Record\\RecordTrait'],
             'methods' => $methods
         ];
     }
@@ -84,7 +83,6 @@ final class Table
 
         return [
             'identifier' => $this->namespace . $dbalSchemaView->getName(),
-            'traits' => ['\\ActiveRecord\\Record\\RecordTrait'],
             'methods' => $methods
         ];
     }
