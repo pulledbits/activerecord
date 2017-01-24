@@ -80,18 +80,8 @@ class Schema
         ];
     }
 
-    private function recordConverter(string $tableIdentifier) {
-        return function(array $values) use ($tableIdentifier) {
-            $recordClassIdentifier = $this->targetNamespace . '\\' . $tableIdentifier;
-            return new $recordClassIdentifier(new Schema\Asset($tableIdentifier, $this), $values);
-        };
-    }
-
-    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter = null) : array {
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
-        if ($recordConverter === null) {
-            return array_map($this->recordConverter($tableIdentifier), $statement->fetchAll(\PDO::FETCH_ASSOC));
-        }
         return array_map(function(array $values) use ($recordConverter) {
             return $recordConverter($this->targetNamespace, $values);
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
