@@ -30,7 +30,7 @@ final class Table
 
     private function describePrimaryKeyMethod(array $primaryKeyWhere) {
         return $this->describeMethod(false, [], [
-            'return [' . join(', ', $primaryKeyWhere) . '];'
+            'return [\'' . join('\', \'', $primaryKeyWhere) . '\'];'
         ]);
     }
 
@@ -62,13 +62,13 @@ final class Table
     }
 
     private function describeTable(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
-        $primaryKeyWhere = [];
+        $primaryKeyColumns = [];
         if ($dbalSchemaTable->hasPrimaryKey()) {
-            $primaryKeyWhere = $this->makeArrayMappingToProperty($dbalSchemaTable->getPrimaryKeyColumns(), $dbalSchemaTable->getPrimaryKeyColumns());
+            $primaryKeyColumns = $dbalSchemaTable->getPrimaryKeyColumns();
         }
 
         $methods = [
-            'primaryKey' => $this->describePrimaryKeyMethod($primaryKeyWhere)
+            'primaryKey' => $this->describePrimaryKeyMethod($primaryKeyColumns)
         ];
 
 

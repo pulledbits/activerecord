@@ -50,7 +50,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
-        $this->assertEquals('return [\'name\' => $this->values[\'name\'], \'birthdate\' => $this->values[\'birthdate\']];', $classDescription['methods']['primaryKey']['body'][0]);
+        $this->assertEquals('return [\'name\', \'birthdate\'];', $classDescription['methods']['primaryKey']['body'][0]);
 
         $this->assertEquals($classDescription['methods']['fetchByFkOthertableRole']['parameters'], []);
         $this->assertFalse($classDescription['methods']['fetchByFkOthertableRole']['static']);

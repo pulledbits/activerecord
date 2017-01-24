@@ -1,26 +1,4 @@
 <?php
-namespace Test\Record {
-
-    class activiteit implements \ActiveRecord\Record
-    {
-        use \ActiveRecord\Record\RecordTrait;
-
-        public function primaryKey() {
-            return $this->values;
-        }
-    }
-
-    class thema implements \ActiveRecord\Record
-    {
-        use \ActiveRecord\Record\RecordTrait;
-    }
-
-    class leerdoelenview implements \ActiveRecord\Record
-    {
-        use \ActiveRecord\Record\RecordTrait;
-
-    }
-}
 
 namespace ActiveRecord\Test {
     /*
@@ -233,5 +211,28 @@ namespace ActiveRecord\Test {
                 throw new \PHPUnit_Framework_AssertionFailedError('Unexpected query \'' . $query . '\'');
             }
         };
+    }
+}
+
+namespace Test\Record {
+
+    class activiteit implements \ActiveRecord\Record
+    {
+        use \ActiveRecord\Record\RecordTrait;
+
+        public function primaryKey() {
+            return $this->values;
+        }
+    }
+
+    class thema implements \ActiveRecord\Record
+    {
+        use \ActiveRecord\Record\RecordTrait;
+    }
+
+    class leerdoelenview implements \ActiveRecord\Record
+    {
+        use \ActiveRecord\Record\RecordTrait;
+
     }
 }
