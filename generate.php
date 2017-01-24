@@ -62,8 +62,8 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php
 namespace ' . $recordClass->getNamespace() . ';
 require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
-return function(\ActiveRecord\Schema\Asset $table, array $values) {
-    return new ' . $recordClass->getName() . '($table, $values);
+return function(\ActiveRecord\Schema\Asset $asset, array $values) {
+    return new ' . $recordClass->getName() . '($asset, $values);
 };');
 });
 
@@ -71,8 +71,7 @@ file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'factory.php', '<?php
 return new class implements \ActiveRecord\RecordFactory {
     function makeRecord(string $recordIdentifier, \ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
     {
-        $recordConfigurator = require __DIR__ . DIRECTORY_SEPARATOR . \'Record\' . DIRECTORY_SEPARATOR . $recordIdentifier . \'.php\';
-        return $recordConfigurator($asset, $values);
+        return $asset->executeRecordClassConfigurator(__DIR__ . DIRECTORY_SEPARATOR . \'Record\', $values);
     }
 };');
 
