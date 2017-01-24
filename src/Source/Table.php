@@ -78,6 +78,7 @@ final class Table
         
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
+            'interfaces' => ['\\ActiveRecord\\MetaRecord'],
             'methods' => $methods
         ];
     }
@@ -89,6 +90,7 @@ final class Table
 
         return [
             'identifier' => $this->namespace . $dbalSchemaView->getName(),
+            'interfaces' => ['\\ActiveRecord\\MetaRecord'],
             'methods' => $methods
         ];
     }

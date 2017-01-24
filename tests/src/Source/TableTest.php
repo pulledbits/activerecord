@@ -46,6 +46,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $classDescription = $this->object->describe($mockTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
+        $this->assertEquals('\\ActiveRecord\\MetaRecord', $classDescription['interfaces'][0]);
 
         $this->assertCount(0, $classDescription['methods']['identifier']['parameters']);
         $this->assertEquals('return [\'name\', \'birthdate\'];', $classDescription['methods']['identifier']['body'][0]);
