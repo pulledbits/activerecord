@@ -67,40 +67,18 @@ final class Table
             ];
         }
 
-        if (count($references) === 0) {
-            $referencesLines = ['return [];'];
-        } else {
-            $referencesLines = explode(PHP_EOL, \var_export_short($references, true));
-            $referencesLines[0] = 'return ' . $referencesLines[0];
-            $referencesLines[count($referencesLines) - 1] .= ';';
-        }
-
-        $methods = [
-            'identifier' => $this->describePrimaryKeyMethod($primaryKeyColumns),
-            'references' => $this->describeMethod(false, [], $referencesLines)
-        ];
-        
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
             'recordIdentifier' => $primaryKeyColumns,
-            'references' => $references,
-            'interfaces' => ['\\ActiveRecord\\MetaRecord'],
-            'methods' => $methods
+            'references' => $references
         ];
     }
 
     private function describeView(\Doctrine\DBAL\Schema\View $dbalSchemaView) : array {
-        $methods = [
-            'identifier' => $this->describePrimaryKeyMethod([]),
-            'references' => $this->describeMethod(false, [], ['return [];'])
-        ];
-
         return [
             'identifier' => $this->namespace . $dbalSchemaView->getName(),
             'recordIdentifier' => [],
-            'references' => [],
-            'interfaces' => ['\\ActiveRecord\\MetaRecord'],
-            'methods' => $methods
+            'references' => []
         ];
     }
     
