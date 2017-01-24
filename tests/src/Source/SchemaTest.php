@@ -40,7 +40,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $called = false;
         $schema->describe(new Table('\\Database\\Record'), function(string $tableName, array $tableDescription) use (&$called) {
             $this->assertEquals('\\Database\\Record\\MyView', $tableDescription['identifier']);
-            $this->assertEquals('\\ActiveRecord\\Record', $tableDescription['interfaces'][0]);
             $this->assertEquals('\\ActiveRecord\\Record\\RecordTrait', $tableDescription['traits'][0]);
             $this->assertEquals('MyView', $tableName);
             $called = true;
