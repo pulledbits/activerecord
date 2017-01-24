@@ -27,12 +27,18 @@ class Asset
 
     public function select(array $columnIdentifiers, array $whereParameters)
     {
-        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters);
+        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, function(string $namespace, array $values) {
+            $identifier = $namespace . '\\' . $this->identifier;
+            return new $identifier($this, $values);
+        });
     }
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters);
+        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(string $namespace, array $values) use ($tableIdentifier) {
+            $identifier = $namespace . '\\' . $tableIdentifier;
+            return new $identifier(new Asset($tableIdentifier, $this->schema), $values);
+        });
     }
 
     public function insert(array $values) {

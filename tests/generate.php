@@ -28,6 +28,9 @@ assert($record->nummer === $table->select(['_collegejaar' => 'collegejaar', '_nu
 assert(count($record->delete()) > 1, 'delete confirms removal');
 
 require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'leerdoelenview.class.php';
-$viewRecord = $schema->selectFrom("leerdoelenview", ['*'], []);
+$viewRecord = $schema->selectFrom("leerdoelenview", ['*'], [], function(string $namespace, array $values) use ($schema) {
+    $identifier = $namespace . '\\leerdoelenview';
+    return new $identifier(new \ActiveRecord\Schema\Asset('leerdoelenview', $schema), $values);
+});
 assert(count($viewRecord) > 1, 'view records exist');
 echo 'Done testing';
