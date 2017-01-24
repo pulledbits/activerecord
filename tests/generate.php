@@ -17,7 +17,25 @@ $blokConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . 
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
-$schema = new \ActiveRecord\Schema($targetNamespace . '\\Record', $connection);
+$recordConfigurator = new class($targetNamespace . '\\Record') implements \ActiveRecord\RecordFactory {
+    /**
+     * @var string
+     */
+    private $namespace;
+
+    public function __construct(string $namespace)
+    {
+        $this->namespace = $namespace;
+    }
+
+    function makeRecord(string $recordIdentifier, \ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
+    {
+        $classIdentifier =  $this->namespace . '\\' . $recordIdentifier;
+        return new $classIdentifier($asset, $values);
+    }
+};
+
+$schema = new \ActiveRecord\Schema($targetNamespace . '\\Record', $recordConfigurator, $connection);
 
 $table = new \ActiveRecord\Schema\Asset("blok", $schema);
 assert(count($table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');

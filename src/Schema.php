@@ -17,12 +17,18 @@ class Schema
     private $targetNamespace;
 
     /**
+     * @var \ActiveRecord\RecordFactory
+     */
+    private $recordFactory;
+
+    /**
      * @var \PDO
      */
     private $connection;
 
-    public function __construct(string $targetNamespace, \PDO $connection) {
+    public function __construct(string $targetNamespace, \ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
         $this->targetNamespace = $targetNamespace;
+        $this->recordFactory = $recordFactory;
         $this->connection = $connection;
     }
 
@@ -85,8 +91,7 @@ class Schema
 
         return array_map(function(array $values) use ($recordConverter, $tableIdentifier) {
             return $recordConverter(function(Schema\Asset $asset) use ($tableIdentifier, $values) {
-                $identifier = $this->targetNamespace . '\\' . $tableIdentifier;
-                return new $identifier($asset, $values);
+                return $this->recordFactory->makeRecord($tableIdentifier, $asset, $values);
             });
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }

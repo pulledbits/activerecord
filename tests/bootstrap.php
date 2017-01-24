@@ -234,4 +234,25 @@ namespace ActiveRecord\Test {
             }
         };
     }
+
+    function createMockRecordFactory(string $namespace) {
+        return new class($namespace) implements \ActiveRecord\RecordFactory {
+
+            /**
+             * @var string
+             */
+            private $namespace;
+
+            public function __construct(string $namespace)
+            {
+                $this->namespace = $namespace;
+            }
+
+            function makeRecord(string $recordIdentifier, \ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
+            {
+                $classIdentifier =  $this->namespace . '\\' . $recordIdentifier;
+                return new $classIdentifier($asset, $values);
+            }
+        };
+    }
 }
