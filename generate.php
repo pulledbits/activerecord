@@ -109,7 +109,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
         }
 
         public function primaryKey() {
-            return array_slice_key($this->values, $this->metaRecord->primaryKey());
+            return array_slice_key($this->values, $this->metaRecord->identifier());
         }
     
         /**

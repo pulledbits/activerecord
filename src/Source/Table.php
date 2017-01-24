@@ -72,7 +72,7 @@ final class Table
         $referencesLines[count($referencesLines) - 1] .= ';';
 
         $methods = [
-            'primaryKey' => $this->describePrimaryKeyMethod($primaryKeyColumns),
+            'identifier' => $this->describePrimaryKeyMethod($primaryKeyColumns),
             'references' => $this->describeMethod(false, [], $referencesLines)
         ];
         
@@ -84,7 +84,7 @@ final class Table
 
     private function describeView(\Doctrine\DBAL\Schema\View $dbalSchemaView) : array {
         $methods = [
-            'primaryKey' => $this->describePrimaryKeyMethod([])
+            'identifier' => $this->describePrimaryKeyMethod([])
         ];
 
         return [
