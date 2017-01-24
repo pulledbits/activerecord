@@ -82,7 +82,7 @@ final class Table
             ];
         }
 
-        $referencesLines = explode(PHP_EOL, var_export_short($references, true));
+        $referencesLines = explode(PHP_EOL, \var_export_short($references, true));
         $referencesLines[0] = 'return ' . $referencesLines[0];
         $referencesLines[count($referencesLines) - 1] .= ';';
         $methods['references'] = $this->describeMethod(false, [], $referencesLines);

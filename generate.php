@@ -4,7 +4,8 @@ use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
 use gossi\codegen\model\PhpParameter;
 
-require __DIR__ . '/vendor/autoload.php';
+$applicationBootstrap = require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
+$applicationBootstrap();
 
 if ($_SERVER['argc'] < 3) {
     exit('please enter destination namespace and path');
@@ -119,6 +120,12 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
         }
         
         public function __call(string $method, array $arguments) {
+            if (substr($method, 0, 6) === \'fetchBy\') {
+                $reference = $this->metaRecord->references()[substr($method, 6)];
+                $fkColumns = array_keys($reference[\'where\']);
+                $fkLocalColumns = array_values($reference[\'where\']);
+                return $this->asset->selectFrom($reference[\'table\'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
+            }
             return call_user_func_array([$this->metaRecord, $method], $arguments);
         }
     };
