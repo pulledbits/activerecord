@@ -27,17 +27,15 @@ class Asset
 
     public function select(array $columnIdentifiers, array $whereParameters)
     {
-        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, function(string $namespace, array $values) {
-            $identifier = $namespace . '\\' . $this->identifier;
-            return new $identifier($this, $values);
+        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) {
+            return $recordConfigurator($this);
         });
     }
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
-        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(string $namespace, array $values) use ($tableIdentifier) {
-            $identifier = $namespace . '\\' . $tableIdentifier;
-            return new $identifier(new Asset($tableIdentifier, $this->schema), $values);
+        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) use ($tableIdentifier) {
+            return $recordConfigurator(new Asset($tableIdentifier, $this->schema));
         });
     }
 
