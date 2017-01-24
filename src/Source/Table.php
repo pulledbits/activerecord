@@ -72,9 +72,20 @@ final class Table
         ];
 
 
+        $references = [];
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $methods["fetchBy" . join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = $this->describeFetchByFKMethod($foreignKey);
+
+            $references[join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = [
+                'table' => $foreignKey->getForeignTableName(),
+                'where' => array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns())
+            ];
         }
+
+        $referencesLines = explode(PHP_EOL, var_export_short($references, true));
+        $referencesLines[0] = 'return ' . $referencesLines[0];
+        $referencesLines[count($referencesLines) - 1] .= ';';
+        $methods['references'] = $this->describeMethod(false, [], $referencesLines);
         
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),

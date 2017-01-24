@@ -65,6 +65,24 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('return $this->table->selectFrom("AntoherTable", [\'id\', \'column_id\'], [', $classDescription['methods']['fetchByFkAnothertableRole']['body'][0]);
         $this->assertEquals(join(',' . PHP_EOL, ['\'id\' => $this->values[\'role2_id\']', '\'column_id\' => $this->values[\'extra_column_id\']']), $classDescription['methods']['fetchByFkAnothertableRole']['body'][1]);
         $this->assertEquals(']);', $classDescription['methods']['fetchByFkAnothertableRole']['body'][2]);
+
+
+        $l = 0;
+        $this->assertEquals('return [', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t" . '\'FkOthertableRole\' => [', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t" . '\'table\' => \'OtherTable\', ', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t" . '\'where\' => [', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t\t" . '\'id\' => \'role_id\'', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t" . ']', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t" . '], ', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t" . '\'FkAnothertableRole\' => [', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t" . '\'table\' => \'AntoherTable\', ', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t" . '\'where\' => [', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t\t" . '\'id\' => \'role2_id\', ', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t\t" . '\'column_id\' => \'extra_column_id\'', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t\t" . ']', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals("\t" . ']', $classDescription['methods']['references']['body'][$l++]);
+        $this->assertEquals('];', $classDescription['methods']['references']['body'][$l++]);
     }
     
     public function testDescribe_When_DifferingTableName_Expect_ArrayWithClassIdentifierAndDifferentClassName()
