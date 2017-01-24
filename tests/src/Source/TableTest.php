@@ -46,8 +46,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $classDescription = $this->object->describe($mockTable);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
-        $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\WritableRecord');
-        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\WritableTrait');
+        $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\Record');
+        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\RecordTrait');
 
 
         $this->assertCount(0, $classDescription['methods']['primaryKey']['parameters']);
@@ -84,7 +84,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;');
         $classDescription = $this->object->describe($dbalView);
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyView');
-        $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\ReadableRecord');
-        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\ReadableTrait');
+        $this->assertEquals($classDescription['interfaces'][0], '\\ActiveRecord\\Record');
+        $this->assertEquals($classDescription['traits'][0], '\\ActiveRecord\\Record\\RecordTrait');
     }
 }

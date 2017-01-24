@@ -3,7 +3,15 @@
 namespace ActiveRecord;
 
 
-interface WritableRecord extends ReadableRecord {
+interface Record {
+
+    /**
+     * @param $property
+     * @return string
+     */
+    public function __get($property);
+
+    public function primaryKey();
 
     /**
      * @return \ActiveRecord\WritableRecord[]

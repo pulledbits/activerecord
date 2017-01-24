@@ -1,26 +1,23 @@
 <?php
 namespace Test\Record {
 
-    use ActiveRecord\Record\ReadableTrait;
-    use ActiveRecord\Record\WritableTrait;
-
-    class activiteit implements \ActiveRecord\WritableRecord
+    class activiteit implements \ActiveRecord\Record
     {
-        use WritableTrait;
+        use \ActiveRecord\Record\RecordTrait;
 
         public function primaryKey() {
             return $this->values;
         }
     }
 
-    class thema implements \ActiveRecord\ReadableRecord
+    class thema implements \ActiveRecord\Record
     {
-        use ReadableTrait;
+        use \ActiveRecord\Record\RecordTrait;
     }
 
-    class leerdoelenview implements \ActiveRecord\ReadableRecord
+    class leerdoelenview implements \ActiveRecord\Record
     {
-        use ReadableTrait;
+        use \ActiveRecord\Record\RecordTrait;
 
     }
 }
