@@ -82,6 +82,7 @@ final class Table
         
         return [
             'identifier' => $this->namespace . $dbalSchemaTable->getName(),
+            'recordIdentifier' => $primaryKeyColumns,
             'interfaces' => ['\\ActiveRecord\\MetaRecord'],
             'methods' => $methods
         ];
@@ -95,6 +96,7 @@ final class Table
 
         return [
             'identifier' => $this->namespace . $dbalSchemaView->getName(),
+            'recordIdentifier' => [],
             'interfaces' => ['\\ActiveRecord\\MetaRecord'],
             'methods' => $methods
         ];
