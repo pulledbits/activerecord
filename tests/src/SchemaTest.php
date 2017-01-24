@@ -56,8 +56,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
-        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(array $values) {
-            return new \Test\Record\activiteit(new Asset('activiteit', $this->object), $values);
+        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(string $namespace, array $values) {
+            $identifier = $namespace . '\\activiteit';
+            return new $identifier(new Asset('activiteit', $this->object), $values);
         });
 
         $this->assertCount(4, $records);

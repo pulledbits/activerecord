@@ -92,7 +92,9 @@ class Schema
         if ($recordConverter === null) {
             return array_map($this->recordConverter($tableIdentifier), $statement->fetchAll(\PDO::FETCH_ASSOC));
         }
-        return array_map($recordConverter, $statement->fetchAll(\PDO::FETCH_ASSOC));
+        return array_map(function(array $values) use ($recordConverter) {
+            return $recordConverter($this->targetNamespace, $values);
+        }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
