@@ -235,23 +235,22 @@ namespace ActiveRecord\Test {
         };
     }
 
-    function createMockRecordFactory(string $namespace) {
-        return new class($namespace) implements \ActiveRecord\RecordFactory {
+    function createMockRecordFactory(string $path) {
+        return new class($path) implements \ActiveRecord\RecordFactory {
 
             /**
              * @var string
              */
-            private $namespace;
+            private $path;
 
-            public function __construct(string $namespace)
+            public function __construct(string $path)
             {
-                $this->namespace = $namespace;
+                $this->path = $path;
             }
 
-            function makeRecord(string $recordIdentifier, \ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
+            function makeRecord(\ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
             {
-                $classIdentifier =  $this->namespace . '\\' . $recordIdentifier;
-                return new $classIdentifier($asset, $values);
+                return $asset->executeRecordClassConfigurator($this->path, $values);
             }
         };
     }

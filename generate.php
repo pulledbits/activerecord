@@ -69,7 +69,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
 
 file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'factory.php', '<?php
 return new class implements \ActiveRecord\RecordFactory {
-    function makeRecord(string $recordIdentifier, \ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
+    function makeRecord(\ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
     {
         return $asset->executeRecordClassConfigurator(__DIR__ . DIRECTORY_SEPARATOR . \'Record\', $values);
     }

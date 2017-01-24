@@ -85,7 +85,7 @@ class Schema
 
         return array_map(function(array $values) use ($recordConverter, $tableIdentifier) {
             return $recordConverter(function(Schema\Asset $asset) use ($tableIdentifier, $values) {
-                return $this->recordFactory->makeRecord($tableIdentifier, $asset, $values);
+                return $this->recordFactory->makeRecord($asset, $values);
             });
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }

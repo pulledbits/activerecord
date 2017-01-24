@@ -10,7 +10,16 @@ class AssetTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->object = new Asset('activiteit', new \ActiveRecord\Schema(\ActiveRecord\Test\createMockRecordFactory('\\Test\\Record'), \ActiveRecord\Test\createMockPDOMultiple([
+        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
+return function(\ActiveRecord\Schema\Asset $asset, array $values) {
+    return new \Test\Record\activiteit($asset, $values);
+};');
+        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'thema.php', '<?php
+return function(\ActiveRecord\Schema\Asset $asset, array $values) {
+    return new \Test\Record\thema($asset, $values);
+};');
+
+        $this->object = new Asset('activiteit', new \ActiveRecord\Schema(\ActiveRecord\Test\createMockRecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([
             '/^SELECT id, name FROM activiteit$/' => [
                 [],
                 [],
@@ -167,12 +176,7 @@ class AssetTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteRecordClassConfigurator_When_PathGiven_Expect_RecordClass()
     {
-        $tempfile = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', 'w+');
-        fwrite($tempfile, '<?php return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return "OK";
-};');
-        fclose($tempfile);
-
-        $this->assertEquals('OK', $this->object->executeRecordClassConfigurator(sys_get_temp_dir(), []));
+        $record = $this->object->executeRecordClassConfigurator(sys_get_temp_dir(), ['status' => 'OK']);
+        $this->assertEquals('OK', $record->status);
     }
 }

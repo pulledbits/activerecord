@@ -25,7 +25,7 @@ class Asset
         $this->schema = $schema;
     }
 
-    public function executeRecordClassConfigurator(string $path, array $values)
+    public function executeRecordClassConfigurator(string $path, array $values) : \ActiveRecord\Record
     {
         $configurator = require $path . DIRECTORY_SEPARATOR . $this->identifier . '.php';
         return $configurator($this, $values);

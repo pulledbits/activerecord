@@ -21,7 +21,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $recordConfiguration = \ActiveRecord\Test\createMockRecordFactory('\\Test\\Record');
+        $recordConfiguration = \ActiveRecord\Test\createMockRecordFactory(sys_get_temp_dir());
         $this->object = new Schema($recordConfiguration, \ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE id = :param1/' => [
                 [],
