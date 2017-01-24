@@ -19,7 +19,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     return new \Test\Record\thema($asset, $values);
 };');
 
-        $this->object = new Asset('activiteit', new \ActiveRecord\Schema(\ActiveRecord\Test\createMockRecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([
+        $this->object = new Asset('activiteit', new \ActiveRecord\Schema(new \ActiveRecord\RecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([
             '/^SELECT id, name FROM activiteit$/' => [
                 [],
                 [],

@@ -234,24 +234,4 @@ namespace ActiveRecord\Test {
             }
         };
     }
-
-    function createMockRecordFactory(string $path) {
-        return new class($path) implements \ActiveRecord\RecordFactory {
-
-            /**
-             * @var string
-             */
-            private $path;
-
-            public function __construct(string $path)
-            {
-                $this->path = $path;
-            }
-
-            function makeRecord(\ActiveRecord\Schema\Asset $asset, array $values) : \ActiveRecord\Record
-            {
-                return $asset->executeRecordClassConfigurator($this->path, $values);
-            }
-        };
-    }
 }
