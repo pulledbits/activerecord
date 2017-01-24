@@ -48,6 +48,21 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($classDescription['identifier'], '\\Database\\Record\\MyTable');
         $this->assertEquals('\\ActiveRecord\\MetaRecord', $classDescription['interfaces'][0]);
         $this->assertEquals(['name', 'birthdate'], $classDescription['recordIdentifier']);
+        $this->assertEquals([
+            'FkOthertableRole' => [
+                'table' => 'OtherTable',
+                'where' => [
+                    'id' => 'role_id'
+                ],
+            ],
+            'FkAnothertableRole' => [
+                'table' => 'AntoherTable',
+                'where' => [
+                    'id' => 'role2_id',
+                    'column_id' => 'extra_column_id'
+                ],
+            ]
+        ], $classDescription['references']);
 
         $this->assertCount(0, $classDescription['methods']['identifier']['parameters']);
         $this->assertEquals('return [\'name\', \'birthdate\'];', $classDescription['methods']['identifier']['body'][0]);
