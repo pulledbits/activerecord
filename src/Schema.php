@@ -82,9 +82,21 @@ class Schema
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter) : array {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
-        return array_map(function(array $values) use ($recordConverter) {
-            return $recordConverter($this->targetNamespace, $values);
-        }, $statement->fetchAll(\PDO::FETCH_ASSOC));
+
+        $closureReflection = new \ReflectionFunction($recordConverter);
+        if ((string)$closureReflection->getParameters()[0]->getType() === 'string') {
+            return array_map(function(array $values) use ($recordConverter) {
+                return $recordConverter($this->targetNamespace, $values);
+            }, $statement->fetchAll(\PDO::FETCH_ASSOC));
+
+        } else {
+            return array_map(function(array $values) use ($recordConverter, $tableIdentifier) {
+                return $recordConverter(function(Schema\Asset $asset) use ($tableIdentifier, $values) {
+                    $identifier = $this->targetNamespace . '\\' . $tableIdentifier;
+                    return new $identifier($asset, $values);
+                });
+            }, $statement->fetchAll(\PDO::FETCH_ASSOC));
+        }
     }
 
     public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
