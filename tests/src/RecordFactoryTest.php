@@ -17,7 +17,7 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \Test\Record\activiteit($asset, $values);
+    return new \ActiveRecord\Record($asset, new \Test\Record\activiteit(), $values);
 };');
         $object = new RecordFactory(sys_get_temp_dir());
         $record = $object->makeRecord(new Asset('activiteit', new Schema($object, \ActiveRecord\Test\createMockPDOMultiple([]))), ['status' => 'OK']);

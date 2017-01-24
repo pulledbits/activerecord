@@ -216,23 +216,37 @@ namespace ActiveRecord\Test {
 
 namespace Test\Record {
 
-    class activiteit implements \ActiveRecord\Record
+    class activiteit implements \ActiveRecord\MetaRecord
     {
-        use \ActiveRecord\Record\RecordTrait;
-
-        public function primaryKey() {
-            return $this->values;
+        public function identifier() {
+            return ['id'];
+        }
+        public function references()
+        {
+            return [];
         }
     }
 
-    class thema implements \ActiveRecord\Record
+    class thema implements \ActiveRecord\MetaRecord
     {
-        use \ActiveRecord\Record\RecordTrait;
+        public function identifier() {
+            return [];
+        }
+        public function references()
+        {
+            return [];
+        }
     }
 
-    class leerdoelenview implements \ActiveRecord\Record
+    class leerdoelenview implements \ActiveRecord\MetaRecord
     {
-        use \ActiveRecord\Record\RecordTrait;
+        public function identifier() {
+            return [];
+        }
+        public function references()
+        {
+            return [];
+        }
 
     }
 }

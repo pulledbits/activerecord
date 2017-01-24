@@ -12,11 +12,11 @@ class AssetTest extends \PHPUnit_Framework_TestCase
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \Test\Record\activiteit($asset, $values);
+    return new \ActiveRecord\Record($asset, new \Test\Record\activiteit(), $values);
 };');
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'thema.php', '<?php
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \Test\Record\thema($asset, $values);
+    return new \ActiveRecord\Record($asset, new \Test\Record\thema(), $values);
 };');
 
         $this->object = new Asset('activiteit', new \ActiveRecord\Schema(new \ActiveRecord\RecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([
@@ -39,7 +39,9 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
                 [],
             ],
             '/^SELECT id, name FROM thema$/' => [
-                [],
+                [
+                    'id' => '1'
+                ],
                 [],
                 [],
                 [],
@@ -66,35 +68,36 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
             ],
 
             // QUERIES FOR CRUD TEST
-            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+$/' => [],
-            '/INSERT INTO activiteit \(nummer, collegejaar\) VALUES \(:\w+, :\w+\)/' => [
+            '/^SELECT id, collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+$/' => [],
+            '/INSERT INTO activiteit \(id, nummer, collegejaar\) VALUES \(:\w+, :\w+, :\w+\)/' => [
             ],
             // SELECT AFTER INSERT
-            '/^SELECT nummer, collegejaar FROM activiteit WHERE nummer = :\w+ AND collegejaar = :\w+$/' => [
+            '/^SELECT id, nummer, collegejaar FROM activiteit WHERE id = :\w+ AND nummer = :\w+ AND collegejaar = :\w+$/' => [
                 [
+                    'id' => '1',
                     'createdat' => date('Y-m-d'),
                     'collegejaar' => '1415',
                     'nummer' => '1',
                 ]
             ],
-            '/^UPDATE activiteit SET nummer = :\w+ WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+/' => 1,
+            '/^UPDATE activiteit SET nummer = :\w+ WHERE id = :\w+/' => 1,
             // SELECT AFTER UPDATE
-            '/^SELECT nummer FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [
+            '/^SELECT id FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'collegejaar' => '1415',
                     'nummer' => '2',
                 ]
             ],
             // CONFIRM UPDATE SELECT
-            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+ AND createdat = :\w+/' => [
+            '/^SELECT nummer FROM activiteit WHERE id = :\w+/' => [
                 [
                     'collegejaar' => '1415',
                     'nummer' => '2',
                 ]
             ],
-            '/^DELETE FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [],
+            '/^DELETE FROM activiteit WHERE id = :\w+$/' => [],
             // SELECT AFTER DELETE
-            '/^SELECT createdat, collegejaar, nummer FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [
+            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+ AND createdat = :\w+$/' => [
                 [
                     'collegejaar' => '1415',
                     'nummer' => '2',
@@ -104,8 +107,8 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     }
 
     public function testCRUD_When_DefaultState_Expect_RecordCreatedSelectedUpdatedAndDeleted() {
-        $this->assertCount(0, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2']), 'no previous record exists');
-        $record = $this->object->insert(['nummer' => '1', 'collegejaar' => '1415'], [])[0];
+        $this->assertCount(0, $this->object->select(['id', 'collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2']), 'no previous record exists');
+        $record = $this->object->insert(['id' => '1', 'nummer' => '1', 'collegejaar' => '1415'], [])[0];
         $this->assertEquals('1', $record->nummer, 'record is properly initialized');
         $record->nummer = '2';
         $this->assertEquals($record->nummer, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2', 'createdat' => date('Y-m-d')])[0]->nummer, 'record is properly updated');
@@ -134,7 +137,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     {
         $records = $this->object->selectFrom('thema', ['id', 'name'], []);
         $this->assertCount(5, $records);
-        $this->assertInstanceOf('\Test\Record\thema', $records[0]);
+        $this->assertEquals('1', $records[0]->id);
     }
 
     public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()

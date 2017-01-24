@@ -63,7 +63,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(4, $records);
         $this->assertEquals('Bla', $records[0]->werkvorm);
-        $this->assertInstanceOf('\Test\Record\activiteit', $records[0]);
     }
 
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
