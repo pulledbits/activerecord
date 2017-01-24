@@ -40,6 +40,7 @@ $generator = new CodeGenerator();
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($generator, $recordsDirectory) {
     $recordClass = new gossi\codegen\model\PhpClass($recordClassDescription['identifier']);
+    $recordClass->setInterfaces($recordClassDescription['interfaces']);
     $recordClass->setFinal(true);
 
     foreach ($recordClassDescription['methods'] as $methodIdentifier => $methodDescription) {
@@ -62,7 +63,7 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
 namespace ' . $recordClass->getNamespace() . ';
 require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new class($asset, $values) implements \ActiveRecord\Record {
+    return new class($asset, new ' . $recordClass->getName() . '(), $values) implements \ActiveRecord\Record {
     
         /**
          * @var \ActiveRecord\Asset
@@ -80,15 +81,15 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
          */
          
         /**
-         * @var \\' . $recordClass->getQualifiedName() . '
+         * @var \\ActiveRecord\\MetaRecord
          */
         private $metaRecord;
         
-        public function __construct(\ActiveRecord\Schema\Asset $asset, array $values) {
+        public function __construct(\ActiveRecord\Schema\Asset $asset, \\ActiveRecord\\MetaRecord $metaRecord, array $values) {
             $this->asset = $asset;
             $this->values = $values;
             
-            $this->metaRecord = new ' . $recordClass->getName() . '($asset, $values);
+            $this->metaRecord = $metaRecord;
         }
         
         /**

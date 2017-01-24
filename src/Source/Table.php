@@ -67,9 +67,13 @@ final class Table
             ];
         }
 
-        $referencesLines = explode(PHP_EOL, \var_export_short($references, true));
-        $referencesLines[0] = 'return ' . $referencesLines[0];
-        $referencesLines[count($referencesLines) - 1] .= ';';
+        if (count($references) === 0) {
+            $referencesLines = ['return [];'];
+        } else {
+            $referencesLines = explode(PHP_EOL, \var_export_short($references, true));
+            $referencesLines[0] = 'return ' . $referencesLines[0];
+            $referencesLines[count($referencesLines) - 1] .= ';';
+        }
 
         $methods = [
             'identifier' => $this->describePrimaryKeyMethod($primaryKeyColumns),
@@ -85,7 +89,8 @@ final class Table
 
     private function describeView(\Doctrine\DBAL\Schema\View $dbalSchemaView) : array {
         $methods = [
-            'identifier' => $this->describePrimaryKeyMethod([])
+            'identifier' => $this->describePrimaryKeyMethod([]),
+            'references' => $this->describeMethod(false, [], ['return [];'])
         ];
 
         return [
