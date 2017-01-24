@@ -165,15 +165,14 @@ class AssetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('newName', $records[0]->name);
     }
 
-    public function testRequireRecordClassConfigurator_When_PathGiven_Expect_RecordClassConfiguratorClosure()
+    public function testExecuteRecordClassConfigurator_When_PathGiven_Expect_RecordClass()
     {
         $tempfile = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', 'w+');
-        fwrite($tempfile, '<?php return function() {
+        fwrite($tempfile, '<?php return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     return "OK";
 };');
         fclose($tempfile);
 
-        $configurator = $this->object->requireRecordClassConfigurator(sys_get_temp_dir());
-        $this->assertEquals('OK', $configurator());
+        $this->assertEquals('OK', $this->object->executeRecordClassConfigurator(sys_get_temp_dir(), []));
     }
 }

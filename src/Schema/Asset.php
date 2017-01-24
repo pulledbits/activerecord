@@ -25,9 +25,10 @@ class Asset
         $this->schema = $schema;
     }
 
-    public function requireRecordClassConfigurator(string $path)
+    public function executeRecordClassConfigurator(string $path, array $values)
     {
-        return require $path . DIRECTORY_SEPARATOR . $this->identifier . '.php';
+        $configurator = require $path . DIRECTORY_SEPARATOR . $this->identifier . '.php';
+        return $configurator($this, $values);
     }
 
     public function select(array $columnIdentifiers, array $whereParameters)
