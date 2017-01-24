@@ -75,7 +75,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
         private $values = NULL;
     
         /**
-         * @param \ActiveRecord\Asset $table
+         * @param \ActiveRecord\Asset $asset
          * @param array $values
          */
          
@@ -91,23 +91,33 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
             $this->metaRecord = new ' . $recordClass->getName() . '($asset, $values);
         }
         
+        /**
+         * @param string $property
+         */
         public function __get($property) {
-            return $this->metaRecord->$property;
+            return $this->values[$property];
         }
+
+        /**
+         * @param string $property
+         * @param string $value
+         */
         public function __set($property, $value) {
-            $this->metaRecord->$property = $value;
+            if (count($this->asset->update([$property => $this->values[$property]], $this->primaryKey())) > 0) {
+                $this->values[$property] = $value;
+            }
         }
 
         public function primaryKey() {
             return $this->metaRecord->primaryKey();
         }
-
+    
         /**
-         * @return \ActiveRecord\WritableRecord[]
          */
         public function delete() {
-            return $this->metaRecord->delete();
+            return $this->asset->delete($this->primaryKey());
         }
+        
         public function __call(string $method, array $arguments) {
             return call_user_func_array([$this->metaRecord, $method], $arguments);
         }
