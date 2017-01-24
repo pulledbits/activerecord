@@ -62,15 +62,33 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
 namespace ' . $recordClass->getNamespace() . ';
 require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new class(new ' . $recordClass->getName() . '($asset, $values)) implements \ActiveRecord\Record {
+    return new class($asset, $values) implements \ActiveRecord\Record {
     
+        /**
+         * @var \ActiveRecord\Asset
+         */
+        private $asset = NULL;
+    
+        /**
+         * @var array
+         */
+        private $values = NULL;
+    
+        /**
+         * @param \ActiveRecord\Asset $table
+         * @param array $values
+         */
+         
         /**
          * @var \\' . $recordClass->getQualifiedName() . '
          */
         private $metaRecord;
-    
-        public function __construct(' . $recordClass->getName() . ' $metaRecord) {
-            $this->metaRecord = $metaRecord;
+        
+        public function __construct(\ActiveRecord\Schema\Asset $asset, array $values) {
+            $this->asset = $asset;
+            $this->values = $values;
+            
+            $this->metaRecord = new ' . $recordClass->getName() . '($asset, $values);
         }
         
         public function __get($property) {
