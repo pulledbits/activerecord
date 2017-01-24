@@ -164,4 +164,16 @@ class AssetTest extends \PHPUnit_Framework_TestCase
         $records = $this->object->insert(['id' => '1', 'name' => 'newName']);
         $this->assertEquals('newName', $records[0]->name);
     }
+
+    public function testRequireRecordClassConfigurator_When_PathGiven_Expect_RecordClassConfiguratorClosure()
+    {
+        $tempfile = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', 'w+');
+        fwrite($tempfile, '<?php return function() {
+    return "OK";
+};');
+        fclose($tempfile);
+
+        $configurator = $this->object->requireRecordClassConfigurator(sys_get_temp_dir());
+        $this->assertEquals('OK', $configurator());
+    }
 }

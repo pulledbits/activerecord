@@ -25,6 +25,11 @@ class Asset
         $this->schema = $schema;
     }
 
+    public function requireRecordClassConfigurator(string $path)
+    {
+        return require $path . DIRECTORY_SEPARATOR . $this->identifier . '.php';
+    }
+
     public function select(array $columnIdentifiers, array $whereParameters)
     {
         return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) {
