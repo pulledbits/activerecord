@@ -30,11 +30,6 @@ class Record
      * @param array $values
      */
 
-    /**
-     * @var \ActiveRecord\MetaRecord
-     */
-    private $metaRecord;
-
     public function __construct(\ActiveRecord\Schema\Asset $asset, array $primaryKey, array $references, array $values)
     {
         $this->asset = $asset;
