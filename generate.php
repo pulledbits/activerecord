@@ -57,6 +57,13 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
         $method->setBody(join(PHP_EOL, $methodDescription['body']));
         $recordClass->setMethod($method);
     }
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.class.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
+    $classFilename = $tableName . '.class.php';
+    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $classFilename, '<?php' . PHP_EOL . $generator->generate($recordClass));
+    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php
+namespace ' . $recordClass->getNamespace() . ';
+require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
+return function(\ActiveRecord\Schema\Asset $table, array $values) {
+    return new ' . $recordClass->getName() . '($table, $values);
+};');
 });
 echo 'Done' . PHP_EOL;

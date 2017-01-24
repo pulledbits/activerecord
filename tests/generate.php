@@ -13,7 +13,7 @@ passthru($command);
 
 // test activiteit
 require dirname(__DIR__) . '/vendor/autoload.php';
-require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'blok.class.php';
+$blokConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'blok.php';
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
