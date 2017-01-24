@@ -63,7 +63,38 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
 namespace ' . $recordClass->getNamespace() . ';
 require_once __DIR__ . DIRECTORY_SEPARATOR . \'' . $classFilename . '\';
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new ' . $recordClass->getName() . '($asset, $values);
+    return new class(new ' . $recordClass->getName() . '($asset, $values)) implements \ActiveRecord\Record {
+    
+        /**
+         * @var \\' . $recordClass->getQualifiedName() . '
+         */
+        private $metaRecord;
+    
+        public function __construct(' . $recordClass->getName() . ' $metaRecord) {
+            $this->metaRecord = $metaRecord;
+        }
+        
+        public function __get($property) {
+            return $this->metaRecord->$property;
+        }
+        public function __set($property, $value) {
+            $this->metaRecord->$property = $value;
+        }
+
+        public function primaryKey() {
+            return $this->metaRecord->primaryKey();
+        }
+
+        /**
+         * @return \ActiveRecord\WritableRecord[]
+         */
+        public function delete() {
+            return $this->metaRecord->delete();
+        }
+        public function __call(string $method, array $arguments) {
+            return call_user_func_array([$this->metaRecord, $method], $arguments);
+        }
+    };
 };');
 });
 
