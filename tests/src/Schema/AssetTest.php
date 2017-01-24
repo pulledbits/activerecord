@@ -10,7 +10,7 @@ class AssetTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->object = new Asset('activiteit', new \ActiveRecord\Schema('\Test\Record', \ActiveRecord\Test\createMockRecordFactory('\\Test\\Record'), \ActiveRecord\Test\createMockPDOMultiple([
+        $this->object = new Asset('activiteit', new \ActiveRecord\Schema(\ActiveRecord\Test\createMockRecordFactory('\\Test\\Record'), \ActiveRecord\Test\createMockPDOMultiple([
             '/^SELECT id, name FROM activiteit$/' => [
                 [],
                 [],

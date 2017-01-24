@@ -35,7 +35,7 @@ $recordConfigurator = new class($targetNamespace . '\\Record') implements \Activ
     }
 };
 
-$schema = new \ActiveRecord\Schema($targetNamespace . '\\Record', $recordConfigurator, $connection);
+$schema = new \ActiveRecord\Schema($recordConfigurator, $connection);
 
 $table = new \ActiveRecord\Schema\Asset("blok", $schema);
 assert(count($table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');

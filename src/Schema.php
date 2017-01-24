@@ -12,11 +12,6 @@ namespace ActiveRecord;
 class Schema
 {
     /**
-     * @var string
-     */
-    private $targetNamespace;
-
-    /**
      * @var \ActiveRecord\RecordFactory
      */
     private $recordFactory;
@@ -26,8 +21,7 @@ class Schema
      */
     private $connection;
 
-    public function __construct(string $targetNamespace, \ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
-        $this->targetNamespace = $targetNamespace;
+    public function __construct(\ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
         $this->recordFactory = $recordFactory;
         $this->connection = $connection;
     }
