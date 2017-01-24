@@ -57,6 +57,6 @@ $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), functi
         $method->setBody(join(PHP_EOL, $methodDescription['body']));
         $recordClass->setMethod($method);
     }
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
+    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.class.php', '<?php' . PHP_EOL . $generator->generate($recordClass));
 });
 echo 'Done' . PHP_EOL;

@@ -13,7 +13,7 @@ passthru($command);
 
 // test activiteit
 require dirname(__DIR__) . '/vendor/autoload.php';
-require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'blok.php';
+require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'blok.class.php';
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
@@ -27,7 +27,7 @@ $record->nummer = '2';
 assert($record->nummer === $table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer, 'record is properly updated');
 assert(count($record->delete()) > 1, 'delete confirms removal');
 
-require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'leerdoelenview.php';
+require $targetDirectory . DIRECTORY_SEPARATOR . 'Record' . DIRECTORY_SEPARATOR . 'leerdoelenview.class.php';
 $viewRecord = $schema->selectFrom("leerdoelenview", ['*'], []);
 assert(count($viewRecord) > 1, 'view records exist');
 echo 'Done testing';
