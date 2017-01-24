@@ -13,6 +13,11 @@ class Record
     /**
      * @var array
      */
+    private $primaryKey = NULL;
+
+    /**
+     * @var array
+     */
     private $values = NULL;
 
     /**
@@ -25,9 +30,10 @@ class Record
      */
     private $metaRecord;
 
-    public function __construct(\ActiveRecord\Schema\Asset $asset, \ActiveRecord\MetaRecord $metaRecord, array $values)
+    public function __construct(\ActiveRecord\Schema\Asset $asset, array $primaryKey, \ActiveRecord\MetaRecord $metaRecord, array $values)
     {
         $this->asset = $asset;
+        $this->primaryKey = $primaryKey;
         $this->values = $values;
 
         $this->metaRecord = $metaRecord;
@@ -47,21 +53,16 @@ class Record
      */
     public function __set($property, $value)
     {
-        if (count($this->asset->update([$property => $this->values[$property]], $this->primaryKey())) > 0) {
+        if (count($this->asset->update([$property => $this->values[$property]], $this->primaryKey)) > 0) {
             $this->values[$property] = $value;
         }
-    }
-
-    public function primaryKey()
-    {
-        return array_slice_key($this->values, $this->metaRecord->identifier());
     }
 
     /**
      */
     public function delete()
     {
-        return $this->asset->delete($this->primaryKey());
+        return $this->asset->delete($this->primaryKey);
     }
 
     public function __call(string $method, array $arguments)
