@@ -6,9 +6,9 @@ class Entity
 {
 
     /**
-     * @var \ActiveRecord\Asset
+     * @var \ActiveRecord\EntityType
      */
-    private $asset = NULL;
+    private $entityType = NULL;
 
     /**
      * @var array
@@ -26,13 +26,15 @@ class Entity
     private $values = NULL;
 
     /**
-     * @param \ActiveRecord\Asset $asset
+     * Entity constructor.
+     * @param Schema\EntityType $asset
+     * @param array $primaryKey
+     * @param array $references
      * @param array $values
      */
-
     public function __construct(\ActiveRecord\Schema\EntityType $asset, array $primaryKey, array $references, array $values)
     {
-        $this->asset = $asset;
+        $this->entityType = $asset;
         $this->primaryKey = $primaryKey;
         $this->references = $references;
         $this->values = $values;
@@ -52,7 +54,7 @@ class Entity
      */
     public function __set($property, $value)
     {
-        if (count($this->asset->update([$property => $this->values[$property]], $this->primaryKey)) > 0) {
+        if (count($this->entityType->update([$property => $this->values[$property]], $this->primaryKey)) > 0) {
             $this->values[$property] = $value;
         }
     }
@@ -61,7 +63,7 @@ class Entity
      */
     public function delete()
     {
-        return $this->asset->delete($this->primaryKey);
+        return $this->entityType->delete($this->primaryKey);
     }
 
     public function __call(string $method, array $arguments)
@@ -70,7 +72,7 @@ class Entity
             $reference = $this->references[substr($method, 6)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
-            return $this->asset->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
+            return $this->entityType->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
         }
     }
 
