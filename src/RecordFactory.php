@@ -12,7 +12,7 @@ class RecordFactory {
         $this->path = $path;
     }
 
-    public function makeRecord(Schema\EntityType $asset, array $values) : Record
+    public function makeRecord(Schema\EntityType $asset, array $values) : Entity
     {
         return $asset->executeRecordClassConfigurator($this->path, $values);
     }

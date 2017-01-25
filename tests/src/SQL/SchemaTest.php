@@ -59,9 +59,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
         $asset = new class implements EntityType {
 
-            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
+            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Entity
             {
-                return new \ActiveRecord\Record($this, $values, [], $values);
+                return new \ActiveRecord\Entity($this, $values, [], $values);
             }
 
             public function select(array $columnIdentifiers, array $whereParameters)

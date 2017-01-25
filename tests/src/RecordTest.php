@@ -14,7 +14,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $asset = new class implements \ActiveRecord\Schema\EntityType{
-            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
+            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Entity
             {}
 
             public function select(array $columnIdentifiers, array $whereParameters)
@@ -37,7 +37,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $values = [
             'number' => '1'
         ];
-        $this->object = new Record($asset, $primaryKey, $references, $values);
+        $this->object = new Entity($asset, $primaryKey, $references, $values);
     }
 
     public function test__get_When_ExistingProperty_Expect_Value()

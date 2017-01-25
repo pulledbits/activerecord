@@ -2,7 +2,7 @@
 
 namespace ActiveRecord;
 
-class Record
+class Entity
 {
 
     /**

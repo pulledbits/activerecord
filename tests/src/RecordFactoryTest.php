@@ -17,9 +17,9 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $asset = new class implements EntityType {
 
-            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
+            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Entity
             {
-                return new \ActiveRecord\Record($this, $values, [], $values);
+                return new \ActiveRecord\Entity($this, $values, [], $values);
             }
 
             public function select(array $columnIdentifiers, array $whereParameters)
