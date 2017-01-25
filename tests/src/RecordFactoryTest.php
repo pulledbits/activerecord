@@ -19,8 +19,21 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 return function(\ActiveRecord\Schema\Asset $asset, array $values) {
     return new \ActiveRecord\Record($asset, $values, [], $values);
 };');
+        $schema = new class implements Schema {
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter): array
+            {}
+
+            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            {}
+
+            public function insertValues(string $tableIdentifier, array $values): int
+            {}
+
+            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            {}
+        };
         $object = new RecordFactory(sys_get_temp_dir());
-        $record = $object->makeRecord(new Asset('activiteit', new Schema($object, \ActiveRecord\Test\createMockPDOMultiple([]))), ['status' => 'OK']);
+        $record = $object->makeRecord(new Asset('activiteit', $schema), ['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
     }
 

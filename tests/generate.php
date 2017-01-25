@@ -18,7 +18,7 @@ $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $u
 
 $recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.php';
 
-$schema = new \ActiveRecord\Schema($recordConfigurator, $connection);
+$schema = new \ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
 $table = new \ActiveRecord\Schema\Asset("blok", $schema);
 assert(count($table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');

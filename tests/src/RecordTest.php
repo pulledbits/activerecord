@@ -13,7 +13,20 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $asset = new \ActiveRecord\Schema\Asset('activeit', new Schema(new RecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([])));
+        $schema = new class implements Schema {
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter): array
+            {}
+
+            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            {}
+
+            public function insertValues(string $tableIdentifier, array $values): int
+            {}
+
+            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            {}
+        };
+        $asset = new \ActiveRecord\Schema\Asset('activeit', $schema);
         $primaryKey = [];
         $references = [];
         $values = [

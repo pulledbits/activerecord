@@ -6,7 +6,7 @@
  * Time: 16:06
  */
 
-namespace ActiveRecord;
+namespace ActiveRecord\SQL;
 
 
 use ActiveRecord\Schema\Asset;
