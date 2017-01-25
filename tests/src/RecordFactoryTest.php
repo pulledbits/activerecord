@@ -9,13 +9,13 @@
 namespace ActiveRecord;
 
 
-use ActiveRecord\Schema\Asset;
+use ActiveRecord\Schema\EntityType;
 
 class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
-        $asset = new class implements Asset {
+        $asset = new class implements EntityType {
 
             public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
             {

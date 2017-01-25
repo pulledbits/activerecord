@@ -8,7 +8,7 @@
 
 namespace ActiveRecord\SQL\Schema;
 
-class Table implements \ActiveRecord\Schema\Asset
+class Table implements \ActiveRecord\Schema\EntityType
 {
     /**
      * @var string

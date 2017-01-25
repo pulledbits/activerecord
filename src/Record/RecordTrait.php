@@ -17,7 +17,7 @@ trait RecordTrait {
      * @param \ActiveRecord\Asset $table
      * @param array $values
      */
-    public function __construct(\ActiveRecord\Schema\Asset $table, array $values) {
+    public function __construct(\ActiveRecord\Schema\EntityType $table, array $values) {
         $this->table = $table;
         $this->values = $values;
     }

@@ -20,7 +20,7 @@ $recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.
 
 $schema = new \ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
-$table = new \ActiveRecord\Schema\Asset("blok", $schema);
+$table = new \ActiveRecord\Schema\EntityType("blok", $schema);
 assert(count($table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');
 $record = $table->insert(['collegejaar' => '1415', 'nummer' => '1'], [])[0];
 assert($record->nummer === '1', 'record is properly initialized');
@@ -29,7 +29,7 @@ assert($record->nummer === $table->select(['_collegejaar' => 'collegejaar', '_nu
 assert(count($record->delete()) > 1, 'delete confirms removal');
 
 $viewRecord = $schema->selectFrom("leerdoelenview", ['*'], [], function(\Closure $recordConfigurator) use ($schema) {
-    return $recordConfigurator(new \ActiveRecord\Schema\Asset('leerdoelenview', $schema));
+    return $recordConfigurator(new \ActiveRecord\Schema\EntityType('leerdoelenview', $schema));
 });
 
 assert(count($viewRecord) > 1, 'view records exist');

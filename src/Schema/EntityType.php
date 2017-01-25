@@ -1,7 +1,7 @@
 <?php
 namespace ActiveRecord\Schema;
 
-interface Asset {
+interface EntityType {
 
     public function executeRecordClassConfigurator(string $path, array $values) : \ActiveRecord\Record;
 

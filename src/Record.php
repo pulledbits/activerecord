@@ -30,7 +30,7 @@ class Record
      * @param array $values
      */
 
-    public function __construct(\ActiveRecord\Schema\Asset $asset, array $primaryKey, array $references, array $values)
+    public function __construct(\ActiveRecord\Schema\EntityType $asset, array $primaryKey, array $references, array $values)
     {
         $this->asset = $asset;
         $this->primaryKey = $primaryKey;

@@ -84,7 +84,7 @@ class Schema implements \ActiveRecord\Schema
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
 
         return array_map(function(array $values) use ($recordConverter, $tableIdentifier) {
-            return $recordConverter(function(\ActiveRecord\Schema\Asset $asset) use ($tableIdentifier, $values) {
+            return $recordConverter(function(\ActiveRecord\Schema\EntityType $asset) use ($tableIdentifier, $values) {
                 return $this->recordFactory->makeRecord($asset, $values);
             });
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));

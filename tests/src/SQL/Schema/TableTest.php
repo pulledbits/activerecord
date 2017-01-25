@@ -109,7 +109,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
 
             private function convertResultSet(array $results, \Closure $recordConverter) {
                 return array_map(function(array $values) use ($recordConverter) {
-                    return $recordConverter(function(\ActiveRecord\Schema\Asset $asset) use ($values) {
+                    return $recordConverter(function(\ActiveRecord\Schema\EntityType $asset) use ($values) {
                         return $asset->executeRecordClassConfigurator(sys_get_temp_dir(), $values);
                     });
                 }, $results);
