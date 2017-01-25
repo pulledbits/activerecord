@@ -14,7 +14,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $asset = new class implements \ActiveRecord\Schema\EntityType{
-            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Entity
+            public function executeEntityConfigurator(string $path, array $values): \ActiveRecord\Entity
             {}
 
             public function select(array $columnIdentifiers, array $whereParameters)

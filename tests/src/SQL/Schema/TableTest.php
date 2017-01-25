@@ -230,7 +230,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 return function(\ActiveRecord\Schema\EntityType $asset, array $values) {
     return new \ActiveRecord\Entity($asset, $values, [], $values);
 };');
-        $record = $this->object->executeRecordClassConfigurator(sys_get_temp_dir(), ['status' => 'OK']);
+        $record = $this->object->executeEntityConfigurator(sys_get_temp_dir(), ['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
     }
 }

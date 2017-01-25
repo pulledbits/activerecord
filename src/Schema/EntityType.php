@@ -3,7 +3,7 @@ namespace ActiveRecord\Schema;
 
 interface EntityType {
 
-    public function executeRecordClassConfigurator(string $path, array $values) : \ActiveRecord\Entity;
+    public function executeEntityConfigurator(string $path, array $values) : \ActiveRecord\Entity;
 
     public function select(array $columnIdentifiers, array $whereParameters);
 

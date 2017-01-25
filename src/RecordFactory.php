@@ -14,6 +14,6 @@ class RecordFactory {
 
     public function makeRecord(Schema\EntityType $asset, array $values) : Entity
     {
-        return $asset->executeRecordClassConfigurator($this->path, $values);
+        return $asset->executeEntityConfigurator($this->path, $values);
     }
 }

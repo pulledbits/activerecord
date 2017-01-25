@@ -25,7 +25,7 @@ class Table implements \ActiveRecord\Schema\EntityType
         $this->schema = $schema;
     }
 
-    public function executeRecordClassConfigurator(string $path, array $values) : \ActiveRecord\Entity
+    public function executeEntityConfigurator(string $path, array $values) : \ActiveRecord\Entity
     {
         $configurator = require $path . DIRECTORY_SEPARATOR . $this->identifier . '.php';
         return $configurator($this, $values);
