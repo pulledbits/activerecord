@@ -8,7 +8,7 @@
 
 namespace ActiveRecord\SQL\Schema;
 
-class Asset implements \ActiveRecord\Schema\Asset
+class Table implements \ActiveRecord\Schema\Asset
 {
     /**
      * @var string
@@ -41,7 +41,7 @@ class Asset implements \ActiveRecord\Schema\Asset
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
     {
         return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) use ($tableIdentifier) {
-            return $recordConfigurator(new Asset($tableIdentifier, $this->schema));
+            return $recordConfigurator(new Table($tableIdentifier, $this->schema));
         });
     }
 

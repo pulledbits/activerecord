@@ -1,10 +1,10 @@
 <?php
 namespace ActiveRecord\SQL\Schema;
 
-class AssetTest extends \PHPUnit_Framework_TestCase
+class TableTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Asset
+     * @var Table
      */
     private $object;
 
@@ -244,7 +244,7 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
             }
         };
 
-        $this->object = new Asset('activiteit', $schema);
+        $this->object = new Table('activiteit', $schema);
     }
 
     public function testCRUD_When_DefaultState_Expect_RecordCreatedSelectedUpdatedAndDeleted() {
