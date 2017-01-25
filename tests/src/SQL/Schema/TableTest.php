@@ -10,107 +10,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \ActiveRecord\Record($asset, $values, [], $values);
-};');
-        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'thema.php', '<?php
-return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \ActiveRecord\Record($asset, $values, [], $values);
-};');
-
-//        $schema = new \ActiveRecord\SQL\Schema(new \ActiveRecord\RecordFactory(sys_get_temp_dir()), \ActiveRecord\Test\createMockPDOMultiple([
-//            '/^SELECT id, name FROM activiteit$/' => [
-//                [],
-//                [],
-//                [],
-//                [],
-//                [],
-//            ],
-//            '/DELETE FROM activiteit WHERE name = :\w+/' => [],
-//            '/^UPDATE activiteit SET name = :\w+ WHERE name = :\w+$/' => [],
-//            '/^SELECT name FROM activiteit WHERE name = :\w+$/' => [
-//                [],
-//                [],
-//                []
-//            ],
-//            '/^UPDATE activiteit SET name = :\w+ WHERE name = :\w+ AND id = :\w+$/' => [],
-//            '/^SELECT name FROM activiteit WHERE name = :\w+ AND id = :\w+$/' => [
-//                [],
-//            ],
-//            '/^SELECT id, name FROM thema$/' => [
-//                [
-//                    'id' => '1'
-//                ],
-//                [],
-//                [],
-//                [],
-//                [],
-//            ],
-//            '/^UPDATE activiteit SET name = :\w+$/' => [],
-//            '/^SELECT name FROM activiteit$/' => [
-//                [],
-//                [],
-//                [],
-//                [],
-//                [],
-//            ],
-//            '/^INSERT INTO activiteit \(id, name\) VALUES \(:\w+, :\w+\)$/' => [],
-//            '/^DELETE FROM activiteit WHERE id = :\w+ AND name = :\w+$/' => [],
-//            '/^SELECT id, name FROM activiteit WHERE id = :\w+ AND name = :\w+$/' => [
-//                [
-//                    'id' => '1',
-//                    'name' => 'newName'],
-//                [],
-//                [],
-//                [],
-//                [],
-//            ],
-//
-//            // QUERIES FOR CRUD TEST
-//            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+$/' => [],
-//            '/INSERT INTO activiteit \(nummer, collegejaar\) VALUES \(:\w+, :\w+\)/' => [
-//            ],
-//            // SELECT AFTER INSERT
-//            '/^SELECT nummer, collegejaar FROM activiteit WHERE nummer = :\w+ AND collegejaar = :\w+$/' => [
-//                [
-//                    'createdat' => date('Y-m-d'),
-//                    'collegejaar' => '1415',
-//                    'nummer' => '1',
-//                ]
-//            ],
-//            '/^UPDATE activiteit SET nummer = :\w+ WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+/' => 1,
-//            // SELECT AFTER UPDATE
-//            '/^SELECT nummer FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [
-//                [
-//                    'collegejaar' => '1415',
-//                    'nummer' => '2',
-//                ]
-//            ],
-//            // CONFIRM UPDATE SELECT
-//            '/^SELECT collegejaar, nummer FROM activiteit WHERE collegejaar = :\w+ AND nummer = :\w+ AND createdat = :\w+/' => [
-//                [
-//                    'collegejaar' => '1415',
-//                    'nummer' => '2',
-//                ]
-//            ],
-//            '/^DELETE FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [],
-//            // SELECT AFTER DELETE
-//            '/^SELECT createdat, collegejaar, nummer FROM activiteit WHERE createdat = :\w+ AND collegejaar = :\w+ AND nummer = :\w+$/' => [
-//                [
-//                    'collegejaar' => '1415',
-//                    'nummer' => '2',
-//                ]
-//            ],
-//        ]));
-
-
         $schema = new class implements \ActiveRecord\Schema {
 
             private function convertResultSet(array $results, \Closure $recordConverter) {
                 return array_map(function(array $values) use ($recordConverter) {
                     return $recordConverter(function(\ActiveRecord\Schema\EntityType $asset) use ($values) {
-                        return $asset->executeRecordClassConfigurator(sys_get_temp_dir(), $values);
+                        return new \ActiveRecord\Entity($asset, $values, [], $values);
+                        //return $asset->executeRecordClassConfigurator(sys_get_temp_dir(), $values);
                     });
                 }, $results);
             }
@@ -320,6 +226,10 @@ return function(\ActiveRecord\Schema\Asset $asset, array $values) {
 
     public function testExecuteRecordClassConfigurator_When_PathGiven_Expect_RecordClass()
     {
+        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
+return function(\ActiveRecord\Schema\EntityType $asset, array $values) {
+    return new \ActiveRecord\Entity($asset, $values, [], $values);
+};');
         $record = $this->object->executeRecordClassConfigurator(sys_get_temp_dir(), ['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
     }
