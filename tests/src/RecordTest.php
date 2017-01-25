@@ -13,20 +13,25 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $schema = new class implements Schema {
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter): array
+        $asset = new class implements \ActiveRecord\Schema\Asset{
+            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
             {}
 
-            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            public function select(array $columnIdentifiers, array $whereParameters)
             {}
 
-            public function insertValues(string $tableIdentifier, array $values): int
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
             {}
 
-            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            public function insert(array $values)
+            { }
+
+            public function update(array $setParameters, array $whereParameters)
+            {}
+
+            public function delete(array $whereParameters)
             {}
         };
-        $asset = new \ActiveRecord\Schema\Asset('activeit', $schema);
         $primaryKey = [];
         $references = [];
         $values = [

@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord\Schema;
+namespace ActiveRecord\SQL\Schema;
 
 class AssetTest extends \PHPUnit_Framework_TestCase
 {

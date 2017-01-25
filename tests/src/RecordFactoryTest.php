@@ -15,25 +15,30 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
-        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\ActiveRecord\Schema\Asset $asset, array $values) {
-    return new \ActiveRecord\Record($asset, $values, [], $values);
-};');
-        $schema = new class implements Schema {
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter): array
+        $asset = new class implements Asset {
+
+            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
+            {
+                return new \ActiveRecord\Record($this, $values, [], $values);
+            }
+
+            public function select(array $columnIdentifiers, array $whereParameters)
             {}
 
-            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
             {}
 
-            public function insertValues(string $tableIdentifier, array $values): int
+            public function insert(array $values)
             {}
 
-            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            public function update(array $setParameters, array $whereParameters)
+            {}
+
+            public function delete(array $whereParameters)
             {}
         };
         $object = new RecordFactory(sys_get_temp_dir());
-        $record = $object->makeRecord(new Asset('activiteit', $schema), ['status' => 'OK']);
+        $record = $object->makeRecord($asset, ['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
     }
 

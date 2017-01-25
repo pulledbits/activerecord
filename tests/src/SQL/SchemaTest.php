@@ -57,8 +57,31 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
-        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(\Closure $recordConfigurator) {
-            return $recordConfigurator(new Asset('activiteit', $this->object));
+        $asset = new class implements Asset {
+
+            public function executeRecordClassConfigurator(string $path, array $values): \ActiveRecord\Record
+            {
+                return new \ActiveRecord\Record($this, $values, [], $values);
+            }
+
+            public function select(array $columnIdentifiers, array $whereParameters)
+            {}
+
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
+            {}
+
+            public function insert(array $values)
+            {}
+
+            public function update(array $setParameters, array $whereParameters)
+            {}
+
+            public function delete(array $whereParameters)
+            {}
+        };
+
+        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(\Closure $recordConfigurator) use ($asset) {
+            return $recordConfigurator($asset);
         });
 
         $this->assertCount(4, $records);
