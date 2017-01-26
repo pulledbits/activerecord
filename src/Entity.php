@@ -68,8 +68,8 @@ class Entity
 
     public function __call(string $method, array $arguments)
     {
-        if (substr($method, 0, 6) === 'fetchBy') {
-            $reference = $this->references[substr($method, 6)];
+        if (substr($method, 0, 7) === 'fetchBy') {
+            $reference = $this->references[substr($method, 7)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
             return $this->entityType->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
