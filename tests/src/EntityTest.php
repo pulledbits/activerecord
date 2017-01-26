@@ -37,7 +37,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             public function delete(array $whereParameters) : int
             {}
         };
-        $primaryKey = [];
+        $primaryKey = [
+            'number' => '1'
+        ];
         $references = [];
         $values = [
             'number' => '1'

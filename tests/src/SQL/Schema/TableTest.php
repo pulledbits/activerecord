@@ -129,7 +129,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
             {
                 if ($tableIdentifier === 'activiteit') {
-                    if ($setParameters === ['nummer' => '1'] && $whereParameters === ['createdat' => date('Y-m-d'), 'collegejaar' => '1415', 'nummer' => '1']) {
+                    if ($setParameters === ['nummer' => '2'] && $whereParameters === ['createdat' => date('Y-m-d'), 'collegejaar' => '1415', 'nummer' => '1']) {
                         return 1;
                     } elseif ($setParameters === ['name' => 'newName'] && $whereParameters === []) {
                         return 5;

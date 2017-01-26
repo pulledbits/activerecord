@@ -54,7 +54,7 @@ class Entity
      */
     public function __set($property, $value)
     {
-        if (count($this->entityType->update([$property => $this->values[$property]], $this->primaryKey)) > 0) {
+        if ($this->entityType->update([$property => $value], $this->primaryKey) > 0) {
             $this->values[$property] = $value;
         }
     }
