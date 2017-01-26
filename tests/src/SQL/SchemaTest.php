@@ -61,7 +61,30 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
             public function executeEntityConfigurator(string $path, array $values): \ActiveRecord\Entity
             {
-                return new \ActiveRecord\Entity($this, $values, [], $values);
+                $schema = new class implements \ActiveRecord\Schema {
+
+                    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+                    {
+                        // TODO: Implement selectFrom() method.
+                    }
+
+                    public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+                    {
+                        // TODO: Implement updateWhere() method.
+                    }
+
+                    public function insertValues(string $tableIdentifier, array $values): int
+                    {
+                        // TODO: Implement insertValues() method.
+                    }
+
+                    public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+                    {
+                        // TODO: Implement deleteFrom() method.
+                    }
+                };
+
+                return new \ActiveRecord\Entity($this, $schema, 'MyTable', $values, [], $values);
             }
 
             public function select(array $columnIdentifiers, array $whereParameters) : array

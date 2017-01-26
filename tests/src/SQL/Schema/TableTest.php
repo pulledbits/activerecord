@@ -14,7 +14,30 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
             private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
                 return array_map(function(array $values) use ($entityType) {
-                    return new \ActiveRecord\Entity($entityType, $values, [], $values);
+                    $schema = new class implements \ActiveRecord\Schema {
+
+                        public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+                        {
+                            // TODO: Implement selectFrom() method.
+                        }
+
+                        public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+                        {
+                            // TODO: Implement updateWhere() method.
+                        }
+
+                        public function insertValues(string $tableIdentifier, array $values): int
+                        {
+                            // TODO: Implement insertValues() method.
+                        }
+
+                        public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+                        {
+                            // TODO: Implement deleteFrom() method.
+                        }
+                    };
+
+                    return new \ActiveRecord\Entity($entityType, $schema, 'MyTable', $values, [], $values);
                 }, $results);
             }
 
@@ -244,8 +267,32 @@ class TableTest extends \PHPUnit_Framework_TestCase
     public function testExecuteRecordClassConfigurator_When_PathGiven_Expect_RecordClass()
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\ActiveRecord\Schema\EntityType $asset, array $values) {
-    return new \ActiveRecord\Entity($asset, $values, [], $values);
+return function(\ActiveRecord\Schema\EntityType $entityType, array $values) {
+
+                    $schema = new class implements \ActiveRecord\Schema {
+
+                        public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+                        {
+                            // TODO: Implement selectFrom() method.
+                        }
+
+                        public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+                        {
+                            // TODO: Implement updateWhere() method.
+                        }
+
+                        public function insertValues(string $tableIdentifier, array $values): int
+                        {
+                            // TODO: Implement insertValues() method.
+                        }
+
+                        public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+                        {
+                            // TODO: Implement deleteFrom() method.
+                        }
+                    };
+
+                    return new \ActiveRecord\Entity($entityType, $schema, \'MyTable\', $values, [], $values);
 };');
         $record = $this->object->executeEntityConfigurator(sys_get_temp_dir(), ['status' => 'OK']);
         $this->assertEquals('OK', $record->status);

@@ -13,10 +13,57 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        $schema = new class implements \ActiveRecord\Schema {
+
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+            {
+                // TODO: Implement selectFrom() method.
+            }
+
+            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            {
+                // TODO: Implement updateWhere() method.
+            }
+
+            public function insertValues(string $tableIdentifier, array $values): int
+            {
+                // TODO: Implement insertValues() method.
+            }
+
+            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            {
+                // TODO: Implement deleteFrom() method.
+            }
+        };
+
         $asset = new class implements \ActiveRecord\Schema\EntityType{
             private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
                 return array_map(function(array $values) use ($entityType) {
-                    return new \ActiveRecord\Entity($entityType, $values, [], $values);
+
+                    $schema = new class implements \ActiveRecord\Schema {
+
+                        public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+                        {
+                            // TODO: Implement selectFrom() method.
+                        }
+
+                        public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+                        {
+                            // TODO: Implement updateWhere() method.
+                        }
+
+                        public function insertValues(string $tableIdentifier, array $values): int
+                        {
+                            // TODO: Implement insertValues() method.
+                        }
+
+                        public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+                        {
+                            // TODO: Implement deleteFrom() method.
+                        }
+                    };
+
+                    return new \ActiveRecord\Entity($entityType, $schema, 'MyTable', $values, [], $values);
                 }, $results);
             }
 
@@ -71,7 +118,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'number' => '1',
             'role_id' => '33',
         ];
-        $this->object = new Entity($asset, $primaryKey, $references, $values);
+        $this->object = new Entity($asset, $schema, 'MyTable', $primaryKey, $references, $values);
     }
 
     public function test__get_When_ExistingProperty_Expect_Value()

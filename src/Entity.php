@@ -32,7 +32,7 @@ class Entity
      * @param array $references
      * @param array $values
      */
-    public function __construct(\ActiveRecord\Schema\EntityType $asset, array $primaryKey, array $references, array $values)
+    public function __construct(\ActiveRecord\Schema\EntityType $asset, Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $references, array $values)
     {
         $this->entityType = $asset;
         $this->primaryKey = $primaryKey;
