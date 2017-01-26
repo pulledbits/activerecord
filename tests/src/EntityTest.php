@@ -35,7 +35,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             }
 
             public function delete(array $whereParameters) : int
-            {}
+            {
+                if ($whereParameters === ['number' => '1']) {
+                    return 1;
+                }
+                return 0;
+            }
         };
         $primaryKey = [
             'number' => '1'
@@ -60,4 +65,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('2', $this->object->number);
     }
 
+    public function testDelete_When_ExistingProperty_Expect_Value()
+    {
+        $this->assertEquals(1, $this->object->delete());
+    }
 }
