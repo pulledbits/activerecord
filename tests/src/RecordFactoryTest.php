@@ -15,53 +15,35 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
-        $asset = new class implements EntityType {
+        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
+return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
+                    return new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $values, [], $values);
+};');
 
-            public function executeEntityConfigurator(string $path, array $values): \ActiveRecord\Entity
+        $schema = new class implements \ActiveRecord\Schema {
+
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {
-                $schema = new class implements \ActiveRecord\Schema {
-
-                    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
-                    {
-                        // TODO: Implement selectFrom() method.
-                    }
-
-                    public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
-                    {
-                        // TODO: Implement updateWhere() method.
-                    }
-
-                    public function insertValues(string $tableIdentifier, array $values): int
-                    {
-                        // TODO: Implement insertValues() method.
-                    }
-
-                    public function deleteFrom(string $tableIdentifier, array $whereParameters): int
-                    {
-                        // TODO: Implement deleteFrom() method.
-                    }
-                };
-
-                return new \ActiveRecord\Entity($this, $schema, 'MyTable', $values, [], $values);
+                // TODO: Implement selectFrom() method.
             }
 
-            public function select(array $columnIdentifiers, array $whereParameters) : array
-            {}
+            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            {
+                // TODO: Implement updateWhere() method.
+            }
 
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array
-            {}
+            public function insertValues(string $tableIdentifier, array $values): int
+            {
+                // TODO: Implement insertValues() method.
+            }
 
-            public function insert(array $values) : int
-            {}
-
-            public function update(array $setParameters, array $whereParameters) : int
-            {}
-
-            public function delete(array $whereParameters) : int
-            {}
+            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            {
+                // TODO: Implement deleteFrom() method.
+            }
         };
         $object = new RecordFactory(sys_get_temp_dir());
-        $record = $object->makeRecord($asset, ['status' => 'OK']);
+        $record = $object->makeRecord($schema, 'activiteit', ['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
     }
 

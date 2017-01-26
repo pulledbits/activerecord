@@ -14,13 +14,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $schema = new class implements \ActiveRecord\Schema {
-            private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
-                return array_map(function(array $values) use ($entityType) {
-                    return new \ActiveRecord\Entity($entityType, $this, 'MyTable', $values, [], $values);
+            private function convertResultSet(array $results) {
+                return array_map(function(array $values) {
+                    return new \ActiveRecord\Entity($this, 'MyTable', $values, [], $values);
                 }, $results);
             }
 
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {
                 $resultset = [];
                 if ($tableIdentifier === 'OtherTable' && $columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {
@@ -28,7 +28,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                         ['id' => '33']
                     ];
                 }
-                return $this->convertResultSet($resultset, $entityType);
+                return $this->convertResultSet($resultset);
             }
 
             public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
@@ -53,29 +53,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $asset = new class implements \ActiveRecord\Schema\EntityType{
-
-            public function executeEntityConfigurator(string $path, array $values): \ActiveRecord\Entity
-            {}
-
-            public function select(array $columnIdentifiers, array $whereParameters) : array
-            {}
-
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array
-            {
-            }
-
-            public function insert(array $values) : int
-            { }
-
-            public function update(array $setParameters, array $whereParameters) : int
-            {
-            }
-
-            public function delete(array $whereParameters) : int
-            {
-            }
-        };
         $primaryKey = [
             'number' => '1'
         ];
@@ -91,7 +68,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'number' => '1',
             'role_id' => '33',
         ];
-        $this->object = new Entity($asset, $schema, 'MyTable', $primaryKey, $references, $values);
+        $this->object = new Entity($schema, 'MyTable', $primaryKey, $references, $values);
     }
 
     public function test__get_When_ExistingProperty_Expect_Value()

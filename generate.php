@@ -37,8 +37,8 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
 $sourceSchema = new \ActiveRecord\Source\Schema($conn->getSchemaManager());
 $sourceSchema->describe(new \ActiveRecord\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($recordsDirectory) {
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema\EntityType $asset, array $values) {
-    return new \ActiveRecord\Entity($asset, array_slice_key($values, '.var_export($recordClassDescription['identifier'], true).'), '.var_export($recordClassDescription['references'], true).', $values);
+    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
+    return new \ActiveRecord\Entity($schema, $entityTypeIdentifier, array_slice_key($values, '.var_export($recordClassDescription['identifier'], true).'), '.var_export($recordClassDescription['references'], true).', $values);
 };');
 });
 

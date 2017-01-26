@@ -4,12 +4,6 @@ namespace ActiveRecord;
 
 class Entity
 {
-
-    /**
-     * @var \ActiveRecord\EntityType
-     */
-    private $entityType = NULL;
-
     /**
      * @var \ActiveRecord\Schema
      */
@@ -42,9 +36,8 @@ class Entity
      * @param array $references
      * @param array $values
      */
-    public function __construct(\ActiveRecord\Schema\EntityType $asset, Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $references, array $values)
+    public function __construct(Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $references, array $values)
     {
-        $this->entityType = $asset;
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->primaryKey = $primaryKey;
@@ -84,7 +77,7 @@ class Entity
             $reference = $this->references[substr($method, 7)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
-            return $this->schema->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)), $this->entityType);
+            return $this->schema->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
         }
     }
 

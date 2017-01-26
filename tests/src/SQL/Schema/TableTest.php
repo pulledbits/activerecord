@@ -12,36 +12,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
     {
         $schema = new class implements \ActiveRecord\Schema {
 
-            private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
-                return array_map(function(array $values) use ($entityType) {
-                    $schema = new class implements \ActiveRecord\Schema {
-
-                        public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
-                        {
-                            // TODO: Implement selectFrom() method.
-                        }
-
-                        public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
-                        {
-                            // TODO: Implement updateWhere() method.
-                        }
-
-                        public function insertValues(string $tableIdentifier, array $values): int
-                        {
-                            // TODO: Implement insertValues() method.
-                        }
-
-                        public function deleteFrom(string $tableIdentifier, array $whereParameters): int
-                        {
-                            // TODO: Implement deleteFrom() method.
-                        }
-                    };
-
-                    return new \ActiveRecord\Entity($entityType, $schema, 'MyTable', $values, [], $values);
+            private function convertResultSet(array $results) {
+                return array_map(function(array $values) {
+                    return new \ActiveRecord\Entity($this, 'MyTable', $values, [], $values);
                 }, $results);
             }
 
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {
                 $resultset = [];
                 if ($tableIdentifier === 'activiteit') {
@@ -146,7 +123,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
                         ];
                     }
                 }
-                return $this->convertResultSet($resultset, $entityType);
+                return $this->convertResultSet($resultset);
             }
 
             public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
@@ -252,39 +229,5 @@ class TableTest extends \PHPUnit_Framework_TestCase
     public function testInsert_When_NoWhereParametersSupplied_Expect_InsertedRecord()
     {
         $this->assertEquals(1, $this->object->insert(['id' => '1', 'name' => 'newName']));
-    }
-
-    public function testExecuteRecordClassConfigurator_When_PathGiven_Expect_RecordClass()
-    {
-        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\ActiveRecord\Schema\EntityType $entityType, array $values) {
-
-                    $schema = new class implements \ActiveRecord\Schema {
-
-                        public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
-                        {
-                            // TODO: Implement selectFrom() method.
-                        }
-
-                        public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
-                        {
-                            // TODO: Implement updateWhere() method.
-                        }
-
-                        public function insertValues(string $tableIdentifier, array $values): int
-                        {
-                            // TODO: Implement insertValues() method.
-                        }
-
-                        public function deleteFrom(string $tableIdentifier, array $whereParameters): int
-                        {
-                            // TODO: Implement deleteFrom() method.
-                        }
-                    };
-
-                    return new \ActiveRecord\Entity($entityType, $schema, \'MyTable\', $values, [], $values);
-};');
-        $record = $this->object->executeEntityConfigurator(sys_get_temp_dir(), ['status' => 'OK']);
-        $this->assertEquals('OK', $record->status);
     }
 }

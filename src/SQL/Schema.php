@@ -80,11 +80,11 @@ class Schema implements \ActiveRecord\Schema
         ];
     }
 
-    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType) : array {
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
 
-        return array_map(function(array $values) use ($entityType, $tableIdentifier) {
-            return $this->recordFactory->makeRecord($entityType, $values);
+        return array_map(function(array $values) use ($tableIdentifier) {
+            return $this->recordFactory->makeRecord($this, $tableIdentifier, $values);
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 

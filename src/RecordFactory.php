@@ -12,8 +12,9 @@ class RecordFactory {
         $this->path = $path;
     }
 
-    public function makeRecord(Schema\EntityType $asset, array $values) : Entity
+    public function makeRecord(Schema $schema, string $entityTypeIdentifier, array $values) : Entity
     {
-        return $asset->executeEntityConfigurator($this->path, $values);
+        $configurator = require $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
+        return $configurator($schema, $entityTypeIdentifier, $values);
     }
 }
