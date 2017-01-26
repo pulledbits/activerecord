@@ -20,7 +20,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }, $results);
             }
 
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
+            public function readFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {
                 $resultset = [];
                 if ($tableIdentifier === 'OtherTable' && $columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {

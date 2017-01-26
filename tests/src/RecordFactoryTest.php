@@ -22,7 +22,7 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
 
         $schema = new class implements \ActiveRecord\Schema {
 
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
+            public function readFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {
                 // TODO: Implement selectFrom() method.
             }
