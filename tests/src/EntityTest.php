@@ -27,7 +27,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             { }
 
             public function update(array $setParameters, array $whereParameters) : int
-            {}
+            {
+                if ($setParameters === ['number' => '2'] && $whereParameters === ['number' => '1']) {
+                    return 1;
+                }
+                return 0;
+            }
 
             public function delete(array $whereParameters) : int
             {}
@@ -46,5 +51,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1', $value);
     }
 
+    public function test__set_When_ExistingProperty_Expect_ValueChanged()
+    {
+        $this->assertEquals('1', $this->object->number);
+        $this->object->number = '2';
+        $this->assertEquals('2', $this->object->number);
+    }
 
 }
