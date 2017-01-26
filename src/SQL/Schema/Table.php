@@ -33,16 +33,12 @@ class Table implements \ActiveRecord\Schema\EntityType
 
     public function select(array $columnIdentifiers, array $whereParameters) : array
     {
-        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) {
-            return $recordConfigurator($this);
-        });
+        return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, $this);
     }
 
     public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array
     {
-        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) use ($tableIdentifier) {
-            return $recordConfigurator(new Table($tableIdentifier, $this->schema));
-        });
+        return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, new Table($tableIdentifier, $this->schema));
     }
 
     public function insert(array $values) : int {

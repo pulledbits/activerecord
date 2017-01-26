@@ -12,16 +12,13 @@ class TableTest extends \PHPUnit_Framework_TestCase
     {
         $schema = new class implements \ActiveRecord\Schema {
 
-            private function convertResultSet(array $results, \Closure $recordConverter) {
-                return array_map(function(array $values) use ($recordConverter) {
-                    return $recordConverter(function(\ActiveRecord\Schema\EntityType $asset) use ($values) {
-                        return new \ActiveRecord\Entity($asset, $values, [], $values);
-                        //return $asset->executeRecordClassConfigurator(sys_get_temp_dir(), $values);
-                    });
+            private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
+                return array_map(function(array $values) use ($entityType) {
+                    return new \ActiveRecord\Entity($entityType, $values, [], $values);
                 }, $results);
             }
 
-            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \Closure $recordConverter): array
+            public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
             {
                 $resultset = [];
                 if ($tableIdentifier === 'activiteit') {
@@ -126,7 +123,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
                         ];
                     }
                 }
-                return $this->convertResultSet($resultset, $recordConverter);
+                return $this->convertResultSet($resultset, $entityType);
             }
 
             public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
@@ -167,6 +164,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
                 return 0;
             }
         };
+
+
 
         $this->object = new Table('activiteit', $schema);
     }

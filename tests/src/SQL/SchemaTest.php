@@ -80,9 +80,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             {}
         };
 
-        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], function(\Closure $recordConfigurator) use ($asset) {
-            return $recordConfigurator($asset);
-        });
+        $records = $this->object->selectFrom('activiteit', ['id', 'werkvorm'], ['id' => '1'], $asset);
 
         $this->assertCount(4, $records);
         $this->assertEquals('Bla', $records[0]->werkvorm);
