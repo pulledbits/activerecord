@@ -31,29 +31,29 @@ class Table implements \ActiveRecord\Schema\EntityType
         return $configurator($this, $values);
     }
 
-    public function select(array $columnIdentifiers, array $whereParameters)
+    public function select(array $columnIdentifiers, array $whereParameters) : array
     {
         return $this->schema->selectFrom($this->identifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) {
             return $recordConfigurator($this);
         });
     }
 
-    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters)
+    public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array
     {
         return $this->schema->selectFrom($tableIdentifier, $columnIdentifiers, $whereParameters, function(\Closure $recordConfigurator) use ($tableIdentifier) {
             return $recordConfigurator(new Table($tableIdentifier, $this->schema));
         });
     }
 
-    public function insert(array $values) {
+    public function insert(array $values) : int {
         return $this->schema->insertValues($this->identifier, $values);
     }
 
-    public function update(array $setParameters, array $whereParameters) {
+    public function update(array $setParameters, array $whereParameters) : int {
         return $this->schema->updateWhere($this->identifier, $setParameters, $whereParameters);
     }
 
-    public function delete(array $whereParameters) {
+    public function delete(array $whereParameters) : int {
         return $this->schema->deleteFrom($this->identifier , $whereParameters);
     }
 }
