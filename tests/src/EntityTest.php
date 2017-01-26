@@ -14,15 +14,29 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $schema = new class implements \ActiveRecord\Schema {
+            private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
+                return array_map(function(array $values) use ($entityType) {
+                    return new \ActiveRecord\Entity($entityType, $this, 'MyTable', $values, [], $values);
+                }, $results);
+            }
 
             public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
             {
-                // TODO: Implement selectFrom() method.
+                $resultset = [];
+                if ($tableIdentifier === 'OtherTable' && $columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {
+                    $resultset = [
+                        ['id' => '33']
+                    ];
+                }
+                return $this->convertResultSet($resultset, $entityType);
             }
 
             public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
             {
-                // TODO: Implement updateWhere() method.
+                if ($tableIdentifier === 'MyTable' && $setParameters === ['number' => '2'] && $whereParameters === ['number' => '1']) {
+                    return 1;
+                }
+                return 0;
             }
 
             public function insertValues(string $tableIdentifier, array $values): int
@@ -32,40 +46,14 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function deleteFrom(string $tableIdentifier, array $whereParameters): int
             {
-                // TODO: Implement deleteFrom() method.
+                if ($tableIdentifier === 'MyTable' && $whereParameters === ['number' => '1']) {
+                    return 1;
+                }
+                return 0;
             }
         };
 
         $asset = new class implements \ActiveRecord\Schema\EntityType{
-            private function convertResultSet(array $results, \ActiveRecord\Schema\EntityType $entityType) {
-                return array_map(function(array $values) use ($entityType) {
-
-                    $schema = new class implements \ActiveRecord\Schema {
-
-                        public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters, \ActiveRecord\Schema\EntityType $entityType): array
-                        {
-                            // TODO: Implement selectFrom() method.
-                        }
-
-                        public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
-                        {
-                            // TODO: Implement updateWhere() method.
-                        }
-
-                        public function insertValues(string $tableIdentifier, array $values): int
-                        {
-                            // TODO: Implement insertValues() method.
-                        }
-
-                        public function deleteFrom(string $tableIdentifier, array $whereParameters): int
-                        {
-                            // TODO: Implement deleteFrom() method.
-                        }
-                    };
-
-                    return new \ActiveRecord\Entity($entityType, $schema, 'MyTable', $values, [], $values);
-                }, $results);
-            }
 
             public function executeEntityConfigurator(string $path, array $values): \ActiveRecord\Entity
             {}
@@ -75,13 +63,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function selectFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array
             {
-                $resultset = [];
-                if ($tableIdentifier === 'OtherTable' && $columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {
-                    $resultset = [
-                        ['id' => '33']
-                    ];
-                }
-                return $this->convertResultSet($resultset, $this);
             }
 
             public function insert(array $values) : int
@@ -89,18 +70,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function update(array $setParameters, array $whereParameters) : int
             {
-                if ($setParameters === ['number' => '2'] && $whereParameters === ['number' => '1']) {
-                    return 1;
-                }
-                return 0;
             }
 
             public function delete(array $whereParameters) : int
             {
-                if ($whereParameters === ['number' => '1']) {
-                    return 1;
-                }
-                return 0;
             }
         };
         $primaryKey = [

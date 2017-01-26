@@ -193,16 +193,6 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->object = new Table('activiteit', $schema);
     }
 
-    public function testCRUD_When_DefaultState_Expect_RecordCreatedSelectedUpdatedAndDeleted() {
-        $this->assertCount(0, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2']), 'no previous record exists');
-        $this->object->insert(['nummer' => '1', 'collegejaar' => '1415'], [])[0];
-        $record = $this->object->select(['nummer', 'collegejaar'], ['nummer' => '1', 'collegejaar' => '1415'])[0];
-        $this->assertEquals('1', $record->nummer, 'record is properly initialized');
-        $record->nummer = '2';
-        $this->assertEquals($record->nummer, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2', 'createdat' => date('Y-m-d')])[0]->nummer, 'record is properly updated');
-        $this->assertEquals(1, $record->delete(), 'delete confirms removal');
-    }
-
     public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
     {
         $records = $this->object->select(['id', 'name'], []);

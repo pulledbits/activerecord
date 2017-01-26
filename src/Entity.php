@@ -11,6 +11,16 @@ class Entity
     private $entityType = NULL;
 
     /**
+     * @var \ActiveRecord\Schema
+     */
+    private $schema;
+
+    /**
+     * @var string
+     */
+    private $entityTypeIdentifier;
+
+    /**
      * @var array
      */
     private $primaryKey = NULL;
@@ -35,6 +45,8 @@ class Entity
     public function __construct(\ActiveRecord\Schema\EntityType $asset, Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $references, array $values)
     {
         $this->entityType = $asset;
+        $this->schema = $schema;
+        $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->primaryKey = $primaryKey;
         $this->references = $references;
         $this->values = $values;
@@ -54,7 +66,7 @@ class Entity
      */
     public function __set($property, $value)
     {
-        if ($this->entityType->update([$property => $value], $this->primaryKey) > 0) {
+        if ($this->schema->updateWhere($this->entityTypeIdentifier, [$property => $value], $this->primaryKey) > 0) {
             $this->values[$property] = $value;
         }
     }
@@ -63,7 +75,7 @@ class Entity
      */
     public function delete()
     {
-        return $this->entityType->delete($this->primaryKey);
+        return $this->schema->deleteFrom($this->entityTypeIdentifier, $this->primaryKey);
     }
 
     public function __call(string $method, array $arguments)
@@ -72,7 +84,7 @@ class Entity
             $reference = $this->references[substr($method, 7)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
-            return $this->entityType->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
+            return $this->schema->selectFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)), $this->entityType);
         }
     }
 
