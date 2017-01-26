@@ -20,16 +20,15 @@ $recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.
 
 $schema = new \ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
-$table = new \ActiveRecord\SQL\Schema\Table("blok", $schema);
-assert(count($table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');
-$table->insert(['collegejaar' => '1415', 'nummer' => '1'], []);
-$record = $table->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '1'])[0];
+assert(count($schema->selectFrom('blok', ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');
+$schema->insertValues('blok', ['collegejaar' => '1415', 'nummer' => '1'], []);
+$record = $schema->selectFrom('blok', ['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '1'])[0];
 assert($record->nummer === '1', 'record is properly initialized');
 $record->nummer = '2';
-assert($record->nummer === $table->select(['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer, 'record is properly updated');
+assert($record->nummer === $schema->selectFrom('blok', ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer, 'record is properly updated');
 assert(count($record->delete()) > 1, 'delete confirms removal');
 
-$viewRecord = $schema->selectFrom("leerdoelenview", ['*'], [], new \ActiveRecord\SQL\Schema\Table('leerdoelenview', $schema));
+$viewRecord = $schema->selectFrom("leerdoelenview", ['*'], []);
 
 assert(count($viewRecord) > 1, 'view records exist');
 echo 'Done testing';
