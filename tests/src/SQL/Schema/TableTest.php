@@ -132,8 +132,14 @@ class TableTest extends \PHPUnit_Framework_TestCase
             public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
             {
                 if ($tableIdentifier === 'activiteit') {
-                    if ($setParameters === ['nummer' => '1'] && $whereParameters ===  ['createdat' => date('Y-m-d'), 'collegejaar' => '1415', 'nummer' => '1']) {
+                    if ($setParameters === ['nummer' => '1'] && $whereParameters === ['createdat' => date('Y-m-d'), 'collegejaar' => '1415', 'nummer' => '1']) {
                         return 1;
+                    } elseif ($setParameters === ['name' => 'newName'] && $whereParameters === []) {
+                        return 5;
+                    } elseif ($setParameters === ['name' => 'newName'] && $whereParameters === ['name' => 'oldName', 'id' => '1']) {
+                        return 1;
+                    } elseif ($setParameters === ['name' => 'newName'] && $whereParameters === ['name' => 'oldName']) {
+                        return 3;
                     }
                 }
                 return 0;
@@ -141,11 +147,23 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
             public function insertValues(string $tableIdentifier, array $values): int
             {
+                if ($tableIdentifier === 'activiteit'  && $values === ['id' => '1', 'name' => 'newName']) {
+                    return 1;
+                }
                 return 0;
             }
 
             public function deleteFrom(string $tableIdentifier, array $whereParameters): int
             {
+                if ($tableIdentifier === 'activiteit') {
+                    if ($whereParameters ===  ['createdat' => date('Y-m-d'), 'collegejaar' => '1415', 'nummer' => '1']) {
+                        return 1;
+                    } elseif ($whereParameters ===  ['name' => 'newName']) {
+                        return 3;
+                    } elseif ($whereParameters === ['id' => '1', 'name' => 'newName']) {
+                        return 5;
+                    }
+                }
                 return 0;
             }
         };
@@ -155,11 +173,12 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testCRUD_When_DefaultState_Expect_RecordCreatedSelectedUpdatedAndDeleted() {
         $this->assertCount(0, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2']), 'no previous record exists');
-        $record = $this->object->insert(['nummer' => '1', 'collegejaar' => '1415'], [])[0];
+        $this->object->insert(['nummer' => '1', 'collegejaar' => '1415'], [])[0];
+        $record = $this->object->select(['nummer', 'collegejaar'], ['nummer' => '1', 'collegejaar' => '1415'])[0];
         $this->assertEquals('1', $record->nummer, 'record is properly initialized');
         $record->nummer = '2';
         $this->assertEquals($record->nummer, $this->object->select(['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '2', 'createdat' => date('Y-m-d')])[0]->nummer, 'record is properly updated');
-        $this->assertCount(1, $record->delete(), 'delete confirms removal');
+        $this->assertEquals(1, $record->delete(), 'delete confirms removal');
     }
 
     public function testSelect_When_NoWhereParametersSupplied_Expect_FiveRecords()
@@ -190,38 +209,37 @@ class TableTest extends \PHPUnit_Framework_TestCase
     public function testUpdate_When_NoWhereParametersSupplied_Expect_FiveUpdates()
     {
         $records = $this->object->update(['name' => 'newName'], []);
-        $this->assertCount(5, $records);
+        $this->assertEquals(5, $records);
     }
 
     public function testUpdate_When_SpecificWhereParameterSupplied_Expect_ThreeUpdates()
     {
         $records = $this->object->update(['name' => 'newName'], ['name' => 'oldName', 'id' => '1']);
-        $this->assertCount(1, $records);
+        $this->assertEquals(1, $records);
     }
 
     public function testUpdate_When_MultipleWhereParameterSupplied_Expect_ThreeUpdates()
     {
         $records = $this->object->update(['name' => 'newName'], ['name' => 'oldName']);
-        $this->assertCount(3, $records);
+        $this->assertEquals(3, $records);
     }
 
 
     public function testDelete_When_SingleParameter_Expect_Three()
     {
         $records = $this->object->delete(['name' => 'newName']);
-        $this->assertCount(3, $records);
+        $this->assertEquals(3, $records);
     }
 
     public function testDelete_When_MultipleParameters_Expect_Five()
     {
         $records = $this->object->delete(['id' => '1', 'name' => 'newName']);
-        $this->assertCount(5, $records);
+        $this->assertEquals(5, $records);
     }
 
     public function testInsert_When_NoWhereParametersSupplied_Expect_InsertedRecord()
     {
-        $records = $this->object->insert(['id' => '1', 'name' => 'newName']);
-        $this->assertEquals('newName', $records[0]->name);
+        $this->assertEquals(1, $this->object->insert(['id' => '1', 'name' => 'newName']));
     }
 
     public function testExecuteRecordClassConfigurator_When_PathGiven_Expect_RecordClass()

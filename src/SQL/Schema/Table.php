@@ -46,18 +46,14 @@ class Table implements \ActiveRecord\Schema\EntityType
     }
 
     public function insert(array $values) {
-        $this->schema->insertValues($this->identifier, $values);
-        return $this->select(array_keys($values), $values);
+        return $this->schema->insertValues($this->identifier, $values);
     }
 
     public function update(array $setParameters, array $whereParameters) {
-        $this->schema->updateWhere($this->identifier, $setParameters, $whereParameters);
-        return $this->select(array_keys($setParameters), $whereParameters);
+        return $this->schema->updateWhere($this->identifier, $setParameters, $whereParameters);
     }
 
     public function delete(array $whereParameters) {
-        $records = $this->select(array_keys($whereParameters), $whereParameters);
-        $this->schema->deleteFrom($this->identifier , $whereParameters);
-        return $records;
+        return $this->schema->deleteFrom($this->identifier , $whereParameters);
     }
 }
