@@ -31,7 +31,8 @@ class Entity
 
     /**
      * Entity constructor.
-     * @param Schema\EntityType $asset
+     * @param Schema $schema
+     * @param string $entityTypeIdentifier
      * @param array $primaryKey
      * @param array $references
      * @param array $values
