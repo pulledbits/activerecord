@@ -32,7 +32,7 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
                 // TODO: Implement updateWhere() method.
             }
 
-            public function insertValues(string $tableIdentifier, array $values): int
+            public function create(string $tableIdentifier, array $values): int
             {
                 // TODO: Implement insertValues() method.
             }

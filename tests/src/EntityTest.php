@@ -39,7 +39,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 return 0;
             }
 
-            public function insertValues(string $tableIdentifier, array $values): int
+            public function create(string $tableIdentifier, array $values): int
             {
                 // TODO: Implement insertValues() method.
             }

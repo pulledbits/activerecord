@@ -50,7 +50,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testInsertValue_When_DefaultState_Expect_SQLInsertQueryWithPreparedValues() {
-        $this->assertEquals(1, $this->object->insertValues('activiteit', ['werkvorm' => 'My Name', 'id' => '3']));
+        $this->assertEquals(1, $this->object->create('activiteit', ['werkvorm' => 'My Name', 'id' => '3']));
     }
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {

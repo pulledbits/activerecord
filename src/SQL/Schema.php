@@ -96,7 +96,7 @@ class Schema implements \ActiveRecord\Schema
         return $statement->rowCount();
     }
 
-    public function insertValues(string $tableIdentifier, array $values) : int {
+    public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = $this->prepareParameters($values);
         $statement = $this->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
         return $statement->rowCount();

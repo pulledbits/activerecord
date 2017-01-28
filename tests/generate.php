@@ -21,7 +21,7 @@ $recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.
 $schema = new \ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
 assert(count($schema->readFrom('blok', ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])) === 0, 'no previous record exists');
-$schema->insertValues('blok', ['collegejaar' => '1415', 'nummer' => '1'], []);
+$schema->create('blok', ['collegejaar' => '1415', 'nummer' => '1'], []);
 $record = $schema->readFrom('blok', ['collegejaar', 'nummer'], ['collegejaar' => '1415', 'nummer' => '1'])[0];
 assert($record->nummer === '1', 'record is properly initialized');
 $record->nummer = '2';
