@@ -80,7 +80,7 @@ class Schema implements \ActiveRecord\Schema
         ];
     }
 
-    public function readFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array {
+    public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array {
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
 
         return array_map(function(array $values) use ($tableIdentifier) {

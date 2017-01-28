@@ -77,7 +77,7 @@ class Entity
             $reference = $this->references[substr($method, 7)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
-            return $this->schema->readFrom($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
+            return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
         }
     }
 
