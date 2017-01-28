@@ -61,6 +61,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
-        $this->assertEquals(1, $this->object->deleteFrom('activiteit', ['id' => '3']));
+        $this->assertEquals(1, $this->object->delete('activiteit', ['id' => '3']));
     }
 }

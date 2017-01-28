@@ -44,7 +44,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 // TODO: Implement insertValues() method.
             }
 
-            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            public function delete(string $tableIdentifier, array $whereParameters): int
             {
                 if ($tableIdentifier === 'MyTable' && $whereParameters === ['number' => '1']) {
                     return 1;

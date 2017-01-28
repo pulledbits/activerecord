@@ -102,7 +102,7 @@ class Schema implements \ActiveRecord\Schema
         return $statement->rowCount();
     }
 
-    public function deleteFrom(string $tableIdentifier, array $whereParameters) : int {
+    public function delete(string $tableIdentifier, array $whereParameters) : int {
         $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $whereParameters);
         return $statement->rowCount();
     }

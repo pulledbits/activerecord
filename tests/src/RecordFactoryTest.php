@@ -31,7 +31,7 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
             public function create(string $tableIdentifier, array $values): int
             {}
 
-            public function deleteFrom(string $tableIdentifier, array $whereParameters): int
+            public function delete(string $tableIdentifier, array $whereParameters): int
             {}
         };
         $object = new RecordFactory(sys_get_temp_dir());

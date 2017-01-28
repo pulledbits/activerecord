@@ -68,7 +68,7 @@ class Entity
      */
     public function delete()
     {
-        return $this->schema->deleteFrom($this->entityTypeIdentifier, $this->primaryKey);
+        return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey);
     }
 
     public function __call(string $method, array $arguments)
