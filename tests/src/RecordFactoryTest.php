@@ -23,24 +23,16 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
         $schema = new class implements \ActiveRecord\Schema {
 
             public function readFrom(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
-            {
-                // TODO: Implement selectFrom() method.
-            }
+            {}
 
-            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
-            {
-                // TODO: Implement updateWhere() method.
-            }
+            public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            {}
 
             public function create(string $tableIdentifier, array $values): int
-            {
-                // TODO: Implement insertValues() method.
-            }
+            {}
 
             public function deleteFrom(string $tableIdentifier, array $whereParameters): int
-            {
-                // TODO: Implement deleteFrom() method.
-            }
+            {}
         };
         $object = new RecordFactory(sys_get_temp_dir());
         $record = $object->makeRecord($schema, 'activiteit', ['status' => 'OK']);

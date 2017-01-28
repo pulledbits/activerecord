@@ -31,7 +31,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 return $this->convertResultSet($resultset);
             }
 
-            public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
             {
                 if ($tableIdentifier === 'MyTable' && $setParameters === ['number' => '2'] && $whereParameters === ['number' => '1']) {
                     return 1;

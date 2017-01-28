@@ -59,7 +59,7 @@ class Entity
      */
     public function __set($property, $value)
     {
-        if ($this->schema->updateWhere($this->entityTypeIdentifier, [$property => $value], $this->primaryKey) > 0) {
+        if ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey) > 0) {
             $this->values[$property] = $value;
         }
     }

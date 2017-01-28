@@ -88,7 +88,7 @@ class Schema implements \ActiveRecord\Schema
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
-    public function updateWhere(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
+    public function update(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
         $preparedParameters = $this->prepareParameters($setParameters);
         $query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters));
         $where = $this->makeWhereCondition($whereParameters);
