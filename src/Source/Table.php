@@ -20,26 +20,6 @@ final class Table
         }
     }
 
-    private function describeMethod(bool $static, array $parameters, array $body) : array {
-        return [
-            'static' => $static,
-            'parameters' => $parameters,
-            'body' => $body
-        ];
-    }
-
-    private function describePrimaryKeyMethod(array $primaryKeyWhere) {
-        if (count($primaryKeyWhere) === 0) {
-            $array = '[]';
-        } else {
-            $array = '[\'' . join('\', \'', $primaryKeyWhere) . '\']';
-        }
-
-        return $this->describeMethod(false, [], [
-            'return ' . $array . ';'
-        ]);
-    }
-
     /**
      * Mimicks overloading
      * @param \Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaAsset
