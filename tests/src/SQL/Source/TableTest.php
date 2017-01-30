@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord\Source;
+namespace ActiveRecord\SQL\Source;
 
 class TableTest extends \PHPUnit_Framework_TestCase
 {

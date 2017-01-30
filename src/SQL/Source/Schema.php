@@ -6,7 +6,7 @@
  * Time: 12:45
  */
 
-namespace ActiveRecord\Source;
+namespace ActiveRecord\SQL\Source;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;

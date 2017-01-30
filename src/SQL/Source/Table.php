@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord\Source;
+namespace ActiveRecord\SQL\Source;
 
 final class Table
 {

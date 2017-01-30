@@ -9,7 +9,7 @@ namespace ActiveRecord\Test {
 
     function createMockSchema(array $tables)
     {
-        return new \ActiveRecord\Source\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
+        return new \ActiveRecord\SQL\Source\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
         {
 
             private $tables;

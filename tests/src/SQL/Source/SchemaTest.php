@@ -6,7 +6,7 @@
  * Time: 12:36
  */
 
-namespace ActiveRecord\Source;
+namespace ActiveRecord\SQL\Source;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
