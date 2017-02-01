@@ -81,6 +81,9 @@ class Schema implements \ActiveRecord\Schema
     }
 
     public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array {
+        if (count($columnIdentifiers) === 0) {
+            $columnIdentifiers[] = '*';
+        }
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
 
         return array_map(function(array $values) use ($tableIdentifier) {

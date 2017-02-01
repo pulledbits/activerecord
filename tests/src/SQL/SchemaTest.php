@@ -20,6 +20,20 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     {
         $recordConfiguration = new \ActiveRecord\RecordFactory(sys_get_temp_dir());
         $this->object = new Schema($recordConfiguration, \ActiveRecord\Test\createMockPDOMultiple([
+            '/SELECT \* FROM activiteit WHERE id = :\w+/' => [
+                [
+                    'werkvorm' => 'BlaBla'
+                ],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                []
+            ],
             '/SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE id = :param1/' => [
                 [],
                 [],
@@ -46,11 +60,17 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {
         $this->assertEquals(1, $this->object->update('activiteit', ['werkvorm' => 'My Name'], ['id' => '3']));
-
     }
 
     public function testInsertValue_When_DefaultState_Expect_SQLInsertQueryWithPreparedValues() {
         $this->assertEquals(1, $this->object->create('activiteit', ['werkvorm' => 'My Name', 'id' => '3']));
+    }
+
+    public function testSelectFrom_When_NoColumnIdentifiers_Expect_SQLSelectAsteriskQueryAndCallbackUsedForFetchAll() {
+        $records = $this->object->read('activiteit', [], ['id' => '1']);
+
+        $this->assertCount(10, $records);
+        $this->assertEquals('BlaBla', $records[0]->werkvorm);
     }
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
