@@ -4,7 +4,7 @@ use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
 use gossi\codegen\model\PhpParameter;
 
-$applicationBootstrap = require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
+$applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 $applicationBootstrap();
 
 if ($_SERVER['argc'] < 3) {
