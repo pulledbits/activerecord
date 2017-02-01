@@ -1,9 +1,5 @@
 <?php
 
-use gossi\codegen\generator\CodeGenerator;
-use gossi\codegen\model\PhpMethod;
-use gossi\codegen\model\PhpParameter;
-
 $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 $applicationBootstrap();
 
@@ -14,6 +10,10 @@ if ($_SERVER['argc'] < 3) {
 $targetNamespace = $_SERVER['argv'][1] . '\\Record';
 
 $targetDirectory = $_SERVER['argv'][2];
+if (file_exists($targetDirectory) == false) {
+    mkdir($targetDirectory);
+}
+
 $recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'Record';
 if (file_exists($recordsDirectory) == false) {
     mkdir($recordsDirectory);
