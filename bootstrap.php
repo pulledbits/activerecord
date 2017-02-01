@@ -1,15 +1,3 @@
-<?php
-
-function array_slice_key(array $array, array $keys) {
-    $sliced = [];
-    foreach ($array as $key => $value) {
-        if (in_array($key, $keys, true)) {
-            $sliced[$key] = $value;
-        }
-    }
-    return $sliced;
-}
-
-return function() {
+<?php return function() {
     require getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 };

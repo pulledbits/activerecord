@@ -78,7 +78,13 @@ class Entity
             $reference = $this->references[substr($method, 7)];
             $fkColumns = array_keys($reference['where']);
             $fkLocalColumns = array_values($reference['where']);
-            return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, array_slice_key($this->values, $fkLocalColumns)));
+            $sliced = [];
+            foreach ($this->values as $key => $value) {
+                if (in_array($key, $fkLocalColumns, true)) {
+                    $sliced[$key] = $value;
+                }
+            }
+            return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, $sliced));
         }
     }
 
