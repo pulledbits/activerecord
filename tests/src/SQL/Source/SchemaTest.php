@@ -18,7 +18,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 'extra_column_id' => [
                     'primaryKey' => false,
                     'references' => [
-                        'fk_anothertable_role' => ['AntoherTable', 'column_id']
+                        'fk_anothertable_role' => ['AnotherTable', 'column_id']
                     ]
                 ]
             ],
@@ -29,20 +29,20 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([
             'FkAnothertableRole' => [
-                'table' => 'AntoherTable',
+                'table' => 'AnotherTable',
                 'where' => [
                     'column_id' => 'extra_column_id'
                 ],
             ]
         ], $schemaDescription['MyTable']['references']);
-//        $this->assertEquals([
-//            'FkAnothertableRole' => [
-//                'table' => 'AntoherTable',
-//                'where' => [
-//                    'column_id' => 'extra_column_id'
-//                ],
-//            ]
-//        ], $schemaDescription['AnotherTable']['references']);
+        $this->assertEquals([
+            'FkAnothertableRole' => [
+                'table' => 'MyTable',
+                'where' => [
+                    'extra_column_id' => 'column_id'
+                ],
+            ]
+        ], $schemaDescription['AnotherTable']['references']);
     }
 
 

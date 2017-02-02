@@ -29,6 +29,16 @@ class Schema
         foreach (array_merge($this->schemaManager->listTables(), $this->schemaManager->listViews()) as $table) {
             $tables[$table->getName()] = $sourceTable->describe($table);
         }
-        return $tables;
+
+        $reversedLinkedTables = $tables;
+        foreach ($tables as $tableName => $recordClassDescription) {
+            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = [
+                    'table' => $tableName,
+                    'where' => array_flip($reference['where'])
+                ];
+            }
+        }
+        return $reversedLinkedTables;
     }
 }
