@@ -36,6 +36,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                             ['id' => '358'],
                             ['id' => '359']
                         ];
+                    } elseif ($columnIdentifiers === [] && $whereParameters === ['id' => '33']) {
+                        $resultset = [
+                            ['id' => '356']
+                        ];
                     }
                 }
                 return $this->convertResultSet($resultset);
@@ -109,5 +113,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $records = $this->object->read("OtherTable", []);
         $this->assertEquals('356', $records[0]->id);
         $this->assertCount(5, $records);
+    }
+    public function testRead_When_ConditionsGiven_Expect_PartialResultSet()
+    {
+        $records = $this->object->read("OtherTable", ['id' => 'role_id']);
+        $this->assertEquals('356', $records[0]->id);
+        $this->assertCount(1, $records);
     }
 }
