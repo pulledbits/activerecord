@@ -54,6 +54,10 @@ class Entity
         return $this->values[$property];
     }
 
+    public function read(string $entityTypeIdentifier, array $conditions) : array {
+        return $this->schema->read($entityTypeIdentifier, [], array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions));
+    }
+
     /**
      * @param string $property
      * @param string $value

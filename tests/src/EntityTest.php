@@ -23,10 +23,20 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {
                 $resultset = [];
-                if ($tableIdentifier === 'OtherTable' && $columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {
-                    $resultset = [
-                        ['id' => '33']
-                    ];
+                if ($tableIdentifier === 'OtherTable') {
+                    if ($columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {
+                        $resultset = [
+                            ['id' => '33']
+                        ];
+                    } elseif ($columnIdentifiers === [] && $whereParameters === []) {
+                        $resultset = [
+                            ['id' => '356'],
+                            ['id' => '352'],
+                            ['id' => '357'],
+                            ['id' => '358'],
+                            ['id' => '359']
+                        ];
+                    }
                 }
                 return $this->convertResultSet($resultset);
             }
@@ -91,5 +101,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $records = $this->object->fetchByFkOthertableRole();
         $this->assertEquals('33', $records[0]->id);
+    }
+
+
+    public function testRead_When_NoConditionsGiven_Expect_FullResultSet()
+    {
+        $records = $this->object->read("OtherTable", []);
+        $this->assertEquals('356', $records[0]->id);
+        $this->assertCount(5, $records);
     }
 }
