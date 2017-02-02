@@ -14,15 +14,35 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
         $schema = \ActiveRecord\Test\createMockSchema([
-            'MyTable' => []
+            'MyTable' => [
+                'extra_column_id' => [
+                    'primaryKey' => false,
+                    'references' => [
+                        'fk_anothertable_role' => ['AntoherTable', 'column_id']
+                    ]
+                ]
+            ],
+            'AnotherTable' => []
         ]);
 
-        $called = false;
-        $schema->describe(new Table('\\Database\\Record'), function(string $tableName, array $tableDescription) use (&$called) {
-            $this->assertEquals('MyTable', $tableName);
-            $called = true;
-        });
-        $this->assertTrue($called);
+        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
+
+        $this->assertEquals([
+            'FkAnothertableRole' => [
+                'table' => 'AntoherTable',
+                'where' => [
+                    'column_id' => 'extra_column_id'
+                ],
+            ]
+        ], $schemaDescription['MyTable']['references']);
+//        $this->assertEquals([
+//            'FkAnothertableRole' => [
+//                'table' => 'AntoherTable',
+//                'where' => [
+//                    'column_id' => 'extra_column_id'
+//                ],
+//            ]
+//        ], $schemaDescription['AnotherTable']['references']);
     }
 
 
@@ -36,11 +56,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;'
         ]);
 
-        $called = false;
-        $schema->describe(new Table('\\Database\\Record'), function(string $tableName, array $tableDescription) use (&$called) {
-            $this->assertEquals('MyView', $tableName);
-            $called = true;
-        });
-        $this->assertTrue($called);
+        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
+        $this->assertArrayHasKey('MyView', $schemaDescription);
     }
 }

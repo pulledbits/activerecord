@@ -23,10 +23,12 @@ class Schema
         $this->schemaManager = $schemaManager;
     }
 
-    public function describe(Table $sourceTable, \Closure $tableHandler)
+    public function describe(Table $sourceTable)
     {
+        $tables = [];
         foreach (array_merge($this->schemaManager->listTables(), $this->schemaManager->listViews()) as $table) {
-            $tableHandler($table->getName(), $sourceTable->describe($table));
+            $tables[$table->getName()] = $sourceTable->describe($table);
         }
+        return $tables;
     }
 }

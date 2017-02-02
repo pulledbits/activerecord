@@ -36,7 +36,8 @@ $connectionParams = array(
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
 $sourceSchema = new \ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
-$sourceSchema->describe(new \ActiveRecord\SQL\Source\Table($targetNamespace), function(string $tableName, array $recordClassDescription) use ($recordsDirectory) {
+$schemaDescription = $sourceSchema->describe(new \ActiveRecord\SQL\Source\Table($targetNamespace));
+foreach ($schemaDescription as $tableName => $recordClassDescription) {
     file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
     $keys = '.var_export($recordClassDescription['identifier'], true).';
     $sliced = [];
@@ -47,7 +48,7 @@ $sourceSchema->describe(new \ActiveRecord\SQL\Source\Table($targetNamespace), fu
     }
     return new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced, '.var_export($recordClassDescription['references'], true).', $values);
 };');
-});
+}
 
 file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'factory.php', '<?php return new \ActiveRecord\RecordFactory(__DIR__ . DIRECTORY_SEPARATOR . \'Record\');');
 
