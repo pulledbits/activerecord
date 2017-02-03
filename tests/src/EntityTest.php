@@ -30,11 +30,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             {
                 $resultset = [];
                 if ($tableIdentifier === 'OtherTable') {
-                    if ($columnIdentifiers === ['id'] && $whereParameters === ['id' => '33']) {
-                        $resultset = [
-                            ['id' => '33']
-                        ];
-                    } elseif ($columnIdentifiers === [] && $whereParameters === []) {
+                    if ($columnIdentifiers === [] && $whereParameters === []) {
                         $resultset = [
                             ['id' => '356'],
                             ['id' => '352'],
@@ -112,13 +108,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()
     {
         $records = $this->object->fetchByFkOthertableRole();
-        $this->assertEquals('33', $records[0]->id);
+        $this->assertEquals('356', $records[0]->id);
     }
 
     public function test__call_When_ExistingReferenceFetchFirstByCall_Expect_Value()
     {
         $record = $this->object->fetchFirstByFkOthertableRole();
-        $this->assertEquals('33', $record->id);
+        $this->assertEquals('356', $record->id);
     }
 
 

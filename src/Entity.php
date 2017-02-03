@@ -98,7 +98,7 @@ class Entity
                 $sliced[$key] = $value;
             }
         }
-        return $this->schema->read($entityTypeIdentifier, $fkColumns, array_combine($fkColumns, $sliced));
+        return $this->schema->read($entityTypeIdentifier, [], array_combine($fkColumns, $sliced));
     }
 
     private function fetchFirstBy(string $entityTypeIdentifier, array $conditions) : Entity {
