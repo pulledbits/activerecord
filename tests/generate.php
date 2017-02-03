@@ -28,6 +28,8 @@ $record->nummer = '2';
 assert($record->nummer === $schema->read('blok', ['_collegejaar' => 'collegejaar', '_nummer' => 'nummer'], ['collegejaar' => '1415', 'nummer' => '2'])[0]->nummer, 'record is properly updated');
 assert(count($record->delete()) > 1, 'delete confirms removal');
 
+$viewRecord = $schema->read("contactmoment_vandaag", [], []);
+
 $viewRecord = $schema->read("leerdoelenview", ['*'], []);
 
 assert(count($viewRecord) > 1, 'view records exist');

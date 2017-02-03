@@ -38,7 +38,10 @@ $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 $sourceSchema = new \ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
 $schemaDescription = $sourceSchema->describe(new \ActiveRecord\SQL\Source\Table($targetNamespace));
 foreach ($schemaDescription as $tableName => $recordClassDescription) {
-    file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
+    if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
+        file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
+    } else {
+        file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
     $keys = '.var_export($recordClassDescription['identifier'], true).';
     $sliced = [];
     foreach ($values as $key => $value) {
@@ -48,6 +51,8 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
     }
     return new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced, '.var_export($recordClassDescription['references'], true).', $values);
 };');
+    }
+
 }
 
 file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'factory.php', '<?php return new \ActiveRecord\RecordFactory(__DIR__ . DIRECTORY_SEPARATOR . \'Record\');');
