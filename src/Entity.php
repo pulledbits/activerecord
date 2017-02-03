@@ -2,6 +2,7 @@
 
 namespace ActiveRecord;
 
+
 class Entity
 {
     /**
@@ -80,28 +81,28 @@ class Entity
     {
         if (substr($method, 0, 7) === 'fetchBy') {
             $reference = $this->references[substr($method, 7)];
-            $fkColumns = array_keys($reference['where']);
-            $fkLocalColumns = array_values($reference['where']);
-            $sliced = [];
-            foreach ($this->values as $key => $value) {
-                if (in_array($key, $fkLocalColumns, true)) {
-                    $sliced[$key] = $value;
-                }
-            }
-            return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, $sliced));
+            return $this->fetchBy($reference['table'], $reference['where']);
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
             $reference = $this->references[substr($method, 12)];
-            $fkColumns = array_keys($reference['where']);
-            $fkLocalColumns = array_values($reference['where']);
-            $sliced = [];
-            foreach ($this->values as $key => $value) {
-                if (in_array($key, $fkLocalColumns, true)) {
-                    $sliced[$key] = $value;
-                }
-            }
-            return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, $sliced))[0];
+            return $this->fetchFirstBy($reference['table'], $reference['where']);
         }
         return null;
+    }
+
+    private function fetchBy(string $entityTypeIdentifier, array $conditions) : array {
+        $fkColumns = array_keys($conditions);
+        $fkLocalColumns = array_values($conditions);
+        $sliced = [];
+        foreach ($this->values as $key => $value) {
+            if (in_array($key, $fkLocalColumns, true)) {
+                $sliced[$key] = $value;
+            }
+        }
+        return $this->schema->read($entityTypeIdentifier, $fkColumns, array_combine($fkColumns, $sliced));
+    }
+
+    private function fetchFirstBy(string $entityTypeIdentifier, array $conditions) : Entity {
+        return $this->fetchBy($entityTypeIdentifier, $conditions)[0];
     }
 
 }
