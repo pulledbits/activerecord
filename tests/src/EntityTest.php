@@ -86,6 +86,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $values = [
             'number' => '1',
             'role_id' => '33',
+            'pole_id' => '3654',
         ];
         $this->object = new Entity($schema, 'MyTable', $primaryKey, $references, $values);
     }
@@ -137,5 +138,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $record = $this->object->readFirst("OtherTable", []);
         $this->assertEquals('356', $record->id);
+    }
+    public function testReadFirst_When_NoMatchingConditionsGiven_Expect_Null()
+    {
+        $record = $this->object->readFirst("OtherTable", ['id' => 'pole_id']);
+        $this->assertNull($record->id);
     }
 }

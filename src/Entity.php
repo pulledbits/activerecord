@@ -52,6 +52,9 @@ class Entity
      */
     public function __get($property)
     {
+        if (array_key_exists($property, $this->values) === false) {
+            return null;
+        }
         return $this->values[$property];
     }
 
@@ -59,7 +62,11 @@ class Entity
         return $this->schema->read($entityTypeIdentifier, [], array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions));
     }
     public function readFirst(string $entityTypeIdentifier, array $conditions) : Entity {
-        return $this->read($entityTypeIdentifier, $conditions)[0];
+        $records = $this->read($entityTypeIdentifier, $conditions);
+        if (count($records) === 0) {
+            return new Entity($this->schema, $this->entityTypeIdentifier, $this->primaryKey, $this->references, []);
+        }
+        return $records[0];
     }
 
     /**
