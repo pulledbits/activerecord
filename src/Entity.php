@@ -84,20 +84,11 @@ class Entity
     {
         if (substr($method, 0, 7) === 'fetchBy') {
             $reference = $this->references[substr($method, 7)];
-            return $this->fetchBy($reference['table'], $reference['where']);
+            return $this->read($reference['table'], $reference['where']);
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
             $reference = $this->references[substr($method, 12)];
-            return $this->fetchFirstBy($reference['table'], $reference['where']);
+            return $this->readFirst($reference['table'], $reference['where']);
         }
         return null;
     }
-
-    private function fetchBy(string $entityTypeIdentifier, array $conditions) : array {
-        return $this->read($entityTypeIdentifier, $conditions);
-    }
-
-    private function fetchFirstBy(string $entityTypeIdentifier, array $conditions) : Entity {
-        return $this->fetchBy($entityTypeIdentifier, $conditions)[0];
-    }
-
 }
