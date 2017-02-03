@@ -90,15 +90,7 @@ class Entity
     }
 
     private function fetchBy(string $entityTypeIdentifier, array $conditions) : array {
-        $fkColumns = array_keys($conditions);
-        $fkLocalColumns = array_values($conditions);
-        $sliced = [];
-        foreach ($this->values as $key => $value) {
-            if (in_array($key, $fkLocalColumns, true)) {
-                $sliced[$key] = $value;
-            }
-        }
-        return $this->schema->read($entityTypeIdentifier, [], array_combine($fkColumns, $sliced));
+        return $this->read($entityTypeIdentifier, $conditions);
     }
 
     private function fetchFirstBy(string $entityTypeIdentifier, array $conditions) : Entity {
