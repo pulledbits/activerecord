@@ -89,7 +89,19 @@ class Entity
                 }
             }
             return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, $sliced));
+        } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
+            $reference = $this->references[substr($method, 12)];
+            $fkColumns = array_keys($reference['where']);
+            $fkLocalColumns = array_values($reference['where']);
+            $sliced = [];
+            foreach ($this->values as $key => $value) {
+                if (in_array($key, $fkLocalColumns, true)) {
+                    $sliced[$key] = $value;
+                }
+            }
+            return $this->schema->read($reference['table'], $fkColumns, array_combine($fkColumns, $sliced))[0];
         }
+        return null;
     }
 
 }

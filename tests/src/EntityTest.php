@@ -11,6 +11,12 @@ namespace ActiveRecord;
 
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var Entity
+     */
+    private $object;
+
     protected function setUp()
     {
         $schema = new class implements \ActiveRecord\Schema {
@@ -54,7 +60,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             }
 
             public function create(string $tableIdentifier, array $values): int
-            {}
+            {
+                return 0;
+            }
 
             public function delete(string $tableIdentifier, array $whereParameters): int
             {
@@ -105,6 +113,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $records = $this->object->fetchByFkOthertableRole();
         $this->assertEquals('33', $records[0]->id);
+    }
+
+    public function test__call_When_ExistingReferenceFetchFirstByCall_Expect_Value()
+    {
+        $record = $this->object->fetchFirstByFkOthertableRole();
+        $this->assertEquals('33', $record->id);
     }
 
 
