@@ -22,6 +22,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $schema = new class implements \ActiveRecord\Schema {
             private function convertResultSet(array $results) {
                 return array_map(function(array $values) {
+                    /**
+                     * @var $this \ActiveRecord\Schema
+                     */
                     return new \ActiveRecord\Entity($this, 'MyTable', $values, [], $values);
                 }, $results);
             }
