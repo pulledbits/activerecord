@@ -38,6 +38,13 @@ class Schema
                     'where' => array_flip($reference['where'])
                 ];
             }
+
+            if (strpos($tableName, '_') > 0) {
+                $possibleEntityTypeIdentifier = substr($tableName, 0, strpos($tableName, '_'));
+                if (array_key_exists($possibleEntityTypeIdentifier, $reversedLinkedTables)) {
+                    $reversedLinkedTables[$tableName]['entityTypeIdentifier'] = $possibleEntityTypeIdentifier;
+                }
+            }
         }
         return $reversedLinkedTables;
     }

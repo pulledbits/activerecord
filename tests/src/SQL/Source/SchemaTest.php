@@ -59,4 +59,49 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
         $this->assertArrayHasKey('MyView', $schemaDescription);
     }
+
+    public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
+    {
+        $schema = \ActiveRecord\Test\createMockSchema([
+            'MyTable' => [
+                'name' => [
+                    'primaryKey' => true
+                ],
+                'birthdate' => [
+                    'primaryKey' => true
+                ],
+                'address' => [
+                    'primaryKey' => false
+                ],
+
+                'role_id' => [
+                    'primaryKey' => false,
+                    'references' => [
+                        'fk_othertable_role' => ['OtherTable', 'id']
+                    ]
+                ],
+                'role2_id' => [
+                    'primaryKey' => false,
+                    'references' => [
+                        'fk_anothertable_role' => ['AntoherTable', 'id']
+                    ]
+                ],
+                'extra_column_id' => [
+                    'primaryKey' => false,
+                    'references' => [
+                        'fk_anothertable_role' => ['AntoherTable', 'column_id']
+                    ]
+                ],
+            ],
+            'MyTable_today' => 'CREATE VIEW `MyTable_today` AS
+  SELECT
+    `schema`.`MyTable`.`name`   AS `name`,
+    `schema`.`MyTable`.`birthdate` AS `birthdate`
+  FROM `teach`.`MyTable`;'
+        ]);
+
+        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
+
+        $this->assertEquals('MyTable', $schemaDescription['MyTable_today']['entityTypeIdentifier']);
+    }
 }
