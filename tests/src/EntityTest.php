@@ -107,13 +107,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()
     {
-        $records = $this->object->fetchByFkOthertableRole();
+        $records = $this->object->__call('fetchByFkOthertableRole', []);
         $this->assertEquals('356', $records[0]->id);
     }
 
     public function test__call_When_ExistingReferenceFetchFirstByCall_Expect_Value()
     {
-        $record = $this->object->fetchFirstByFkOthertableRole();
+        $record = $this->object->__call('fetchFirstByFkOthertableRole', []);
         $this->assertEquals('356', $record->id);
     }
 
