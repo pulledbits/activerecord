@@ -130,4 +130,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('356', $records[0]->id);
         $this->assertCount(1, $records);
     }
+    public function testReadFirst_When_NoConditionsGiven_Expect_OnlyFirstRecord()
+    {
+        $record = $this->object->readFirst("OtherTable", []);
+        $this->assertEquals('356', $record->id);
+    }
 }
