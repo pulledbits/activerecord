@@ -20,7 +20,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     {
         $recordConfiguration = new \ActiveRecord\RecordFactory(sys_get_temp_dir());
         $this->object = new Schema($recordConfiguration, \ActiveRecord\Test\createMockPDOMultiple([
-            '/SELECT \* FROM activiteit WHERE id = :\w+/' => [
+            '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'BlaBla'
                 ],
@@ -34,7 +34,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
-            '/SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE id = :param1/' => [
+            '/SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE id = :param1$/' => [
                 [],
                 [],
                 [],
@@ -46,7 +46,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ],
             '/^UPDATE activiteit SET werkvorm = :\w+ WHERE id = :\w+$/' => 1,
             '/^INSERT INTO activiteit \(werkvorm, id\) VALUES \(:\w+, :\w+\)$/' => 1,
-            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+/' => [
+            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'Bla'
                 ],
@@ -54,6 +54,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
+            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+ AND foo = :\w+$/' => [],
             '/^DELETE FROM activiteit WHERE id = :\w+$/' => 1,
         ]));
     }
@@ -83,6 +84,11 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testReadFirst_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
         $record = $this->object->readFirst('activiteit', ['id', 'werkvorm'], ['id' => '1']);
         $this->assertEquals('Bla', $record->werkvorm);
+    }
+
+    public function testReadFirst_When_NoMatchingConditions_Expect_DummyEntity() {
+        $record = $this->object->readFirst('activiteit', ['id', 'werkvorm'], ['id' => '2323', 'foo' => 'bar']);
+        $this->assertNull($record->werkvorm);
     }
 
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
