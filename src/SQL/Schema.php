@@ -80,15 +80,22 @@ class Schema implements \ActiveRecord\Schema
         ];
     }
 
-    public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters) : array {
+    public function read(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : array {
         if (count($columnIdentifiers) === 0) {
             $columnIdentifiers[] = '*';
         }
-        $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $tableIdentifier, $whereParameters);
+        $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $entityTypeIdentifier, $conditions);
 
-        return array_map(function(array $values) use ($tableIdentifier) {
-            return $this->recordFactory->makeRecord($this, $tableIdentifier, $values);
+        return array_map(function(array $values) use ($entityTypeIdentifier) {
+            return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, $values);
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
+    }
+    public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : \ActiveRecord\Entity {
+        $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
+        if (count($records) === 0) {
+            return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, []);
+        }
+        return $records[0];
     }
 
     public function update(string $tableIdentifier, array $setParameters, array $whereParameters) : int {

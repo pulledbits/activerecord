@@ -80,6 +80,11 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Bla', $records[0]->werkvorm);
     }
 
+    public function testReadFirst_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
+        $record = $this->object->readFirst('activiteit', ['id', 'werkvorm'], ['id' => '1']);
+        $this->assertEquals('Bla', $record->werkvorm);
+    }
+
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
         $this->assertEquals(1, $this->object->delete('activiteit', ['id' => '3']));
     }
