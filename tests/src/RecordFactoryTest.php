@@ -20,19 +20,29 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
         $schema = new class implements \ActiveRecord\Schema {
 
             public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
-            {}
+            {
+                return [];
+            }
 
             public function readFirst(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): Entity
-            {}
+            {
+                return $this->read($tableIdentifier, $columnIdentifiers,$whereParameters)[0];
+            }
 
             public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
-            {}
+            {
+                return 0;
+            }
 
             public function create(string $tableIdentifier, array $values): int
-            {}
+            {
+                return 0;
+            }
 
             public function delete(string $tableIdentifier, array $whereParameters): int
-            {}
+            {
+                return 0;
+            }
         };
         $object = new RecordFactory(sys_get_temp_dir());
         $record = $object->makeRecord($schema, 'activiteit', ['status' => 'OK']);
