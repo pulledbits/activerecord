@@ -62,11 +62,7 @@ class Entity
         return $this->schema->read($entityTypeIdentifier, [], array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions));
     }
     public function readFirst(string $entityTypeIdentifier, array $conditions) : Entity {
-        $records = $this->read($entityTypeIdentifier, $conditions);
-        if (count($records) === 0) {
-            return new Entity($this->schema, $this->entityTypeIdentifier, $this->primaryKey, $this->references, []);
-        }
-        return $records[0];
+        return $this->schema->readFirst($entityTypeIdentifier, [], array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions));
     }
 
     /**

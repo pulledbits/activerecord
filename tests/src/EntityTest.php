@@ -49,6 +49,14 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }
                 return $this->convertResultSet($resultset);
             }
+            public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions): Entity
+            {
+                $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
+                if (count($records) === 0) {
+                    return new \ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
+                }
+                return $records[0];
+            }
 
             public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
             {
