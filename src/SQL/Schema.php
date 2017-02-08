@@ -30,7 +30,7 @@ class Schema implements \ActiveRecord\Schema
     {
         $statement = $this->connection->prepare($query);
         foreach ($namedParameters as $namedParameter => $value) {
-            $statement->bindParam($namedParameter, $value, \PDO::PARAM_STR);
+            $statement->bindValue($namedParameter, $value, \PDO::PARAM_STR);
         }
 
         if ($statement->execute() === false) {
