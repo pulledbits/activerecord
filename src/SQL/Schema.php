@@ -32,7 +32,11 @@ class Schema implements \ActiveRecord\Schema
         foreach ($namedParameters as $namedParameter => $value) {
             $statement->bindParam($namedParameter, $value, \PDO::PARAM_STR);
         }
-        $statement->execute();
+
+        if ($statement->execute() === false) {
+            trigger_error("Failed executing query `" . $query . "` (" . json_encode($namedParameters) . ")", E_USER_WARNING);
+        }
+
         return $statement;
     }
 

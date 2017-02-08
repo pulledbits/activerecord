@@ -56,6 +56,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ],
             '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+ AND foo = :\w+$/' => [],
             '/^DELETE FROM activiteit WHERE id = :\w+$/' => 1,
+            '/^DELETE FROM activiteit WHERE sid = :\w+$/' => false,
         ]));
     }
 
@@ -94,4 +95,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
         $this->assertEquals(1, $this->object->delete('activiteit', ['id' => '3']));
     }
+
+    /**
+     * @expectedException \PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessageRegExp /^Failed executing query/
+     */
+    public function testDeleteFrom_When_Erroneous_Expect_Warning() {
+        $this->assertEquals(0, $this->object->delete('activiteit', ['sid' => '3']));
+    }
+
 }

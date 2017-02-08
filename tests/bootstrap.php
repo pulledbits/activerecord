@@ -125,6 +125,8 @@ namespace ActiveRecord\Test {
             return createMockPDOStatementFetchAll($results);
         } elseif (is_int($results)) {
             return createMockPDOStatementRowCount($results);
+        } elseif ($results === false) {
+            return createMockPDOStatementFail($results);
         }
         return;
     }
@@ -145,6 +147,11 @@ namespace ActiveRecord\Test {
                     return $this->results;
                 }
             }
+
+            public function execute($bound_input_params = NULL)
+            {
+                return true;
+            }
         };
     }
 
@@ -162,8 +169,41 @@ namespace ActiveRecord\Test {
             {
                 return $this->results;
             }
+
+            public function execute($bound_input_params = NULL)
+            {
+                return true;
+            }
         };
     }
+
+    function createMockPDOStatementFail(bool $results) {
+        return new class($results) extends \PDOStatement
+        {
+            private $results;
+
+            public function __construct(bool $results)
+            {
+                $this->results = $results;
+            }
+
+            public function rowCount()
+            {
+                return 0;
+            }
+
+            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+            {
+                return $this->results;
+            }
+
+            public function execute($bound_input_params = NULL)
+            {
+                return $this->results;
+            }
+        };
+    }
+
 
 
     function createMockPDO(string $query, array $results)
