@@ -59,10 +59,10 @@ class Entity
     }
 
     public function read(string $entityTypeIdentifier, array $conditions) : array {
-        return $this->schema->read($entityTypeIdentifier, [], array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions));
+        return $this->schema->read($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
     public function readFirst(string $entityTypeIdentifier, array $conditions) : Entity {
-        return $this->schema->readFirst($entityTypeIdentifier, [], array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions));
+        return $this->schema->readFirst($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
 
     /**
@@ -83,18 +83,22 @@ class Entity
         return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey);
     }
 
+    private function fillConditions(array $conditions) {
+        return array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions);
+    }
+
     public function __call(string $method, array $arguments)
     {
         if (substr($method, 0, 7) === 'fetchBy') {
             $reference = $this->references[substr($method, 7)];
-            $conditions = array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $reference['where']);
+            $conditions = $this->fillConditions($reference['where']);
             if (count($arguments) === 1) {
                 $conditions = array_merge($arguments[0], $conditions);
             }
             return $this->schema->read($reference['table'], [], $conditions);
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
             $reference = $this->references[substr($method, 12)];
-            $conditions = array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $reference['where']);
+            $conditions = $this->fillConditions($reference['where']);
             if (count($arguments) === 1) {
                 $conditions = array_merge($arguments[0], $conditions);
             }
