@@ -17,6 +17,10 @@ if (file_exists($targetDirectory) == false) {
 $recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'Record';
 if (file_exists($recordsDirectory) == false) {
     mkdir($recordsDirectory);
+} else {
+    foreach (glob($recordsDirectory . DIRECTORY_SEPARATOR . '*.php') as $recordFile) {
+        unlink($recordFile);
+    }
 }
 
 if ($_SERVER['argc'] === 4) {
