@@ -87,22 +87,27 @@ class Entity
         return array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions);
     }
 
+    private function prepareReference(string $identifier) {
+        $reference = $this->references[$identifier];
+        $reference['where'] = $this->fillConditions($reference['where']);
+        return $reference;
+    }
+
+    private function mergeConditionsWith__callCustomConditions(array $conditions, array $arguments) {
+        if (count($arguments) === 1) {
+            return array_merge($arguments[0], $conditions);
+        }
+        return $conditions;
+    }
+
     public function __call(string $method, array $arguments)
     {
         if (substr($method, 0, 7) === 'fetchBy') {
-            $reference = $this->references[substr($method, 7)];
-            $conditions = $this->fillConditions($reference['where']);
-            if (count($arguments) === 1) {
-                $conditions = array_merge($arguments[0], $conditions);
-            }
-            return $this->schema->read($reference['table'], [], $conditions);
+            $reference = $this->prepareReference(substr($method, 7));
+            return $this->schema->read($reference['table'], [], $this->mergeConditionsWith__callCustomConditions($reference['where'], $arguments));
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
-            $reference = $this->references[substr($method, 12)];
-            $conditions = $this->fillConditions($reference['where']);
-            if (count($arguments) === 1) {
-                $conditions = array_merge($arguments[0], $conditions);
-            }
-            return $this->schema->readFirst($reference['table'], [], $conditions);
+            $reference = $this->prepareReference(substr($method, 12));
+            return $this->schema->readFirst($reference['table'], [], $this->mergeConditionsWith__callCustomConditions($reference['where'], $arguments));
         }
         return null;
     }
