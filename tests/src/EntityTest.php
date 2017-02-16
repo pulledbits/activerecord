@@ -138,6 +138,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $record = $this->object->__call('fetchFirstByFkOthertableRole', []);
         $this->assertEquals('356', $record->id);
     }
+    public function test__call_When_ExistingReferenceFetchFirstByCallWithAdditionalConditions_Expect_Value()
+    {
+        $record = $this->object->__call('fetchFirstByFkOthertableRole', [["extra" => '5']]);
+        $this->assertEquals('357', $record->id);
+    }
 
 
     public function testRead_When_NoConditionsGiven_Expect_FullResultSet()
