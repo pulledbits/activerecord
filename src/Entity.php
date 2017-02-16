@@ -87,7 +87,11 @@ class Entity
     {
         if (substr($method, 0, 7) === 'fetchBy') {
             $reference = $this->references[substr($method, 7)];
-            return $this->read($reference['table'], $reference['where']);
+            $conditions = array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $reference['where']);
+            if (count($arguments) === 1) {
+                $conditions = array_merge($arguments[0], $conditions);
+            }
+            return $this->schema->read($reference['table'], [], $conditions);
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
             $reference = $this->references[substr($method, 12)];
             return $this->readFirst($reference['table'], $reference['where']);

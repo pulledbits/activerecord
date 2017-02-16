@@ -45,6 +45,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                         $resultset = [
                             ['id' => '356']
                         ];
+                    } elseif ($columnIdentifiers === [] && $whereParameters === ['extra' => '5', 'id' => '33']) {
+                        $resultset = [
+                            ['id' => '357']
+                        ];
                     }
                 }
                 return $this->convertResultSet($resultset);
@@ -121,6 +125,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $records = $this->object->__call('fetchByFkOthertableRole', []);
         $this->assertEquals('356', $records[0]->id);
+    }
+
+    public function test__call_When_ExistingReferenceFetchByCallWithAdditionalConditions_Expect_Value()
+    {
+        $records = $this->object->__call('fetchByFkOthertableRole', [["extra" => '5']]);
+        $this->assertEquals('357', $records[0]->id);
     }
 
     public function test__call_When_ExistingReferenceFetchFirstByCall_Expect_Value()
