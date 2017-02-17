@@ -53,7 +53,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }
                 return $this->convertResultSet($resultset);
             }
-            public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions): Entity
+            public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions): Record
             {
                 $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
                 if (count($records) === 0) {

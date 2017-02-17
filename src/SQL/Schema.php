@@ -9,6 +9,9 @@
 namespace ActiveRecord\SQL;
 
 
+use ActiveRecord\Entity;
+use ActiveRecord\Record;
+
 class Schema implements \ActiveRecord\Schema
 {
     /**
@@ -34,7 +37,7 @@ class Schema implements \ActiveRecord\Schema
         }
 
         if ($statement->execute() === false) {
-            trigger_error("Failed executing query `" . $query . "` (" . json_encode($namedParameters) . ")", E_USER_WARNING);
+            trigger_error("Failed executing query `" . $query . "` (" . json_encode($namedParameters) . "): " . $statement->errorInfo()[2], E_USER_WARNING);
         }
 
         return $statement;
@@ -94,10 +97,72 @@ class Schema implements \ActiveRecord\Schema
             return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, $values);
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
-    public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : \ActiveRecord\Entity {
+    public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : \ActiveRecord\Record {
         $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
         if (count($records) === 0) {
-            return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, $conditions);
+            return new class($this->recordFactory->makeRecord($this, $entityTypeIdentifier, $conditions)) implements Record {
+
+                /**
+                 * @var \ActiveRecord\Record
+                 */
+                private $record;
+
+                private $created;
+
+                public function __construct(\ActiveRecord\Record $record)
+                {
+                    $this->record = $record;
+                    $this->created = false;
+                }
+
+                /**
+                 * @param string $property
+                 */
+                public function __get($property)
+                {
+                    return $this->record->__get($property);
+                }
+
+                public function read(string $entityTypeIdentifier, array $conditions): array
+                {
+                    return $this->record->read($entityTypeIdentifier, $conditions);
+                }
+
+                public function readFirst(string $entityTypeIdentifier, array $conditions): Entity
+                {
+                    return $this->record->readFirst($entityTypeIdentifier, $conditions);
+                }
+
+                /**
+                 * @param string $property
+                 * @param string $value
+                 */
+                public function __set($property, $value)
+                {
+                    if ($this->created === true) {
+                        $this->record->__set($property, $value);
+                    } elseif ($this->record->create() === 1) {
+                        $this->created = true;
+                    }
+                }
+
+                /**
+                 */
+                public function delete()
+                {
+                    return $this->record->delete();
+                }
+
+                public function create()
+                {
+                    return $this->record->create();
+                }
+
+                public function __call(string $method, array $arguments)
+                {
+                    return $this->record->__call($method, $arguments);
+                }
+            };
         }
         return $records[0];
     }

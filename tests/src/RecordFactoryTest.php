@@ -24,7 +24,7 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
                 return [];
             }
 
-            public function readFirst(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): Entity
+            public function readFirst(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): Record
             {
                 return $this->read($tableIdentifier, $columnIdentifiers,$whereParameters)[0];
             }

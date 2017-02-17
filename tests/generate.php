@@ -1,4 +1,13 @@
 <?php
+
+if (ini_get('zend.assertions') != 1) {
+    exit('zend.assertions must be enabled');
+}
+assert_options(ASSERT_ACTIVE, true);
+assert_options(ASSERT_WARNING, true);
+assert_options(ASSERT_BAIL, true);
+
+
 $targetNamespace = '\\Database';
 $targetDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'gen';
 
@@ -20,15 +29,19 @@ $recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.
 
 $schema = new \ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
-assert(count($schema->read('contactmoment', [], ['starttijd' => '23:00:00', 'les_id' => '2'])) === 0, 'no previous record exists');
-$schema->create('contactmoment', ['starttijd' => '23:00:00', 'les_id' => '1'], []);
-$record = $schema->read('contactmoment', [], ['starttijd' => '23:00:00', 'les_id' => '1'])[0];
+$starttijd = date('Y-m-d ') . '23:00:00';
+
+$schema->delete('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '1']);
+$schema->delete('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2']);
+assert(count($schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2'])) === 0, 'previous record exists');
+assert($schema->create('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1'], []) === 1, 'no record created');
+$record = $schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '1'])[0];
 assert($record->les_id === '1', 'record is properly initialized');
 $record->les_id = '2';
-assert($record->les_id === $schema->read('contactmoment', [], ['starttijd' => '23:00:00', 'les_id' => '2'])[0]->les_id, 'record is properly updated');
-assert(count($record->delete()) > 1, 'delete confirms removal');
+assert($record->les_id === $schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2'])[0]->les_id, 'record is properly updated');
 
 $viewRecord = $schema->read("contactmoment_vandaag", [], []);
+assert(count($viewRecord) === 1, 'view records exist');
 
-assert(count($viewRecord) > 1, 'view records exist');
+assert(count($record->delete()) === 1, 'delete confirms removal');
 echo 'Done testing';
