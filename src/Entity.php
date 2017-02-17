@@ -93,6 +93,9 @@ class Entity implements Record
     }
 
     private function prepareReference(string $identifier) {
+        if (array_key_exists($identifier, $this->references) === false) {
+            trigger_error('Reference does not exist `' . $identifier . '`', E_USER_ERROR);
+        }
         $reference = $this->references[$identifier];
         $reference['where'] = $this->fillConditions($reference['where']);
         return $reference;

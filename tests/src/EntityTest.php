@@ -151,6 +151,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $record = $this->object->__call('fetchFirstByFkOthertableRole', [["extra" => '5']]);
         $this->assertEquals('357', $record->id);
     }
+    /**
+     * @expectedException \PHPUnit_Framework_Error
+     * @expectedExceptionMessageRegExp /^Reference does not exist/
+     */
+    public function test__call_When_NonExistingReference_Expect_Value() {
+        $this->object->__call('fetchFirstByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
+    }
 
 
     public function testRead_When_NoConditionsGiven_Expect_FullResultSet()
