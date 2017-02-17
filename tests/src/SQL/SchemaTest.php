@@ -99,7 +99,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Error_Warning
+     * @expectedException \PHPUnit_Framework_Error
      * @expectedExceptionMessageRegExp /^Failed executing query/
      */
     public function testDeleteFrom_When_Erroneous_Expect_Warning() {
