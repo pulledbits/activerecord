@@ -72,6 +72,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function create(string $tableIdentifier, array $values): int
             {
+                if ($tableIdentifier === 'MyTable' && $values === ['number' => '1', 'role_id' => '33', 'pole_id' => '3654']) {
+                    return 1;
+                }
                 return 0;
             }
 
@@ -119,6 +122,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testDelete_When_ExistingProperty_Expect_Value()
     {
         $this->assertEquals(1, $this->object->delete());
+    }
+
+    public function testCreate_When_DefaultState_Expect_AtLeastOneCreatedRecord()
+    {
+        $this->assertEquals(1, $this->object->create());
     }
 
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()

@@ -83,6 +83,11 @@ class Entity
         return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey);
     }
 
+    public function create()
+    {
+        return $this->schema->create($this->entityTypeIdentifier, $this->values);
+    }
+
     private function fillConditions(array $conditions) {
         return array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions);
     }
