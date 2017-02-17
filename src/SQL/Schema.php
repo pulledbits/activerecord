@@ -97,7 +97,7 @@ class Schema implements \ActiveRecord\Schema
     public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : \ActiveRecord\Entity {
         $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
         if (count($records) === 0) {
-            return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, []);
+            return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, $conditions);
         }
         return $records[0];
     }

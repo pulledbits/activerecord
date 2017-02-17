@@ -87,9 +87,11 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Bla', $record->werkvorm);
     }
 
-    public function testReadFirst_When_NoMatchingConditions_Expect_DummyEntity() {
+    public function testReadFirst_When_NoMatchingConditions_Expect_DummyEntityWithConditionsAsValue() {
         $record = $this->object->readFirst('activiteit', ['id', 'werkvorm'], ['id' => '2323', 'foo' => 'bar']);
         $this->assertNull($record->werkvorm);
+        $this->assertEquals('2323', $record->id);
+        $this->assertEquals('bar', $record->foo);
     }
 
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
