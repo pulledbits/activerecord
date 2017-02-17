@@ -3,7 +3,7 @@
 namespace ActiveRecord;
 
 
-class Entity
+class Entity implements Record
 {
     /**
      * @var \ActiveRecord\Schema
