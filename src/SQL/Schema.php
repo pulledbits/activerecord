@@ -87,6 +87,12 @@ class Schema implements \ActiveRecord\Schema
         ];
     }
 
+    private function makeRecord($entityTypeIdentifier, array $values) {
+        $record = $this->recordFactory->makeRecord($this, $entityTypeIdentifier);
+        $record->contains($values);
+        return $record;
+    }
+
     public function read(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : array {
         if (count($columnIdentifiers) === 0) {
             $columnIdentifiers[] = '*';
@@ -94,12 +100,12 @@ class Schema implements \ActiveRecord\Schema
         $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $entityTypeIdentifier, $conditions);
 
         return array_map(function(array $values) use ($entityTypeIdentifier) {
-            return $this->recordFactory->makeRecord($this, $entityTypeIdentifier, $values);
+            return $this->makeRecord($entityTypeIdentifier, $values);
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function initializeRecord(string $entityTypeIdentifier, array $values) {
-        return new class($this->recordFactory->makeRecord($this, $entityTypeIdentifier, $values)) implements Record {
+        return new class($this->makeRecord($entityTypeIdentifier, $values)) implements Record {
 
             /**
              * @var \ActiveRecord\Record

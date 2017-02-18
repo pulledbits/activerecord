@@ -13,9 +13,8 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
-                    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $values);
-                    $record->contains($values);
+return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+                    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, []);
                     return $record;
 };');
 
@@ -47,7 +46,8 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, arra
             }
         };
         $object = new RecordFactory(sys_get_temp_dir());
-        $record = $object->makeRecord($schema, 'activiteit', ['status' => 'OK']);
+        $record = $object->makeRecord($schema, 'activiteit');
+        $record->contains(['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
     }
 

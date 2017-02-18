@@ -51,9 +51,8 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
             $references[] = '$record->references("' . $referenceIdentifier .'", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
         }
 
-        file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
+        file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
     $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
-    $record->contains($values);
     ' . join(PHP_EOL . '    ', $references) . '
     return $record;
 };');
