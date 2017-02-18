@@ -52,14 +52,7 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
         }
 
         file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
-    $keys = '.var_export($recordClassDescription['identifier'], true).';
-    $sliced = [];
-    foreach ($values as $key => $value) {
-        if (in_array($key, $keys, true)) {
-            $sliced[$key] = $value;
-        }
-    }
-    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced);
+    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
     $record->contains($values);
     ' . join(PHP_EOL . '    ', $references) . '
     return $record;

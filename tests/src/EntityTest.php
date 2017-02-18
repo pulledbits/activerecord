@@ -89,16 +89,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $primaryKey = [
-            'number' => '1'
-        ];
-
         $values = [
             'number' => '1',
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($schema, 'MyTable', $primaryKey);
+        $this->object = new Entity($schema, 'MyTable', ['number']);
         $this->object->contains($values);
         $this->object->references('FkOthertableRole', 'OtherTable', [
             'id' => 'role_id'

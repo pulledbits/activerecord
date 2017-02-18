@@ -51,6 +51,16 @@ class Entity implements Record
         $this->values += $values;
     }
 
+    private function primaryKey() {
+        $sliced = [];
+        foreach ($this->values as $key => $value) {
+            if (in_array($key, $this->primaryKey, true)) {
+                $sliced[$key] = $value;
+            }
+        }
+        return $sliced;
+    }
+
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
         $this->references[$referenceIdentifier] = [
             'table' => $referencedEntityTypeIdentifier,
@@ -82,7 +92,7 @@ class Entity implements Record
      */
     public function __set($property, $value)
     {
-        if ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey) > 0) {
+        if ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey()) > 0) {
             $this->values[$property] = $value;
         }
     }
@@ -91,7 +101,7 @@ class Entity implements Record
      */
     public function delete()
     {
-        return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey);
+        return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey());
     }
 
     public function create()
