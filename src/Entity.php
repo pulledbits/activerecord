@@ -103,6 +103,21 @@ class Entity implements Record
      */
     public function __set($property, $value)
     {
+        $missing = [];
+        foreach ($this->requiredColumnIdentifiers as $requiredColumnIdentifier) {
+            if (array_key_exists($requiredColumnIdentifier, $this->values) === false) {
+                $missing[] = $requiredColumnIdentifier;
+                break;
+            } elseif ($this->values[$requiredColumnIdentifier] === null) {
+                $missing[] = $requiredColumnIdentifier;
+                break;
+            }
+        }
+
+        if (count($missing) > 0) {
+            return 0;
+        }
+
         if ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey()) > 0) {
             $this->values[$property] = $value;
         }
@@ -130,6 +145,7 @@ class Entity implements Record
 
         if (count($missing) > 0) {
             trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
+            return 0;
         }
 
         return $this->schema->create($this->entityTypeIdentifier, $this->values);

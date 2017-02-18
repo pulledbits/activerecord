@@ -121,6 +121,14 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('2', $this->object->number);
     }
 
+    public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
+    {
+        $this->object->requires(['name']);
+        $this->assertEquals('1', $this->object->number);
+        $this->object->number = '2';
+        $this->assertEquals('1', $this->object->number);
+    }
+
     public function testDelete_When_ExistingProperty_Expect_Value()
     {
         $this->assertEquals(1, $this->object->delete());
