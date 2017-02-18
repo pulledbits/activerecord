@@ -56,10 +56,18 @@ namespace ActiveRecord\Test {
                 $this->primaryKey = [];
                 $foreignKeys = [];
                 foreach ($columns as $columnIdentifier => $column) {
-                    $this->columns[$columnIdentifier] = new class extends \Doctrine\DBAL\Schema\Column
+                    $this->columns[$columnIdentifier] = new class($column['required']) extends \Doctrine\DBAL\Schema\Column
                     {
-                        public function __construct()
+                        private $required;
+
+                        public function __construct(bool $required)
                         {
+                            $this->required = $required;
+                        }
+
+                        public function getNotnull()
+                        {
+                            return $this->required;
                         }
                     };
                     if ($column['primaryKey']) {

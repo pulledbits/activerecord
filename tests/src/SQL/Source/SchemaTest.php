@@ -17,6 +17,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'MyTable' => [
                 'extra_column_id' => [
                     'primaryKey' => false,
+                    'required' => false,
                     'references' => [
                         'fk_anothertable_role' => ['AnotherTable', 'column_id']
                     ]
@@ -65,29 +66,35 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $schema = \ActiveRecord\Test\createMockSchema([
             'MyTable' => [
                 'name' => [
-                    'primaryKey' => true
+                    'primaryKey' => true,
+                    'required' => true
                 ],
                 'birthdate' => [
-                    'primaryKey' => true
+                    'primaryKey' => true,
+                    'required' => true
                 ],
                 'address' => [
-                    'primaryKey' => false
+                    'primaryKey' => false,
+                    'required' => false
                 ],
 
                 'role_id' => [
                     'primaryKey' => false,
+                    'required' => false,
                     'references' => [
                         'fk_othertable_role' => ['OtherTable', 'id']
                     ]
                 ],
                 'role2_id' => [
                     'primaryKey' => false,
+                    'required' => false,
                     'references' => [
                         'fk_anothertable_role' => ['AntoherTable', 'id']
                     ]
                 ],
                 'extra_column_id' => [
                     'primaryKey' => false,
+                    'required' => false,
                     'references' => [
                         'fk_anothertable_role' => ['AntoherTable', 'column_id']
                     ]

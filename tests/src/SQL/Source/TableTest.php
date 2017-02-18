@@ -4,6 +4,9 @@ namespace ActiveRecord\SQL\Source;
 class TableTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var Table
+     */
     private $object;
 
     protected function setUp()
@@ -15,29 +18,35 @@ class TableTest extends \PHPUnit_Framework_TestCase
     {
         $mockTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
-                'primaryKey' => true
+                'primaryKey' => true,
+                'required' => true
             ],
             'birthdate' => [
-                'primaryKey' => true
+                'primaryKey' => true,
+                'required' => true
             ],
             'address' => [
-                'primaryKey' => false
+                'primaryKey' => false,
+                'required' => true
             ],
 
             'role_id' => [
                 'primaryKey' => false,
+                'required' => false,
                 'references' => [
                     'fk_othertable_role' => ['OtherTable', 'id']
                 ]
             ],
             'role2_id' => [
                 'primaryKey' => false,
+                'required' => false,
                 'references' => [
                     'fk_anothertable_role' => ['AntoherTable', 'id']
                 ]
             ],
             'extra_column_id' => [
                 'primaryKey' => false,
+                'required' => false,
                 'references' => [
                     'fk_anothertable_role' => ['AntoherTable', 'column_id']
                 ]
@@ -46,6 +55,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $classDescription = $this->object->describe($mockTable);
         $this->assertEquals(['name', 'birthdate'], $classDescription['identifier']);
+        $this->assertEquals(['name', 'birthdate', 'address'], $classDescription['requiredColumnIdentifiers']);
         $this->assertEquals([
             'FkOthertableRole' => [
                 'table' => 'OtherTable',

@@ -39,6 +39,12 @@ final class Table
             $primaryKeyColumns = $dbalSchemaTable->getPrimaryKeyColumns();
         }
 
+        $requiredColumnIdentifiers = [];
+        foreach ($dbalSchemaTable->getColumns() as $columnIdentifier => $column) {
+            if ($column->getNotnull()) {
+                $requiredColumnIdentifiers[] = $columnIdentifier;
+            }
+        }
         $references = [];
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
             $references[join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = [
@@ -49,6 +55,7 @@ final class Table
 
         return [
             'identifier' => $primaryKeyColumns,
+            'requiredColumnIdentifiers' => $requiredColumnIdentifiers,
             'references' => $references
         ];
     }
