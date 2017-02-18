@@ -38,13 +38,20 @@ class Entity implements Record
      * @param array $references
      * @param array $values
      */
-    public function __construct(Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $references, array $values)
+    public function __construct(Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $values)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->primaryKey = $primaryKey;
-        $this->references = $references;
+        $this->references = [];
         $this->values = $values;
+    }
+
+    public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
+        $this->references[$referenceIdentifier] = [
+            'table' => $referencedEntityTypeIdentifier,
+            'where' => $conditions
+        ];
     }
 
     /**

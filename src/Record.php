@@ -9,6 +9,8 @@ namespace ActiveRecord;
 
 interface Record
 {
+    public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions);
+
     /**
      * @param string $property
      */

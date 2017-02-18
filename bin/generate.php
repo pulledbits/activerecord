@@ -45,6 +45,12 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
         file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
     } else {
+
+        $references = [];
+        foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+            $references[] = '$record->references("' . $referenceIdentifier .'", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
+        }
+
         file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
     $keys = '.var_export($recordClassDescription['identifier'], true).';
     $sliced = [];
@@ -53,7 +59,9 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
             $sliced[$key] = $value;
         }
     }
-    return new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced, '.var_export($recordClassDescription['references'], true).', $values);
+    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced, $values);
+    ' . join(PHP_EOL . '    ', $references) . '
+    return $record;
 };');
     }
 

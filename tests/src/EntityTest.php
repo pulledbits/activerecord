@@ -25,7 +25,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                     /**
                      * @var $this \ActiveRecord\Schema
                      */
-                    return new \ActiveRecord\Entity($this, 'MyTable', $values, [], $values);
+                    return new \ActiveRecord\Entity($this, 'MyTable', $values, $values);
                 }, $results);
             }
 
@@ -90,20 +90,16 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $primaryKey = [
             'number' => '1'
         ];
-        $references = [
-            'FkOthertableRole' => [
-                'table' => 'OtherTable',
-                'where' => [
-                    'id' => 'role_id'
-                ],
-            ]
-        ];
+
         $values = [
             'number' => '1',
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($schema, 'MyTable', $primaryKey, $references, $values);
+        $this->object = new Entity($schema, 'MyTable', $primaryKey, $values);
+        $this->object->references('FkOthertableRole', 'OtherTable', [
+            'id' => 'role_id'
+        ]);
     }
 
     public function test__get_When_ExistingProperty_Expect_Value()
