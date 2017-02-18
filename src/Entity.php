@@ -97,12 +97,7 @@ class Entity implements Record
         return $this->schema->readFirst($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
 
-    /**
-     * @param string $property
-     * @param string $value
-     */
-    public function __set($property, $value)
-    {
+    private function calculateMissingValues() : array {
         $missing = [];
         foreach ($this->requiredColumnIdentifiers as $requiredColumnIdentifier) {
             if (array_key_exists($requiredColumnIdentifier, $this->values) === false) {
@@ -113,7 +108,16 @@ class Entity implements Record
                 break;
             }
         }
+        return $missing;
+    }
 
+    /**
+     * @param string $property
+     * @param string $value
+     */
+    public function __set($property, $value)
+    {
+        $missing = $this->calculateMissingValues();
         if (count($missing) > 0) {
             return 0;
         }
@@ -132,17 +136,7 @@ class Entity implements Record
 
     public function create()
     {
-        $missing = [];
-        foreach ($this->requiredColumnIdentifiers as $requiredColumnIdentifier) {
-            if (array_key_exists($requiredColumnIdentifier, $this->values) === false) {
-                $missing[] = $requiredColumnIdentifier;
-                break;
-            } elseif ($this->values[$requiredColumnIdentifier] === null) {
-                $missing[] = $requiredColumnIdentifier;
-                break;
-            }
-        }
-
+        $missing = $this->calculateMissingValues();
         if (count($missing) > 0) {
             trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
             return 0;
