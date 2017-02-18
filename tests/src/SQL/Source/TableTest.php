@@ -82,6 +82,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;');
         $classDescription = $this->object->describe($dbalView);
         $this->assertEquals([], $classDescription['identifier']);
+        $this->assertEquals([], $classDescription['requiredColumnIdentifiers']);
         $this->assertEquals([], $classDescription['references']);
     }
 }

@@ -53,6 +53,7 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
 
         file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
     $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
+    $record->requires('.var_export($recordClassDescription['requiredColumnIdentifiers'], true).');
     ' . join(PHP_EOL . '    ', $references) . '
     return $record;
 };');

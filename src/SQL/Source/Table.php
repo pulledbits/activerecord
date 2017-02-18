@@ -27,10 +27,18 @@ final class Table
      */
     public function describe(\Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaAsset) : array {
         if ($dbalSchemaAsset instanceof \Doctrine\DBAL\Schema\Table) {
-            return $this->describeTable($dbalSchemaAsset);
+            $description = $this->describeTable($dbalSchemaAsset);
         } elseif ($dbalSchemaAsset instanceof \Doctrine\DBAL\Schema\View) {
-            return $this->describeView($dbalSchemaAsset);
+            $description = $this->describeView($dbalSchemaAsset);
+        } else {
+            $description = [];
         }
+
+        return $description + [
+            'identifier' => [],
+            'requiredColumnIdentifiers' => [],
+            'references' => []
+        ];
     }
 
     private function describeTable(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
@@ -61,10 +69,7 @@ final class Table
     }
 
     private function describeView(\Doctrine\DBAL\Schema\View $dbalSchemaView) : array {
-        return [
-            'identifier' => [],
-            'references' => []
-        ];
+        return [];
     }
     
 }
