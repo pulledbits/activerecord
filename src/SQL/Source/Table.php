@@ -49,7 +49,9 @@ final class Table
 
         $requiredColumnIdentifiers = [];
         foreach ($dbalSchemaTable->getColumns() as $columnIdentifier => $column) {
-            if ($column->getNotnull()) {
+            if ($column->getAutoincrement()) {
+                continue;
+            } elseif ($column->getNotnull()) {
                 $requiredColumnIdentifiers[] = $columnIdentifier;
             }
         }

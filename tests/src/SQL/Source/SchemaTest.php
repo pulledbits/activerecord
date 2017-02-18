@@ -17,6 +17,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'MyTable' => [
                 'extra_column_id' => [
                     'primaryKey' => false,
+                    'auto_increment' => false,
                     'required' => false,
                     'references' => [
                         'fk_anothertable_role' => ['AnotherTable', 'column_id']
@@ -67,19 +68,23 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'MyTable' => [
                 'name' => [
                     'primaryKey' => true,
+                    'auto_increment' => true,
                     'required' => true
                 ],
                 'birthdate' => [
                     'primaryKey' => true,
+                    'auto_increment' => false,
                     'required' => true
                 ],
                 'address' => [
                     'primaryKey' => false,
+                    'auto_increment' => false,
                     'required' => false
                 ],
 
                 'role_id' => [
                     'primaryKey' => false,
+                    'auto_increment' => false,
                     'required' => false,
                     'references' => [
                         'fk_othertable_role' => ['OtherTable', 'id']
@@ -87,6 +92,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 ],
                 'role2_id' => [
                     'primaryKey' => false,
+                    'auto_increment' => false,
                     'required' => false,
                     'references' => [
                         'fk_anothertable_role' => ['AntoherTable', 'id']
@@ -94,6 +100,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 ],
                 'extra_column_id' => [
                     'primaryKey' => false,
+                    'auto_increment' => false,
                     'required' => false,
                     'references' => [
                         'fk_anothertable_role' => ['AntoherTable', 'column_id']

@@ -56,18 +56,25 @@ namespace ActiveRecord\Test {
                 $this->primaryKey = [];
                 $foreignKeys = [];
                 foreach ($columns as $columnIdentifier => $column) {
-                    $this->columns[$columnIdentifier] = new class($column['required']) extends \Doctrine\DBAL\Schema\Column
+                    $this->columns[$columnIdentifier] = new class($column['required'], $column['auto_increment']) extends \Doctrine\DBAL\Schema\Column
                     {
                         private $required;
+                        private $auto_increment;
 
-                        public function __construct(bool $required)
+                        public function __construct(bool $required, bool $auto_increment)
                         {
                             $this->required = $required;
+                            $this->auto_increment = $auto_increment;
                         }
 
                         public function getNotnull()
                         {
                             return $this->required;
+                        }
+
+                        public function getAutoincrement()
+                        {
+                            return $this->auto_increment;
                         }
                     };
                     if ($column['primaryKey']) {

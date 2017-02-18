@@ -19,19 +19,23 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $mockTable = \ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true,
+                'auto_increment' => true,
                 'required' => true
             ],
             'birthdate' => [
                 'primaryKey' => true,
+                'auto_increment' => false,
                 'required' => true
             ],
             'address' => [
                 'primaryKey' => false,
+                'auto_increment' => false,
                 'required' => true
             ],
 
             'role_id' => [
                 'primaryKey' => false,
+                'auto_increment' => false,
                 'required' => false,
                 'references' => [
                     'fk_othertable_role' => ['OtherTable', 'id']
@@ -39,6 +43,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ],
             'role2_id' => [
                 'primaryKey' => false,
+                'auto_increment' => false,
                 'required' => false,
                 'references' => [
                     'fk_anothertable_role' => ['AntoherTable', 'id']
@@ -46,6 +51,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ],
             'extra_column_id' => [
                 'primaryKey' => false,
+                'auto_increment' => false,
                 'required' => false,
                 'references' => [
                     'fk_anothertable_role' => ['AntoherTable', 'column_id']
@@ -55,7 +61,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $classDescription = $this->object->describe($mockTable);
         $this->assertEquals(['name', 'birthdate'], $classDescription['identifier']);
-        $this->assertEquals(['name', 'birthdate', 'address'], $classDescription['requiredColumnIdentifiers']);
+        $this->assertEquals(['birthdate', 'address'], $classDescription['requiredColumnIdentifiers']);
         $this->assertEquals([
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
