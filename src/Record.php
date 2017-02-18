@@ -13,6 +13,8 @@ interface Record
 
     public function contains(array $values);
 
+    public function requires(array $columnIdentifiers);
+
     /**
      * @param string $property
      */

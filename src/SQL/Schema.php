@@ -176,6 +176,11 @@ class Schema implements \ActiveRecord\Schema
             {
                 return $this->record->contains($values);
             }
+
+            public function requires(array $requiredColumnIdentifiers)
+            {
+                return $this->record->requires($requiredColumnIdentifiers);
+            }
         };
     }
 
