@@ -97,6 +97,11 @@ class Entity implements Record
         return $this->schema->readFirst($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
 
+    public function missesRequiredValues(): bool
+    {
+        return count($this->calculateMissingValues()) > 0;
+    }
+
     private function calculateMissingValues() : array {
         $missing = [];
         foreach ($this->requiredColumnIdentifiers as $requiredColumnIdentifier) {
@@ -117,12 +122,9 @@ class Entity implements Record
      */
     public function __set($property, $value)
     {
-        $missing = $this->calculateMissingValues();
-        if (count($missing) > 0) {
+        if ($this->missesRequiredValues()) {
             return 0;
-        }
-
-        if ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey()) > 0) {
+        } elseif ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey()) > 0) {
             $this->values[$property] = $value;
         }
     }

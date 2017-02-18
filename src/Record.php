@@ -15,6 +15,8 @@ interface Record
 
     public function requires(array $columnIdentifiers);
 
+    public function missesRequiredValues() : bool;
+
     /**
      * @param string $property
      */

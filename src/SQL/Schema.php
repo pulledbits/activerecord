@@ -146,6 +146,8 @@ class Schema implements \ActiveRecord\Schema
             {
                 if ($this->created === true) {
                     $this->record->__set($property, $value);
+                } elseif ($this->record->missesRequiredValues()) {
+                    $this->record->contains([$property => $value]);
                 } elseif ($this->record->create() === 1) {
                     $this->created = true;
                 }
@@ -180,6 +182,11 @@ class Schema implements \ActiveRecord\Schema
             public function requires(array $requiredColumnIdentifiers)
             {
                 return $this->record->requires($requiredColumnIdentifiers);
+            }
+
+            public function missesRequiredValues(): bool
+            {
+                return $this->record->missesRequiredValues();
             }
         };
     }

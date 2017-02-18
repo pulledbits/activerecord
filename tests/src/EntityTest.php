@@ -103,6 +103,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
+    public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()
+    {
+        $this->assertFalse($this->object->missesRequiredValues());
+        $this->object->requires(['name']);
+        $this->assertTrue($this->object->missesRequiredValues());
+    }
+
     public function test__get_When_ExistingProperty_Expect_Value()
     {
         $value = $this->object->number;
