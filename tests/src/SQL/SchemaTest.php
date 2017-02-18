@@ -68,6 +68,11 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $this->object->create('activiteit', ['werkvorm' => 'My Name', 'id' => '3']));
     }
 
+    public function testInitializeRecord_When_DefaultState_Expect_UncommittedRecord() {
+        $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
+        $this->assertEquals('blabla', $record->name);
+    }
+
     public function testSelectFrom_When_NoColumnIdentifiers_Expect_SQLSelectAsteriskQueryAndCallbackUsedForFetchAll() {
         $records = $this->object->read('activiteit', [], ['id' => '1']);
 
