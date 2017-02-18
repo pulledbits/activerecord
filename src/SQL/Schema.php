@@ -165,6 +165,11 @@ class Schema implements \ActiveRecord\Schema
             public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
                 return $this->record->references($referenceIdentifier, $referencedEntityTypeIdentifier, $conditions);
             }
+
+            public function contains(array $values)
+            {
+                return $this->record->contains($values);
+            }
         };
     }
 

@@ -25,7 +25,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                     /**
                      * @var $this \ActiveRecord\Schema
                      */
-                    return new \ActiveRecord\Entity($this, 'MyTable', $values, $values);
+                    $record = new \ActiveRecord\Entity($this, 'MyTable', $values);
+                    $record->contains($values);
+                    return $record;
                 }, $results);
             }
 
@@ -96,7 +98,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($schema, 'MyTable', $primaryKey, $values);
+        $this->object = new Entity($schema, 'MyTable', $primaryKey);
+        $this->object->contains($values);
         $this->object->references('FkOthertableRole', 'OtherTable', [
             'id' => 'role_id'
         ]);

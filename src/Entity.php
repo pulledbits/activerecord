@@ -38,13 +38,17 @@ class Entity implements Record
      * @param array $references
      * @param array $values
      */
-    public function __construct(Schema $schema, string $entityTypeIdentifier, array $primaryKey, array $values)
+    public function __construct(Schema $schema, string $entityTypeIdentifier, array $primaryKey)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->primaryKey = $primaryKey;
         $this->references = [];
-        $this->values = $values;
+        $this->values = [];
+    }
+
+    public function contains(array $values) {
+        $this->values += $values;
     }
 
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {

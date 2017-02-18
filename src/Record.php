@@ -11,6 +11,8 @@ interface Record
 {
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions);
 
+    public function contains(array $values);
+
     /**
      * @param string $property
      */

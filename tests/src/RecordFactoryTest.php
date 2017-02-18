@@ -14,7 +14,9 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
 return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier, array $values) {
-                    return new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $values, $values);
+                    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $values);
+                    $record->contains($values);
+                    return $record;
 };');
 
         $schema = new class implements \ActiveRecord\Schema {

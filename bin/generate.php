@@ -59,7 +59,8 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
             $sliced[$key] = $value;
         }
     }
-    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced, $values);
+    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, $sliced);
+    $record->contains($values);
     ' . join(PHP_EOL . '    ', $references) . '
     return $record;
 };');
