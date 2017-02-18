@@ -18,17 +18,23 @@ class Entity implements Record
     /**
      * @var array
      */
-    private $primaryKey = NULL;
+    private $primaryKey;
 
     /**
      * @var array
      */
-    private $references = NULL;
+    private $references;
 
     /**
      * @var array
      */
-    private $values = NULL;
+    private $values;
+
+
+    /**
+     * @var array
+     */
+    private $requiredColumnIdentifiers;
 
     /**
      * Entity constructor.
@@ -45,6 +51,7 @@ class Entity implements Record
         $this->primaryKey = $primaryKey;
         $this->references = [];
         $this->values = [];
+        $this->requiredColumnIdentifiers = [];
     }
 
     public function contains(array $values) {
@@ -66,6 +73,10 @@ class Entity implements Record
             'table' => $referencedEntityTypeIdentifier,
             'where' => $conditions
         ];
+    }
+
+    public function requires(array $columnIdentifiers) {
+        $this->requiredColumnIdentifiers = $columnIdentifiers;
     }
 
     /**
@@ -106,6 +117,21 @@ class Entity implements Record
 
     public function create()
     {
+        $missing = [];
+        foreach ($this->requiredColumnIdentifiers as $requiredColumnIdentifier) {
+            if (array_key_exists($requiredColumnIdentifier, $this->values) === false) {
+                $missing[] = $requiredColumnIdentifier;
+                break;
+            } elseif ($this->values[$requiredColumnIdentifier] === null) {
+                $missing[] = $requiredColumnIdentifier;
+                break;
+            }
+        }
+
+        if (count($missing) > 0) {
+            trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
+        }
+
         return $this->schema->create($this->entityTypeIdentifier, $this->values);
     }
 

@@ -11,6 +11,10 @@ namespace ActiveRecord;
 
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Schema
+     */
+    private $schema;
 
     /**
      * @var Entity
@@ -19,7 +23,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $schema = new class implements \ActiveRecord\Schema {
+        $this->schema = new class implements \ActiveRecord\Schema {
             private function convertResultSet(array $results) {
                 return array_map(function(array $values) {
                     /**
@@ -74,7 +78,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function create(string $tableIdentifier, array $values): int
             {
+
                 if ($tableIdentifier === 'MyTable' && $values === ['number' => '1', 'role_id' => '33', 'pole_id' => '3654']) {
+                    return 1;
+                } elseif ($tableIdentifier === 'MyTable' && $values === ['name' => 'Test']) {
                     return 1;
                 }
                 return 0;
@@ -94,7 +101,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($schema, 'MyTable', ['number']);
+        $this->object = new Entity($this->schema, 'MyTable', ['number']);
         $this->object->contains($values);
         $this->object->references('FkOthertableRole', 'OtherTable', [
             'id' => 'role_id'
@@ -124,6 +131,20 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $this->object->create());
     }
 
+    /**
+     * @expectedException \PHPUnit_Framework_Error
+     * @expectedExceptionMessageRegExp /^Required values are missing/
+     */
+    public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
+    {
+        $object = new Entity($this->schema, 'MyTable', ['number']);
+        $object->requires(['name']);
+        $object->contains([]);
+        $this->assertEquals(0, $object->create());
+        $object->contains(['name' => 'Test']);
+        $this->assertEquals(1, $object->create());
+    }
+
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()
     {
         $records = $this->object->__call('fetchByFkOthertableRole', []);
@@ -146,6 +167,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $record = $this->object->__call('fetchFirstByFkOthertableRole', [["extra" => '5']]);
         $this->assertEquals('357', $record->id);
     }
+
     /**
      * @expectedException \PHPUnit_Framework_Error
      * @expectedExceptionMessageRegExp /^Reference does not exist/
