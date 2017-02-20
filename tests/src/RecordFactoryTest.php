@@ -44,6 +44,11 @@ return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
             {
                 return 0;
             }
+
+            public function initializeRecord(string $entityTypeIdentifier, array $values): Record
+            {
+                // TODO: Implement initializeRecord() method.
+            }
         };
         $object = new RecordFactory(sys_get_temp_dir());
         $record = $object->makeRecord($schema, 'activiteit');

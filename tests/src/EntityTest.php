@@ -89,6 +89,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }
                 return 0;
             }
+
+            public function initializeRecord(string $entityTypeIdentifier, array $values): Record
+            {
+                // TODO: Implement initializeRecord() method.
+            }
         };
 
         $values = [

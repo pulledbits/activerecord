@@ -57,6 +57,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+ AND foo = :\w+$/' => [],
             '/^DELETE FROM activiteit WHERE id = :\w+$/' => 1,
             '/^DELETE FROM activiteit WHERE sid = :\w+$/' => false,
+
+            '/^INSERT INTO activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
+            '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
         ]));
     }
 
@@ -71,6 +74,28 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testInitializeRecord_When_DefaultState_Expect_UncommittedRecord() {
         $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
         $this->assertEquals('blabla', $record->name);
+    }
+
+    public function testInitializeRecord_When_NoRequiredValuesMissing_Expect_InsertQuery() {
+        $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
+        $this->assertEquals('blabla', $record->name);
+        $this->assertNull($record->foo2);
+        $record->foo2 = 'bar';
+        $this->assertEquals('bar', $record->foo2);
+    }
+
+    public function testInitializeRecord_When_RequiredValuesMissing_Expect_NoInsertQuery() {
+        $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
+        $record->requires(['foo4']);
+        $this->assertEquals('blabla', $record->name);
+
+        $this->assertNull($record->foo3);
+        $record->foo3 = 'bar';
+        $this->assertEquals('bar', $record->foo3);
+
+        $this->assertNull($record->foo4);
+        $record->foo4 = 'bar';
+        $this->assertEquals('bar', $record->foo4);
     }
 
     public function testSelectFrom_When_NoColumnIdentifiers_Expect_SQLSelectAsteriskQueryAndCallbackUsedForFetchAll() {

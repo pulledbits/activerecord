@@ -104,7 +104,7 @@ class Schema implements \ActiveRecord\Schema
         }, $statement->fetchAll(\PDO::FETCH_ASSOC));
     }
 
-    public function initializeRecord(string $entityTypeIdentifier, array $values) {
+    public function initializeRecord(string $entityTypeIdentifier, array $values) : Record {
         return new class($this->makeRecord($entityTypeIdentifier, $values)) implements Record {
 
             /**
@@ -146,9 +146,15 @@ class Schema implements \ActiveRecord\Schema
             {
                 if ($this->created === true) {
                     $this->record->__set($property, $value);
-                } elseif ($this->record->missesRequiredValues()) {
-                    $this->record->contains([$property => $value]);
-                } elseif ($this->record->create() === 1) {
+                    return;
+                }
+
+                $this->record->contains([$property => $value]);
+                if ($this->record->missesRequiredValues()) {
+                    return;
+                }
+
+                if ($this->record->create() === 1) {
                     $this->created = true;
                 }
             }
