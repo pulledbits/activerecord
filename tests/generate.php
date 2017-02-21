@@ -25,16 +25,16 @@ require __DIR__ . '/bootstrap.php';
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
-$recordConfigurator = require $targetDirectory . DIRECTORY_SEPARATOR . 'factory.php';
+$recordConfigurator = new \ActiveRecord\RecordFactory($targetDirectory);
 
 $schema = new \ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
 $starttijd = date('Y-m-d ') . '23:00:00';
 
-$schema->delete('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '1']);
-$schema->delete('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2']);
+$schema->delete('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1']);
+$schema->delete('contactmoment', ['starttijd' => $starttijd, 'les_id' => '2']);
 assert(count($schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2'])) === 0, 'previous record exists');
-assert($schema->create('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1'], []) === 1, 'no record created');
+assert($schema->create('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1']) === 1, 'no record created');
 $record = $schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '1'])[0];
 assert($record->les_id === '1', 'record is properly initialized');
 $record->les_id = '2';

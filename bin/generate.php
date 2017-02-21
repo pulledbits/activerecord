@@ -12,13 +12,8 @@ $targetNamespace = $_SERVER['argv'][1] . '\\Record';
 $targetDirectory = $_SERVER['argv'][2];
 if (file_exists($targetDirectory) == false) {
     mkdir($targetDirectory);
-}
-
-$recordsDirectory = $targetDirectory . DIRECTORY_SEPARATOR . 'Record';
-if (file_exists($recordsDirectory) == false) {
-    mkdir($recordsDirectory);
 } else {
-    foreach (glob($recordsDirectory . DIRECTORY_SEPARATOR . '*.php') as $recordFile) {
+    foreach (glob($targetDirectory . DIRECTORY_SEPARATOR . '*.php') as $recordFile) {
         unlink($recordFile);
     }
 }
@@ -43,7 +38,7 @@ $sourceSchema = new \ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
 $schemaDescription = $sourceSchema->describe(new \ActiveRecord\SQL\Source\Table($targetNamespace));
 foreach ($schemaDescription as $tableName => $recordClassDescription) {
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
-        file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
+        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
     } else {
 
         $references = [];
@@ -51,7 +46,7 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
             $references[] = '$record->references("' . $referenceIdentifier .'", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
         }
 
-        file_put_contents($recordsDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
     $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
     $record->requires('.var_export($recordClassDescription['requiredColumnIdentifiers'], true).');
     ' . join(PHP_EOL . '    ', $references) . '
@@ -60,7 +55,5 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
     }
 
 }
-
-file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . 'factory.php', '<?php return new \ActiveRecord\RecordFactory(__DIR__ . DIRECTORY_SEPARATOR . \'Record\');');
 
 echo 'Done' . PHP_EOL;
