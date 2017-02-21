@@ -65,12 +65,12 @@ class Fresh implements \ActiveRecord\Record
 
     /**
      */
-    public function delete()
+    public function delete() : int
     {
         return $this->record->delete();
     }
 
-    public function create()
+    public function create() : int
     {
         return $this->record->create();
     }
@@ -89,9 +89,9 @@ class Fresh implements \ActiveRecord\Record
         return $this->record->contains($values);
     }
 
-    public function requires(array $requiredColumnIdentifiers)
+    public function requires(array $requiredAttributeIdentifiers)
     {
-        return $this->record->requires($requiredColumnIdentifiers);
+        return $this->record->requires($requiredAttributeIdentifiers);
     }
 
     public function missesRequiredValues(): bool

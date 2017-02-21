@@ -13,7 +13,7 @@ interface Record
 
     public function contains(array $values);
 
-    public function requires(array $columnIdentifiers);
+    public function requires(array $attributeIdentifiers);
 
     public function missesRequiredValues() : bool;
 
@@ -34,9 +34,9 @@ interface Record
 
     /**
      */
-    public function delete();
+    public function delete() : int;
 
-    public function create();
+    public function create() : int;
 
     public function __call(string $method, array $arguments);
 }

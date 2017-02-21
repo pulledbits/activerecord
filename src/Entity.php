@@ -75,8 +75,8 @@ class Entity implements Record
         ];
     }
 
-    public function requires(array $columnIdentifiers) {
-        $this->requiredColumnIdentifiers = $columnIdentifiers;
+    public function requires(array $attributeIdentifiers) {
+        $this->requiredColumnIdentifiers = $attributeIdentifiers;
     }
 
     /**
@@ -131,12 +131,12 @@ class Entity implements Record
 
     /**
      */
-    public function delete()
+    public function delete() : int
     {
         return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey());
     }
 
-    public function create()
+    public function create() : int
     {
         $missing = $this->calculateMissingValues();
         if (count($missing) > 0) {

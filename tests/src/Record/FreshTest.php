@@ -8,38 +8,52 @@
 
 namespace ActiveRecord\Record;
 
-
-use ActiveRecord\Entity;
-
 class FreshTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @var Fresh
-     */
-    private $object;
+    public function testDecoratedMethods_When_Called_Expect_ResultsFromWrappedRecord() {
 
-    protected function setUp() {
+        $calls = [];
+        $wrappedRecord = new class($calls) implements \ActiveRecord\Record {
 
-        $wrappedRecord = new class implements \ActiveRecord\Record {
+            private $calls;
+            private $values;
+            private $requiredAttributeIdentifiers;
+            private $references;
+
+            public function __construct(array &$calls)
+            {
+                $this->calls =& $calls;
+                $this->values = [];
+                $this->requiredAttributeIdentifiers = [];
+                $this->references = [];
+            }
+
 
             public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
-                // TODO: Implement references() method.
+                $this->references[$referenceIdentifier] =  [$referencedEntityTypeIdentifier, $conditions];
             }
 
             public function contains(array $values)
             {
-                // TODO: Implement contains() method.
+                $this->values += $values;
             }
 
-            public function requires(array $columnIdentifiers)
+            public function requires(array $attributeIdentifiers)
             {
-                // TODO: Implement requires() method.
+                $this->requiredAttributeIdentifiers = $attributeIdentifiers;
             }
 
             public function missesRequiredValues(): bool
             {
-                // TODO: Implement missesRequiredValues() method.
+                foreach ($this->requiredAttributeIdentifiers as $attributeIdentifier) {
+                    if (array_key_exists($attributeIdentifier, $this->values) === false) {
+                        return true;
+                    } elseif ($this->values[$attributeIdentifier] === null) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             /**
@@ -47,17 +61,17 @@ class FreshTest extends \PHPUnit_Framework_TestCase
              */
             public function __get($property)
             {
-                // TODO: Implement __get() method.
+                return 'bla';
             }
 
             public function read(string $entityTypeIdentifier, array $conditions): array
             {
-                return ['bla'];
+                return [$this];
             }
 
             public function readFirst(string $entityTypeIdentifier, array $conditions): \ActiveRecord\Record
             {
-                // TODO: Implement readFirst() method.
+                return $this;
             }
 
             /**
@@ -66,32 +80,52 @@ class FreshTest extends \PHPUnit_Framework_TestCase
              */
             public function __set($property, $value)
             {
-                // TODO: Implement __set() method.
+                $this->calls['__set'] = func_get_args();
+                $this->values[$property] = $value;
             }
 
             /**
              */
-            public function delete()
+            public function delete() : int
             {
-                // TODO: Implement delete() method.
+                return 42;
             }
 
-            public function create()
+            public function create() : int
             {
-                // TODO: Implement create() method.
+                return $this->missesRequiredValues() ? 43 : 1;
             }
 
             public function __call(string $method, array $arguments)
             {
-                // TODO: Implement __call() method.
+                if (array_key_exists(substr($method, 7), $this->references)) {
+                    return [$this];
+                } else {
+                    return [];
+                }
             }
         };
-        $this->object = new Fresh($wrappedRecord);
-    }
+        $object = new Fresh($wrappedRecord);
 
-    public function testRead_When_Called_Expect_ResultsFromWrappedRecord() {
+        $this->assertEquals([$wrappedRecord], $object->read('entity', []));
+        $this->assertEquals($wrappedRecord, $object->readFirst('entity', []));
 
-        $this->assertEquals(['bla'], $this->object->read('entity', []));
+        $this->assertFalse($wrappedRecord->missesRequiredValues());
+        $object->requires(['bla']);
+        $this->assertTrue($wrappedRecord->missesRequiredValues());
+
+        $this->assertTrue($object->missesRequiredValues());
+        $object->bla = 'bloe';
+        $this->assertFalse($object->missesRequiredValues());
+        $object->bla = 'blie';
+        $this->assertEquals(['bla', 'blie'], $calls['__set']);
+
+        $this->assertEquals(42, $object->delete());
+        $this->assertEquals(1, $object->create());
+
+        $this->assertEquals([], $wrappedRecord->__call('fetchByforeignkey', []));
+        $object->references('foreignkey', 'somewhere', ['bla']);
+        $this->assertEquals([$wrappedRecord], $wrappedRecord->__call('fetchByforeignkey', []));
     }
 
 }
