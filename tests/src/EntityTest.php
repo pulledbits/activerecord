@@ -30,11 +30,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }, $results);
             }
 
-            public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
+            public function read(string $tableIdentifier, array $attributeIdentifiers, array $conditions): array
             {
                 $resultset = [];
                 if ($tableIdentifier === 'OtherTable') {
-                    if ($columnIdentifiers === [] && $whereParameters === []) {
+                    if ($attributeIdentifiers === [] && $conditions === []) {
                         $resultset = [
                             ['id' => '356'],
                             ['id' => '352'],
@@ -42,11 +42,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                             ['id' => '358'],
                             ['id' => '359']
                         ];
-                    } elseif ($columnIdentifiers === [] && $whereParameters === ['id' => '33']) {
+                    } elseif ($attributeIdentifiers === [] && $conditions === ['id' => '33']) {
                         $resultset = [
                             ['id' => '356']
                         ];
-                    } elseif ($columnIdentifiers === [] && $whereParameters === ['extra' => '5', 'id' => '33']) {
+                    } elseif ($attributeIdentifiers === [] && $conditions === ['extra' => '5', 'id' => '33']) {
                         $resultset = [
                             ['id' => '357']
                         ];
@@ -54,18 +54,18 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }
                 return $this->convertResultSet($resultset);
             }
-            public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions): Record
+            public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): Record
             {
-                $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
+                $records = $this->read($entityTypeIdentifier, $attributeIdentifiers, $conditions);
                 if (count($records) === 0) {
-                    return new \ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
+                    return $this->initializeRecord($entityTypeIdentifier, $conditions);
                 }
                 return $records[0];
             }
 
-            public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            public function update(string $tableIdentifier, array $values, array $conditions): int
             {
-                if ($tableIdentifier === 'MyTable' && $setParameters === ['number' => '2'] && $whereParameters === ['number' => '1']) {
+                if ($tableIdentifier === 'MyTable' && $values === ['number' => '2'] && $conditions === ['number' => '1']) {
                     return 1;
                 }
                 return 0;
@@ -82,9 +82,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 return 0;
             }
 
-            public function delete(string $tableIdentifier, array $whereParameters): int
+            public function delete(string $tableIdentifier, array $conditions): int
             {
-                if ($tableIdentifier === 'MyTable' && $whereParameters === ['number' => '1']) {
+                if ($tableIdentifier === 'MyTable' && $conditions === ['number' => '1']) {
                     return 1;
                 }
                 return 0;
@@ -92,7 +92,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function initializeRecord(string $entityTypeIdentifier, array $values): Record
             {
-                // TODO: Implement initializeRecord() method.
+                return new \ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
             }
         };
 

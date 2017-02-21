@@ -93,11 +93,11 @@ class Schema implements \ActiveRecord\Schema
         return $record;
     }
 
-    public function read(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : array {
-        if (count($columnIdentifiers) === 0) {
-            $columnIdentifiers[] = '*';
+    public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
+        if (count($attributeIdentifiers) === 0) {
+            $attributeIdentifiers[] = '*';
         }
-        $statement = $this->executeWhere("SELECT " . join(', ', $columnIdentifiers) . " FROM " . $entityTypeIdentifier, $conditions);
+        $statement = $this->executeWhere("SELECT " . join(', ', $attributeIdentifiers) . " FROM " . $entityTypeIdentifier, $conditions);
 
         return array_map(function(array $values) use ($entityTypeIdentifier) {
             return $this->makeRecord($entityTypeIdentifier, $values);
@@ -105,7 +105,8 @@ class Schema implements \ActiveRecord\Schema
     }
 
     public function initializeRecord(string $entityTypeIdentifier, array $values) : Record {
-        return new class($this->makeRecord($entityTypeIdentifier, $values)) implements Record {
+        $record = $this->makeRecord($entityTypeIdentifier, $values);
+        return new class($record) implements Record {
 
             /**
              * @var \ActiveRecord\Record
@@ -197,18 +198,18 @@ class Schema implements \ActiveRecord\Schema
         };
     }
 
-    public function readFirst(string $entityTypeIdentifier, array $columnIdentifiers, array $conditions) : \ActiveRecord\Record {
-        $records = $this->read($entityTypeIdentifier, $columnIdentifiers, $conditions);
+    public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : \ActiveRecord\Record {
+        $records = $this->read($entityTypeIdentifier, $attributeIdentifiers, $conditions);
         if (count($records) === 0) {
             return $this->initializeRecord($entityTypeIdentifier, $conditions);
         }
         return $records[0];
     }
 
-    public function update(string $tableIdentifier, array $setParameters, array $whereParameters) : int {
-        $preparedParameters = $this->prepareParameters($setParameters);
+    public function update(string $tableIdentifier, array $values, array $conditions) : int {
+        $preparedParameters = $this->prepareParameters($values);
         $query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters));
-        $where = $this->makeWhereCondition($whereParameters);
+        $where = $this->makeWhereCondition($conditions);
         $statement = $this->execute($query . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
         return $statement->rowCount();
     }
@@ -219,8 +220,8 @@ class Schema implements \ActiveRecord\Schema
         return $statement->rowCount();
     }
 
-    public function delete(string $tableIdentifier, array $whereParameters) : int {
-        $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $whereParameters);
+    public function delete(string $tableIdentifier, array $conditions) : int {
+        $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $conditions);
         return $statement->rowCount();
     }
 }
