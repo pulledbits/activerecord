@@ -93,7 +93,7 @@ class Entity implements Record
     public function read(string $entityTypeIdentifier, array $conditions) : array {
         return $this->schema->read($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
-    public function readFirst(string $entityTypeIdentifier, array $conditions) : Entity {
+    public function readFirst(string $entityTypeIdentifier, array $conditions) : Record {
         return $this->schema->readFirst($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
 

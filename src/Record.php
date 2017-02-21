@@ -24,7 +24,7 @@ interface Record
 
     public function read(string $entityTypeIdentifier, array $conditions): array;
 
-    public function readFirst(string $entityTypeIdentifier, array $conditions): Entity;
+    public function readFirst(string $entityTypeIdentifier, array $conditions): \ActiveRecord\Record;
 
     /**
      * @param string $property
