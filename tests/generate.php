@@ -14,7 +14,7 @@ if (file_exists($targetDirectory) === false) {
 }
 
 $phpbin = trim(`which php`);
-$command = $phpbin . ' ' . dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'generate.php ' . $targetDirectory . ' ' . $_SERVER['argv'][1];
+$command = $phpbin . ' ' . dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activerecord.php ' . $targetDirectory . ' ' . $_SERVER['argv'][1];
 echo 'Running ' . $command . '...' . PHP_EOL;
 passthru($command);
 
