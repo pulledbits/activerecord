@@ -31,27 +31,27 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     '};';
 
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorPHPCode() {
-        $object = new EntityGenerator('MyTable', ["a", "b", "c"], ["FkRatingContactmoment" => [
+        $object = new EntityGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
             "table" => "rating",
             "where" => [
                 'contactmoment_id' => 'id',
             ]
         ]]);
-        $this->assertEquals(sprintf($this->base, '\'MyTable\'', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
+        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_EntityGeneratorWithoutRequiresCallPHPCode() {
-        $object = new EntityGenerator('MyTable', [], ["FkRatingContactmoment" => [
+        $object = new EntityGenerator(['id'], [], ["FkRatingContactmoment" => [
             "table" => "rating",
             "where" => [
                 'contactmoment_id' => 'id',
             ]
         ]]);
-        $this->assertEquals(sprintf($this->baseNoRequires, '\'MyTable\'', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
+        $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
     }
 
     public function testGenerate_When_NoReferences_Expect_EntityGeneratorWithoutReferencesCallsPHPCode() {
-        $object = new EntityGenerator('MyTable', ["a", "b", "c"], []);
-        $this->assertEquals(sprintf($this->baseNoReferences, '\'MyTable\'', '[\'a\', \'b\', \'c\']'), $object->generate());
+        $object = new EntityGenerator(['id'], ["a", "b", "c"], []);
+        $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $object->generate());
     }
 }

@@ -13,16 +13,27 @@ class EntityGenerator
 {
     const NEWLINE = PHP_EOL . "    ";
 
-    private $entityTypeIdentifier;
+    /**
+     * @var array
+     */
+    private $entityIdentifier;
+
+    /**
+     * @var array
+     */
     private $requiredAttributeIdentifiers;
+
+    /**
+     * @var array
+     */
     private $references;
 
     /**
      * WrappedEntityGenerator constructor.
      */
-    public function __construct(string $entityTypeIdentifier, array $requiredAttributeIdentifiers, array $references)
+    public function __construct(array $entityIdentifier, array $requiredAttributeIdentifiers, array $references)
     {
-        $this->entityTypeIdentifier = $entityTypeIdentifier;
+        $this->entityIdentifier = $entityIdentifier;
         $this->requiredAttributeIdentifiers = $requiredAttributeIdentifiers;
         $this->references = $references;
     }
@@ -45,7 +56,7 @@ class EntityGenerator
         }
 
         return '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' .
-            self::NEWLINE . '$record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, \'' . $this->entityTypeIdentifier . '\');' .
+            self::NEWLINE . "\$record = new \\pulledbits\\ActiveRecord\\Entity(\$schema, \$entityTypeIdentifier, ['" . join("', '", $this->entityIdentifier) . "']);" .
             $requires .
             join(PHP_EOL . '    ', $references) .
             self::NEWLINE . 'return $record;' . "\n" . '};';

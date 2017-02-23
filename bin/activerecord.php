@@ -35,20 +35,8 @@ foreach ($schemaDescription as $entityTypeIdentifier => $recordClassDescription)
         continue;
     }
 
-    $references = [];
-    foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-        $references[] = '$record->references("' . $referenceIdentifier . '", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
-    }
-
-    file_put_contents($targetFile, '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, ' . var_export($recordClassDescription['identifier'],
-            true) . ');
-    $record->requires(' . var_export($recordClassDescription['requiredColumnIdentifiers'], true) . ');
-    ' . join(PHP_EOL . '    ', $references) . '
-    return $record;
-};');
-
-
+    $generator = new \pulledbits\ActiveRecord\Source\EntityGenerator($recordClassDescription['identifier'], $recordClassDescription['requiredColumnIdentifiers'], $recordClassDescription['references']);
+    file_put_contents($targetFile, $generator->generate());
 }
 
 echo 'Done' . PHP_EOL;
