@@ -27,9 +27,9 @@ if ($_SERVER['argc'] === 3) {
 
 $sourceSchema = $applicationBootstrap->sourceSchema($dburl);
 $schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table());
-foreach ($schemaDescription as $tableName => $recordClassDescription) {
+foreach ($schemaDescription as $entityTypeIdentifier => $recordClassDescription) {
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
-        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
+        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
     } else {
 
         $references = [];
@@ -37,7 +37,7 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
             $references[] = '$record->references("' . $referenceIdentifier .'", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
         }
 
-        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php', '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
     $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
     $record->requires('.var_export($recordClassDescription['requiredColumnIdentifiers'], true).');
     ' . join(PHP_EOL . '    ', $references) . '
