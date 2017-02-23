@@ -14,5 +14,5 @@
 	"require-dev" : {
 		"phpunit/phpunit" : "~5"
 	},
-	"bin": ["bin/generate.php"]
+	"bin": ["bin/activerecord.php"]
 }
