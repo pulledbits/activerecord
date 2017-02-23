@@ -34,8 +34,8 @@ $connectionParams = array(
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
-$sourceSchema = new \ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
-$schemaDescription = $sourceSchema->describe(new \ActiveRecord\SQL\Source\Table($targetNamespace));
+$sourceSchema = new \pulledbits\ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
+$schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table($targetNamespace));
 foreach ($schemaDescription as $tableName => $recordClassDescription) {
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
         file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
@@ -46,8 +46,8 @@ foreach ($schemaDescription as $tableName => $recordClassDescription) {
             $references[] = '$record->references("' . $referenceIdentifier .'", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
         }
 
-        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
+        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, '.var_export($recordClassDescription['identifier'], true).');
     $record->requires('.var_export($recordClassDescription['requiredColumnIdentifiers'], true).');
     ' . join(PHP_EOL . '    ', $references) . '
     return $record;

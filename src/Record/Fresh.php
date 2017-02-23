@@ -6,19 +6,19 @@
  * Time: 14:54
  */
 
-namespace ActiveRecord\Record;
+namespace pulledbits\ActiveRecord\Record;
 
 
-class Fresh implements \ActiveRecord\Record
+class Fresh implements \pulledbits\ActiveRecord\Record
 {
     /**
-     * @var \ActiveRecord\Record
+     * @var \pulledbits\ActiveRecord\Record
      */
     private $record;
 
     private $created;
 
-    public function __construct(\ActiveRecord\Record $record)
+    public function __construct(\pulledbits\ActiveRecord\Record $record)
     {
         $this->record = $record;
         $this->created = false;
@@ -37,7 +37,7 @@ class Fresh implements \ActiveRecord\Record
         return $this->record->read($entityTypeIdentifier, $conditions);
     }
 
-    public function readFirst(string $entityTypeIdentifier, array $conditions): \ActiveRecord\Record
+    public function readFirst(string $entityTypeIdentifier, array $conditions): \pulledbits\ActiveRecord\Record
     {
         return $this->record->readFirst($entityTypeIdentifier, $conditions);
     }

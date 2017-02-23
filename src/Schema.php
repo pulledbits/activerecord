@@ -1,11 +1,11 @@
 <?php
-namespace ActiveRecord;
+namespace pulledbits\ActiveRecord;
 
 interface Schema {
     /**
      * @param string $entityTypeIdentifier
      * @param array $values
-     * @return \ActiveRecord\Record
+     * @return \pulledbits\ActiveRecord\Record
      */
     public function initializeRecord(string $entityTypeIdentifier, array $values) : Record;
 
@@ -13,7 +13,7 @@ interface Schema {
      * @param string $entityTypeIdentifier
      * @param array $attributeIdentifiers
      * @param array $conditions
-     * @return \ActiveRecord\Record[]
+     * @return \pulledbits\ActiveRecord\Record[]
      */
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array;
 
@@ -21,7 +21,7 @@ interface Schema {
      * @param string $entityTypeIdentifier
      * @param array $attributeIdentifiers
      * @param array $conditions
-     * @return \ActiveRecord\Record
+     * @return \pulledbits\ActiveRecord\Record
      */
     public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : Record;
 

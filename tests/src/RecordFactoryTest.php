@@ -6,19 +6,19 @@
  * Time: 12:28
  */
 
-namespace ActiveRecord;
+namespace pulledbits\ActiveRecord;
 
 class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
         file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-                    $record = new \ActiveRecord\Entity($schema, $entityTypeIdentifier, []);
+return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+                    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, []);
                     return $record;
 };');
 
-        $schema = new class implements \ActiveRecord\Schema {
+        $schema = new class implements \pulledbits\ActiveRecord\Schema {
 
             public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
             {

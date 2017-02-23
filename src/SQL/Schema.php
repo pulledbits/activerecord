@@ -6,16 +6,16 @@
  * Time: 16:08
  */
 
-namespace ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL;
 
 
-use ActiveRecord\Entity;
-use ActiveRecord\Record;
+use pulledbits\ActiveRecord\Entity;
+use pulledbits\ActiveRecord\Record;
 
-class Schema implements \ActiveRecord\Schema
+class Schema implements \pulledbits\ActiveRecord\Schema
 {
     /**
-     * @var \ActiveRecord\RecordFactory
+     * @var \pulledbits\ActiveRecord\RecordFactory
      */
     private $recordFactory;
 
@@ -24,7 +24,7 @@ class Schema implements \ActiveRecord\Schema
      */
     private $connection;
 
-    public function __construct(\ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
+    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
         $this->recordFactory = $recordFactory;
         $this->connection = $connection;
     }
@@ -109,7 +109,7 @@ class Schema implements \ActiveRecord\Schema
         return new Record\Fresh($record);
     }
 
-    public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : \ActiveRecord\Record {
+    public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : \pulledbits\ActiveRecord\Record {
         $records = $this->read($entityTypeIdentifier, $attributeIdentifiers, $conditions);
         if (count($records) === 0) {
             return $this->initializeRecord($entityTypeIdentifier, $conditions);

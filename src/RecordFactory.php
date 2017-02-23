@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord;
+namespace pulledbits\ActiveRecord;
 
 class RecordFactory {
     /**

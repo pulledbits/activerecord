@@ -5,7 +5,7 @@
  * Date: 17-2-17
  * Time: 10:48
  */
-namespace ActiveRecord;
+namespace pulledbits\ActiveRecord;
 
 interface Record
 {
@@ -51,7 +51,7 @@ interface Record
      * @param array $conditions
      * @return Record
      */
-    public function readFirst(string $entityTypeIdentifier, array $conditions): \ActiveRecord\Record;
+    public function readFirst(string $entityTypeIdentifier, array $conditions): \pulledbits\ActiveRecord\Record;
 
     /**
      * @param string $property

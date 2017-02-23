@@ -6,7 +6,7 @@
  * Time: 12:45
  */
 
-namespace ActiveRecord\SQL\Source;
+namespace pulledbits\ActiveRecord\SQL\Source;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;

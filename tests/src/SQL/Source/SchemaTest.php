@@ -6,14 +6,14 @@
  * Time: 12:36
  */
 
-namespace ActiveRecord\SQL\Source;
+namespace pulledbits\ActiveRecord\SQL\Source;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
-        $schema = \ActiveRecord\Test\createMockSchema([
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
             'MyTable' => [
                 'extra_column_id' => [
                     'primaryKey' => false,
@@ -50,7 +50,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = \ActiveRecord\Test\createMockSchema([
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
             'MyView' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -64,7 +64,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
     {
-        $schema = \ActiveRecord\Test\createMockSchema([
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
             'MyTable' => [
                 'name' => [
                     'primaryKey' => true,

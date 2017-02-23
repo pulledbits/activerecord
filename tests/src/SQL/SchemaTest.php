@@ -6,7 +6,7 @@
  * Time: 16:06
  */
 
-namespace ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,8 +18,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $recordConfiguration = new \ActiveRecord\RecordFactory(sys_get_temp_dir());
-        $this->object = new Schema($recordConfiguration, \ActiveRecord\Test\createMockPDOMultiple([
+        $recordConfiguration = new \pulledbits\ActiveRecord\RecordFactory(sys_get_temp_dir());
+        $this->object = new Schema($recordConfiguration, \pulledbits\ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'BlaBla'

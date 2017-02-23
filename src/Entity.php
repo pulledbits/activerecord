@@ -1,12 +1,12 @@
 <?php
 
-namespace ActiveRecord;
+namespace pulledbits\ActiveRecord;
 
 
 class Entity implements Record
 {
     /**
-     * @var \ActiveRecord\Schema
+     * @var \pulledbits\ActiveRecord\Schema
      */
     private $schema;
 

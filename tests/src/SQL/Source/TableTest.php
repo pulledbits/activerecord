@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord\SQL\Source;
+namespace pulledbits\ActiveRecord\SQL\Source;
 
 class TableTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_DefaultState_Expect_ClassDescription()
     {
-        $mockTable = \ActiveRecord\Test\createMockTable('MyTable', [
+        $mockTable = \pulledbits\ActiveRecord\Test\createMockTable('MyTable', [
             'name' => [
                 'primaryKey' => true,
                 'auto_increment' => true,
@@ -81,7 +81,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewUsed_Expect_ArrayWithReadableRecord()
     {
-        $dbalView = \ActiveRecord\Test\createMockView('MyView', 'CREATE VIEW `MyView` AS
+        $dbalView = \pulledbits\ActiveRecord\Test\createMockView('MyView', 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
     `schema`.`MyTable`.`birthdate` AS `birthdate`

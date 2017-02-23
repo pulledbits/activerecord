@@ -1,6 +1,6 @@
 <?php
 
-namespace ActiveRecord\Test {
+namespace pulledbits\ActiveRecord\Test {
     /*
      * test specific bootstrapper
      */
@@ -9,7 +9,7 @@ namespace ActiveRecord\Test {
 
     function createMockSchema(array $tables)
     {
-        return new \ActiveRecord\SQL\Source\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
+        return new \pulledbits\ActiveRecord\SQL\Source\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
         {
 
             private $tables;
@@ -20,9 +20,9 @@ namespace ActiveRecord\Test {
                 $this->tables = $this->views = [];
                 foreach ($tables as $tableIdentifier => $columns) {
                     if (is_array($columns)) {
-                        $this->tables[] = \ActiveRecord\Test\createMockTable($tableIdentifier, $columns);
+                        $this->tables[] = \pulledbits\ActiveRecord\Test\createMockTable($tableIdentifier, $columns);
                     } elseif (is_string($columns)) {
-                        $this->views[] = \ActiveRecord\Test\createMockView($tableIdentifier, $columns);
+                        $this->views[] = \pulledbits\ActiveRecord\Test\createMockView($tableIdentifier, $columns);
                     }
                 }
             }

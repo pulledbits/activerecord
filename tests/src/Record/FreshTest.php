@@ -6,7 +6,7 @@
  * Time: 14:49
  */
 
-namespace ActiveRecord\Record;
+namespace pulledbits\ActiveRecord\Record;
 
 class FreshTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,7 @@ class FreshTest extends \PHPUnit_Framework_TestCase
     public function testDecoratedMethods_When_Called_Expect_ResultsFromWrappedRecord() {
 
         $calls = [];
-        $wrappedRecord = new class($calls) implements \ActiveRecord\Record {
+        $wrappedRecord = new class($calls) implements \pulledbits\ActiveRecord\Record {
 
             private $calls;
             private $values;
@@ -69,7 +69,7 @@ class FreshTest extends \PHPUnit_Framework_TestCase
                 return [$this];
             }
 
-            public function readFirst(string $entityTypeIdentifier, array $conditions): \ActiveRecord\Record
+            public function readFirst(string $entityTypeIdentifier, array $conditions): \pulledbits\ActiveRecord\Record
             {
                 return $this;
             }

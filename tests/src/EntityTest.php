@@ -6,7 +6,7 @@
  * Time: 15:50
  */
 
-namespace ActiveRecord;
+namespace pulledbits\ActiveRecord;
 
 
 class EntityTest extends \PHPUnit_Framework_TestCase
@@ -18,13 +18,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $schema = new class implements \ActiveRecord\Schema {
+        $schema = new class implements \pulledbits\ActiveRecord\Schema {
             private function convertResultSet(array $results) {
                 return array_map(function(array $values) {
                     /**
-                     * @var $this \ActiveRecord\Schema
+                     * @var $this \pulledbits\ActiveRecord\Schema
                      */
-                    $record = new \ActiveRecord\Entity($this, 'MyTable', $values);
+                    $record = new \pulledbits\ActiveRecord\Entity($this, 'MyTable', $values);
                     $record->contains($values);
                     return $record;
                 }, $results);
@@ -92,7 +92,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function initializeRecord(string $entityTypeIdentifier, array $values): Record
             {
-                return new \ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
+                return new \pulledbits\ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
             }
         };
 
