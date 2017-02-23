@@ -18,6 +18,12 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     return $record;
 };';
 
+    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);
+    $record->requires(%s);
+    return $record;
+};';
+
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorPHPCode() {
         $object = new EntityGenerator('MyTable', ["a", "b", "c"], ["FkRatingContactmoment" => [
             "table" => "rating",
@@ -26,5 +32,10 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
             ]
         ]]);
         $this->assertEquals(sprintf($this->base, '\'MyTable\'', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
+    }
+
+    public function testGenerate_When_NoReferences_Expect_EntityGeneratorWithoutReferencesCallsPHPCode() {
+        $object = new EntityGenerator('MyTable', ["a", "b", "c"], []);
+        $this->assertEquals(sprintf($this->baseNoReferences, '\'MyTable\'', '[\'a\', \'b\', \'c\']'), $object->generate());
     }
 }

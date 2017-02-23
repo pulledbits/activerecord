@@ -34,13 +34,12 @@ class EntityGenerator
             foreach ($reference['where'] as $referencedAttributeIdentifier => $localAttributeIdentifier) {
                 $where[] = '\'' . $referencedAttributeIdentifier . '\' => \'' . $localAttributeIdentifier . '\'';
             }
-            $references[] = '$record->references(\'' . $referenceIdentifier . '\', \'' . $reference['table'] . '\', [' . join('\', \'', $where). ']);';
+            $references[] = "\n    \$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join("', '", $where). ']);';
         }
 
         return '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
     $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, \'' . $this->entityTypeIdentifier . '\');
-    $record->requires([\'' . join('\', \'', $this->requiredAttributeIdentifiers) . '\']);
-    ' . join(PHP_EOL . '    ', $references) . '
+    $record->requires([\'' . join('\', \'', $this->requiredAttributeIdentifiers) . '\']);' . join(PHP_EOL . '    ', $references) . '
     return $record;
 };';
     }
