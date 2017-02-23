@@ -1,7 +1,6 @@
 <?php
 
 $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
-$applicationBootstrap();
 
 if ($_SERVER['argc'] < 2) {
     exit('please enter destination namespace and path');

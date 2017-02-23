@@ -5,7 +5,6 @@ namespace pulledbits\ActiveRecord\Test {
      * test specific bootstrapper
      */
     $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
-    $applicationBootstrap();
 
     function createMockSchema(array $tables)
     {
