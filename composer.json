@@ -1,5 +1,5 @@
 {
-	"name" : "rikmeijer/activerecord.php",
+	"name" : "pulledbits/activerecord.php",
 	"description" : "proper activerecord in PHP",
 	"license" : "MIT",
 	"autoload" : {
