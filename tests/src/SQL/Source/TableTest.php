@@ -11,7 +11,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->object = new Table('\\Database\\Record');
+        $this->object = new Table();
     }
 
     public function testDescribe_When_DefaultState_Expect_ClassDescription()

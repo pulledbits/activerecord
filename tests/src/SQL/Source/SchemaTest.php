@@ -114,7 +114,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`MyTable`;'
         ]);
 
-        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
+        $schemaDescription = $schema->describe(new Table());
 
         $this->assertEquals('MyTable', $schemaDescription['MyTable_today']['entityTypeIdentifier']);
     }

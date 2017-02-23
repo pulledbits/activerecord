@@ -3,23 +3,6 @@ namespace pulledbits\ActiveRecord\SQL\Source;
 
 final class Table
 {
-
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * Table constructor.
-     */
-    public function __construct(string $namespace)
-    {
-        $this->namespace = $namespace;
-        if (substr($this->namespace, -1) != "\\") {
-            $this->namespace .= "\\";
-        }
-    }
-
     /**
      * Mimicks overloading
      * @param \Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaAsset

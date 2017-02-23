@@ -3,13 +3,11 @@
 $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 $applicationBootstrap();
 
-if ($_SERVER['argc'] < 3) {
+if ($_SERVER['argc'] < 2) {
     exit('please enter destination namespace and path');
 }
 
-$targetNamespace = $_SERVER['argv'][1] . '\\Record';
-
-$targetDirectory = $_SERVER['argv'][2];
+$targetDirectory = $_SERVER['argv'][1];
 if (file_exists($targetDirectory) == false) {
     mkdir($targetDirectory);
 } else {
@@ -18,8 +16,8 @@ if (file_exists($targetDirectory) == false) {
     }
 }
 
-if ($_SERVER['argc'] === 4) {
-    $dburl = $_SERVER['argv'][3];
+if ($_SERVER['argc'] === 3) {
+    $dburl = $_SERVER['argv'][2];
 } else {
     $dbhost = readline('Please enter database hostname: ');
     $dbname = readline('Please enter database name on ' . $dbhost . ': ');
@@ -35,7 +33,7 @@ $connectionParams = array(
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
 $sourceSchema = new \pulledbits\ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
-$schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table($targetNamespace));
+$schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table());
 foreach ($schemaDescription as $tableName => $recordClassDescription) {
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
         file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $tableName . '.php', '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');

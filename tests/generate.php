@@ -7,8 +7,6 @@ assert_options(ASSERT_ACTIVE, true);
 assert_options(ASSERT_WARNING, true);
 assert_options(ASSERT_BAIL, true);
 
-
-$targetNamespace = '\\Database';
 $targetDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'gen';
 
 if (file_exists($targetDirectory) === false) {
@@ -16,7 +14,7 @@ if (file_exists($targetDirectory) === false) {
 }
 
 $phpbin = trim(`which php`);
-$command = $phpbin . ' ' . dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'generate.php ' . $targetNamespace . ' ' . $targetDirectory . ' ' . $_SERVER['argv'][1];
+$command = $phpbin . ' ' . dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'generate.php ' . $targetDirectory . ' ' . $_SERVER['argv'][1];
 echo 'Running ' . $command . '...' . PHP_EOL;
 passthru($command);
 
