@@ -11,6 +11,8 @@ namespace pulledbits\ActiveRecord\Source;
 
 class EntityGenerator
 {
+    const NEWLINE = "\n    ";
+
     private $entityTypeIdentifier;
     private $requiredAttributeIdentifiers;
     private $references;
@@ -34,13 +36,18 @@ class EntityGenerator
             foreach ($reference['where'] as $referencedAttributeIdentifier => $localAttributeIdentifier) {
                 $where[] = '\'' . $referencedAttributeIdentifier . '\' => \'' . $localAttributeIdentifier . '\'';
             }
-            $references[] = "\n    \$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join("', '", $where). ']);';
+            $references[] = self::NEWLINE . "\$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join("', '", $where). ']);';
         }
 
-        return '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, \'' . $this->entityTypeIdentifier . '\');
-    $record->requires([\'' . join('\', \'', $this->requiredAttributeIdentifiers) . '\']);' . join(PHP_EOL . '    ', $references) . '
-    return $record;
-};';
+        $requires = '';
+        if (count($this->requiredAttributeIdentifiers) > 0) {
+            $requires = self::NEWLINE . "\$record->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);";
+        }
+
+        return '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' .
+            self::NEWLINE . '$record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, \'' . $this->entityTypeIdentifier . '\');' .
+            $requires .
+            join(PHP_EOL . '    ', $references) .
+            self::NEWLINE . 'return $record;' . "\n" . '};';
     }
 }
