@@ -25,13 +25,7 @@ if ($_SERVER['argc'] === 3) {
     $dburl = 'mysql://' . $dbuser . ':' . $dbpass . '@' . $dbhost . '/' . $dbname;
 }
 
-$config = new \Doctrine\DBAL\Configuration();
-$connectionParams = array(
-    'url' => $dburl
-);
-$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-
-$sourceSchema = new \pulledbits\ActiveRecord\SQL\Source\Schema($conn->getSchemaManager());
+$sourceSchema = $applicationBootstrap->sourceSchema($dburl);
 $schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table());
 foreach ($schemaDescription as $tableName => $recordClassDescription) {
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
