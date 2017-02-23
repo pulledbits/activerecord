@@ -28,19 +28,18 @@ if ($_SERVER['argc'] === 3) {
 $sourceSchema = $applicationBootstrap->sourceSchema($dburl);
 $schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table());
 foreach ($schemaDescription as $entityTypeIdentifier => $recordClassDescription) {
+    $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
-        file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php',
-            '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
+        file_put_contents($targetFile, '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
         continue;
     }
 
     $references = [];
     foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-        $references[] = '$record->references("' . $referenceIdentifier . '", "' . $reference['table'] . '", ' . var_export($reference['where'],
-                true) . ');';
+        $references[] = '$record->references("' . $referenceIdentifier . '", "' . $reference['table'] . '", ' . var_export($reference['where'], true) . ');';
     }
 
-    file_put_contents($targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php', '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+    file_put_contents($targetFile, '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
     $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, ' . var_export($recordClassDescription['identifier'],
             true) . ');
     $record->requires(' . var_export($recordClassDescription['requiredColumnIdentifiers'], true) . ');
