@@ -23,6 +23,6 @@ class WrappedEntityGenerator
 
     public function generate()
     {
-        return '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "MyTable.php";';
+        return '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $this->entityTypeIdentifier . '.php";';
     }
 }

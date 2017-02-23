@@ -30,7 +30,8 @@ $schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\So
 foreach ($schemaDescription as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
-        file_put_contents($targetFile, '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $recordClassDescription['entityTypeIdentifier'] . '.php";');
+        $generator = new \pulledbits\ActiveRecord\Source\WrappedEntityGenerator($recordClassDescription['entityTypeIdentifier']);
+        file_put_contents($targetFile, $generator->generate());
         continue;
     }
 

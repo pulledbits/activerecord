@@ -15,4 +15,8 @@ class WrappedEntityGeneratorTest extends \PHPUnit_Framework_TestCase
         $object = new WrappedEntityGenerator('MyTable');
         $this->assertEquals('<?php return require __DIR__ . DIRECTORY_SEPARATOR . "MyTable.php";', $object->generate());
     }
+    public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
+        $object = new WrappedEntityGenerator('MyTable2');
+        $this->assertEquals('<?php return require __DIR__ . DIRECTORY_SEPARATOR . "MyTable2.php";', $object->generate());
+    }
 }
