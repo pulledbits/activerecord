@@ -40,8 +40,8 @@ assert($record->les_id === '1', 'record is properly initialized');
 $record->les_id = '2';
 assert($record->les_id === $schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2'])[0]->les_id, 'record is properly updated');
 
-$viewRecord = $schema->read("contactmoment_vandaag", [], []);
-assert(count($viewRecord) === 1, 'view records exist');
+$viewRecord = $schema->readFirst("contactmoment_vandaag", [], ['starttijd' => $starttijd]);
+assert($viewRecord->starttijd === $starttijd, 'view records exist');
 
 assert(count($record->delete()) === 1, 'delete confirms removal');
 echo 'Done testing';
