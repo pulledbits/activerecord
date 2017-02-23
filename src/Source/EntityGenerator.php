@@ -11,7 +11,7 @@ namespace pulledbits\ActiveRecord\Source;
 
 class EntityGenerator
 {
-    const NEWLINE = "\n    ";
+    const NEWLINE = PHP_EOL . "    ";
 
     private $entityTypeIdentifier;
     private $requiredAttributeIdentifiers;

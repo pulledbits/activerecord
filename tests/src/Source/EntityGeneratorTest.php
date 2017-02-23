@@ -11,24 +11,24 @@ namespace pulledbits\ActiveRecord\Source;
 
 class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    private $base = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);
-    $record->requires(%s);
-    $record->references(%s);
-    return $record;
-};';
+    private $base = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
+    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);' . PHP_EOL .
+    '    $record->requires(%s);' . PHP_EOL .
+    '    $record->references(%s);' . PHP_EOL .
+    '    return $record;' . PHP_EOL .
+    '};';
 
-    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);
-    $record->references(%s);
-    return $record;
-};';
+    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
+    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);' . PHP_EOL .
+    '    $record->references(%s);' . PHP_EOL .
+    '    return $record;' . PHP_EOL .
+    '};';
 
-    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);
-    $record->requires(%s);
-    return $record;
-};';
+    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
+    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);' . PHP_EOL .
+    '    $record->requires(%s);' . PHP_EOL .
+    '    return $record;' . PHP_EOL .
+    '};';
 
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorPHPCode() {
         $object = new EntityGenerator('MyTable', ["a", "b", "c"], ["FkRatingContactmoment" => [
