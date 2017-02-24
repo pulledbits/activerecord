@@ -31,14 +31,14 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
     /**
      * WrappedEntityGenerator constructor.
      */
-    public function __construct(array $entityIdentifier, array $requiredAttributeIdentifiers, array $references)
+    public function __construct(array $entityIdentifier, array $requiredAttributeIdentifiers)
     {
         $this->entityIdentifier = $entityIdentifier;
         $this->requiredAttributeIdentifiers = $requiredAttributeIdentifiers;
-        $this->references = $references;
+        $this->references = [];
     }
 
-    public function reference(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
+    public function references(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
     {
         $this->references[$referenceIdentifier] = [
             'table' => $referencedEntityIdentifier,

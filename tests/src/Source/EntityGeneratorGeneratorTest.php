@@ -38,21 +38,10 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '    return $record;' . PHP_EOL .
     '};';
 
-    public function testGenerate_When_DefaultState_Expect_EntityGeneratorPHPCode() {
-        $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
-            "table" => "rating",
-            "where" => [
-                'contactmoment_id' => 'id',
-            ]
-        ]]);
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
-    }
-
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], []);
-        $object->reference("FkRatingContactmoment", "rating", [
+        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"]);
+        $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
         $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
@@ -60,43 +49,32 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
-            "table" => "rating",
-            "where" => [
-                'contactmoment_id' => 'id',
-                'foo_id' => 'bar_id'
-            ]
-        ]]);
+        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"]);
+        $object->references("FkRatingContactmoment", "rating", [
+            'contactmoment_id' => 'id',
+            'foo_id' => 'bar_id'
+        ]);
         $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $object->generate());
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], [
-            "FkRatingContactmoment" => [
-                "table" => "rating",
-                "where" => [
-                    'contactmoment_id' => 'id',
-                ]
-            ],
-            "FkRatingContactmoment2" => [
-                "table" => "rating2",
-                "where" => [
-                    'contactmoment_id' => 'id',
-                ]
-            ]
+        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"]);
+        $object->references("FkRatingContactmoment", "rating", [
+            'contactmoment_id' => 'id',
+        ]);
+        $object->references("FkRatingContactmoment2", "rating2", [
+            'contactmoment_id' => 'id',
         ]);
         $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $object->generate());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], [], ["FkRatingContactmoment" => [
-            "table" => "rating",
-            "where" => [
-                'contactmoment_id' => 'id',
-            ]
-        ]]);
+        $object = $factory->makeEntityGeneratorGenerator(['id'], []);
+        $object->references("FkRatingContactmoment", "rating", [
+            'contactmoment_id' => 'id',
+        ]);
         $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
     }
 

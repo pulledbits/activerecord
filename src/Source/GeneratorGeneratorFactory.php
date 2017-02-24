@@ -11,8 +11,8 @@ namespace pulledbits\ActiveRecord\Source;
 
 final class GeneratorGeneratorFactory
 {
-    public function makeEntityGeneratorGenerator(array $entityIdentifier, array $requiredAttributeIdentifiers, array $references) : EntityGeneratorGenerator {
-        return new EntityGeneratorGenerator($entityIdentifier, $requiredAttributeIdentifiers, $references);
+    public function makeEntityGeneratorGenerator(array $entityIdentifier, array $requiredAttributeIdentifiers) : EntityGeneratorGenerator {
+        return new EntityGeneratorGenerator($entityIdentifier, $requiredAttributeIdentifiers);
     }
 
     public function makeWrappedEntityGeneratorGenerator(string $entityTypeIdentifier) : WrappedEntityGeneratorGenerator {
@@ -24,7 +24,11 @@ final class GeneratorGeneratorFactory
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
             return $this->makeWrappedEntityGeneratorGenerator($entityDescription['entityTypeIdentifier']);
         }
-        return $this->makeEntityGeneratorGenerator($entityDescription['identifier'], $entityDescription['requiredAttributeIdentifiers'], $entityDescription['references']);
+        $entityGeneratorGenerator = $this->makeEntityGeneratorGenerator($entityDescription['identifier'], $entityDescription['requiredAttributeIdentifiers']);
+        foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
+            $entityGeneratorGenerator->references($referenceIdentifier, $reference['table'], $reference['where']);
+        }
+        return $entityGeneratorGenerator;
     }
 
     public function makeReference(string $entityTypeIdentifier, array $conditions) : array
