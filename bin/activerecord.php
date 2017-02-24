@@ -26,16 +26,11 @@ if ($_SERVER['argc'] === 3) {
 }
 
 $sourceSchema = $applicationBootstrap->sourceSchema($dburl);
+$generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
 $schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table());
 foreach ($schemaDescription as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
-    if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
-        $generator = new \pulledbits\ActiveRecord\Source\WrappedEntityGeneratorGenerator($recordClassDescription['entityTypeIdentifier']);
-        file_put_contents($targetFile, $generator->generate());
-        continue;
-    }
-
-    $generator = new \pulledbits\ActiveRecord\Source\EntityGeneratorGenerator($recordClassDescription['identifier'], $recordClassDescription['requiredColumnIdentifiers'], $recordClassDescription['references']);
+    $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
     file_put_contents($targetFile, $generator->generate());
 }
 

@@ -11,23 +11,15 @@ namespace pulledbits\ActiveRecord\Source;
 
 class GeneratorGeneratorFactory
 {
-
-    /**
-     * GeneratorGeneratorFactory constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    public function makeEntityGeneratorGenerator(array $entityIdentifier, array $requiredAttributeIdentifiers, array $references) {
+    public function makeEntityGeneratorGenerator(array $entityIdentifier, array $requiredAttributeIdentifiers, array $references) : EntityGeneratorGenerator {
         return new EntityGeneratorGenerator($entityIdentifier, $requiredAttributeIdentifiers, $references);
     }
 
-    public function makeWrappedEntityGeneratorGenerator(string $entityTypeIdentifier) {
+    public function makeWrappedEntityGeneratorGenerator(string $entityTypeIdentifier) : WrappedEntityGeneratorGenerator {
         return new WrappedEntityGeneratorGenerator($entityTypeIdentifier);
     }
 
-    public function makeGeneratorGenerator(array $entityDescription)
+    public function makeGeneratorGenerator(array $entityDescription) : GeneratorGenerator
     {
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
             return $this->makeWrappedEntityGeneratorGenerator($entityDescription['entityTypeIdentifier']);
