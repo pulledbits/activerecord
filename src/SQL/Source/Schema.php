@@ -29,13 +29,6 @@ class Schema
         foreach ($this->schemaManager->listTables() as $table) {
             $tables[$table->getName()] = $sourceTable->describe($table);
         }
-        foreach ($this->schemaManager->listViews() as $view) {
-            $tables[$view->getName()] = [
-                'identifier' => [],
-                'requiredAttributeIdentifiers' => [],
-                'references' => []
-            ];
-        }
 
         $reversedLinkedTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
@@ -45,14 +38,28 @@ class Schema
                     'where' => array_flip($reference['where'])
                 ];
             }
+        }
+        $tables = $reversedLinkedTables;
 
-            if (strpos($tableName, '_') > 0) {
-                $possibleEntityTypeIdentifier = substr($tableName, 0, strpos($tableName, '_'));
-                if (array_key_exists($possibleEntityTypeIdentifier, $reversedLinkedTables)) {
-                    $reversedLinkedTables[$tableName]['entityTypeIdentifier'] = $possibleEntityTypeIdentifier;
+        foreach ($this->schemaManager->listViews() as $view) {
+            $viewIdentifier = $view->getName();
+            if (strpos($viewIdentifier, '_') > 0) {
+                $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, strpos($viewIdentifier, '_'));
+                if (array_key_exists($possibleEntityTypeIdentifier, $tables)) {
+                    $tables[$viewIdentifier] = [
+                        'entityTypeIdentifier' => $possibleEntityTypeIdentifier
+                    ];
+                    continue;
                 }
             }
+
+            $tables[$viewIdentifier] = [
+                'identifier' => [],
+                'requiredAttributeIdentifiers' => [],
+                'references' => []
+            ];
         }
-        return $reversedLinkedTables;
+
+        return $tables;
     }
 }
