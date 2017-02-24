@@ -49,8 +49,7 @@ class EntityGenerator
                 foreach ($reference['where'] as $referencedAttributeIdentifier => $localAttributeIdentifier) {
                     $where[] = '\'' . $referencedAttributeIdentifier . '\' => \'' . $localAttributeIdentifier . '\'';
                 }
-                $references[] = "\$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join("', '",
-                        $where) . ']);';
+                $references[] = "\$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join(", ", $where) . "]);";
             }
         }
 
