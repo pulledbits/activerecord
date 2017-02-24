@@ -26,8 +26,15 @@ class Schema
     public function describe(Table $sourceTable)
     {
         $tables = [];
-        foreach (array_merge($this->schemaManager->listTables(), $this->schemaManager->listViews()) as $table) {
+        foreach ($this->schemaManager->listTables() as $table) {
             $tables[$table->getName()] = $sourceTable->describe($table);
+        }
+        foreach ($this->schemaManager->listViews() as $view) {
+            $tables[$view->getName()] = [
+                'identifier' => [],
+                'requiredAttributeIdentifiers' => [],
+                'references' => []
+            ];
         }
 
         $reversedLinkedTables = $tables;

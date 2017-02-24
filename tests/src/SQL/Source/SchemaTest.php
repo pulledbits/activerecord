@@ -60,6 +60,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $schemaDescription = $schema->describe(new Table());
         $this->assertArrayHasKey('MyView', $schemaDescription);
+        $this->assertEquals([], $schemaDescription['MyView']['identifier']);
+        $this->assertEquals([], $schemaDescription['MyView']['requiredAttributeIdentifiers']);
+        $this->assertEquals([], $schemaDescription['MyView']['references']);
     }
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
