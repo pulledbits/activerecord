@@ -70,8 +70,8 @@ final class Entity implements Record
 
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
         $this->references[$referenceIdentifier] = [
-            'table' => $referencedEntityTypeIdentifier,
-            'where' => $conditions
+            'entityTypeIdentifier' => $referencedEntityTypeIdentifier,
+            'conditions' => $conditions
         ];
     }
 
@@ -156,7 +156,7 @@ final class Entity implements Record
             trigger_error('Reference does not exist `' . $identifier . '`', E_USER_ERROR);
         }
         $reference = $this->references[$identifier];
-        $reference['where'] = $this->fillConditions($reference['where']);
+        $reference['conditions'] = $this->fillConditions($reference['conditions']);
         return $reference;
     }
 
@@ -171,10 +171,10 @@ final class Entity implements Record
     {
         if (substr($method, 0, 7) === 'fetchBy') {
             $reference = $this->prepareReference(substr($method, 7));
-            return $this->schema->read($reference['table'], [], $this->mergeConditionsWith__callCustomConditions($reference['where'], $arguments));
+            return $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
             $reference = $this->prepareReference(substr($method, 12));
-            return $this->schema->readFirst($reference['table'], [], $this->mergeConditionsWith__callCustomConditions($reference['where'], $arguments));
+            return $this->schema->readFirst($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
         }
         return null;
     }
