@@ -8,6 +8,8 @@
 
 namespace pulledbits\ActiveRecord\SQL\Source;
 
+use pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory;
+
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -27,7 +29,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'AnotherTable' => []
         ]);
 
-        $schemaDescription = $schema->describe(new Table());
+        $schemaDescription = $schema->describe(new Table(), new GeneratorGeneratorFactory());
 
         $this->assertEquals([
             'FkAnothertableRole' => [
@@ -58,7 +60,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;'
         ]);
 
-        $schemaDescription = $schema->describe(new Table());
+        $schemaDescription = $schema->describe(new Table(), new GeneratorGeneratorFactory());
         $this->assertArrayHasKey('MyView', $schemaDescription);
         $this->assertEquals([], $schemaDescription['MyView']['identifier']);
         $this->assertEquals([], $schemaDescription['MyView']['requiredAttributeIdentifiers']);
@@ -117,7 +119,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`MyTable`;'
         ]);
 
-        $schemaDescription = $schema->describe(new Table());
+        $schemaDescription = $schema->describe(new Table(), new GeneratorGeneratorFactory());
 
         $this->assertEquals('MyTable', $schemaDescription['MyTable_today']['entityTypeIdentifier']);
     }

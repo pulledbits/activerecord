@@ -10,6 +10,7 @@ namespace pulledbits\ActiveRecord\SQL\Source;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory;
 
 final class Schema
 {
@@ -23,7 +24,7 @@ final class Schema
         $this->schemaManager = $schemaManager;
     }
 
-    public function describe(Table $sourceTable)
+    public function describe(Table $sourceTable, GeneratorGeneratorFactory $factory)
     {
         $tables = [];
         foreach ($this->schemaManager->listTables() as $table) {
@@ -33,10 +34,7 @@ final class Schema
         $reversedLinkedTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = [
-                    'table' => $tableName,
-                    'where' => array_flip($reference['where'])
-                ];
+                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $factory->makeReference($tableName, array_flip($reference['where']));
             }
         }
         $tables = $reversedLinkedTables;

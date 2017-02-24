@@ -27,7 +27,7 @@ if ($_SERVER['argc'] === 3) {
 
 $sourceSchema = $applicationBootstrap->sourceSchema($dburl);
 $generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
-foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table()) as $entityTypeIdentifier => $recordClassDescription) {
+foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table(), $generatorGeneratorFactory) as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
     file_put_contents($targetFile, $generator->generate());
