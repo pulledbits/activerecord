@@ -26,4 +26,12 @@ final class GeneratorGeneratorFactory
         }
         return $this->makeEntityGeneratorGenerator($entityDescription['identifier'], $entityDescription['requiredAttributeIdentifiers'], $entityDescription['references']);
     }
+
+    public function makeReference(string $entityTypeIdentifier, array $conditions) : array
+    {
+        return [
+            'table' => $entityTypeIdentifier,
+            'where' => $conditions
+        ];
+    }
 }
