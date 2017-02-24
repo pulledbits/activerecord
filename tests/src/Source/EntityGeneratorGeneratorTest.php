@@ -40,7 +40,8 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"]);
+        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object->requires(["a", "b", "c"]);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
@@ -49,7 +50,8 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"]);
+        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object->requires(["a", "b", "c"]);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
             'foo_id' => 'bar_id'
@@ -59,7 +61,8 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"]);
+        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object->requires(["a", "b", "c"]);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
@@ -71,7 +74,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], []);
+        $object = $factory->makeEntityGeneratorGenerator(['id']);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
@@ -80,7 +83,8 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
         $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], []);
+        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object->requires(["a", "b", "c"]);
         $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $object->generate());
     }
 }
