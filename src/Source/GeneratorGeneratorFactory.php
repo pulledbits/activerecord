@@ -32,11 +32,4 @@ final class GeneratorGeneratorFactory
         return $entityGeneratorGenerator;
     }
 
-    public function makeReference(string $entityTypeIdentifier, array $conditions) : array
-    {
-        return [
-            'table' => $entityTypeIdentifier,
-            'where' => $conditions
-        ];
-    }
 }

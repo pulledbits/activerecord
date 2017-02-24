@@ -80,4 +80,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ]
         ], $classDescription['references']);
     }
+
+    public function testMakeReference_When_DefaultState_Expect_ReferenceWithConditions() {
+        $expectedReference = [
+            'table' => 'EntityTypeIdentifier',
+            'where' => [
+                'referenced_column_id' => 'local_column_id'
+            ]
+        ];
+        $this->assertEquals($expectedReference, $this->object->makeReference('EntityTypeIdentifier', [
+            'referenced_column_id' => 'local_column_id'
+        ]));
+    }
 }

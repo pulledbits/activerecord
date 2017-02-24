@@ -24,17 +24,17 @@ final class Schema
         $this->schemaManager = $schemaManager;
     }
 
-    public function describe(Table $sourceTable, GeneratorGeneratorFactory $factory)
+    public function describe(Table $sourceTable)
     {
         $tables = [];
         foreach ($this->schemaManager->listTables() as $table) {
-            $tables[$table->getName()] = $sourceTable->describe($table, $factory);
+            $tables[$table->getName()] = $sourceTable->describe($table);
         }
 
         $reversedLinkedTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $factory->makeReference($tableName, array_flip($reference['where']));
+                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
             }
         }
         $tables = $reversedLinkedTables;

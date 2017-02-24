@@ -37,16 +37,4 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($factory->makeWrappedEntityGeneratorGenerator('blabla'), $object);
     }
 
-    public function testMakeReference_When_DefaultState_Expect_ReferenceWithConditions() {
-        $factory = new GeneratorGeneratorFactory();
-        $expectedReference = [
-            'table' => 'EntityTypeIdentifier',
-            'where' => [
-                'referenced_column_id' => 'local_column_id'
-            ]
-        ];
-        $this->assertEquals($expectedReference, $factory->makeReference('EntityTypeIdentifier', [
-            'referenced_column_id' => 'local_column_id'
-        ]));
-    }
 }
