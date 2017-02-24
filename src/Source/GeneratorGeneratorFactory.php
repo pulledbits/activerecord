@@ -24,6 +24,6 @@ class GeneratorGeneratorFactory
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
             return $this->makeWrappedEntityGeneratorGenerator($entityDescription['entityTypeIdentifier']);
         }
-        return $this->makeEntityGeneratorGenerator($entityDescription['identifier'], $entityDescription['requiredColumnIdentifiers'], $entityDescription['references']);
+        return $this->makeEntityGeneratorGenerator($entityDescription['identifier'], $entityDescription['requiredAttributeIdentifiers'], $entityDescription['references']);
     }
 }

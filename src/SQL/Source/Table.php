@@ -19,7 +19,7 @@ final class Table
 
         return $description + [
             'identifier' => [],
-            'requiredColumnIdentifiers' => [],
+            'requiredAttributeIdentifiers' => [],
             'references' => []
         ];
     }
@@ -30,12 +30,12 @@ final class Table
             $primaryKeyColumns = $dbalSchemaTable->getPrimaryKeyColumns();
         }
 
-        $requiredColumnIdentifiers = [];
+        $requiredAttributeIdentifiers = [];
         foreach ($dbalSchemaTable->getColumns() as $columnIdentifier => $column) {
             if ($column->getAutoincrement()) {
                 continue;
             } elseif ($column->getNotnull()) {
-                $requiredColumnIdentifiers[] = $columnIdentifier;
+                $requiredAttributeIdentifiers[] = $columnIdentifier;
             }
         }
         $references = [];
@@ -48,7 +48,7 @@ final class Table
 
         return [
             'identifier' => $primaryKeyColumns,
-            'requiredColumnIdentifiers' => $requiredColumnIdentifiers,
+            'requiredAttributeIdentifiers' => $requiredAttributeIdentifiers,
             'references' => $references
         ];
     }

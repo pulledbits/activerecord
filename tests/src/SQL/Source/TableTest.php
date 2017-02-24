@@ -61,7 +61,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $classDescription = $this->object->describe($mockTable);
         $this->assertEquals(['name', 'birthdate'], $classDescription['identifier']);
-        $this->assertEquals(['birthdate', 'address'], $classDescription['requiredColumnIdentifiers']);
+        $this->assertEquals(['birthdate', 'address'], $classDescription['requiredAttributeIdentifiers']);
         $this->assertEquals([
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
@@ -88,7 +88,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;');
         $classDescription = $this->object->describe($dbalView);
         $this->assertEquals([], $classDescription['identifier']);
-        $this->assertEquals([], $classDescription['requiredColumnIdentifiers']);
+        $this->assertEquals([], $classDescription['requiredAttributeIdentifiers']);
         $this->assertEquals([], $classDescription['references']);
     }
 }

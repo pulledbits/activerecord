@@ -16,7 +16,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new GeneratorGeneratorFactory();
         $object = $factory->makeGeneratorGenerator([
             'identifier' => ['id'],
-            'requiredColumnIdentifiers' =>["a", "b", "c"],
+            'requiredAttributeIdentifiers' =>["a", "b", "c"],
             'references' => []
         ]);
 
@@ -28,7 +28,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         $object = $factory->makeGeneratorGenerator([
             'identifier' => ['id'],
             'entityTypeIdentifier' => 'blabla',
-            'requiredColumnIdentifiers' =>["a", "b", "c"],
+            'requiredAttributeIdentifiers' =>["a", "b", "c"],
             'references' => []
         ]);
 

@@ -34,7 +34,7 @@ class Entity implements Record
     /**
      * @var array
      */
-    private $requiredColumnIdentifiers;
+    private $requiredAttributeIdentifiers;
 
     /**
      * Entity constructor.
@@ -51,7 +51,7 @@ class Entity implements Record
         $this->primaryKey = $primaryKey;
         $this->references = [];
         $this->values = [];
-        $this->requiredColumnIdentifiers = [];
+        $this->requiredAttributeIdentifiers = [];
     }
 
     public function contains(array $values) {
@@ -76,7 +76,7 @@ class Entity implements Record
     }
 
     public function requires(array $attributeIdentifiers) {
-        $this->requiredColumnIdentifiers = $attributeIdentifiers;
+        $this->requiredAttributeIdentifiers = $attributeIdentifiers;
     }
 
     /**
@@ -104,7 +104,7 @@ class Entity implements Record
 
     private function calculateMissingValues() : array {
         $missing = [];
-        foreach ($this->requiredColumnIdentifiers as $requiredColumnIdentifier) {
+        foreach ($this->requiredAttributeIdentifiers as $requiredColumnIdentifier) {
             if (array_key_exists($requiredColumnIdentifier, $this->values) === false) {
                 $missing[] = $requiredColumnIdentifier;
                 break;
