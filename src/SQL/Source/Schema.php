@@ -43,20 +43,25 @@ class Schema
 
         foreach ($this->schemaManager->listViews() as $view) {
             $viewIdentifier = $view->getName();
-            if (strpos($viewIdentifier, '_') > 0) {
-                $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, strpos($viewIdentifier, '_'));
-                if (array_key_exists($possibleEntityTypeIdentifier, $tables)) {
-                    $tables[$viewIdentifier] = [
-                        'entityTypeIdentifier' => $possibleEntityTypeIdentifier
-                    ];
-                    continue;
-                }
-            }
 
             $tables[$viewIdentifier] = [
                 'identifier' => [],
                 'requiredAttributeIdentifiers' => [],
                 'references' => []
+            ];
+
+            $underscorePosition = strpos($viewIdentifier, '_');
+            if ($underscorePosition < 1) {
+                continue;
+            }
+
+            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
+            if (array_key_exists($possibleEntityTypeIdentifier, $tables) === false) {
+                continue;
+            }
+
+            $tables[$viewIdentifier] = [
+                'entityTypeIdentifier' => $possibleEntityTypeIdentifier
             ];
         }
 
