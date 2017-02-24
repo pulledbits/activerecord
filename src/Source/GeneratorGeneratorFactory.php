@@ -26,4 +26,9 @@ class GeneratorGeneratorFactory
     public function makeWrappedEntityGeneratorGenerator(string $entityTypeIdentifier) {
         return new WrappedEntityGeneratorGenerator($entityTypeIdentifier);
     }
+
+    public function makeGeneratorGenerator(array $entityDescription)
+    {
+        return $this->makeEntityGeneratorGenerator($entityDescription['identifier'], $entityDescription['requiredColumnIdentifiers'], $entityDescription['references']);
+    }
 }
