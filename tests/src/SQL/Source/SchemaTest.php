@@ -27,7 +27,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'AnotherTable' => []
         ]);
 
-        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
+        $schemaDescription = $schema->describe(new Table());
 
         $this->assertEquals([
             'FkAnothertableRole' => [
@@ -58,7 +58,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;'
         ]);
 
-        $schemaDescription = $schema->describe(new Table('\\Database\\Record'));
+        $schemaDescription = $schema->describe(new Table());
         $this->assertArrayHasKey('MyView', $schemaDescription);
     }
 
