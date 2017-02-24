@@ -31,6 +31,14 @@ final class Schema
             $tables[$table->getName()] = $sourceTable->describe($table, $factory);
         }
 
+        $reversedLinkedTables = $tables;
+        foreach ($tables as $tableName => $recordClassDescription) {
+            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $factory->makeReference($tableName, array_flip($reference['where']));
+            }
+        }
+        $tables = $reversedLinkedTables;
+
         foreach ($this->schemaManager->listViews() as $view) {
             $viewIdentifier = $view->getName();
 

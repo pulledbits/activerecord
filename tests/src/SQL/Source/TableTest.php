@@ -61,7 +61,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $classDescription = $this->object->describe($mockTable);
+        $classDescription = $this->object->describe($mockTable, new GeneratorGeneratorFactory());
         $this->assertEquals(['name', 'birthdate'], $classDescription['identifier']);
         $this->assertEquals(['birthdate', 'address'], $classDescription['requiredAttributeIdentifiers']);
         $this->assertEquals([
