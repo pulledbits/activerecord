@@ -3,7 +3,7 @@
 namespace pulledbits\ActiveRecord;
 
 
-class Entity implements Record
+final class Entity implements Record
 {
     /**
      * @var \pulledbits\ActiveRecord\Schema

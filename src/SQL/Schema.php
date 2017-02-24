@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hameijer
- * Date: 20-12-16
- * Time: 16:08
- */
 
 namespace pulledbits\ActiveRecord\SQL;
 
@@ -12,7 +6,7 @@ namespace pulledbits\ActiveRecord\SQL;
 use pulledbits\ActiveRecord\Entity;
 use pulledbits\ActiveRecord\Record;
 
-class Schema implements \pulledbits\ActiveRecord\Schema
+final class Schema implements \pulledbits\ActiveRecord\Schema
 {
     /**
      * @var \pulledbits\ActiveRecord\RecordFactory

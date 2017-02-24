@@ -3,7 +3,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-class WrappedEntityGeneratorGenerator implements GeneratorGenerator
+final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
 {
     private $entityTypeIdentifier;
 

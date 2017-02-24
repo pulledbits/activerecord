@@ -1,7 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord;
 
-class RecordFactory {
+final class RecordFactory {
     /**
      * @var string
      */

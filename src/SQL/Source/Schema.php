@@ -11,7 +11,7 @@ namespace pulledbits\ActiveRecord\SQL\Source;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
-class Schema
+final class Schema
 {
     /**
      * @var \Doctrine\DBAL\Schema\AbstractSchemaManager

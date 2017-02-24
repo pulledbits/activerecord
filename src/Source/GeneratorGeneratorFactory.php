@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-class GeneratorGeneratorFactory
+final class GeneratorGeneratorFactory
 {
     public function makeEntityGeneratorGenerator(array $entityIdentifier, array $requiredAttributeIdentifiers, array $references) : EntityGeneratorGenerator {
         return new EntityGeneratorGenerator($entityIdentifier, $requiredAttributeIdentifiers, $references);

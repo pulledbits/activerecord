@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-class EntityGeneratorGenerator implements GeneratorGenerator
+final class EntityGeneratorGenerator implements GeneratorGenerator
 {
     const NEWLINE = PHP_EOL . "    ";
 

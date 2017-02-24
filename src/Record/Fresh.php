@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Record;
 
 
-class Fresh implements \pulledbits\ActiveRecord\Record
+final class Fresh implements \pulledbits\ActiveRecord\Record
 {
     /**
      * @var \pulledbits\ActiveRecord\Record
