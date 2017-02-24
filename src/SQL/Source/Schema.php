@@ -28,7 +28,7 @@ final class Schema
     {
         $tables = [];
         foreach ($this->schemaManager->listTables() as $table) {
-            $tables[$table->getName()] = $sourceTable->describe($table);
+            $tables[$table->getName()] = $sourceTable->describe($table, $factory);
         }
 
         $reversedLinkedTables = $tables;
