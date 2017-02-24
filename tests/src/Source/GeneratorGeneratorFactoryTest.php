@@ -23,4 +23,15 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($factory->makeEntityGeneratorGenerator(['id'], ['a', 'b', 'c'], []), $object);
     }
 
+    public function testMakeGeneratorGeneratorFromDescription_When_WrappedEntityTypeIdentifier_Expect_WrappedEntityGeneratorGenerator() {
+        $factory = new GeneratorGeneratorFactory();
+        $object = $factory->makeGeneratorGenerator([
+            'identifier' => ['id'],
+            'entityTypeIdentifier' => 'blabla',
+            'requiredColumnIdentifiers' =>["a", "b", "c"],
+            'references' => []
+        ]);
+
+        $this->assertEquals($factory->makeWrappedEntityGeneratorGenerator('blabla'), $object);
+    }
 }
