@@ -49,6 +49,15 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
     }
 
+    public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
+        $factory = new GeneratorGeneratorFactory();
+        $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], []);
+        $object->reference("FkRatingContactmoment", "rating", [
+            'contactmoment_id' => 'id',
+        ]);
+        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
+    }
+
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
         $factory = new GeneratorGeneratorFactory();
         $object = $factory->makeEntityGeneratorGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [

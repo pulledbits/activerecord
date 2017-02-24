@@ -38,6 +38,14 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
         $this->references = $references;
     }
 
+    public function reference(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
+    {
+        $this->references[$referenceIdentifier] = [
+            'table' => $referencedEntityIdentifier,
+            'where' => $conditions
+        ];
+    }
+
     public function generate()
     {
 
