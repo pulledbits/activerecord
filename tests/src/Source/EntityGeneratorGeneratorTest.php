@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
+class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     private $base = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
     '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, %s);' . PHP_EOL .
@@ -39,7 +39,7 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     '};';
 
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorPHPCode() {
-        $object = new EntityGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
+        $object = new EntityGeneratorGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
             "table" => "rating",
             "where" => [
                 'contactmoment_id' => 'id',
@@ -49,7 +49,7 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
-        $object = new EntityGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
+        $object = new EntityGeneratorGenerator(['id'], ["a", "b", "c"], ["FkRatingContactmoment" => [
             "table" => "rating",
             "where" => [
                 'contactmoment_id' => 'id',
@@ -60,7 +60,7 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
-        $object = new EntityGenerator(['id'], ["a", "b", "c"], [
+        $object = new EntityGeneratorGenerator(['id'], ["a", "b", "c"], [
             "FkRatingContactmoment" => [
                 "table" => "rating",
                 "where" => [
@@ -78,7 +78,7 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
-        $object = new EntityGenerator(['id'], [], ["FkRatingContactmoment" => [
+        $object = new EntityGeneratorGenerator(['id'], [], ["FkRatingContactmoment" => [
             "table" => "rating",
             "where" => [
                 'contactmoment_id' => 'id',
@@ -88,7 +88,7 @@ class EntityGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
-        $object = new EntityGenerator(['id'], ["a", "b", "c"], []);
+        $object = new EntityGeneratorGenerator(['id'], ["a", "b", "c"], []);
         $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $object->generate());
     }
 }

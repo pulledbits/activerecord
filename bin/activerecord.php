@@ -30,12 +30,12 @@ $schemaDescription = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\So
 foreach ($schemaDescription as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     if (array_key_exists('entityTypeIdentifier', $recordClassDescription)) {
-        $generator = new \pulledbits\ActiveRecord\Source\WrappedEntityGenerator($recordClassDescription['entityTypeIdentifier']);
+        $generator = new \pulledbits\ActiveRecord\Source\WrappedEntityGeneratorGenerator($recordClassDescription['entityTypeIdentifier']);
         file_put_contents($targetFile, $generator->generate());
         continue;
     }
 
-    $generator = new \pulledbits\ActiveRecord\Source\EntityGenerator($recordClassDescription['identifier'], $recordClassDescription['requiredColumnIdentifiers'], $recordClassDescription['references']);
+    $generator = new \pulledbits\ActiveRecord\Source\EntityGeneratorGenerator($recordClassDescription['identifier'], $recordClassDescription['requiredColumnIdentifiers'], $recordClassDescription['references']);
     file_put_contents($targetFile, $generator->generate());
 }
 
