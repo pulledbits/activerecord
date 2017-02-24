@@ -27,7 +27,19 @@ if ($_SERVER['argc'] === 3) {
 
 $sourceSchema = $applicationBootstrap->sourceSchema($dburl);
 $generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
-foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table(), $generatorGeneratorFactory) as $entityTypeIdentifier => $recordClassDescription) {
+$entityTypes = $sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table(), $generatorGeneratorFactory);
+
+$reversedLinkedEntityTypes = $entityTypes;
+foreach ($entityTypes as $entityTypeIdentifier => $recordClassDescription) {
+    if (array_key_exists('references', $recordClassDescription) === false) {
+        continue;
+    }
+
+    foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+        $reversedLinkedEntityTypes[$reference['table']]['references'][$referenceIdentifier] = $generatorGeneratorFactory->makeReference($entityTypeIdentifier, array_flip($reference['where']));
+    }
+}
+foreach ($reversedLinkedEntityTypes as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
     file_put_contents($targetFile, $generator->generate());

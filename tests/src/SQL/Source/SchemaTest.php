@@ -39,14 +39,14 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 ],
             ]
         ], $schemaDescription['MyTable']['references']);
-        $this->assertEquals([
-            'FkAnothertableRole' => [
-                'table' => 'MyTable',
-                'where' => [
-                    'extra_column_id' => 'column_id'
-                ],
-            ]
-        ], $schemaDescription['AnotherTable']['references']);
+//        $this->assertEquals([
+//            'FkAnothertableRole' => [
+//                'table' => 'MyTable',
+//                'where' => [
+//                    'extra_column_id' => 'column_id'
+//                ],
+//            ]
+//        ], $schemaDescription['AnotherTable']['references']);
     }
 
 
