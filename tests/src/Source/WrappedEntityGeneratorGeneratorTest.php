@@ -12,11 +12,13 @@ namespace pulledbits\ActiveRecord\Source;
 class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $object = new WrappedEntityGeneratorGenerator('MyTable');
+        $factory = new GeneratorGeneratorFactory();
+        $object = $factory->makeWrappedEntityGeneratorGenerator('MyTable');
         $this->assertEquals('<?php return require __DIR__ . DIRECTORY_SEPARATOR . "MyTable.php";', $object->generate());
     }
     public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $object = new WrappedEntityGeneratorGenerator('MyTable2');
+        $factory = new GeneratorGeneratorFactory();
+        $object = $factory->makeWrappedEntityGeneratorGenerator('MyTable2');
         $this->assertEquals('<?php return require __DIR__ . DIRECTORY_SEPARATOR . "MyTable2.php";', $object->generate());
     }
 }
