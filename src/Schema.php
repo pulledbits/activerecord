@@ -1,6 +1,10 @@
 <?php
 namespace pulledbits\ActiveRecord;
 
+/**
+ * Interface Schema
+ * @package pulledbits\ActiveRecord
+ */
 interface Schema {
     /**
      * @param string $entityTypeIdentifier

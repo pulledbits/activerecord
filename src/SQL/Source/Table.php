@@ -1,6 +1,10 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Source;
 
+/**
+ * Class Table
+ * @package pulledbits\ActiveRecord\SQL\Source
+ */
 final class Table
 {
     /**
@@ -33,6 +37,11 @@ final class Table
         return $description;
     }
 
+    /**
+     * @param string $entityTypeIdentifier
+     * @param array $conditions
+     * @return array
+     */
     public function makeReference(string $entityTypeIdentifier, array $conditions) : array
     {
         return [

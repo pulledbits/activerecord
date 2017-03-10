@@ -7,6 +7,10 @@
  */
 namespace pulledbits\ActiveRecord;
 
+/**
+ * Interface Record
+ * @package pulledbits\ActiveRecord
+ */
 interface Record
 {
     /**

@@ -3,6 +3,10 @@
 namespace pulledbits\ActiveRecord;
 
 
+/**
+ * Class Entity
+ * @package pulledbits\ActiveRecord
+ */
 final class Entity implements Record
 {
     /**
@@ -54,10 +58,16 @@ final class Entity implements Record
         $this->requiredAttributeIdentifiers = [];
     }
 
+    /**
+     * @param array $values
+     */
     public function contains(array $values) {
         $this->values += $values;
     }
 
+    /**
+     * @return array
+     */
     private function primaryKey() {
         $sliced = [];
         foreach ($this->values as $key => $value) {
@@ -68,6 +78,11 @@ final class Entity implements Record
         return $sliced;
     }
 
+    /**
+     * @param string $referenceIdentifier
+     * @param string $referencedEntityTypeIdentifier
+     * @param array $conditions
+     */
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
         $this->references[$referenceIdentifier] = [
             'entityTypeIdentifier' => $referencedEntityTypeIdentifier,
@@ -75,6 +90,9 @@ final class Entity implements Record
         ];
     }
 
+    /**
+     * @param array $attributeIdentifiers
+     */
     public function requires(array $attributeIdentifiers) {
         $this->requiredAttributeIdentifiers = $attributeIdentifiers;
     }
@@ -90,18 +108,35 @@ final class Entity implements Record
         return $this->values[$property];
     }
 
+    /**
+     * @param string $entityTypeIdentifier
+     * @param array $conditions
+     * @return array
+     */
     public function read(string $entityTypeIdentifier, array $conditions) : array {
         return $this->schema->read($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
+
+    /**
+     * @param string $entityTypeIdentifier
+     * @param array $conditions
+     * @return Record
+     */
     public function readFirst(string $entityTypeIdentifier, array $conditions) : Record {
         return $this->schema->readFirst($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
 
+    /**
+     * @return bool
+     */
     public function missesRequiredValues(): bool
     {
         return count($this->calculateMissingValues()) > 0;
     }
 
+    /**
+     * @return array
+     */
     private function calculateMissingValues() : array {
         $missing = [];
         foreach ($this->requiredAttributeIdentifiers as $requiredColumnIdentifier) {
@@ -136,6 +171,9 @@ final class Entity implements Record
         return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey());
     }
 
+    /**
+     * @return int
+     */
     public function create() : int
     {
         $missing = $this->calculateMissingValues();
@@ -147,10 +185,18 @@ final class Entity implements Record
         return $this->schema->create($this->entityTypeIdentifier, $this->values);
     }
 
+    /**
+     * @param array $conditions
+     * @return array
+     */
     private function fillConditions(array $conditions) {
         return array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions);
     }
 
+    /**
+     * @param string $identifier
+     * @return mixed
+     */
     private function prepareReference(string $identifier) {
         if (array_key_exists($identifier, $this->references) === false) {
             trigger_error('Reference does not exist `' . $identifier . '`', E_USER_ERROR);
@@ -160,6 +206,11 @@ final class Entity implements Record
         return $reference;
     }
 
+    /**
+     * @param array $conditions
+     * @param array $arguments
+     * @return array
+     */
     private function mergeConditionsWith__callCustomConditions(array $conditions, array $arguments) {
         if (count($arguments) === 1) {
             return array_merge($arguments[0], $conditions);
@@ -167,6 +218,11 @@ final class Entity implements Record
         return $conditions;
     }
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return array|null|Record|Record[]
+     */
     public function __call(string $method, array $arguments)
     {
         if (substr($method, 0, 7) === 'fetchBy') {

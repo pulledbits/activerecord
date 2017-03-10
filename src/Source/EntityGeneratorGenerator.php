@@ -9,8 +9,15 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
+/**
+ * Class EntityGeneratorGenerator
+ * @package pulledbits\ActiveRecord\Source
+ */
 final class EntityGeneratorGenerator implements GeneratorGenerator
 {
+    /**
+     *
+     */
     const NEWLINE = PHP_EOL . "    ";
 
     /**
@@ -38,10 +45,18 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
         $this->references = [];
     }
 
+    /**
+     * @param array $requiredAttributeIdentifiers
+     */
     public function requires(array $requiredAttributeIdentifiers) {
         $this->requiredAttributeIdentifiers = $requiredAttributeIdentifiers;
     }
 
+    /**
+     * @param string $referenceIdentifier
+     * @param string $referencedEntityIdentifier
+     * @param array $conditions
+     */
     public function references(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
     {
         $this->references[$referenceIdentifier] = [
@@ -50,6 +65,9 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
         ];
     }
 
+    /**
+     * @return string
+     */
     public function generate()
     {
 

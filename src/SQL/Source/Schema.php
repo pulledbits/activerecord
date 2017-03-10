@@ -1,17 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hameijer
- * Date: 5-12-16
- * Time: 12:45
- */
-
 namespace pulledbits\ActiveRecord\SQL\Source;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory;
 
+/**
+ * Class Schema
+ * @package pulledbits\ActiveRecord\SQL\Source
+ */
 final class Schema
 {
     /**
@@ -19,11 +15,19 @@ final class Schema
      */
     private $schemaManager;
 
+    /**
+     * Schema constructor.
+     * @param AbstractSchemaManager $schemaManager
+     */
     public function __construct(AbstractSchemaManager $schemaManager)
     {
         $this->schemaManager = $schemaManager;
     }
 
+    /**
+     * @param Table $sourceTable
+     * @return array
+     */
     public function describe(Table $sourceTable)
     {
         $tables = [];

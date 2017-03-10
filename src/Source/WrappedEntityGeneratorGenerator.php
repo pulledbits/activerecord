@@ -3,8 +3,15 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
+/**
+ * Class WrappedEntityGeneratorGenerator
+ * @package pulledbits\ActiveRecord\Source
+ */
 final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
 {
+    /**
+     * @var string
+     */
     private $entityTypeIdentifier;
 
     /**
@@ -15,6 +22,9 @@ final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
         $this->entityTypeIdentifier = $entityTypeIdentifier;
     }
 
+    /**
+     * @return string
+     */
     public function generate()
     {
         return '<?php return require __DIR__ . DIRECTORY_SEPARATOR . "' . $this->entityTypeIdentifier . '.php";';
