@@ -58,3 +58,4 @@ modules.xml
 vendor
 tests/gen
 .idea/inspectionProfiles/
+/build/
