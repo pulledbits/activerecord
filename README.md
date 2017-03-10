@@ -1,5 +1,7 @@
 ActiveRecord
 ========
+[documentation](https://pulledbits.github.io/activerecord/)
+
 
 Experiment on proper ActiveRecord in PHP
 
