@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>phpDox - pulledbits\ActiveRecord\SQL\Schema</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <nav class="topnav">
+      <ul>
+        <li>
+          <div class="logo"><span>/**</span>phpDox</div>
+        </li>
+        <li class="separator">
+          <a href="../index.xhtml">Overview</a>
+        </li>
+        <li class="separator">
+          <a href="../namespaces.xhtml">Namespaces</a>
+        </li>
+        <li>
+          <a href="../interfaces.xhtml">Interfaces</a>
+        </li>
+        <li>
+          <a href="../classes.xhtml">Classes</a>
+        </li>
+        <li class="separator">
+          <a href="../source/index.xhtml">Source</a>
+        </li>
+      </ul>
+    </nav>
+    <div id="mainstage">
+      <div class="box">
+        <ul class="breadcrumb">
+          <li>
+            <a href="../index.xhtml">Overview</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml">Classes</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml#pulledbits_ActiveRecord_SQL">pulledbits\ActiveRecord\SQL</a>
+          </li>
+          <li class="separator">Schema</li>
+        </ul>
+      </div>
+      <nav class="box">
+        <ul>
+          <li>
+            <a href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#synopsis">Synopsis</a>
+          </li>
+          <li>
+            <a href="#hierarchy">Hierarchy</a>
+          </li>
+          <li>
+            <a href="#constants">Constants</a>
+          </li>
+          <li>
+            <a href="#members">Members</a>
+          </li>
+          <li>
+            <a href="#methods">Methods</a>
+          </li>
+          <li>
+            <a href="../source/SQL/Schema.php.xhtml#line9">Source</a>
+          </li>
+        </ul>
+      </nav>
+      <section>
+        <h1 id="introduction"><small>pulledbits\ActiveRecord\SQL\</small>Schema</h1>
+        <h4/>
+        <p/>
+        <h2 id="synopsis">Synopsis</h2>
+        <div class="synopsis">class Schema
+                implements
+                <a title="pulledbits\ActiveRecord\Schema" href="../interfaces/pulledbits_ActiveRecord_Schema.xhtml">Schema</a>
+            {<br/><ul class="none"><li>// constants</li><li>const PP_COLUMN = 'column';</li><li>const PP_VALUE = 'value';</li><li>const PP_SQL = 'sql';</li><li>const PP_PARAM = 'parameter';</li><li>const PP_PARAMS = 'parameters';</li></ul><ul class="none"><li>// members</li><li>private <span title="\pulledbits\ActiveRecord\RecordFactory">RecordFactory</span> <a href="#members">$recordFactory</a>;
+                    </li><li>private <span title="\PDO">PDO</span> <a href="#members">$connection</a>;
+                    </li></ul><ul class="none"><li>// methods</li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/__construct.xhtml">__construct</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/execute.xhtml">execute</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/executeWhere.xhtml">executeWhere</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/prepareParameters.xhtml">prepareParameters</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/extract.xhtml">extract</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/extractParameters.xhtml">extractParameters</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/extractParametersSQL.xhtml">extractParametersSQL</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/makeWhereCondition.xhtml">makeWhereCondition</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/makeRecord.xhtml">makeRecord</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/read.xhtml">read</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/initializeRecord.xhtml">initializeRecord</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/readFirst.xhtml">readFirst</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/update.xhtml">update</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/create.xhtml">create</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/delete.xhtml">delete</a>()
+                    </li></ul>
+
+            }<br/></div>
+        <h2 id="hierarchy">Hierarchy</h2>
+        <div class="styled">
+          <h4>Implements</h4>
+          <ul>
+            <li>
+              <a title="pulledbits\ActiveRecord\Schema" href="../interfaces/pulledbits_ActiveRecord_Schema.xhtml">pulledbits\ActiveRecord\Schema</a>
+            </li>
+          </ul>
+        </div>
+        <h2 id="constants">Constants</h2>
+        <table class="styled">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="PP_COLUMN">PP_COLUMN</td>
+              <td>'column'</td>
+            </tr>
+            <tr>
+              <td id="PP_VALUE">PP_VALUE</td>
+              <td>'value'</td>
+            </tr>
+            <tr>
+              <td id="PP_SQL">PP_SQL</td>
+              <td>'sql'</td>
+            </tr>
+            <tr>
+              <td id="PP_PARAM">PP_PARAM</td>
+              <td>'parameter'</td>
+            </tr>
+            <tr>
+              <td id="PP_PARAMS">PP_PARAMS</td>
+              <td>'parameters'</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="members">Members</h2>
+        <div class="styled members">
+          <h4>private</h4>
+          <ul class="members">
+            <li id="connection"><strong>$connection</strong>
+                —
+                <a title="\PDO" href="../classes/_PDO.xhtml">\PDO</a></li>
+            <li id="recordFactory"><strong>$recordFactory</strong>
+                —
+                <a title="\pulledbits\ActiveRecord\RecordFactory" href="../classes/_pulledbits_ActiveRecord_RecordFactory.xhtml">\pulledbits\ActiveRecord\RecordFactory</a></li>
+          </ul>
+        </div>
+        <h2 id="methods">Methods</h2>
+        <div class="styled">
+          <h4>private</h4>
+          <ul>
+            <li id="execute">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/execute.xhtml">execute()</a>
+            </li>
+            <li id="executeWhere">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/executeWhere.xhtml">executeWhere()</a>
+            </li>
+            <li id="extract">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/extract.xhtml">extract()</a>
+            </li>
+            <li id="extractParameters">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/extractParameters.xhtml">extractParameters()</a>
+            </li>
+            <li id="extractParametersSQL">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/extractParametersSQL.xhtml">extractParametersSQL()</a>
+            </li>
+            <li id="makeRecord">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/makeRecord.xhtml">makeRecord()</a>
+            </li>
+            <li id="makeWhereCondition">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/makeWhereCondition.xhtml">makeWhereCondition()</a>
+            </li>
+            <li id="prepareParameters">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/prepareParameters.xhtml">prepareParameters()</a>
+            </li>
+          </ul>
+          <h4>public</h4>
+          <ul>
+            <li id="__construct">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/__construct.xhtml">__construct()</a>
+            </li>
+            <li id="create">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/create.xhtml">create()</a>
+            </li>
+            <li id="delete">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/delete.xhtml">delete()</a>
+            </li>
+            <li id="initializeRecord">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/initializeRecord.xhtml">initializeRecord()</a>
+            </li>
+            <li id="read">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/read.xhtml">read()</a>
+            </li>
+            <li id="readFirst">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/readFirst.xhtml">readFirst()</a>
+            </li>
+            <li id="update">
+              <a title="pulledbits\ActiveRecord\SQL\Schema" href="../classes/pulledbits_ActiveRecord_SQL_Schema/update.xhtml">update()</a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <span>Generated using phpDox 0.8.2-dev - Copyright (C) 2010 - 2017 by Arne Blankerts</span>
+    </footer>
+  </body>
+</html>

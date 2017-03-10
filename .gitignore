@@ -59,3 +59,4 @@ vendor
 tests/gen
 .idea/inspectionProfiles/
 /build/
+/cache.properties
