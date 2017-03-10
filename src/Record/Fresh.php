@@ -79,6 +79,7 @@ final class Fresh implements \pulledbits\ActiveRecord\Record
     }
 
     /**
+     * @return int
      */
     public function delete() : int
     {
