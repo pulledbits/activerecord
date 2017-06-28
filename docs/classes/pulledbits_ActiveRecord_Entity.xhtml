@@ -62,20 +62,19 @@
             <a href="#methods">Methods</a>
           </li>
           <li>
-            <a href="../source/Entity.php.xhtml#line10">Source</a>
+            <a href="../source/Entity.php.xhtml#line5">Source</a>
           </li>
         </ul>
       </nav>
       <section>
         <h1 id="introduction"><small>pulledbits\ActiveRecord\</small>Entity</h1>
-        <h4>Class Entity</h4>
+        <h4/>
         <p/>
-        <ul/>
         <h2 id="synopsis">Synopsis</h2>
         <div class="synopsis">class Entity
                 implements
                 <a title="pulledbits\ActiveRecord\Record" href="../interfaces/pulledbits_ActiveRecord_Record.xhtml">Record</a>
-            {<br/><ul class="none"><li>// members</li><li>private <span title="\pulledbits\ActiveRecord\Schema">Schema</span> <a href="#members">$schema</a>;
+            {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$schema</a>;
                     </li><li>private  <a href="#members">$entityTypeIdentifier</a>;
                     </li><li>private  <a href="#members">$primaryKey</a>;
                     </li><li>private  <a href="#members">$references</a>;
@@ -83,21 +82,21 @@
                     </li><li>private  <a href="#members">$requiredAttributeIdentifiers</a>;
                     </li></ul><ul class="none"><li>// methods</li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__construct.xhtml">__construct</a>()
                     </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/contains.xhtml">contains</a>()
-                    </li><li>private array <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/primaryKey.xhtml">primaryKey</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/primaryKey.xhtml">primaryKey</a>()
                     </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/references.xhtml">references</a>()
                     </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/requires.xhtml">requires</a>()
                     </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__get.xhtml">__get</a>()
-                    </li><li>public array <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/read.xhtml">read</a>()
-                    </li><li>public Record <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/readFirst.xhtml">readFirst</a>()
-                    </li><li>public bool <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/missesRequiredValues.xhtml">missesRequiredValues</a>()
-                    </li><li>private array <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/calculateMissingValues.xhtml">calculateMissingValues</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/read.xhtml">read</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/readFirst.xhtml">readFirst</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/missesRequiredValues.xhtml">missesRequiredValues</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/calculateMissingValues.xhtml">calculateMissingValues</a>()
                     </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__set.xhtml">__set</a>()
                     </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/delete.xhtml">delete</a>()
-                    </li><li>public int <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/create.xhtml">create</a>()
-                    </li><li>private array <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/fillConditions.xhtml">fillConditions</a>()
-                    </li><li>private mixed <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/prepareReference.xhtml">prepareReference</a>()
-                    </li><li>private array <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/mergeConditionsWith__callCustomConditions.xhtml">mergeConditionsWith__callCustomConditions</a>()
-                    </li><li>public array <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__call.xhtml">__call</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/create.xhtml">create</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/fillConditions.xhtml">fillConditions</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/prepareReference.xhtml">prepareReference</a>()
+                    </li><li>private void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/mergeConditionsWith__callCustomConditions.xhtml">mergeConditionsWith__callCustomConditions</a>()
+                    </li><li>public void <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__call.xhtml">__call</a>()
                     </li></ul>
 
             }<br/></div>
@@ -114,24 +113,24 @@
         <div class="styled members">
           <h4>private</h4>
           <ul class="members">
-            <li id="entityTypeIdentifier"><strong>$entityTypeIdentifier</strong>
-                —
-                string</li>
-            <li id="primaryKey"><strong>$primaryKey</strong>
-                —
-                array</li>
-            <li id="references"><strong>$references</strong>
-                —
-                array</li>
-            <li id="requiredAttributeIdentifiers"><strong>$requiredAttributeIdentifiers</strong>
-                —
-                array</li>
-            <li id="schema"><strong>$schema</strong>
-                —
-                <a title="\pulledbits\ActiveRecord\Schema" href="../classes/_pulledbits_ActiveRecord_Schema.xhtml">\pulledbits\ActiveRecord\Schema</a></li>
-            <li id="values"><strong>$values</strong>
-                —
-                array</li>
+            <li id="entityTypeIdentifier">
+              <strong>$entityTypeIdentifier</strong>
+            </li>
+            <li id="primaryKey">
+              <strong>$primaryKey</strong>
+            </li>
+            <li id="references">
+              <strong>$references</strong>
+            </li>
+            <li id="requiredAttributeIdentifiers">
+              <strong>$requiredAttributeIdentifiers</strong>
+            </li>
+            <li id="schema">
+              <strong>$schema</strong>
+            </li>
+            <li id="values">
+              <strong>$values</strong>
+            </li>
           </ul>
         </div>
         <h2 id="methods">Methods</h2>
@@ -156,8 +155,9 @@
           </ul>
           <h4>public</h4>
           <ul>
-            <li id="__construct"><a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__construct.xhtml">__construct()</a>
-                — Entity constructor.</li>
+            <li id="__construct">
+              <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__construct.xhtml">__construct()</a>
+            </li>
             <li id="__call">
               <a title="pulledbits\ActiveRecord\Entity" href="../classes/pulledbits_ActiveRecord_Entity/__call.xhtml">__call()</a>
             </li>
