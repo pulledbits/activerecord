@@ -1,43 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hameijer
- * Date: 23-2-17
- * Time: 15:33
- */
-
 namespace pulledbits\ActiveRecord\Source;
 
 
-/**
- * Class EntityGeneratorGenerator
- * @package pulledbits\ActiveRecord\Source
- */
 final class EntityGeneratorGenerator implements GeneratorGenerator
 {
-    /**
-     *
-     */
     const NEWLINE = PHP_EOL . "    ";
 
-    /**
-     * @var array
-     */
     private $entityIdentifier;
 
-    /**
-     * @var array
-     */
     private $requiredAttributeIdentifiers;
 
-    /**
-     * @var array
-     */
     private $references;
 
-    /**
-     * WrappedEntityGenerator constructor.
-     */
     public function __construct(array $entityIdentifier)
     {
         $this->entityIdentifier = $entityIdentifier;
@@ -45,18 +19,10 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
         $this->references = [];
     }
 
-    /**
-     * @param array $requiredAttributeIdentifiers
-     */
     public function requires(array $requiredAttributeIdentifiers) {
         $this->requiredAttributeIdentifiers = $requiredAttributeIdentifiers;
     }
 
-    /**
-     * @param string $referenceIdentifier
-     * @param string $referencedEntityIdentifier
-     * @param array $conditions
-     */
     public function references(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
     {
         $this->references[$referenceIdentifier] = [
@@ -65,9 +31,6 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
         ];
     }
 
-    /**
-     * @return string
-     */
     public function generate()
     {
 

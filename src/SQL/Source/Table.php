@@ -1,16 +1,8 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Source;
 
-/**
- * Class Table
- * @package pulledbits\ActiveRecord\SQL\Source
- */
 final class Table
 {
-    /**
-     * @param \Doctrine\DBAL\Schema\AbstractAsset $dbalSchemaTable
-     * @return array
-     */
     public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
         $description = [
             'identifier' => [],
@@ -37,11 +29,6 @@ final class Table
         return $description;
     }
 
-    /**
-     * @param string $entityTypeIdentifier
-     * @param array $conditions
-     * @return array
-     */
     public function makeReference(string $entityTypeIdentifier, array $conditions) : array
     {
         return [

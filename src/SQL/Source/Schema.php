@@ -4,30 +4,15 @@ namespace pulledbits\ActiveRecord\SQL\Source;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
-/**
- * Class Schema
- * @package pulledbits\ActiveRecord\SQL\Source
- */
 final class Schema
 {
-    /**
-     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
-     */
     private $schemaManager;
 
-    /**
-     * Schema constructor.
-     * @param AbstractSchemaManager $schemaManager
-     */
     public function __construct(AbstractSchemaManager $schemaManager)
     {
         $this->schemaManager = $schemaManager;
     }
 
-    /**
-     * @param Table $sourceTable
-     * @return array
-     */
     public function describe(Table $sourceTable)
     {
         $tables = [];
