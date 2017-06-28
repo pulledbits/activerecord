@@ -2,7 +2,6 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\Entity;
 use pulledbits\ActiveRecord\Record;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
@@ -128,15 +127,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
-        $expandedArguments = [];
-        foreach ($arguments as $argument) {
-            if ($argument instanceof Entity) {
-                $expandedArguments = array_merge($expandedArguments, $argument->primaryKey());
-            } else {
-                $expandedArguments[] = $argument;
-            }
-        }
-        $preparedParameters = $this->prepareParameters($expandedArguments);
+        $preparedParameters = $this->prepareParameters($arguments);
         $this->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($this->extractParameters($preparedParameters))) . ')', $this->extractParameters($preparedParameters));
     }
 }

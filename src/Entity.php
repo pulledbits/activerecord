@@ -30,7 +30,7 @@ final class Entity implements Record
         $this->values += $values;
     }
 
-    public function primaryKey() {
+    private function primaryKey() {
         $sliced = [];
         foreach ($this->values as $key => $value) {
             if (in_array($key, $this->primaryKey, true)) {

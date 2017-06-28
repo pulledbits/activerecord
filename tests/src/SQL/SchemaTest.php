@@ -8,8 +8,6 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\Entity;
-
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -62,9 +60,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
             '/^INSERT INTO activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
-            '/^CALL missing_procedure\(:\w+, :\w+\)/' => false,
-            '/^CALL entity_procedure\(:\w+, :\w+, :\w+\)/' => false
-
+            '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]));
     }
 
@@ -143,13 +139,5 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->expectException('PHPUnit_Framework_Error');
         $this->expectExceptionMessageRegExp('/^Failed executing query/');
         $this->assertNull(1, $this->object->executeProcedure('missing_procedure', ['3', 'Foobar']));
-    }
-
-    public function testExecuteProcedure_When_PassingEntity_Expect_PrimaryKeyPassedAsArgument() {
-        $this->expectException('PHPUnit_Framework_Error');
-        $this->expectExceptionMessageRegExp('/^Failed executing query/');
-        $entity = new Entity($this->object, 'Entity', ['name', 'birthdate']);
-        $entity->contains(['name' => 'BlaBla', 'birthdate' => '1984-06-03']);
-        $this->assertNull(1, $this->object->executeProcedure('entity_procedure', [$entity, 'Foobar']));
     }
 }
