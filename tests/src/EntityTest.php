@@ -94,6 +94,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             {
                 return new \pulledbits\ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
             }
+
+            public function executeProcedure(string $procedureIdentifier, array $arguments): void
+            {
+                // TODO: Implement executeProcedure() method.
+            }
         };
 
         $values = [

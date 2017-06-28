@@ -49,6 +49,11 @@ return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdent
             {
                 // TODO: Implement initializeRecord() method.
             }
+
+            public function executeProcedure(string $procedureIdentifier, array $arguments): void
+            {
+                // TODO: Implement executeProcedure() method.
+            }
         };
         $object = new RecordFactory(sys_get_temp_dir());
         $record = $object->makeRecord($schema, 'activiteit');

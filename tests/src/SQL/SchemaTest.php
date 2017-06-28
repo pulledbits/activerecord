@@ -60,6 +60,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
             '/^INSERT INTO activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
+            '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]));
     }
 
@@ -128,12 +129,15 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $this->object->delete('activiteit', ['id' => '3']));
     }
 
-    /**
-     * @expectedException \PHPUnit_Framework_Error
-     * @expectedExceptionMessageRegExp /^Failed executing query/
-     */
     public function testDeleteFrom_When_Erroneous_Expect_Warning() {
+        $this->expectException('PHPUnit_Framework_Error');
+        $this->expectExceptionMessageRegExp('/^Failed executing query/');
         $this->assertEquals(0, $this->object->delete('activiteit', ['sid' => '3']));
     }
 
+    public function testExecuteProcedure_When_ExistingProcedure_Expect_ProcedureToBeCalled() {
+        $this->expectException('PHPUnit_Framework_Error');
+        $this->expectExceptionMessageRegExp('/^Failed executing query/');
+        $this->assertNull(1, $this->object->executeProcedure('missing_procedure', ['3', 'Foobar']));
+    }
 }

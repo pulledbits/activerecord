@@ -223,4 +223,10 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $conditions);
         return $statement->rowCount();
     }
+
+    public function executeProcedure(string $procedureIdentifier, array $arguments): void
+    {
+        $preparedParameters = $this->prepareParameters($arguments);
+        $this->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($this->extractParameters($preparedParameters))) . ')', $this->extractParameters($preparedParameters));
+    }
 }

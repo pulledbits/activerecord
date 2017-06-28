@@ -50,4 +50,6 @@ interface Schema {
      * @return int
      */
     public function delete(string $entityTypeIdentifier, array $conditions) : int;
+
+    public function executeProcedure(string $procedureIdentifier, array $arguments) : void;
 }
