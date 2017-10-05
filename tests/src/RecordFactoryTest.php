@@ -8,7 +8,7 @@
 
 namespace pulledbits\ActiveRecord;
 
-use pulledbits\ActiveRecord\Source\SQL\Table;
+use pulledbits\ActiveRecord\Source\Table;
 
 class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,7 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\Source\SQL;
 
-final class Table
+final class Table implements \pulledbits\ActiveRecord\Source\Table
 {
     public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
         $description = [

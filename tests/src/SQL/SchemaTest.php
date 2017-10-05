@@ -20,7 +20,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     {
         $sourceSchema = new class implements \pulledbits\ActiveRecord\Source\Schema {
 
-            public function describeTable(\pulledbits\ActiveRecord\Source\SQL\Table $sourceTable, string $tableIdentifier): array
+            public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier): array
             {
                 return [
                     'identifier' => [],
@@ -29,7 +29,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 ];
             }
 
-            public function describeTables(\pulledbits\ActiveRecord\Source\SQL\Table $sourceTable)
+            public function describeTables(\pulledbits\ActiveRecord\Source\Table $sourceTable)
             {
                 return [];
             }

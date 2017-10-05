@@ -23,13 +23,13 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         return new self($conn->getSchemaManager());
     }
 
-    public function describeTable(Table $sourceTable, string $tableIdentifier) : array
+    public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier) : array
     {
         $table = $this->describeTables($sourceTable);
         return $table[$tableIdentifier];
     }
 
-    public function describeTables(Table $sourceTable)
+    public function describeTables(\pulledbits\ActiveRecord\Source\Table $sourceTable)
     {
         $tables = [];
         foreach ($this->schemaManager->listTables() as $table) {
