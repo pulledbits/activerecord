@@ -13,6 +13,16 @@ final class Schema
         $this->schemaManager = $schemaManager;
     }
 
+    static function fromDatabaseURL(string $dburl) : Schema
+    {
+        $config = new \Doctrine\DBAL\Configuration();
+        $connectionParams = [
+            'url' => $dburl
+        ];
+        $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+        return new self($conn->getSchemaManager());
+    }
+
     public function describe(Table $sourceTable)
     {
         $tables = [];

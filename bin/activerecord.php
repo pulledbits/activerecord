@@ -25,7 +25,7 @@ if ($_SERVER['argc'] === 3) {
     $dburl = 'mysql://' . $dbuser . ':' . $dbpass . '@' . $dbhost . '/' . $dbname;
 }
 
-$sourceSchema = $applicationBootstrap->sourceSchema($dburl);
+$sourceSchema = \pulledbits\ActiveRecord\SQL\Source\Schema::fromDatabaseURL($dburl);
 $generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
 foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table(), $generatorGeneratorFactory) as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
