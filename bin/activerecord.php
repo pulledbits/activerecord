@@ -26,8 +26,11 @@ if ($_SERVER['argc'] === 3) {
 }
 
 $sourceSchema = \pulledbits\ActiveRecord\SQL\Source\Schema::fromDatabaseURL($dburl);
+/**
+ * @var $generatorGeneratorFactory \pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory
+ */
 $generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
-foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table(), $generatorGeneratorFactory) as $entityTypeIdentifier => $recordClassDescription) {
+foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table()) as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
     file_put_contents($targetFile, $generator->generate());
