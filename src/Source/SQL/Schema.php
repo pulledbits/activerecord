@@ -23,6 +23,16 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         return new self($conn->getSchemaManager());
     }
 
+    static function fromPDO(\PDO $pdo) : Schema
+    {
+        $config = new \Doctrine\DBAL\Configuration();
+        $connectionParams = [
+            'pdo' => $pdo
+        ];
+        $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+        return new self($conn->getSchemaManager());
+    }
+
     public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier) : array
     {
         $table = $this->describeTables($sourceTable);

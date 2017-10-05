@@ -23,7 +23,7 @@ require __DIR__ . '/bootstrap.php';
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
-$recordConfigurator = new \pulledbits\ActiveRecord\RecordFactory(\pulledbits\ActiveRecord\Source\SQL\Schema::fromDatabaseURL($_SERVER['argv'][1]), $targetDirectory);
+$recordConfigurator = new \pulledbits\ActiveRecord\RecordFactory(\pulledbits\ActiveRecord\Source\SQL\Schema::fromPDO($connection), $targetDirectory);
 
 $schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, $connection);
 
@@ -33,6 +33,9 @@ $schema->delete('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1']);
 $schema->delete('contactmoment', ['starttijd' => $starttijd, 'les_id' => '2']);
 assert(count($schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2'])) === 0, 'previous record exists');
 assert($schema->create('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1']) === 1, 'no record created');
+/**
+ * @var $record \pulledbits\ActiveRecord\Record
+ */
 $record = $schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '1'])[0];
 assert($record->les_id === '1', 'record is properly initialized');
 $record->les_id = '2';
@@ -41,5 +44,5 @@ assert($record->les_id === $schema->read('contactmoment', [], ['starttijd' => $s
 $viewRecord = $schema->readFirst("contactmoment_vandaag", [], ['starttijd' => $starttijd]);
 assert($viewRecord->starttijd === $starttijd, 'view records exist');
 
-assert(count($record->delete()) === 1, 'delete confirms removal');
+assert($record->delete() === 1, 'delete confirms removal');
 echo 'Done testing';
