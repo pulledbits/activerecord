@@ -1,5 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord\SQL\Source;
+namespace pulledbits\ActiveRecord\Source\SQL;
 
 final class Table
 {

@@ -8,6 +8,8 @@
 
 namespace pulledbits\ActiveRecord\SQL\Source;
 
+use pulledbits\ActiveRecord\Source\SQL\Table;
+
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 

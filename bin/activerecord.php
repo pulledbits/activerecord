@@ -25,12 +25,12 @@ if ($_SERVER['argc'] === 3) {
     $dburl = 'mysql://' . $dbuser . ':' . $dbpass . '@' . $dbhost . '/' . $dbname;
 }
 
-$sourceSchema = \pulledbits\ActiveRecord\SQL\Source\Schema::fromDatabaseURL($dburl);
+$sourceSchema = \pulledbits\ActiveRecord\Source\SQL\Schema::fromDatabaseURL($dburl);
 /**
  * @var $generatorGeneratorFactory \pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory
  */
 $generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
-foreach ($sourceSchema->describeTables(new \pulledbits\ActiveRecord\SQL\Source\Table()) as $entityTypeIdentifier => $recordClassDescription) {
+foreach ($sourceSchema->describeTables(new \pulledbits\ActiveRecord\Source\SQL\Table()) as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
     file_put_contents($targetFile, $generator->generate());

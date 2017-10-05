@@ -1,5 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord\SQL\Source;
+namespace pulledbits\ActiveRecord\Source\SQL;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
