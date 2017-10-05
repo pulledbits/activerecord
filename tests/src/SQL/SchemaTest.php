@@ -18,7 +18,23 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $recordConfiguration = new \pulledbits\ActiveRecord\RecordFactory(sys_get_temp_dir());
+        $sourceSchema = new class implements \pulledbits\ActiveRecord\Source\Schema {
+
+            public function describeTable(\pulledbits\ActiveRecord\SQL\Source\Table $sourceTable, string $tableIdentifier): array
+            {
+                return [
+                    'identifier' => [],
+                    'requiredAttributeIdentifiers' => [],
+                    'references' => []
+                ];
+            }
+
+            public function describeTables(\pulledbits\ActiveRecord\SQL\Source\Table $sourceTable)
+            {
+                return [];
+            }
+        };
+        $recordConfiguration = new \pulledbits\ActiveRecord\RecordFactory($sourceSchema, sys_get_temp_dir());
         $this->object = new Schema($recordConfiguration, \pulledbits\ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
@@ -138,6 +154,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testExecuteProcedure_When_ExistingProcedure_Expect_ProcedureToBeCalled() {
         $this->expectException('PHPUnit_Framework_Error');
         $this->expectExceptionMessageRegExp('/^Failed executing query/');
-        $this->assertNull(1, $this->object->executeProcedure('missing_procedure', ['3', 'Foobar']));
+        $this->object->executeProcedure('missing_procedure', ['3', 'Foobar']);
     }
 }

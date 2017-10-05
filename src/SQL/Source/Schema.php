@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\SQL\Source;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
-final class Schema
+final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
     private $schemaManager;
 
@@ -21,6 +21,12 @@ final class Schema
         ];
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
         return new self($conn->getSchemaManager());
+    }
+
+    public function describeTable(Table $sourceTable, string $tableIdentifier) : array
+    {
+        $table = $this->describeTables($sourceTable);
+        return $table[$tableIdentifier];
     }
 
     public function describeTables(Table $sourceTable)

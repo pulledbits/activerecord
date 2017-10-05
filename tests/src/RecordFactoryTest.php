@@ -8,15 +8,17 @@
 
 namespace pulledbits\ActiveRecord;
 
+use pulledbits\ActiveRecord\SQL\Source\Table;
+
 class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
-        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-                    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, []);
-                    return $record;
-};');
+//        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
+//return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
+//                    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, []);
+//                    return $record;
+//};');
 
         $schema = new class implements \pulledbits\ActiveRecord\Schema {
 
@@ -35,6 +37,7 @@ return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdent
                 return 0;
             }
 
+
             public function create(string $tableIdentifier, array $values): int
             {
                 return 0;
@@ -47,15 +50,33 @@ return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdent
 
             public function initializeRecord(string $entityTypeIdentifier, array $values): Record
             {
-                // TODO: Implement initializeRecord() method.
+                return new Entity($this, $entityTypeIdentifier, []);
             }
 
             public function executeProcedure(string $procedureIdentifier, array $arguments): void
             {
-                // TODO: Implement executeProcedure() method.
+
             }
         };
-        $object = new RecordFactory(sys_get_temp_dir());
+
+        $sourceSchema = new class implements Source\Schema {
+
+            public function describeTable(Table $sourceTable, string $tableIdentifier): array
+            {
+                return [
+                    'identifier' => [],
+                    'requiredAttributeIdentifiers' => [],
+                    'references' => []
+                ];
+            }
+
+            public function describeTables(Table $sourceTable)
+            {
+                return [];
+            }
+        };
+
+        $object = new RecordFactory($sourceSchema, sys_get_temp_dir());
         $record = $object->makeRecord($schema, 'activiteit');
         $record->contains(['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
