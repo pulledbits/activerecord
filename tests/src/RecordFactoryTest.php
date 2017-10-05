@@ -20,6 +20,13 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 //                    return $record;
 //};');
 
+        $directory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'ActiveRecordTest';
+
+        if (is_dir($directory)) {
+            unlink($directory . DIRECTORY_SEPARATOR . 'activiteit.php');
+            rmdir($directory);
+        }
+
         $schema = new class implements \pulledbits\ActiveRecord\Schema {
 
             public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
@@ -76,7 +83,7 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $object = new RecordFactory($sourceSchema, sys_get_temp_dir());
+        $object = new RecordFactory($sourceSchema, $directory);
         $record = $object->makeRecord($schema, 'activiteit');
         $record->contains(['status' => 'OK']);
         $this->assertEquals('OK', $record->status);

@@ -10,6 +10,9 @@ final class RecordFactory {
     {
         $this->sourceSchema = $sourceSchema;
         $this->path = $path;
+        if (is_dir($this->path) === false) {
+            mkdir($this->path);
+        }
     }
 
     public function makeRecord(Schema $schema, string $entityTypeIdentifier) : Entity
