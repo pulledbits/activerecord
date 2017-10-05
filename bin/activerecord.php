@@ -30,7 +30,7 @@ $sourceSchema = \pulledbits\ActiveRecord\SQL\Source\Schema::fromDatabaseURL($dbu
  * @var $generatorGeneratorFactory \pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory
  */
 $generatorGeneratorFactory = $applicationBootstrap->generatorGeneratorFactory();
-foreach ($sourceSchema->describe(new \pulledbits\ActiveRecord\SQL\Source\Table()) as $entityTypeIdentifier => $recordClassDescription) {
+foreach ($sourceSchema->describeTables(new \pulledbits\ActiveRecord\SQL\Source\Table()) as $entityTypeIdentifier => $recordClassDescription) {
     $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
     $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
     file_put_contents($targetFile, $generator->generate());

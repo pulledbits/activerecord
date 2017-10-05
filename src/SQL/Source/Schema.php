@@ -23,7 +23,7 @@ final class Schema
         return new self($conn->getSchemaManager());
     }
 
-    public function describe(Table $sourceTable)
+    public function describeTables(Table $sourceTable)
     {
         $tables = [];
         foreach ($this->schemaManager->listTables() as $table) {
