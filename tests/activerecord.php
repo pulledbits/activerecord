@@ -7,7 +7,7 @@ assert_options(ASSERT_ACTIVE, true);
 assert_options(ASSERT_WARNING, true);
 assert_options(ASSERT_BAIL, true);
 
-$targetDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'gen';
+$targetDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activerecord';
 
 if (file_exists($targetDirectory) === false) {
     mkdir($targetDirectory);
