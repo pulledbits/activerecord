@@ -14,18 +14,7 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testMakeRecord_When_DefaultState_Expect_Record()
     {
-//        file_put_contents(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php', '<?php
-//return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {
-//                    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier, []);
-//                    return $record;
-//};');
-
         $directory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'ActiveRecordTest';
-
-        if (is_dir($directory)) {
-            unlink($directory . DIRECTORY_SEPARATOR . 'activiteit.php');
-            rmdir($directory);
-        }
 
         $schema = new class implements \pulledbits\ActiveRecord\Schema {
 
@@ -87,6 +76,86 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
         $record = $object->makeRecord($schema, 'activiteit');
         $record->contains(['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
+
+
+        unlink($directory . DIRECTORY_SEPARATOR . 'activiteit.php');
+        rmdir($directory);
     }
 
+    public function testMakeRecord_When_View_Expect_RecordWrappedAroundOtherEntity()
+    {
+        $directory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'ActiveRecordViewTest';
+
+        $schema = new class implements \pulledbits\ActiveRecord\Schema {
+
+            public function read(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): array
+            {
+                return [];
+            }
+
+            public function readFirst(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): Record
+            {
+                return $this->read($tableIdentifier, $columnIdentifiers,$whereParameters)[0];
+            }
+
+            public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
+            {
+                return 0;
+            }
+
+
+            public function create(string $tableIdentifier, array $values): int
+            {
+                return 0;
+            }
+
+            public function delete(string $tableIdentifier, array $whereParameters): int
+            {
+                return 0;
+            }
+
+            public function initializeRecord(string $entityTypeIdentifier, array $values): Record
+            {
+                return new Entity($this, $entityTypeIdentifier, []);
+            }
+
+            public function executeProcedure(string $procedureIdentifier, array $arguments): void
+            {
+
+            }
+        };
+
+        $sourceSchema = new class implements Source\Schema {
+
+            public function describeTable(Table $sourceTable, string $tableIdentifier): array
+            {
+
+                if ($tableIdentifier === 'activiteit_vandaag') {
+                    return [
+                        'entityTypeIdentifier' => 'activiteit'
+                    ];
+                } else {
+                    return [
+                        'identifier' => [],
+                        'requiredAttributeIdentifiers' => [],
+                        'references' => []
+                    ];
+                }
+            }
+
+            public function describeTables(Table $sourceTable)
+            {
+                return [];
+            }
+        };
+
+        $object = new RecordFactory($sourceSchema, $directory);
+        $record = $object->makeRecord($schema, 'activiteit_vandaag');
+        $record->contains(['status' => 'OK']);
+        $this->assertEquals('OK', $record->status);
+
+        unlink($directory . DIRECTORY_SEPARATOR . 'activiteit_vandaag.php');
+        unlink($directory . DIRECTORY_SEPARATOR . 'activiteit.php');
+        rmdir($directory);
+    }
 }

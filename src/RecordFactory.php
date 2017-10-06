@@ -15,7 +15,7 @@ final class RecordFactory {
         }
     }
 
-    public function makeRecord(Schema $schema, string $entityTypeIdentifier) : Entity
+    private function generateConfigurator(string $entityTypeIdentifier)
     {
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
@@ -24,8 +24,13 @@ final class RecordFactory {
             $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
             file_put_contents($configuratorPath, $generator->generate());
         }
+        return require $configuratorPath;
+    }
 
-        $configurator = require $configuratorPath;
+    public function makeRecord(Schema $schema, string $entityTypeIdentifier) : Entity
+    {
+
+        $configurator = $this->generateConfigurator($entityTypeIdentifier);
         return $configurator($schema, $entityTypeIdentifier);
     }
 }
