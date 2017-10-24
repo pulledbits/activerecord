@@ -10,9 +10,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private $connection;
 
-    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
+    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, PDO $connection) {
         $this->recordFactory = $recordFactory;
-        $this->connection = new PDO($connection);
+        $this->connection = $connection;
     }
 
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement

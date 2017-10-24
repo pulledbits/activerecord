@@ -25,7 +25,7 @@ $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $u
 
 $recordConfigurator = new \pulledbits\ActiveRecord\RecordFactory(\pulledbits\ActiveRecord\Source\SQL\Schema::fromPDO($connection), $targetDirectory);
 
-$schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, $connection);
+$schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, new \pulledbits\ActiveRecord\SQL\PDO($connection));
 
 $starttijd = date('Y-m-d ') . '23:00:00';
 
