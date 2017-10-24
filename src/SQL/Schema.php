@@ -53,12 +53,10 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private function makeWhereCondition(array $whereParameters) {
         $preparedParameters = $this->prepareParameters($whereParameters);
-        if (count($preparedParameters) === 0) {
-            return [self::PP_SQL => '', self::PP_PARAMS => []];
-        }
+        $where = new Where($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
         return [
-            self::PP_SQL => " WHERE " . join(" AND ", $this->extractParametersSQL($preparedParameters)),
-            self::PP_PARAMS => $this->extractParameters($preparedParameters)
+            self::PP_SQL => $where->__toString(),
+            self::PP_PARAMS => $where->parameters()
         ];
     }
 

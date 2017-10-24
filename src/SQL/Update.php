@@ -16,7 +16,7 @@ class Update
     }
 
 
-    public function __toString()
+    public function __toString() : string
     {
         return "UPDATE " . $this->tableIdentifier . " SET " . join(", ", $this->values);
     }
