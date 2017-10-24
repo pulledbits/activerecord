@@ -86,8 +86,8 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $preparedParameters = $this->prepareParameters($values);
         $query = new Update($tableIdentifier, $this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
         $preparedWhereParameters = $this->prepareParameters($conditions);
-        $where = new Where($this->extractParametersSQL($preparedWhereParameters), $this->extractParameters($preparedWhereParameters));
-        return $this->connection->executeChange($query . $where, array_merge($query->parameters(), $where->parameters()));
+        $query->where($this->extractParametersSQL($preparedWhereParameters), $this->extractParameters($preparedWhereParameters));
+        return $this->connection->executeChange($query, $query->parameters());
     }
 
     public function create(string $tableIdentifier, array $values) : int {

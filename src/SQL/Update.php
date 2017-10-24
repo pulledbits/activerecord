@@ -8,24 +8,29 @@ class Update
 {
     private $tableIdentifier;
     private $values;
-    private $parameters;
+    private $queryParameters;
 
-    public function __construct(string $tableIdentifier, array $values, array $parameters)
+    public function __construct(string $tableIdentifier, array $values, array $queryParameters)
     {
         $this->tableIdentifier = $tableIdentifier;
         $this->values = $values;
-        $this->parameters = $parameters;
+        $this->queryParameters = $queryParameters;
     }
 
 
     public function __toString() : string
     {
-        return "UPDATE " . $this->tableIdentifier . " SET " . join(", ", $this->values);
+        return "UPDATE " . $this->tableIdentifier . " SET " . join(", ", $this->values) . $this->where;
     }
 
     public function parameters()
     {
-        return $this->parameters;
+        return array_merge($this->queryParameters, $this->where->parameters());
+    }
+
+    public function where(array $sqlConditions, array $queryParameters)
+    {
+        $this->where = new Where($sqlConditions, $queryParameters);
     }
 
 }
