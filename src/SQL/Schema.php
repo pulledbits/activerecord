@@ -102,8 +102,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = $this->prepareParameters($values);
-        $statement = $this->connection->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
-        return $statement->rowCount();
+        return $this->connection->executeChange("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
