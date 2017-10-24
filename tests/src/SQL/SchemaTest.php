@@ -35,7 +35,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         };
         $recordConfiguration = new \pulledbits\ActiveRecord\RecordFactory($sourceSchema, sys_get_temp_dir());
-        $this->object = new Schema($recordConfiguration, new PDO(\pulledbits\ActiveRecord\Test\createMockPDOMultiple([
+        $this->object = new Schema($recordConfiguration, new Connection(\pulledbits\ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'BlaBla'

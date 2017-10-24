@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
-class PDO
+class Connection
 {
     private $connection;
 

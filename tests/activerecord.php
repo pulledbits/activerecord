@@ -22,7 +22,7 @@ passthru($command);
 require __DIR__ . '/bootstrap.php';
 $recordConfigurator = new \pulledbits\ActiveRecord\RecordFactory(\pulledbits\ActiveRecord\Source\SQL\Schema::fromDatabaseURL($_SERVER['argv'][1]), $targetDirectory);
 
-$schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, \pulledbits\ActiveRecord\SQL\PDO::fromDatabaseURL($_SERVER['argv'][1]));
+$schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1]));
 
 $starttijd = date('Y-m-d ') . '23:00:00';
 

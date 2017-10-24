@@ -10,7 +10,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private $connection;
 
-    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, PDO $connection) {
+    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, Connection $connection) {
         $this->recordFactory = $recordFactory;
         $this->connection = $connection;
     }
