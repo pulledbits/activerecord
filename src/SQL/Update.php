@@ -9,10 +9,10 @@ class Update
     private $tableIdentifier;
     private $values;
 
-    public function __construct(string $tableIdentifier, array $values, array $queryParameters)
+    public function __construct(string $tableIdentifier, Update\Values $values)
     {
         $this->tableIdentifier = $tableIdentifier;
-        $this->values = new Update\Values($values, $queryParameters);
+        $this->values = $values;
     }
 
 
