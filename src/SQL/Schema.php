@@ -17,7 +17,8 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement
     {
-        $where = $this->makeWhereCondition($this->prepareParameters($whereParameters));
+        $preparedParameters = $this->prepareParameters($whereParameters);
+        $where = new Where($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
         return $this->connection->execute($query . $where, $where->parameters());
     }
 
@@ -49,10 +50,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private function extractParametersSQL(array $preparedParameters) {
         return array_map(function($preparedParameter) { return $preparedParameter[self::PP_COLUMN] . " = " . $preparedParameter[self::PP_PARAM]; }, $preparedParameters);
-    }
-
-    private function makeWhereCondition(array $preparedParameters) : Where {
-        return new Where($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
     }
 
     private function makeRecord($entityTypeIdentifier, array $values) {
@@ -88,7 +85,8 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $preparedParameters = $this->prepareParameters($values);
         $query = new Update($tableIdentifier, $this->extractParametersSQL($preparedParameters));
-        $where = $this->makeWhereCondition($this->prepareParameters($conditions));
+        $preparedWhereParameters = $this->prepareParameters($conditions);
+        $where = new Where($this->extractParametersSQL($preparedWhereParameters), $this->extractParameters($preparedWhereParameters));
         return $this->connection->executeChange($query . $where, array_merge($this->extractParameters($preparedParameters), $where->parameters()));
     }
 
