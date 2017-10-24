@@ -12,27 +12,13 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, \PDO $connection) {
         $this->recordFactory = $recordFactory;
-        $this->connection = $connection;
-    }
-
-    private function execute(string $query, array $namedParameters) : \PDOStatement
-    {
-        $statement = $this->connection->prepare($query);
-        foreach ($namedParameters as $namedParameter => $value) {
-            $statement->bindValue($namedParameter, $value, \PDO::PARAM_STR);
-        }
-
-        if ($statement->execute() === false) {
-            trigger_error("Failed executing query `" . $query . "` (" . json_encode($namedParameters) . "): " . $statement->errorInfo()[2], E_USER_ERROR);
-        }
-
-        return $statement;
+        $this->connection = new PDO($connection);
     }
 
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement
     {
         $where = $this->makeWhereCondition($whereParameters);
-        return $this->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
+        return $this->connection->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
     }
 
     const PP_COLUMN = 'column';
@@ -110,13 +96,13 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $preparedParameters = $this->prepareParameters($values);
         $query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters));
         $where = $this->makeWhereCondition($conditions);
-        $statement = $this->execute($query . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
+        $statement = $this->connection->execute($query . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
         return $statement->rowCount();
     }
 
     public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = $this->prepareParameters($values);
-        $statement = $this->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
+        $statement = $this->connection->execute("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
         return $statement->rowCount();
     }
 
@@ -128,6 +114,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
         $preparedParameters = $this->prepareParameters($arguments);
-        $this->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($this->extractParameters($preparedParameters))) . ')', $this->extractParameters($preparedParameters));
+        $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($this->extractParameters($preparedParameters))) . ')', $this->extractParameters($preparedParameters));
     }
 }
