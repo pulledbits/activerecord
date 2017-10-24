@@ -18,7 +18,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement
     {
         $where = $this->makeWhereCondition($whereParameters);
-        return $this->connection->execute($query . $where[self::PP_SQL], $where[self::PP_PARAMS]);
+        return $this->connection->execute($query . $where, $where->parameters());
     }
 
     const PP_COLUMN = 'column';
@@ -51,13 +51,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return array_map(function($preparedParameter) { return $preparedParameter[self::PP_COLUMN] . " = " . $preparedParameter[self::PP_PARAM]; }, $preparedParameters);
     }
 
-    private function makeWhereCondition(array $whereParameters) {
+    private function makeWhereCondition(array $whereParameters) : Where {
         $preparedParameters = $this->prepareParameters($whereParameters);
-        $where = new Where($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
-        return [
-            self::PP_SQL => $where->__toString(),
-            self::PP_PARAMS => $where->parameters()
-        ];
+        return new Where($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
     }
 
     private function makeRecord($entityTypeIdentifier, array $values) {
@@ -94,7 +90,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $preparedParameters = $this->prepareParameters($values);
         $query = new Update($tableIdentifier, $this->extractParametersSQL($preparedParameters));
         $where = $this->makeWhereCondition($conditions);
-        return $this->connection->executeChange($query . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
+        return $this->connection->executeChange($query . $where, array_merge($this->extractParameters($preparedParameters), $where->parameters()));
     }
 
     public function create(string $tableIdentifier, array $values) : int {
