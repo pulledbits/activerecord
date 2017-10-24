@@ -94,7 +94,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $preparedParameters = $this->prepareParameters($values);
-        $query = "UPDATE " . $tableIdentifier . " SET " . join(", ", $this->extractParametersSQL($preparedParameters));
+        $query = new Update($tableIdentifier, $this->extractParametersSQL($preparedParameters));
         $where = $this->makeWhereCondition($conditions);
         return $this->connection->executeChange($query . $where[self::PP_SQL], array_merge($this->extractParameters($preparedParameters), $where[self::PP_PARAMS]));
     }
