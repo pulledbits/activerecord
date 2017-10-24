@@ -13,6 +13,13 @@ class PDO
         $this->connection = $connection;
     }
 
+    static function fromDatabaseURL(string $databaseURL) : self
+    {
+        $url = parse_url($databaseURL);
+        $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+        return new self($connection);
+    }
+
     public function execute(string $query, array $namedParameters) : \PDOStatement
     {
         $statement = $this->connection->prepare($query);
