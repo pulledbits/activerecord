@@ -47,8 +47,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     private function prepareParameters(array $parameters) : PreparedParameters {
-        $preparedParameters = new PreparedParameters($parameters);
-        return $preparedParameters;
+        return new PreparedParameters($parameters);
     }
 
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement
@@ -80,6 +79,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
         $preparedParameters = $this->prepareParameters($arguments);
-        $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($preparedParameters->extractParameters())) . ')', $preparedParameters->extractParameters());
+        $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", $preparedParameters->extractParameterizedValues()) . ')', $preparedParameters->extractParameters());
     }
 }
