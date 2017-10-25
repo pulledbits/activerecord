@@ -23,12 +23,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
-        if (count($attributeIdentifiers) === 0) {
-            $attributeIdentifiers[] = '*';
-        }
-
-        $where = new Where(new PreparedParameters($conditions));
-        $statement = $this->connection->execute("SELECT " . join(', ', $attributeIdentifiers) . " FROM " . $entityTypeIdentifier . $where, $where->parameters());
+        $query = new Select($entityTypeIdentifier, $attributeIdentifiers);
+        $query->where(new PreparedParameters($conditions));
+        $statement = $query->execute($this->connection);
 
         return array_map(function(array $values) use ($entityTypeIdentifier) {
             return $this->makeRecord($entityTypeIdentifier, $values);
