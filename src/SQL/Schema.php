@@ -32,7 +32,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
         $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
-        $query->where(new PreparedParameters($conditions));
+        $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute($this->connection);
 
         return $result->map(function(array $values) use ($entityTypeIdentifier) {
@@ -54,21 +54,19 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
-        $values = new Query\Update\Values(new PreparedParameters($values));
         $query = $this->queryFactory->makeUpdate($tableIdentifier, $values);
-        $query->where(new PreparedParameters($conditions));
+        $query->where($this->queryFactory->makeWhere($conditions));
         return count($query->execute($this->connection));
     }
 
     public function create(string $tableIdentifier, array $values) : int {
-        $preparedParameters = new PreparedParameters($values);
-        $query = $this->queryFactory->makeInsert($tableIdentifier, $preparedParameters);
+        $query = $this->queryFactory->makeInsert($tableIdentifier, $values);
         return count($query->execute($this->connection));
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
         $query = $this->queryFactory->makeDelete($tableIdentifier);
-        $query->where(new PreparedParameters($conditions));
+        $query->where($this->queryFactory->makeWhere($conditions));
         return count($query->execute($this->connection));
     }
 

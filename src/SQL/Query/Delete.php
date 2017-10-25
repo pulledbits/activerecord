@@ -20,9 +20,9 @@ class Delete
         $this->tableIdentifier = $tableIdentifier;
     }
 
-    public function where(PreparedParameters $conditions) : void
+    public function where(Where $where)
     {
-        $this->where = new Where($conditions);
+        $this->where = $where;
     }
 
     public function execute(Connection $connection) : Result

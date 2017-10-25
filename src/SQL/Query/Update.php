@@ -23,9 +23,9 @@ class Update
         $this->values = $values;
     }
 
-    public function where(PreparedParameters $preparedParameters) : void
+    public function where(Where $where)
     {
-        $this->where = new Where($preparedParameters);
+        $this->where = $where;
     }
 
     public function execute(Connection $connection) : Result
