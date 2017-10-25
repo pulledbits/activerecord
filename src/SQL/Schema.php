@@ -15,7 +15,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $this->connection = $connection;
     }
 
-
     private function makeRecord($entityTypeIdentifier, array $values) {
         $record = $this->recordFactory->makeRecord($this, $entityTypeIdentifier);
         $record->contains($values);
