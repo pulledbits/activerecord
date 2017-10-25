@@ -62,8 +62,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
-        $where = new Where(new PreparedParameters($conditions));
-        return $this->connection->executeChange("DELETE FROM " . $tableIdentifier . $where, $where->parameters());
+        $query = new Delete($tableIdentifier);
+        $query->where(new PreparedParameters($conditions));
+        return $query->execute($this->connection);
     }
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
