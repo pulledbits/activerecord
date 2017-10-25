@@ -57,7 +57,8 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = new PreparedParameters($values);
-        return $this->connection->executeChange("INSERT INTO " . $tableIdentifier . " (" . join(', ', $preparedParameters->extractColumns()) . ") VALUES (" . join(', ', $preparedParameters->extractParameterizedValues()) . ")", $preparedParameters->extractParameters());
+        $query = new Insert($tableIdentifier, $preparedParameters);
+        return $query->execute($this->connection);
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
