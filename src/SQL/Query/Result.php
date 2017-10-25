@@ -1,7 +1,7 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL\Query;
 
 
 class Result implements \Countable

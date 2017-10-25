@@ -3,6 +3,12 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\SQL\Query\Delete;
+use pulledbits\ActiveRecord\SQL\Query\Insert;
+use pulledbits\ActiveRecord\SQL\Query\PreparedParameters;
+use pulledbits\ActiveRecord\SQL\Query\Procedure;
+use pulledbits\ActiveRecord\SQL\Query\Select;
+use pulledbits\ActiveRecord\SQL\Query\Update;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
@@ -45,7 +51,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
-        $values = new Update\Values(new PreparedParameters($values));
+        $values = new Query\Update\Values(new PreparedParameters($values));
         $query = new Update($tableIdentifier, $values);
         $query->where(new PreparedParameters($conditions));
         return count($query->execute($this->connection));

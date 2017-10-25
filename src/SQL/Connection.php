@@ -3,6 +3,7 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use pulledbits\ActiveRecord\SQL\Query\Result;
 
 class Connection
 {

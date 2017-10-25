@@ -1,8 +1,10 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL\Query;
 
+
+use pulledbits\ActiveRecord\SQL\Connection;
 
 class Delete
 {
