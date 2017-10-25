@@ -51,9 +51,8 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $values = new Update\Values(new PreparedParameters($values));
         $query = new Update($tableIdentifier, $values);
-
         $query->where(new PreparedParameters($conditions));
-        return $this->connection->executeChange($query, $query->parameters());
+        return $query->execute($this->connection);
     }
 
     public function create(string $tableIdentifier, array $values) : int {

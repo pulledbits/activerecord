@@ -26,18 +26,18 @@ class Update
         return "UPDATE " . $this->tableIdentifier . $this->values . $this->where;
     }
 
-    public function parameters()
+    public function where(PreparedParameters $preparedParameters)
+    {
+        $this->where = new Where($preparedParameters);
+    }
+
+    public function execute(Connection $connection)
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {
             $parameters = array_merge($parameters, $this->where->parameters());
         }
-        return $parameters;
-    }
-
-    public function where(PreparedParameters $preparedParameters)
-    {
-        $this->where = new Where($preparedParameters);
+        return $connection->executeChange($this, $parameters);
     }
 
 }
