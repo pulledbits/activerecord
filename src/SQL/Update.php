@@ -20,12 +20,6 @@ class Update
         $this->values = $values;
     }
 
-
-    public function __toString() : string
-    {
-        return "UPDATE " . $this->tableIdentifier . $this->values . $this->where;
-    }
-
     public function where(PreparedParameters $preparedParameters)
     {
         $this->where = new Where($preparedParameters);
@@ -37,7 +31,7 @@ class Update
         if ($this->where !== null) {
             $parameters = array_merge($parameters, $this->where->parameters());
         }
-        return $connection->executeChange($this, $parameters);
+        return $connection->executeChange("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters);
     }
 
 }
