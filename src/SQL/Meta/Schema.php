@@ -13,16 +13,6 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         $this->schemaManager = $schemaManager;
     }
 
-    static function fromDatabaseURL(string $databaseURL) : Schema
-    {
-        $config = new \Doctrine\DBAL\Configuration();
-        $connectionParams = [
-            'url' => $databaseURL
-        ];
-        $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        return new self($conn->getSchemaManager());
-    }
-
     static function fromPDO(\PDO $pdo) : Schema
     {
         $config = new \Doctrine\DBAL\Configuration();
