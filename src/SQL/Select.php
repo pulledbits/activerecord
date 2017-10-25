@@ -28,8 +28,8 @@ class Select
         $this->where = new Where($conditions);
     }
 
-    public function execute(Connection $connection) : \PDOStatement
+    public function execute(Connection $connection) : Result
     {
-        return $connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
+        return new Result($connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters()));
     }
 }

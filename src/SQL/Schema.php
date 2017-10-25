@@ -25,7 +25,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
         $query = new Select($entityTypeIdentifier, $attributeIdentifiers);
         $query->where(new PreparedParameters($conditions));
-        $result = new Result($query->execute($this->connection));
+        $result = $query->execute($this->connection);
 
         return $result->map(function(array $values) use ($entityTypeIdentifier) {
             return $this->makeRecord($entityTypeIdentifier, $values);
