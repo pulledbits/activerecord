@@ -46,28 +46,22 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return $records[0];
     }
 
-    private function prepareParameters(array $parameters) : PreparedParameters {
-        return new PreparedParameters($parameters);
-    }
-
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement
     {
-        $preparedParameters = $this->prepareParameters($whereParameters);
-        $where = new Where($preparedParameters);
+        $where = new Where(new PreparedParameters($whereParameters));
         return $this->connection->execute($query . $where, $where->parameters());
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
-        $preparedParameters = $this->prepareParameters($values);
-        $values = new Update\Values($preparedParameters);
+        $values = new Update\Values(new PreparedParameters($values));
         $query = new Update($tableIdentifier, $values);
-        $preparedWhereParameters = $this->prepareParameters($conditions);
-        $query->where($preparedWhereParameters);
+
+        $query->where(new PreparedParameters($conditions));
         return $this->connection->executeChange($query, $query->parameters());
     }
 
     public function create(string $tableIdentifier, array $values) : int {
-        $preparedParameters = $this->prepareParameters($values);
+        $preparedParameters = new PreparedParameters($values);
         return $this->connection->executeChange("INSERT INTO " . $tableIdentifier . " (" . join(', ', $preparedParameters->extractColumns()) . ") VALUES (" . join(', ', $preparedParameters->extractParameterizedValues()) . ")", $preparedParameters->extractParameters());
     }
 
@@ -78,7 +72,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
-        $preparedParameters = $this->prepareParameters($arguments);
+        $preparedParameters = new PreparedParameters($arguments);
         $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", $preparedParameters->extractParameterizedValues()) . ')', $preparedParameters->extractParameters());
     }
 }
