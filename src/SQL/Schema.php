@@ -49,19 +49,19 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $values = new Update\Values(new PreparedParameters($values));
         $query = new Update($tableIdentifier, $values);
         $query->where(new PreparedParameters($conditions));
-        return $query->execute($this->connection);
+        return count($query->execute($this->connection));
     }
 
     public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = new PreparedParameters($values);
         $query = new Insert($tableIdentifier, $preparedParameters);
-        return $query->execute($this->connection);
+        return count($query->execute($this->connection));
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
         $query = new Delete($tableIdentifier);
         $query->where(new PreparedParameters($conditions));
-        return $query->execute($this->connection);
+        return count($query->execute($this->connection));
     }
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void

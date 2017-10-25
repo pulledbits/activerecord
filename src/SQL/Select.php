@@ -30,6 +30,6 @@ class Select
 
     public function execute(Connection $connection) : Result
     {
-        return new Result($connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters()));
+        return $connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
     }
 }

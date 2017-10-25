@@ -16,8 +16,8 @@ class Insert
         $this->values = $values;
     }
 
-    public function execute(Connection $connection) : int
+    public function execute(Connection $connection) : Result
     {
-        return $connection->executeChange("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters());
+        return $connection->execute("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters());
     }
 }

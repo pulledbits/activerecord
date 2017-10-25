@@ -13,7 +13,7 @@ class Connection
         $this->connection = $connection;
     }
 
-    public function execute(string $query, array $namedParameters) : \PDOStatement
+    public function execute(string $query, array $namedParameters) : Result
     {
         $pdostatement = $this->connection->prepare($query);
         $statement = new Statement($pdostatement);
@@ -23,11 +23,6 @@ class Connection
             trigger_error("Failed executing query `" . $query . "` (" . json_encode($pdostatement->debugDumpParams()) . "): " . $pdostatement->errorInfo()[2], E_USER_ERROR);
         }
 
-        return $pdostatement;
-    }
-
-    public function executeChange(string $query, array $namedParameters) : int {
-        $statement = $this->execute($query, $namedParameters);
-        return $statement->rowCount();
+        return new Result($pdostatement);
     }
 }

@@ -23,8 +23,8 @@ class Delete
         $this->where = new Where($conditions);
     }
 
-    public function execute(Connection $connection)
+    public function execute(Connection $connection) : Result
     {
-        return $connection->executeChange("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
+        return $connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
     }
 }

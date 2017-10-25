@@ -25,13 +25,13 @@ class Update
         $this->where = new Where($preparedParameters);
     }
 
-    public function execute(Connection $connection) : int
+    public function execute(Connection $connection) : Result
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {
             $parameters = array_merge($parameters, $this->where->parameters());
         }
-        return $connection->executeChange("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters);
+        return $connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters);
     }
 
 }

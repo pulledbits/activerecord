@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
-class Result
+class Result implements \Countable
 {
 
     private $statement;
@@ -17,5 +17,10 @@ class Result
     public function map(callable $callback)
     {
         return array_map($callback, $this->statement->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
+    public function count()
+    {
+        return $this->statement->rowCount();
     }
 }
