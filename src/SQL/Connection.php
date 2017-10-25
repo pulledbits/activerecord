@@ -24,9 +24,10 @@ class Connection
     {
         return new Schema($recordFactory, new QueryFactory($this));
     }
-    public function sourceSchema()
+    public function recordConfigurator($targetDirectory)
     {
-        return \pulledbits\ActiveRecord\Source\SQL\Schema::fromPDO($this->connection);
+        $sourceSchema = \pulledbits\ActiveRecord\Source\SQL\Schema::fromPDO($this->connection);
+        return $sourceSchema->recordConfigurator($targetDirectory);
     }
 
     public function execute(string $query, array $namedParameters) : Result
@@ -41,5 +42,6 @@ class Connection
 
         return new Result($pdostatement);
     }
+
 
 }
