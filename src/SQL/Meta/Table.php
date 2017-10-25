@@ -1,5 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord\Source\SQL;
+namespace pulledbits\ActiveRecord\SQL\Meta;
 
 final class Table implements \pulledbits\ActiveRecord\Source\Table
 {

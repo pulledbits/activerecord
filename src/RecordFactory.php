@@ -20,7 +20,7 @@ final class RecordFactory {
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
             $generatorGeneratorFactory = new Source\GeneratorGeneratorFactory();
-            $recordClassDescription = $this->sourceSchema->describeTable(new Source\SQL\Table(), $entityTypeIdentifier);
+            $recordClassDescription = $this->sourceSchema->describeTable(new SQL\Meta\Table(), $entityTypeIdentifier);
             $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
             file_put_contents($configuratorPath, $generator->generate());
         }

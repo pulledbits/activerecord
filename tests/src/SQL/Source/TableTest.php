@@ -2,7 +2,7 @@
 namespace pulledbits\ActiveRecord\SQL\Source;
 
 use pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory;
-use pulledbits\ActiveRecord\Source\SQL\Table;
+use pulledbits\ActiveRecord\SQL\Meta\Table;
 
 class TableTest extends \PHPUnit_Framework_TestCase
 {

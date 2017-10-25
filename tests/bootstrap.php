@@ -8,7 +8,7 @@ namespace pulledbits\ActiveRecord\Test {
 
     function createMockSchema(array $tables)
     {
-        return new \pulledbits\ActiveRecord\Source\SQL\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
+        return new \pulledbits\ActiveRecord\SQL\Meta\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
         {
 
             private $tables;
