@@ -26,7 +26,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         if (count($attributeIdentifiers) === 0) {
             $attributeIdentifiers[] = '*';
         }
-        $statement = $this->executeWhere("SELECT " . join(', ', $attributeIdentifiers) . " FROM " . $entityTypeIdentifier, $conditions);
+
+        $where = new Where(new PreparedParameters($conditions));
+        $statement = $this->connection->execute("SELECT " . join(', ', $attributeIdentifiers) . " FROM " . $entityTypeIdentifier . $where, $where->parameters());
 
         return array_map(function(array $values) use ($entityTypeIdentifier) {
             return $this->makeRecord($entityTypeIdentifier, $values);
@@ -46,12 +48,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return $records[0];
     }
 
-    private function executeWhere(string $query, array $whereParameters) : \PDOStatement
-    {
-        $where = new Where(new PreparedParameters($whereParameters));
-        return $this->connection->execute($query . $where, $where->parameters());
-    }
-
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $values = new Update\Values(new PreparedParameters($values));
         $query = new Update($tableIdentifier, $values);
@@ -66,8 +62,8 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
-        $statement = $this->executeWhere("DELETE FROM " . $tableIdentifier , $conditions);
-        return $statement->rowCount();
+        $where = new Where(new PreparedParameters($conditions));
+        return $this->connection->executeChange("DELETE FROM " . $tableIdentifier . $where, $where->parameters());
     }
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
