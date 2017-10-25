@@ -33,6 +33,11 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         return new self($conn->getSchemaManager());
     }
 
+    public function recordConfigurator(string $targetDirectory)
+    {
+        return new \pulledbits\ActiveRecord\RecordFactory($this, $targetDirectory);
+    }
+
     public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier) : array
     {
         $table = $this->describeTables($sourceTable);

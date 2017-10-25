@@ -20,8 +20,9 @@ passthru($command);
 
 // test activiteit
 require __DIR__ . '/bootstrap.php';
-$recordConfigurator = new \pulledbits\ActiveRecord\RecordFactory(\pulledbits\ActiveRecord\Source\SQL\Schema::fromDatabaseURL($_SERVER['argv'][1]), $targetDirectory);
 $connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1]);
+$sourceSchema = $connection->sourceSchema();
+$recordConfigurator = $sourceSchema->recordConfigurator($targetDirectory);
 $schema = $connection->schema($recordConfigurator);
 
 $starttijd = date('Y-m-d ') . '23:00:00';
