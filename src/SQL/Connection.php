@@ -14,6 +14,17 @@ class Connection
         $this->connection = $connection;
     }
 
+    static function fromDatabaseURL(string $url) : self
+    {
+        $parsedUrl = parse_url($url);
+        return new \pulledbits\ActiveRecord\SQL\Connection(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+    }
+
+    public function schema(\pulledbits\ActiveRecord\RecordFactory $recordFactory)
+    {
+        return new Schema($recordFactory, new QueryFactory($this));
+    }
+
     public function execute(string $query, array $namedParameters) : Result
     {
         $pdostatement = $this->connection->prepare($query);
