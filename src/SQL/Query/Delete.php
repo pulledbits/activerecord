@@ -8,6 +8,7 @@ use pulledbits\ActiveRecord\SQL\Connection;
 
 class Delete
 {
+    private $connection;
     private $tableIdentifier;
 
     /**
@@ -15,8 +16,9 @@ class Delete
      */
     private $where;
 
-    public function __construct(string $tableIdentifier)
+    public function __construct(Connection $connection, string $tableIdentifier)
     {
+        $this->connection = $connection;
         $this->tableIdentifier = $tableIdentifier;
     }
 
@@ -25,8 +27,8 @@ class Delete
         $this->where = $where;
     }
 
-    public function execute(Connection $connection) : Result
+    public function execute() : Result
     {
-        return $connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
+        return $this->connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
     }
 }

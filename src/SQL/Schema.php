@@ -14,8 +14,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, Connection $connection) {
         $this->recordFactory = $recordFactory;
-        $this->connection = $connection;
-        $this->queryFactory = new QueryFactory();
+        $this->queryFactory = new QueryFactory($this->connection);
     }
 
     private function makeRecord($entityTypeIdentifier, array $values) {
@@ -27,7 +26,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
         $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
-        $result = $query->execute($this->connection);
+        $result = $query->execute();
 
         return $result->map(function(array $values) use ($entityTypeIdentifier) {
             return $this->makeRecord($entityTypeIdentifier, $values);
@@ -50,23 +49,23 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $query = $this->queryFactory->makeUpdate($tableIdentifier, $values);
         $query->where($this->queryFactory->makeWhere($conditions));
-        return count($query->execute($this->connection));
+        return count($query->execute());
     }
 
     public function create(string $tableIdentifier, array $values) : int {
         $query = $this->queryFactory->makeInsert($tableIdentifier, $values);
-        return count($query->execute($this->connection));
+        return count($query->execute());
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
         $query = $this->queryFactory->makeDelete($tableIdentifier);
         $query->where($this->queryFactory->makeWhere($conditions));
-        return count($query->execute($this->connection));
+        return count($query->execute());
     }
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
         $query = $this->queryFactory->makeProcedure($procedureIdentifier, $arguments);
-        $query->execute($this->connection);
+        $query->execute();
     }
 }

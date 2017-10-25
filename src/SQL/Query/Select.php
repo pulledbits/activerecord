@@ -8,6 +8,7 @@ use pulledbits\ActiveRecord\SQL\Connection;
 
 class Select
 {
+    private $connection;
     private $entityTypeIdentifier;
     private $attributeIdentifiers;
 
@@ -16,11 +17,12 @@ class Select
      */
     private $where;
 
-    public function __construct($entityTypeIdentifier, array $attributeIdentifiers)
+    public function __construct(Connection $connection, $entityTypeIdentifier, array $attributeIdentifiers)
     {
         if (count($attributeIdentifiers) === 0) {
             $attributeIdentifiers[] = '*';
         }
+        $this->connection = $connection;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->attributeIdentifiers = $attributeIdentifiers;
     }
@@ -30,8 +32,8 @@ class Select
         $this->where = $where;
     }
 
-    public function execute(Connection $connection) : Result
+    public function execute() : Result
     {
-        return $connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
+        return $this->connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
     }
 }
