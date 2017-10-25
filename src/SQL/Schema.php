@@ -70,6 +70,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
         $preparedParameters = new PreparedParameters($arguments);
-        $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", $preparedParameters->extractParameterizedValues()) . ')', $preparedParameters->extractParameters());
+        $query = new Procedure($procedureIdentifier, $preparedParameters);
+        $query->execute($this->connection);
     }
 }
