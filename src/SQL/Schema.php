@@ -16,9 +16,12 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private $connection;
 
+    private $queryFactory;
+
     public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, Connection $connection) {
         $this->recordFactory = $recordFactory;
         $this->connection = $connection;
+        $this->queryFactory = new QueryFactory();
     }
 
     private function makeRecord($entityTypeIdentifier, array $values) {
@@ -28,7 +31,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
-        $query = new Select($entityTypeIdentifier, $attributeIdentifiers);
+        $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
         $query->where(new PreparedParameters($conditions));
         $result = $query->execute($this->connection);
 
@@ -52,19 +55,19 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $values = new Query\Update\Values(new PreparedParameters($values));
-        $query = new Update($tableIdentifier, $values);
+        $query = $this->queryFactory->makeUpdate($tableIdentifier, $values);
         $query->where(new PreparedParameters($conditions));
         return count($query->execute($this->connection));
     }
 
     public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = new PreparedParameters($values);
-        $query = new Insert($tableIdentifier, $preparedParameters);
+        $query = $this->queryFactory->makeInsert($tableIdentifier, $preparedParameters);
         return count($query->execute($this->connection));
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
-        $query = new Delete($tableIdentifier);
+        $query = $this->queryFactory->makeDelete($tableIdentifier);
         $query->where(new PreparedParameters($conditions));
         return count($query->execute($this->connection));
     }
@@ -72,7 +75,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
         $preparedParameters = new PreparedParameters($arguments);
-        $query = new Procedure($procedureIdentifier, $preparedParameters);
+        $query = $this->queryFactory->makeProcedure($procedureIdentifier, $preparedParameters);
         $query->execute($this->connection);
     }
 }
