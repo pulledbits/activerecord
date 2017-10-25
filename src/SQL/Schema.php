@@ -25,11 +25,11 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
         $query = new Select($entityTypeIdentifier, $attributeIdentifiers);
         $query->where(new PreparedParameters($conditions));
-        $statement = $query->execute($this->connection);
+        $result = new Result($query->execute($this->connection));
 
-        return array_map(function(array $values) use ($entityTypeIdentifier) {
+        return $result->map(function(array $values) use ($entityTypeIdentifier) {
             return $this->makeRecord($entityTypeIdentifier, $values);
-        }, $statement->fetchAll(\PDO::FETCH_ASSOC));
+        });
     }
 
     public function initializeRecord(string $entityTypeIdentifier, array $values) : Record {
