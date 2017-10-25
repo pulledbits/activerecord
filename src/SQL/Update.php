@@ -20,12 +20,12 @@ class Update
         $this->values = $values;
     }
 
-    public function where(PreparedParameters $preparedParameters)
+    public function where(PreparedParameters $preparedParameters) : void
     {
         $this->where = new Where($preparedParameters);
     }
 
-    public function execute(Connection $connection)
+    public function execute(Connection $connection) : int
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {
