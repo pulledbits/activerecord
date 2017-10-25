@@ -54,16 +54,16 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     private function executeWhere(string $query, array $whereParameters) : \PDOStatement
     {
         $preparedParameters = $this->prepareParameters($whereParameters);
-        $where = new Where($preparedParameters->extractParametersSQL(), $preparedParameters->extractParameters());
+        $where = new Where($preparedParameters);
         return $this->connection->execute($query . $where, $where->parameters());
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $preparedParameters = $this->prepareParameters($values);
-        $values = new Update\Values($preparedParameters->extractParametersSQL(), $preparedParameters->extractParameters());
+        $values = new Update\Values($preparedParameters);
         $query = new Update($tableIdentifier, $values);
         $preparedWhereParameters = $this->prepareParameters($conditions);
-        $query->where($preparedWhereParameters->extractParametersSQL(), $preparedWhereParameters->extractParameters());
+        $query->where($preparedWhereParameters);
         return $this->connection->executeChange($query, $query->parameters());
     }
 

@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
-class PreparedParameters
+class PreparedParameters implements \Countable
 {
     const PP_COLUMN = 'column';
     const PP_VALUE = 'value';
@@ -35,7 +35,7 @@ class PreparedParameters
     }
 
     public function extractParameters() {
-        return array_combine($this->extract(self::PP_PARAM, $this->preparedParameters), $this->extract(self::PP_VALUE, $this->preparedParameters));
+        return array_combine($this->extract(self::PP_PARAM), $this->extract(self::PP_VALUE));
     }
 
     public function extractParametersSQL() {
@@ -50,5 +50,10 @@ class PreparedParameters
     public function extractColumns()
     {
         return $this->extract(self::PP_COLUMN);
+    }
+
+    public function count()
+    {
+        return count($this->preparedParameters);
     }
 }

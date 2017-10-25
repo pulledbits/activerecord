@@ -50,6 +50,20 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
+            '/SELECT \* FROM activiteit$/' => [
+                [
+                    'werkvorm' => 'BlaBlaNoWhere'
+                ],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                []
+            ],
             '/SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE id = :param1$/' => [
                 [],
                 [],
@@ -113,6 +127,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($record->foo4);
         $record->foo4 = 'bar';
         $this->assertEquals('bar', $record->foo4);
+    }
+
+    public function testSelectFrom_When_NoConditions_Expect_WhereLessSQL() {
+        $records = $this->object->read('activiteit', [], []);
+
+        $this->assertCount(10, $records);
+        $this->assertEquals('BlaBlaNoWhere', $records[0]->werkvorm);
     }
 
     public function testSelectFrom_When_NoColumnIdentifiers_Expect_SQLSelectAsteriskQueryAndCallbackUsedForFetchAll() {

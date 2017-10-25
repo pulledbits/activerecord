@@ -4,24 +4,24 @@
 namespace pulledbits\ActiveRecord\SQL\Update;
 
 
+use pulledbits\ActiveRecord\SQL\PreparedParameters;
+
 class Values
 {
     private $values;
-    private $queryParameters;
 
-    public function __construct($values, $queryParameters)
+    public function __construct(PreparedParameters $values)
     {
         $this->values = $values;
-        $this->queryParameters = $queryParameters;
     }
 
     public function __toString() : string
     {
-        return " SET " . join(", ", $this->values);
+        return " SET " . join(", ", $this->values->extractParametersSQL());
     }
 
     public function parameters()
     {
-        return $this->queryParameters;
+        return $this->values->extractParameters();
     }
 }

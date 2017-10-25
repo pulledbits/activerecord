@@ -9,6 +9,11 @@ class Update
     private $tableIdentifier;
     private $values;
 
+    /**
+     * @var Where
+     */
+    private $where;
+
     public function __construct(string $tableIdentifier, Update\Values $values)
     {
         $this->tableIdentifier = $tableIdentifier;
@@ -23,12 +28,16 @@ class Update
 
     public function parameters()
     {
-        return array_merge($this->values->parameters(), $this->where->parameters());
+        $parameters = $this->values->parameters();
+        if ($this->where !== null) {
+            $parameters = array_merge($parameters, $this->where->parameters());
+        }
+        return $parameters;
     }
 
-    public function where(array $sqlConditions, array $queryParameters)
+    public function where(PreparedParameters $preparedParameters)
     {
-        $this->where = new Where($sqlConditions, $queryParameters);
+        $this->where = new Where($preparedParameters);
     }
 
 }
