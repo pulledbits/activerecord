@@ -4,6 +4,8 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
+use pulledbits\ActiveRecord\SQL\Query\PreparedParameters;
+
 class QueryFactory
 {
 
@@ -14,12 +16,12 @@ class QueryFactory
 
     public function makeUpdate(string $tableIdentifier, array $values) : Query\Update
     {
-        return new Query\Update($tableIdentifier, new Query\Update\Values(new Query\PreparedParameters($values)));
+        return new Query\Update($tableIdentifier, new Query\Update\Values($this->prepareParameters($values)));
     }
 
     public function makeInsert(string $tableIdentifier, array $values) : Query\Insert
     {
-        return new Query\Insert($tableIdentifier, new Query\PreparedParameters($values));
+        return new Query\Insert($tableIdentifier, $this->prepareParameters($values));
     }
 
     public function makeDelete(string $tableIdentifier) : Query\Delete
@@ -27,13 +29,18 @@ class QueryFactory
         return new Query\Delete($tableIdentifier);
     }
 
-    public function makeProcedure(string $procedureIdentifier, Query\PreparedParameters $preparedParameters) : Query\Procedure
+    public function makeProcedure(string $procedureIdentifier, array $arguments) : Query\Procedure
     {
-        return new Query\Procedure($procedureIdentifier, $preparedParameters);
+        return new Query\Procedure($procedureIdentifier, $this->prepareParameters($arguments));
+    }
+
+    public function prepareParameters(array $values) : PreparedParameters
+    {
+        return new Query\PreparedParameters($values);
     }
 
     public function makeWhere($conditions) : Query\Where
     {
-        return new Query\Where(new Query\PreparedParameters($conditions));
+        return new Query\Where($this->prepareParameters($conditions));
     }
 }

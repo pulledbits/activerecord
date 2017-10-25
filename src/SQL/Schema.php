@@ -3,12 +3,6 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
-use pulledbits\ActiveRecord\SQL\Query\Delete;
-use pulledbits\ActiveRecord\SQL\Query\Insert;
-use pulledbits\ActiveRecord\SQL\Query\PreparedParameters;
-use pulledbits\ActiveRecord\SQL\Query\Procedure;
-use pulledbits\ActiveRecord\SQL\Query\Select;
-use pulledbits\ActiveRecord\SQL\Query\Update;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
@@ -72,8 +66,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
-        $preparedParameters = new PreparedParameters($arguments);
-        $query = $this->queryFactory->makeProcedure($procedureIdentifier, $preparedParameters);
+        $query = $this->queryFactory->makeProcedure($procedureIdentifier, $arguments);
         $query->execute($this->connection);
     }
 }
