@@ -24,7 +24,7 @@ $recordConfigurator = new \pulledbits\ActiveRecord\RecordFactory(\pulledbits\Act
 
 $url = parse_url($_SERVER['argv'][1]);
 $connection = new \PDO($url['scheme'] . ':dbname=' . substr($url['path'], 1), $url['user'], $url['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
-$schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, new \pulledbits\ActiveRecord\SQL\Connection($connection));
+$schema = new \pulledbits\ActiveRecord\SQL\Schema($recordConfigurator, new \pulledbits\ActiveRecord\SQL\QueryFactory(new \pulledbits\ActiveRecord\SQL\Connection($connection)));
 
 $starttijd = date('Y-m-d ') . '23:00:00';
 

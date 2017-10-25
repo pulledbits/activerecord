@@ -12,9 +12,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     private $queryFactory;
 
-    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, Connection $connection) {
+    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, QueryFactory $queryFactory) {
         $this->recordFactory = $recordFactory;
-        $this->queryFactory = new QueryFactory($this->connection);
+        $this->queryFactory = $queryFactory;
     }
 
     private function makeRecord($entityTypeIdentifier, array $values) {

@@ -35,7 +35,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             }
         };
         $recordConfiguration = new \pulledbits\ActiveRecord\RecordFactory($sourceSchema, sys_get_temp_dir());
-        $this->object = new Schema($recordConfiguration, new Connection(\pulledbits\ActiveRecord\Test\createMockPDOMultiple([
+
+        $connection = new Connection(\pulledbits\ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'BlaBla'
@@ -91,7 +92,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^INSERT INTO activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
-        ])));
+        ]));
+        $queryFactory = new QueryFactory($connection);
+        $this->object = new Schema($recordConfiguration, $queryFactory);
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {
