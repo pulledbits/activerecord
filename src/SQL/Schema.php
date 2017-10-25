@@ -15,42 +15,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $this->connection = $connection;
     }
 
-    private function executeWhere(string $query, array $whereParameters) : \PDOStatement
-    {
-        $preparedParameters = $this->prepareParameters($whereParameters);
-        $where = new Where($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
-        return $this->connection->execute($query . $where, $where->parameters());
-    }
-
-    const PP_COLUMN = 'column';
-    const PP_VALUE = 'value';
-    const PP_SQL = 'sql';
-    const PP_PARAM = 'parameter';
-    const PP_PARAMS = 'parameters';
-
-    private function prepareParameters(array $parameters) {
-        $preparedParameters = [];
-        foreach ($parameters as $localColumn => $value) {
-            $preparedParameters[] = [
-                self::PP_COLUMN => $localColumn,
-                self::PP_VALUE => $value,
-                self::PP_PARAM => ":" . uniqid()
-            ];
-        }
-        return $preparedParameters;
-    }
-
-    private function extract(string $type, array $preparedParameters) {
-        return array_map(function(array $preparedParameters) use ($type) { return $preparedParameters[$type]; }, $preparedParameters);
-    }
-
-    private function extractParameters(array $preparedParameters) {
-        return array_combine($this->extract(self::PP_PARAM, $preparedParameters), $this->extract(self::PP_VALUE, $preparedParameters));
-    }
-
-    private function extractParametersSQL(array $preparedParameters) {
-        return array_map(function($preparedParameter) { return $preparedParameter[self::PP_COLUMN] . " = " . $preparedParameter[self::PP_PARAM]; }, $preparedParameters);
-    }
 
     private function makeRecord($entityTypeIdentifier, array $values) {
         $record = $this->recordFactory->makeRecord($this, $entityTypeIdentifier);
@@ -82,18 +46,30 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return $records[0];
     }
 
+    private function prepareParameters(array $parameters) : PreparedParameters {
+        $preparedParameters = new PreparedParameters($parameters);
+        return $preparedParameters;
+    }
+
+    private function executeWhere(string $query, array $whereParameters) : \PDOStatement
+    {
+        $preparedParameters = $this->prepareParameters($whereParameters);
+        $where = new Where($preparedParameters->extractParametersSQL(), $preparedParameters->extractParameters());
+        return $this->connection->execute($query . $where, $where->parameters());
+    }
+
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $preparedParameters = $this->prepareParameters($values);
-        $values = new Update\Values($this->extractParametersSQL($preparedParameters), $this->extractParameters($preparedParameters));
+        $values = new Update\Values($preparedParameters->extractParametersSQL(), $preparedParameters->extractParameters());
         $query = new Update($tableIdentifier, $values);
         $preparedWhereParameters = $this->prepareParameters($conditions);
-        $query->where($this->extractParametersSQL($preparedWhereParameters), $this->extractParameters($preparedWhereParameters));
+        $query->where($preparedWhereParameters->extractParametersSQL(), $preparedWhereParameters->extractParameters());
         return $this->connection->executeChange($query, $query->parameters());
     }
 
     public function create(string $tableIdentifier, array $values) : int {
         $preparedParameters = $this->prepareParameters($values);
-        return $this->connection->executeChange("INSERT INTO " . $tableIdentifier . " (" . join(', ', $this->extract(Schema::PP_COLUMN, $preparedParameters)) . ") VALUES (" . join(', ', $this->extract(Schema::PP_PARAM, $preparedParameters)) . ")", $this->extractParameters($preparedParameters));
+        return $this->connection->executeChange("INSERT INTO " . $tableIdentifier . " (" . join(', ', $preparedParameters->extractColumns()) . ") VALUES (" . join(', ', $preparedParameters->extractParameterizedValues()) . ")", $preparedParameters->extractParameters());
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
@@ -104,6 +80,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
         $preparedParameters = $this->prepareParameters($arguments);
-        $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($this->extractParameters($preparedParameters))) . ')', $this->extractParameters($preparedParameters));
+        $this->connection->execute('CALL ' . $procedureIdentifier . '(' . join(", ", array_keys($preparedParameters->extractParameters())) . ')', $preparedParameters->extractParameters());
     }
 }
