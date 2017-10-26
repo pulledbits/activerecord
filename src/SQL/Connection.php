@@ -21,13 +21,13 @@ class Connection
         return new \pulledbits\ActiveRecord\SQL\Connection(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
     }
 
-    public function schema(\pulledbits\ActiveRecord\RecordFactory $recordFactory)
+    public function schema(string $targetDirectory)
     {
-        return new Schema($recordFactory, new QueryFactory($this));
+        return new Schema($this->recordConfigurator($targetDirectory), new QueryFactory($this));
     }
-    public function recordConfigurator($targetDirectory)
+    private function recordConfigurator($targetDirectory)
     {
-        $sourceSchema = \pulledbits\ActiveRecord\SQL\Meta\Schema::fromPDO($this->connection);
+        $sourceSchema = Meta\Schema::fromPDO($this->connection);
         return new RecordFactory($sourceSchema, $targetDirectory);
     }
 

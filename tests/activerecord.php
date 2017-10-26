@@ -21,8 +21,7 @@ passthru($command);
 // test activiteit
 require __DIR__ . '/bootstrap.php';
 $connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1]);
-$recordConfigurator = $connection->recordConfigurator($targetDirectory);
-$schema = $connection->schema($recordConfigurator);
+$schema = $connection->schema($targetDirectory);
 
 $starttijd = date('Y-m-d ') . '23:00:00';
 
