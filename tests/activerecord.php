@@ -13,11 +13,6 @@ if (file_exists($targetDirectory) === false) {
     mkdir($targetDirectory);
 }
 
-$phpbin = trim(`which php`);
-$command = $phpbin . ' ' . dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activerecord.php ' . $targetDirectory . ' ' . $_SERVER['argv'][1];
-echo 'Running ' . $command . '...' . PHP_EOL;
-passthru($command);
-
 // test activiteit
 require __DIR__ . '/bootstrap.php';
 $connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1]);

@@ -8,8 +8,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 {
     private $recordFactory;
 
-    private $connection;
-
     private $queryFactory;
 
     public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, QueryFactory $queryFactory) {
