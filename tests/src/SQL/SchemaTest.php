@@ -105,33 +105,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $this->object->create('activiteit', ['werkvorm' => 'My Name', 'id' => '3']));
     }
 
-    public function testInitializeRecord_When_DefaultState_Expect_UncommittedRecord() {
-        $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
-        $this->assertEquals('blabla', $record->name);
-    }
-
-    public function testInitializeRecord_When_NoRequiredValuesMissing_Expect_InsertQuery() {
-        $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
-        $this->assertEquals('blabla', $record->name);
-        $this->assertNull($record->foo2);
-        $record->foo2 = 'bar';
-        $this->assertEquals('bar', $record->foo2);
-    }
-
-    public function testInitializeRecord_When_RequiredValuesMissing_Expect_NoInsertQuery() {
-        $record = $this->object->initializeRecord('activiteit', ['name' => 'blabla']);
-        $record->requires(['foo4']);
-        $this->assertEquals('blabla', $record->name);
-
-        $this->assertNull($record->foo3);
-        $record->foo3 = 'bar';
-        $this->assertEquals('bar', $record->foo3);
-
-        $this->assertNull($record->foo4);
-        $record->foo4 = 'bar';
-        $this->assertEquals('bar', $record->foo4);
-    }
-
     public function testSelectFrom_When_NoConditions_Expect_WhereLessSQL() {
         $records = $this->object->read('activiteit', [], []);
 

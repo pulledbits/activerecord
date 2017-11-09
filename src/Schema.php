@@ -3,8 +3,6 @@ namespace pulledbits\ActiveRecord;
 
 interface Schema {
 
-    public function initializeRecord(string $entityTypeIdentifier, array $values) : Record;
-
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array;
 
     public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : Record;

@@ -31,15 +31,11 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         });
     }
 
-    public function initializeRecord(string $entityTypeIdentifier, array $values) : Record {
-        $record = $this->makeRecord($entityTypeIdentifier, $values);
-        return new Record\Fresh($record);
-    }
-
     public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : \pulledbits\ActiveRecord\Record {
         $records = $this->read($entityTypeIdentifier, $attributeIdentifiers, $conditions);
         if (count($records) === 0) {
-            return $this->initializeRecord($entityTypeIdentifier, $conditions);
+            $record = $this->makeRecord($entityTypeIdentifier, $conditions);
+            return new Record\Fresh($record);
         }
         return $records[0];
     }
