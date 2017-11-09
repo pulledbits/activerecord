@@ -9,26 +9,28 @@ use pulledbits\ActiveRecord\SQL\Query\Result;
 class Connection
 {
     private $connection;
+    private $targetDirectory;
 
-    public function __construct(\PDO $connection)
+    public function __construct(\PDO $connection, string $targetDirectory)
     {
         $this->connection = $connection;
+        $this->targetDirectory = $targetDirectory;
     }
 
-    static function fromDatabaseURL(string $url) : self
+    static function fromDatabaseURL(string $url, string $targetDirectory) : self
     {
         $parsedUrl = parse_url($url);
-        return new \pulledbits\ActiveRecord\SQL\Connection(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+        return new self(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')), $targetDirectory);
     }
 
-    public function schema(string $targetDirectory)
+    public function schema()
     {
-        return new Schema($this->recordConfigurator($targetDirectory), new QueryFactory($this));
+        return new Schema($this->recordConfigurator(), new QueryFactory($this));
     }
-    private function recordConfigurator($targetDirectory)
+    private function recordConfigurator()
     {
         $sourceSchema = Meta\Schema::fromPDO($this->connection);
-        return new RecordFactory($sourceSchema, $targetDirectory);
+        return new RecordFactory($sourceSchema, $this->targetDirectory);
     }
 
     public function execute(string $query, array $namedParameters) : Result
