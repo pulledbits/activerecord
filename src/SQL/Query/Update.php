@@ -36,7 +36,7 @@ class Update
         if ($this->where !== null) {
             $parameters = array_merge($parameters, $this->where->parameters());
         }
-        return $this->connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters);
+        return new Result($this->connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters));
     }
 
 }

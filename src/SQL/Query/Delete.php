@@ -29,6 +29,6 @@ class Delete
 
     public function execute() : Result
     {
-        return $this->connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
+        return new Result($this->connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters()));
     }
 }

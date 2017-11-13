@@ -33,7 +33,7 @@ class Connection
         return new RecordFactory($sourceSchema, $this->targetDirectory);
     }
 
-    public function execute(string $query, array $namedParameters) : Result
+    public function execute(string $query, array $namedParameters) : Statement
     {
         $pdostatement = $this->connection->prepare($query);
         $statement = new Statement($pdostatement);
@@ -43,7 +43,7 @@ class Connection
             trigger_error("Failed executing query `" . $query . "` (" . json_encode($pdostatement->debugDumpParams()) . "): " . $pdostatement->errorInfo()[2], E_USER_ERROR);
         }
 
-        return new Result($pdostatement);
+        return $statement;
     }
 
 
