@@ -240,6 +240,15 @@ namespace pulledbits\ActiveRecord\Test {
                     return createMockPDOStatement($this->results);
                 }
             }
+
+            public function setAttribute ($attribute, $value) {
+            }
+            public function getAttribute($attribute) {
+                switch ($attribute) {
+                    case \PDO::ATTR_DRIVER_NAME:
+                        return 'mysql';
+                }
+            }
         };
     }
 
@@ -263,6 +272,15 @@ namespace pulledbits\ActiveRecord\Test {
                     }
                 }
                 throw new \PHPUnit_Framework_AssertionFailedError('Unexpected query \'' . $query . '\'');
+            }
+
+            public function setAttribute($attribute, $value) {
+            }
+            public function getAttribute($attribute) {
+                switch ($attribute) {
+                    case \PDO::ATTR_DRIVER_NAME:
+                        return 'mysql';
+                }
             }
         };
     }

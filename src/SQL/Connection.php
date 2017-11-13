@@ -27,7 +27,7 @@ class Connection
     {
         return new Schema($this->recordConfigurator(), new QueryFactory($this));
     }
-    private function recordConfigurator()
+    public function recordConfigurator()
     {
         $sourceSchema = Meta\Schema::fromPDO($this->connection);
         return new RecordFactory($sourceSchema, $this->targetDirectory);
