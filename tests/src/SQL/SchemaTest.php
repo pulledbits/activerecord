@@ -94,7 +94,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]), sys_get_temp_dir());
         $queryFactory = new QueryFactory($connection);
-        $this->object = new Schema($recordConfiguration, $queryFactory);
+        $this->object = new Schema($queryFactory);
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {

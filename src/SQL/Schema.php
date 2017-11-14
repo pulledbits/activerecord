@@ -2,42 +2,27 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\Record;
-
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
-    private $recordFactory;
 
     private $queryFactory;
 
-    public function __construct(\pulledbits\ActiveRecord\RecordFactory $recordFactory, QueryFactory $queryFactory) {
-        $this->recordFactory = $recordFactory;
+    public function __construct(QueryFactory $queryFactory) {
         $this->queryFactory = $queryFactory;
-    }
-
-    private function makeRecord($entityTypeIdentifier, array $values) {
-        $record = $this->recordFactory->makeRecord($this, $entityTypeIdentifier);
-        $record->contains($values);
-        return $record;
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
         $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute();
-
-        return $result->map(function(array $values) use ($entityTypeIdentifier) {
-            return $this->makeRecord($entityTypeIdentifier, $values);
-        });
+        return $result->fetchAllAs($this, $entityTypeIdentifier);
     }
 
     public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : \pulledbits\ActiveRecord\Record {
-        $records = $this->read($entityTypeIdentifier, $attributeIdentifiers, $conditions);
-        if (count($records) === 0) {
-            $record = $this->makeRecord($entityTypeIdentifier, $conditions);
-            return new Record\Fresh($record);
-        }
-        return $records[0];
+        $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
+        $query->where($this->queryFactory->makeWhere($conditions));
+        $result = $query->execute();
+        return $result->fetchFirstAs($this, $entityTypeIdentifier, $conditions);
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
