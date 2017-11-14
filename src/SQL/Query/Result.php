@@ -40,14 +40,4 @@ class Result implements \Countable
             return $this->makeRecord($schema, $entityTypeIdentifier, $values);
         });
     }
-
-    public function fetchFirstAs(Schema $schema, $entityTypeIdentifier, array $conditions) : \pulledbits\ActiveRecord\Record
-    {
-        $records = $this->fetchAllAs($schema, $entityTypeIdentifier);
-        if (count($records) === 0) {
-            $record = $this->makeRecord($schema, $entityTypeIdentifier, $conditions);
-            return new \pulledbits\ActiveRecord\Record\Fresh($record);
-        }
-        return $records[0];
-    }
 }

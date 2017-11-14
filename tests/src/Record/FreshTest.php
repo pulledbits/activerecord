@@ -69,11 +69,6 @@ class FreshTest extends \PHPUnit_Framework_TestCase
                 return [$this];
             }
 
-            public function readFirst(string $entityTypeIdentifier, array $conditions): \pulledbits\ActiveRecord\Record
-            {
-                return $this;
-            }
-
             /**
              * @param string $property
              * @param string $value
@@ -108,7 +103,6 @@ class FreshTest extends \PHPUnit_Framework_TestCase
         $object = new Fresh($wrappedRecord);
 
         $this->assertEquals([$wrappedRecord], $object->read('entity', []));
-        $this->assertEquals($wrappedRecord, $object->readFirst('entity', []));
 
         $this->assertFalse($wrappedRecord->missesRequiredValues());
         $object->requires(['bla']);

@@ -15,8 +15,6 @@ interface Record
 
     public function read(string $entityTypeIdentifier, array $conditions): array;
 
-    public function readFirst(string $entityTypeIdentifier, array $conditions): \pulledbits\ActiveRecord\Record;
-
     public function __set($property, $value);
 
     public function delete() : int;

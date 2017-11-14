@@ -58,14 +58,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 }
                 return $this->convertResultSet($resultset);
             }
-            public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): Record
-            {
-                $records = $this->read($entityTypeIdentifier, $attributeIdentifiers, $conditions);
-                if (count($records) === 0) {
-                    return $this->initializeRecord($entityTypeIdentifier, $conditions);
-                }
-                return $records[0];
-            }
 
             public function update(string $tableIdentifier, array $values, array $conditions): int
             {
@@ -181,16 +173,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('357', $records[0]->id);
     }
 
-    public function test__call_When_ExistingReferenceFetchFirstByCall_Expect_Value()
-    {
-        $record = $this->object->__call('fetchFirstByFkOthertableRole', []);
-        $this->assertEquals('356', $record->id);
-    }
-    public function test__call_When_ExistingReferenceFetchFirstByCallWithAdditionalConditions_Expect_Value()
-    {
-        $record = $this->object->__call('fetchFirstByFkOthertableRole', [["extra" => '5']]);
-        $this->assertEquals('357', $record->id);
-    }
     public function test__call_When_ExistingReferenceReferenceByCallWithAdditionalConditions_Expect_Value()
     {
         $record = $this->object->__call('referenceByFkOthertableRole', [["extra" => '6']]);
@@ -202,7 +184,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      * @expectedExceptionMessageRegExp /^Reference does not exist/
      */
     public function test__call_When_NonExistingReference_Expect_Value() {
-        $this->object->__call('fetchFirstByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
+        $this->object->__call('fetchByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
     }
 
 
@@ -217,15 +199,5 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $records = $this->object->read("OtherTable", ['id' => 'role_id']);
         $this->assertEquals('356', $records[0]->id);
         $this->assertCount(1, $records);
-    }
-    public function testReadFirst_When_NoConditionsGiven_Expect_OnlyFirstRecord()
-    {
-        $record = $this->object->readFirst("OtherTable", []);
-        $this->assertEquals('356', $record->id);
-    }
-    public function testReadFirst_When_NoMatchingConditionsGiven_Expect_Null()
-    {
-        $record = $this->object->readFirst("OtherTable", ['id' => 'pole_id']);
-        $this->assertNull($record->id);
     }
 }

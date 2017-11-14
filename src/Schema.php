@@ -5,8 +5,6 @@ interface Schema {
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array;
 
-    public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : Record;
-
     public function update(string $entityTypeIdentifier, array $values, array $conditions) : int;
 
     public function create(string $entityTypeIdentifier, array $values) : int;

@@ -23,11 +23,6 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
                 return [];
             }
 
-            public function readFirst(string $tableIdentifier, array $columnIdentifiers, array $whereParameters): Record
-            {
-                return $this->read($tableIdentifier, $columnIdentifiers,$whereParameters)[0];
-            }
-
             public function update(string $tableIdentifier, array $setParameters, array $whereParameters): int
             {
                 return 0;

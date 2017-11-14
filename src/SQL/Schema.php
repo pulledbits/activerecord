@@ -18,13 +18,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return $result->fetchAllAs($this, $entityTypeIdentifier);
     }
 
-    public function readFirst(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : \pulledbits\ActiveRecord\Record {
-        $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
-        $query->where($this->queryFactory->makeWhere($conditions));
-        $result = $query->execute();
-        return $result->fetchFirstAs($this, $entityTypeIdentifier, $conditions);
-    }
-
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
         $query = $this->queryFactory->makeUpdate($tableIdentifier, $values);
         $query->where($this->queryFactory->makeWhere($conditions));

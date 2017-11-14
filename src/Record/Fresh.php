@@ -25,11 +25,6 @@ final class Fresh implements \pulledbits\ActiveRecord\Record
         return $this->record->read($entityTypeIdentifier, $conditions);
     }
 
-    public function readFirst(string $entityTypeIdentifier, array $conditions): \pulledbits\ActiveRecord\Record
-    {
-        return $this->record->readFirst($entityTypeIdentifier, $conditions);
-    }
-
     public function __set($property, $value)
     {
         if ($this->created === true) {

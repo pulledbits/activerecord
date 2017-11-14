@@ -63,10 +63,6 @@ final class Entity implements Record
         return $this->schema->read($entityTypeIdentifier, [], $this->fillConditions($conditions));
     }
 
-    public function readFirst(string $entityTypeIdentifier, array $conditions) : Record {
-        return $this->schema->readFirst($entityTypeIdentifier, [], $this->fillConditions($conditions));
-    }
-
     public function missesRequiredValues(): bool
     {
         return count($this->calculateMissingValues()) > 0;
@@ -139,10 +135,8 @@ final class Entity implements Record
         } elseif (substr($method, 0, 11) === 'referenceBy') {
             $reference = $this->prepareReference(substr($method, 11));
             $this->schema->create($reference['entityTypeIdentifier'], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
-            return $this->schema->readFirst($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
-        } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
-            $reference = $this->prepareReference(substr($method, 12));
-            return $this->schema->readFirst($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
+            $records = $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
+            return $records[0];
         }
         return null;
     }
