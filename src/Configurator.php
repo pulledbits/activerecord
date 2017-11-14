@@ -1,7 +1,7 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord\Record;
+namespace pulledbits\ActiveRecord;
 
 
 class Configurator

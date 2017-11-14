@@ -5,7 +5,7 @@ final class RecordFactory {
 
     private $configurator;
 
-    public function __construct(Record\Configurator $configurator)
+    public function __construct(\pulledbits\ActiveRecord\Configurator $configurator)
     {
         $this->configurator = $configurator;
     }
