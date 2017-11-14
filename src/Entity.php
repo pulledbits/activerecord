@@ -136,6 +136,10 @@ final class Entity implements Record
         if (substr($method, 0, 7) === 'fetchBy') {
             $reference = $this->prepareReference(substr($method, 7));
             return $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
+        } elseif (substr($method, 0, 11) === 'referenceBy') {
+            $reference = $this->prepareReference(substr($method, 11));
+            $this->schema->create($reference['entityTypeIdentifier'], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
+            return $this->schema->readFirst($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
         } elseif (substr($method, 0, 12) === 'fetchFirstBy') {
             $reference = $this->prepareReference(substr($method, 12));
             return $this->schema->readFirst($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));

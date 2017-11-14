@@ -50,6 +50,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                         $resultset = [
                             ['id' => '357']
                         ];
+                    } elseif ($attributeIdentifiers === [] && $conditions === ['extra' => '6', 'id' => '33']) {
+                        $resultset = [
+                            ['id' => '358']
+                        ];
                     }
                 }
                 return $this->convertResultSet($resultset);
@@ -73,10 +77,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function create(string $tableIdentifier, array $values): int
             {
-
                 if ($tableIdentifier === 'MyTable' && $values === ['number' => '1', 'role_id' => '33', 'pole_id' => '3654']) {
                     return 1;
                 } elseif ($tableIdentifier === 'MyTable' && $values === ['name' => 'Test']) {
+                    return 1;
+                } elseif ($tableIdentifier === 'OtherTable' && $values === ['extra' => '6', 'id' => '33']) {
                     return 1;
                 }
                 return 0;
@@ -185,6 +190,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $record = $this->object->__call('fetchFirstByFkOthertableRole', [["extra" => '5']]);
         $this->assertEquals('357', $record->id);
+    }
+    public function test__call_When_ExistingReferenceReferenceByCallWithAdditionalConditions_Expect_Value()
+    {
+        $record = $this->object->__call('referenceByFkOthertableRole', [["extra" => '6']]);
+        $this->assertEquals('358', $record->id);
     }
 
     /**
