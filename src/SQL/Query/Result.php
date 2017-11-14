@@ -18,11 +18,6 @@ class Result implements \Countable
         $this->recordFactory = $recordFactory;
     }
 
-    public function map(callable $callback)
-    {
-        return array_map($callback, $this->statement->fetchAll());
-    }
-
     public function count()
     {
         return $this->statement->rowCount();
@@ -36,8 +31,8 @@ class Result implements \Countable
 
     public function fetchAllAs(Schema $schema, string $entityTypeIdentifier) : array
     {
-        return $this->map(function(array $values) use ($schema, $entityTypeIdentifier) {
+        return array_map(function(array $values) use ($schema, $entityTypeIdentifier) {
             return $this->makeRecord($schema, $entityTypeIdentifier, $values);
-        });
+        }, $this->statement->fetchAll());
     }
 }
