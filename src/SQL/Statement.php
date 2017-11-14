@@ -20,12 +20,12 @@ class Statement
         }
     }
 
-    public function rowCount()
+    public function rowCount() : int
     {
         return $this->statement->rowCount();
     }
 
-    public function fetchAll()
+    public function fetchAll() : array
     {
         return $this->statement->fetchAll(\PDO::FETCH_ASSOC);
     }
