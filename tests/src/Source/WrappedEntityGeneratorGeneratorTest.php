@@ -14,11 +14,11 @@ class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorWrappingOtherPHPCode() {
         $factory = new GeneratorGeneratorFactory();
         $object = $factory->makeWrappedEntityGeneratorGenerator('MyTable');
-        $this->assertEquals('<?php return $this->generateConfigurator("MyTable");', $object->generate());
+        $this->assertEquals('<?php return $this->generate("MyTable");', $object->generate());
     }
     public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
         $factory = new GeneratorGeneratorFactory();
         $object = $factory->makeWrappedEntityGeneratorGenerator('MyTable2');
-        $this->assertEquals('<?php return $this->generateConfigurator("MyTable2");', $object->generate());
+        $this->assertEquals('<?php return $this->generate("MyTable2");', $object->generate());
     }
 }

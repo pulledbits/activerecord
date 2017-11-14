@@ -14,6 +14,6 @@ final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
 
     public function generate()
     {
-        return '<?php return $this->generateConfigurator("' . $this->entityTypeIdentifier . '");';
+        return '<?php return $this->generate("' . $this->entityTypeIdentifier . '");';
     }
 }

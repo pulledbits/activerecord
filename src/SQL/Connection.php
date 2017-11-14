@@ -4,7 +4,6 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordFactory;
-use pulledbits\ActiveRecord\SQL\Query\Result;
 
 class Connection
 {
@@ -30,7 +29,7 @@ class Connection
     public function recordConfigurator()
     {
         $sourceSchema = Meta\Schema::fromPDO($this->connection);
-        return new RecordFactory($sourceSchema, $this->targetDirectory);
+        return new RecordFactory(new \pulledbits\ActiveRecord\Record\Configurator($sourceSchema, $this->targetDirectory));
     }
 
     public function execute(string $query, array $namedParameters) : Statement
