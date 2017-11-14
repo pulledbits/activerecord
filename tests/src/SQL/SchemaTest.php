@@ -18,24 +18,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $sourceSchema = new class implements \pulledbits\ActiveRecord\Source\Schema {
-
-            public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier): array
-            {
-                return [
-                    'identifier' => [],
-                    'requiredAttributeIdentifiers' => [],
-                    'references' => []
-                ];
-            }
-
-            public function describeTables(\pulledbits\ActiveRecord\Source\Table $sourceTable)
-            {
-                return [];
-            }
-        };
-        $recordConfiguration = new \pulledbits\ActiveRecord\RecordFactory($sourceSchema, sys_get_temp_dir());
-
         $connection = new Connection(\pulledbits\ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
@@ -93,8 +75,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]), sys_get_temp_dir());
-        $queryFactory = new QueryFactory($connection);
-        $this->object = new Schema($queryFactory);
+        $this->object = $connection->schema();
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {

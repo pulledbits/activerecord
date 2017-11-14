@@ -25,7 +25,7 @@ class Connection
 
     public function schema()
     {
-        return new Schema($this->recordConfigurator(), new QueryFactory($this));
+        return new Schema(new QueryFactory($this));
     }
     public function recordConfigurator()
     {
