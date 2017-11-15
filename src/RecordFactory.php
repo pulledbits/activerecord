@@ -11,7 +11,8 @@ final class RecordFactory {
     }
     public function makeRecord(Schema $schema, string $entityTypeIdentifier) : Entity
     {
-        $configurator = $this->configurator->generate($entityTypeIdentifier);
-        return $configurator(new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier));
+        $record = new Entity($schema, $entityTypeIdentifier);
+        $configurator = $record->generateConfigurator($this->configurator);
+        return $configurator($record);
     }
 }
