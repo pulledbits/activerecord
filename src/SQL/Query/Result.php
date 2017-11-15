@@ -4,6 +4,7 @@
 namespace pulledbits\ActiveRecord\SQL\Query;
 
 
+use pulledbits\ActiveRecord\Entity;
 use pulledbits\ActiveRecord\RecordFactory;
 use pulledbits\ActiveRecord\SQL\Schema;
 
@@ -23,16 +24,16 @@ class Result implements \Countable
         return $this->statement->rowCount();
     }
 
-    private function makeRecord(Schema $schema, string $entityTypeIdentifier, array $values) {
-        $record = $this->recordFactory->makeRecord($schema, $entityTypeIdentifier);
+    private function makeRecord(Entity $record, array $values) {
+        $record = $this->recordFactory->makeRecord($record);
         $record->contains($values);
         return $record;
     }
 
-    public function fetchAllAs(Schema $schema, string $entityTypeIdentifier) : array
+    public function fetchAllAs(Entity $record) : array
     {
-        return array_map(function(array $values) use ($schema, $entityTypeIdentifier) {
-            return $this->makeRecord($schema, $entityTypeIdentifier, $values);
+        return array_map(function(array $values) use ($record) {
+            return $this->makeRecord($record, $values);
         }, $this->statement->fetchAll());
     }
 }

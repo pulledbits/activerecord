@@ -9,9 +9,8 @@ final class RecordFactory {
     {
         $this->configurator = $configurator;
     }
-    public function makeRecord(Schema $schema, string $entityTypeIdentifier) : Entity
+    public function makeRecord(Entity $record) : Entity
     {
-        $record = new Entity($schema, $entityTypeIdentifier);
         $configurator = $record->generateConfigurator($this->configurator);
         return $configurator($record);
     }
