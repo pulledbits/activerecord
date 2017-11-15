@@ -11,7 +11,6 @@ final class RecordFactory {
     }
     public function configureRecord(Entity $record) : Entity
     {
-        $configurator = $record->generateConfigurator($this->configurator);
-        return $configurator($record);
+        return $record->configure($this->configurator);
     }
 }
