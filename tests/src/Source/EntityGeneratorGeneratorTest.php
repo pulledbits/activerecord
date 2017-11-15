@@ -11,16 +11,14 @@ namespace pulledbits\ActiveRecord\Source;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    private $base = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
-    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier);' . PHP_EOL .
+    private $base = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
     '};';
 
-    private $baseTwoReferences = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
-    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier);' . PHP_EOL .
+    private $baseTwoReferences = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
@@ -28,15 +26,13 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '    return $record;' . PHP_EOL .
     '};';
 
-    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
-    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier);' . PHP_EOL .
+    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
     '};';
 
-    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' . PHP_EOL .
-    '    $record = new \pulledbits\ActiveRecord\Entity($schema, $entityTypeIdentifier);' . PHP_EOL .
+    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .

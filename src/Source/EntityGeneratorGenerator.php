@@ -51,8 +51,7 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
             $requires = self::NEWLINE . "\$record->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);";
         }
 
-        return '<?php return function(\pulledbits\ActiveRecord\Schema $schema, string $entityTypeIdentifier) {' .
-            self::NEWLINE . "\$record = new \\pulledbits\\ActiveRecord\\Entity(\$schema, \$entityTypeIdentifier);" .
+        return '<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {' .
             self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);" .
             $requires .
             join(self::NEWLINE, $references) .
