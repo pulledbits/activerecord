@@ -120,29 +120,10 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $sourceSchema = new class implements Source\Schema {
-
-            public function describeTable(Table $sourceTable, string $tableIdentifier): array
-            {
-
-                if ($tableIdentifier === 'activiteit_vandaag') {
-                    return [
-                        'entityTypeIdentifier' => 'activiteit'
-                    ];
-                } else {
-                    return [
-                        'identifier' => [],
-                        'requiredAttributeIdentifiers' => [],
-                        'references' => []
-                    ];
-                }
-            }
-
-            public function describeTables(Table $sourceTable)
-            {
-                return [];
-            }
-        };
+        $sourceSchema = \pulledbits\ActiveRecord\Test\createMockSchema([
+            'activiteit_vandaag' => 'activiteit',
+            'activiteit' => []
+        ]);
 
         $object = new RecordFactory(new \pulledbits\ActiveRecord\Configurator($sourceSchema, $directory));
         $record = $object->makeRecord($schema, 'activiteit_vandaag');
