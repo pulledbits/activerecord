@@ -16,11 +16,11 @@ final class Entity implements Record
 
     private $requiredAttributeIdentifiers;
 
-    public function __construct(Schema $schema, string $entityTypeIdentifier, array $primaryKey)
+    public function __construct(Schema $schema, string $entityTypeIdentifier)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
-        $this->primaryKey = $primaryKey;
+        $this->primaryKey = [];
         $this->references = [];
         $this->values = [];
         $this->requiredAttributeIdentifiers = [];
@@ -28,6 +28,10 @@ final class Entity implements Record
 
     public function contains(array $values) {
         $this->values += $values;
+    }
+
+    public function identifiedBy(array $primaryKey) {
+        $this->primaryKey = $primaryKey;
     }
 
     private function primaryKey() {

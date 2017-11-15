@@ -4,6 +4,9 @@ namespace pulledbits\ActiveRecord\Test {
     /*
      * test specific bootstrapper
      */
+
+    use PDO;
+
     $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
     function createMockSchema(array $tables)
@@ -155,10 +158,21 @@ namespace pulledbits\ActiveRecord\Test {
                 $this->results = $results;
             }
 
-            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+            public function fetchAll($how = \PDO::ATTR_DEFAULT_FETCH_MODE, $class_name = NULL, $ctor_args = NULL)
             {
+                if ($how === \PDO::ATTR_DEFAULT_FETCH_MODE) {
+                    $how = \PDO::FETCH_ASSOC;
+                }
+
                 if ($how === \PDO::FETCH_ASSOC) {
                     return $this->results;
+                }
+            }
+
+            public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
+            {
+                if ($fetch_style === \PDO::FETCH_ASSOC) {
+                    return next($this->results);
                 }
             }
 
@@ -262,6 +276,25 @@ namespace pulledbits\ActiveRecord\Test {
             public function __construct(array $queries)
             {
                 $this->queries = $queries;
+
+                $tables = [];
+                foreach ($this->queries as $query => $results) {
+                    if (preg_match('/FROM (?<table>\w+)/', $query, $matches) === 1) {
+                        $fullTables[] = [$matches['table'], 'BASE_TABLE'];
+                    }
+                }
+
+                $this->queries['/SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'/'] = $fullTables;
+                $this->queries['/SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra, COLUMN_COMMENT AS Comment, CHARACTER_SET_NAME AS CharacterSet, COLLATION_NAME AS Collation FROM information_schema\.COLUMNS WHERE TABLE_SCHEMA = DATABASE\(\) AND TABLE_NAME = \'\w+\'/'] = [];
+                $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'\w+\' AND k.table_schema = \'\' \/\**!50116 AND c.constraint_schema = \'\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = [];
+                $this->queries['/SHOW INDEX FROM \w+/'] = [];
+                $this->queries['/SELECT \* FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/'] = [];
+                $this->queries['/SELECT DATABASE()/'] = [];
+            }
+
+            public function query($statement, $mode = \PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = array())
+            {
+                return $this->prepare($statement);
             }
 
             public function prepare($query, $options = null)
