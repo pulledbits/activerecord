@@ -55,7 +55,7 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $object = new RecordFactory(new \pulledbits\ActiveRecord\Configurator($sourceSchema, $directory));
-        $record = $object->makeRecord(new Entity($schema, 'activiteit'));
+        $record = $object->configureRecord(new Entity($schema, 'activiteit'));
         $record->contains(['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
 
@@ -113,7 +113,7 @@ class RecordFactoryTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $object = new RecordFactory(new \pulledbits\ActiveRecord\Configurator($sourceSchema, $directory));
-        $record = $object->makeRecord(new Entity($schema, 'activiteit_vandaag'));
+        $record = $object->configureRecord(new Entity($schema, 'activiteit_vandaag'));
         $record->contains(['status' => 'OK']);
         $this->assertEquals('OK', $record->status);
 

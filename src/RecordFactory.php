@@ -9,7 +9,7 @@ final class RecordFactory {
     {
         $this->configurator = $configurator;
     }
-    public function makeRecord(Entity $record) : Entity
+    public function configureRecord(Entity $record) : Entity
     {
         $configurator = $record->generateConfigurator($this->configurator);
         return $configurator($record);
