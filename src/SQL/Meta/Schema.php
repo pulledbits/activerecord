@@ -33,14 +33,16 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         return new Configurator($this, $targetDirectory);
     }
 
-    public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier) : array
+    public function describeTable(string $tableIdentifier) : array
     {
-        $table = $this->describeTables($sourceTable);
+        $table = $this->describeTables();
         return $table[$tableIdentifier];
     }
 
-    public function describeTables(\pulledbits\ActiveRecord\Source\Table $sourceTable)
+    public function describeTables()
     {
+        $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
+
         $tables = [];
         foreach ($this->schemaManager->listTables() as $table) {
             $tables[$table->getName()] = $sourceTable->describe($table);

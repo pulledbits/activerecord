@@ -21,7 +21,7 @@ class Configurator
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
             $generatorGeneratorFactory = new \pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory();
-            $recordClassDescription = $this->sourceSchema->describeTable(new \pulledbits\ActiveRecord\SQL\Meta\Table(), $entityTypeIdentifier);
+            $recordClassDescription = $this->sourceSchema->describeTable($entityTypeIdentifier);
             $generator = $generatorGeneratorFactory->makeGeneratorGenerator($recordClassDescription);
             file_put_contents($configuratorPath, $generator->generate());
         }
