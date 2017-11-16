@@ -30,7 +30,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function createConfigurator(string $targetDirectory)
     {
-        return new Configurator($this, $targetDirectory);
+        return new Configurator(new \pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory($this), $targetDirectory);
     }
 
     public function describeTable(string $tableIdentifier) : array

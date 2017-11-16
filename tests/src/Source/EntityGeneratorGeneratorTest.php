@@ -38,9 +38,28 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '    return $record;' . PHP_EOL .
     '};';
 
+    /**
+     * @var GeneratorGeneratorFactory
+     */
+    private $object;
+
+    protected function setUp()
+    {
+        $this->object = new GeneratorGeneratorFactory(new class implements Schema {
+            public function describeTable(string $tableIdentifier): array
+            {
+                // TODO: Implement describeTable() method.
+            }
+
+            public function describeTables()
+            {
+                // TODO: Implement describeTables() method.
+            }
+        });
+    }
+
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
-        $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object = $this->object->makeEntityGeneratorGenerator(['id']);
         $object->requires(["a", "b", "c"]);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
@@ -49,8 +68,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
-        $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object = $this->object->makeEntityGeneratorGenerator(['id']);
         $object->requires(["a", "b", "c"]);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
@@ -60,8 +78,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
-        $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object = $this->object->makeEntityGeneratorGenerator(['id']);
         $object->requires(["a", "b", "c"]);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
@@ -73,8 +90,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
-        $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object = $this->object->makeEntityGeneratorGenerator(['id']);
         $object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
@@ -82,8 +98,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
-        $factory = new GeneratorGeneratorFactory();
-        $object = $factory->makeEntityGeneratorGenerator(['id']);
+        $object = $this->object->makeEntityGeneratorGenerator(['id']);
         $object->requires(["a", "b", "c"]);
         $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $object->generate());
     }
