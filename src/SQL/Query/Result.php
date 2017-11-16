@@ -24,12 +24,15 @@ class Result implements \Countable
         return $this->statement->rowCount();
     }
 
-    public function fetchAllAs(Entity $record) : array
+    public function fetchAllAs(Entity $recordPrototype) : array
     {
-        return array_map(function(array $values) use ($record) {
+        $records = [];
+        foreach ($this->statement->fetchAll() as $row) {
+            $record = clone $recordPrototype;
             $record = $this->recordFactory->configureRecord($record);
-            $record->contains($values);
-            return $record;
-        }, $this->statement->fetchAll());
+            $record->contains($row);
+            $records[] = $record;
+        }
+        return $records;
     }
 }
