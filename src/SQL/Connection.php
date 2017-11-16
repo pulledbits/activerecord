@@ -3,7 +3,7 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\Configurator;
+use pulledbits\ActiveRecord\SQL\Meta\Configurator;
 
 class Connection
 {

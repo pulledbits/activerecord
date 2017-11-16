@@ -3,7 +3,6 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use pulledbits\ActiveRecord\Configurator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {

@@ -1,5 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord;
+namespace pulledbits\ActiveRecord\SQL\Meta;
 
 
 class Configurator

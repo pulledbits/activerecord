@@ -76,7 +76,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]);
         $sourceSchema = Meta\Schema::fromPDO($pdo);
-        $configurator = new \pulledbits\ActiveRecord\Configurator($sourceSchema, sys_get_temp_dir());
+        $configurator = new Meta\Configurator($sourceSchema, sys_get_temp_dir());
 
         $connection = new Connection($pdo, $configurator);
         $this->object = $connection->schema();
