@@ -29,7 +29,7 @@ class Connection
     public function recordConfigurator(string $entityTypeIdentifier) : callable
     {
         $sourceSchema = Meta\Schema::fromPDO($this->connection);
-        return (new \pulledbits\ActiveRecord\Configurator($sourceSchema, $entityTypeIdentifier, $this->targetDirectory))->generate();
+        return (new \pulledbits\ActiveRecord\Configurator($sourceSchema, $this->targetDirectory))->generate($entityTypeIdentifier);
     }
 
     public function execute(string $query, array $namedParameters) : Statement
