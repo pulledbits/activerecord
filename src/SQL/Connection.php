@@ -26,10 +26,10 @@ class Connection
     {
         return new Schema(new QueryFactory($this));
     }
-    public function recordConfigurator(string $entityTypeIdentifier) : \pulledbits\ActiveRecord\Configurator
+    public function recordConfigurator(string $entityTypeIdentifier) : callable
     {
         $sourceSchema = Meta\Schema::fromPDO($this->connection);
-        return new \pulledbits\ActiveRecord\Configurator($sourceSchema, $entityTypeIdentifier, $this->targetDirectory);
+        return (new \pulledbits\ActiveRecord\Configurator($sourceSchema, $entityTypeIdentifier, $this->targetDirectory))->generate();
     }
 
     public function execute(string $query, array $namedParameters) : Statement
