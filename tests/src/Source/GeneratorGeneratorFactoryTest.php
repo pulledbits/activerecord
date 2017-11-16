@@ -50,7 +50,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         
         $object = $this->object->makeGeneratorGenerator('base_table');
 
-        $expectedObject = $this->object->makeEntityGeneratorGenerator(['id']);
+        $expectedObject = new EntityGeneratorGenerator(['id']);
         $expectedObject->requires(['a', 'b', 'c']);
         $this->assertEquals($expectedObject, $object);
     }
@@ -59,7 +59,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         
         $object = $this->object->makeGeneratorGenerator('view');
 
-        $this->assertEquals($this->object->makeWrappedEntityGeneratorGenerator('blabla'), $object);
+        $this->assertEquals(new WrappedEntityGeneratorGenerator('blabla'), $object);
     }
 
 }
