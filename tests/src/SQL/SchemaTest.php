@@ -18,7 +18,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $connection = new Connection(\pulledbits\ActiveRecord\Test\createMockPDOMultiple([
+        $pdo = \pulledbits\ActiveRecord\Test\createMockPDOMultiple([
             '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'BlaBla'
@@ -74,7 +74,11 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^INSERT INTO activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
-        ]), sys_get_temp_dir());
+        ]);
+        $sourceSchema = Meta\Schema::fromPDO($pdo);
+        $configurator = new \pulledbits\ActiveRecord\Configurator($sourceSchema, sys_get_temp_dir());
+
+        $connection = new Connection($pdo, $configurator);
         $this->object = $connection->schema();
     }
 

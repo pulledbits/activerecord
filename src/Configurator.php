@@ -6,7 +6,6 @@ class Configurator
 {
     private $sourceSchema;
     private $path;
-    private $entityTypeIdentifier;
 
     public function __construct(\pulledbits\ActiveRecord\Source\Schema $sourceSchema, string $path)
     {

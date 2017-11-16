@@ -22,6 +22,11 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
         return new self($conn->getSchemaManager());
     }
+    static function fromDatabaseURL(string $url) : self
+    {
+        $parsedUrl = parse_url($url);
+        return self::fromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+    }
 
     public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier) : array
     {

@@ -15,7 +15,9 @@ if (file_exists($targetDirectory) === false) {
 
 // test activiteit
 require __DIR__ . '/bootstrap.php';
-$connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1], $targetDirectory);
+$sourceSchema = \pulledbits\ActiveRecord\SQL\Meta\Schema::fromDatabaseURL($_SERVER['argv'][1]);
+$configurator = new \pulledbits\ActiveRecord\Configurator($sourceSchema, $targetDirectory);
+$connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1], $configurator);
 $schema = $connection->schema();
 
 $starttijd = date('Y-m-d ') . '23:00:00';

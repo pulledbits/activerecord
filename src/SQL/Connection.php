@@ -3,23 +3,23 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\Configurator;
 
 class Connection
 {
     private $connection;
-    private $targetDirectory;
+    private $configurator;
 
-    public function __construct(\PDO $connection, string $targetDirectory)
+    public function __construct(\PDO $connection, Configurator $configurator)
     {
         $this->connection = $connection;
-        $this->targetDirectory = $targetDirectory;
+        $this->configurator = $configurator;
     }
 
-    static function fromDatabaseURL(string $url, string $targetDirectory) : self
+    static function fromDatabaseURL(string $url, Configurator $configurator) : self
     {
         $parsedUrl = parse_url($url);
-        return new self(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')), $targetDirectory);
+        return new self(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')), $configurator);
     }
 
     public function schema()
@@ -28,8 +28,7 @@ class Connection
     }
     public function recordConfigurator(string $entityTypeIdentifier) : callable
     {
-        $sourceSchema = Meta\Schema::fromPDO($this->connection);
-        return (new \pulledbits\ActiveRecord\Configurator($sourceSchema, $this->targetDirectory))->generate($entityTypeIdentifier);
+        return $this->configurator->generate($entityTypeIdentifier);
     }
 
     public function execute(string $query, array $namedParameters) : Statement
