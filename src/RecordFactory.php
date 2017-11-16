@@ -18,11 +18,9 @@ class RecordFactory
 
     }
 
-    public function createRecord(Configurator $configuratorGenerator) : Record
+    public function createRecord(callable $configurator) : Record
     {
         $record = new Entity($this->schema, $this->entityTypeIdentifier);
-        $record->configure($configuratorGenerator);
-        $configurator = $configuratorGenerator->generate();
         return $configurator($record);
     }
 

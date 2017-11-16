@@ -28,7 +28,7 @@ class Result implements \Countable
     {
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = $recordFactory->createRecord($this->configurator);
+            $record = $recordFactory->createRecord($this->configurator->generate());
             $record->contains($row);
             $records[] = $record;
         }
