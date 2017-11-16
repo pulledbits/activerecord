@@ -35,6 +35,6 @@ class Select
     public function execute() : Result
     {
         $statement = $this->connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
-        return new Result($statement, $this->connection->recordConfigurator());
+        return new Result($statement, $this->connection->recordConfigurator($this->entityTypeIdentifier));
     }
 }

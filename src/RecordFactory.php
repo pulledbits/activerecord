@@ -22,7 +22,7 @@ class RecordFactory
     {
         $record = new Entity($this->schema, $this->entityTypeIdentifier);
         $record->configure($configuratorGenerator);
-        $configurator = $configuratorGenerator->generate($this->entityTypeIdentifier);
+        $configurator = $configuratorGenerator->generate();
         return $configurator($record);
     }
 
