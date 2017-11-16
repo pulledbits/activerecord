@@ -3,6 +3,7 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use pulledbits\ActiveRecord\Configurator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
@@ -26,6 +27,11 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
     {
         $parsedUrl = parse_url($url);
         return self::fromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+    }
+
+    public function createConfigurator(string $targetDirectory)
+    {
+        return new Configurator($this, $targetDirectory);
     }
 
     public function describeTable(\pulledbits\ActiveRecord\Source\Table $sourceTable, string $tableIdentifier) : array
