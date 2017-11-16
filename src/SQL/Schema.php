@@ -2,7 +2,7 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\Entity;
+use pulledbits\ActiveRecord\RecordFactory;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
@@ -17,7 +17,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute();
-        return $result->fetchAllAs(new Entity($this, $entityTypeIdentifier));
+        return $result->fetchAllAs(new RecordFactory($this, $entityTypeIdentifier));
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {

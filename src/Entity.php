@@ -144,10 +144,4 @@ final class Entity implements Record
         }
         return null;
     }
-
-    public function configure(Configurator $configuratorGenerator) : self
-    {
-        $configurator = $configuratorGenerator->generate($this->entityTypeIdentifier);
-        return $configurator($this);
-    }
 }

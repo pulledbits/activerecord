@@ -5,9 +5,7 @@ namespace pulledbits\ActiveRecord\SQL\Query;
 
 
 use pulledbits\ActiveRecord\Configurator;
-use pulledbits\ActiveRecord\Entity;
 use pulledbits\ActiveRecord\RecordFactory;
-use pulledbits\ActiveRecord\SQL\Schema;
 
 class Result implements \Countable
 {
@@ -26,12 +24,11 @@ class Result implements \Countable
         return $this->statement->rowCount();
     }
 
-    public function fetchAllAs(Entity $recordPrototype) : array
+    public function fetchAllAs(RecordFactory $recordFactory) : array
     {
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = clone $recordPrototype;
-            $record = $record->configure($this->configurator);
+            $record = $recordFactory->createRecord($this->configurator);
             $record->contains($row);
             $records[] = $record;
         }
