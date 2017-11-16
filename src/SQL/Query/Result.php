@@ -13,7 +13,7 @@ class Result implements \Countable
     private $statement;
     private $configurator;
 
-    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, Configurator $configurator = null)
+    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, callable $configurator = null)
     {
         $this->statement = $statement;
         $this->configurator = $configurator;
@@ -28,7 +28,7 @@ class Result implements \Countable
     {
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = $recordFactory->createRecord($this->configurator->generate());
+            $record = $recordFactory->createRecord($this->configurator);
             $record->contains($row);
             $records[] = $record;
         }
