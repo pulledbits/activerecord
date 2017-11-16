@@ -39,67 +39,52 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '};';
 
     /**
-     * @var GeneratorGeneratorFactory
+     * @var EntityGeneratorGenerator
      */
     private $object;
 
     protected function setUp()
     {
-        $this->object = new GeneratorGeneratorFactory(new class implements Schema {
-            public function describeTable(string $tableIdentifier): array
-            {
-                // TODO: Implement describeTable() method.
-            }
-
-            public function describeTables()
-            {
-                // TODO: Implement describeTables() method.
-            }
-        });
+        $this->object = new EntityGeneratorGenerator(['id']);
     }
 
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
-        $object = $this->object->makeEntityGeneratorGenerator(['id']);
-        $object->requires(["a", "b", "c"]);
-        $object->references("FkRatingContactmoment", "rating", [
+        $this->object->requires(["a", "b", "c"]);
+        $this->object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
+        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->object->generate());
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
-        $object = $this->object->makeEntityGeneratorGenerator(['id']);
-        $object->requires(["a", "b", "c"]);
-        $object->references("FkRatingContactmoment", "rating", [
+        $this->object->requires(["a", "b", "c"]);
+        $this->object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
             'foo_id' => 'bar_id'
         ]);
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $object->generate());
+        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->object->generate());
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
-        $object = $this->object->makeEntityGeneratorGenerator(['id']);
-        $object->requires(["a", "b", "c"]);
-        $object->references("FkRatingContactmoment", "rating", [
+        $this->object->requires(["a", "b", "c"]);
+        $this->object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
-        $object->references("FkRatingContactmoment2", "rating2", [
+        $this->object->references("FkRatingContactmoment2", "rating2", [
             'contactmoment_id' => 'id',
         ]);
-        $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $object->generate());
+        $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->object->generate());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
-        $object = $this->object->makeEntityGeneratorGenerator(['id']);
-        $object->references("FkRatingContactmoment", "rating", [
+        $this->object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
-        $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $object->generate());
+        $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->object->generate());
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
-        $object = $this->object->makeEntityGeneratorGenerator(['id']);
-        $object->requires(["a", "b", "c"]);
-        $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $object->generate());
+        $this->object->requires(["a", "b", "c"]);
+        $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->object->generate());
     }
 }
