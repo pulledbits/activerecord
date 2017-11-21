@@ -3,6 +3,8 @@ namespace pulledbits\ActiveRecord;
 
 interface Record
 {
+    public function identifiedBy(array $primaryKey);
+
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions);
 
     public function contains(array $values);
@@ -22,4 +24,5 @@ interface Record
     public function create() : int;
 
     public function __call(string $method, array $arguments);
+
 }

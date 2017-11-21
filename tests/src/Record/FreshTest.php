@@ -99,6 +99,11 @@ class FreshTest extends \PHPUnit_Framework_TestCase
                     return [];
                 }
             }
+
+            public function identifiedBy(array $primaryKey)
+            {
+                // TODO: Implement identifiedBy() method.
+            }
         };
         $object = new Fresh($wrappedRecord);
 

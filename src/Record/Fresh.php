@@ -75,4 +75,9 @@ final class Fresh implements \pulledbits\ActiveRecord\Record
     {
         return $this->record->missesRequiredValues();
     }
+
+    public function identifiedBy(array $primaryKey)
+    {
+        // TODO: Implement identifiedBy() method.
+    }
 }
