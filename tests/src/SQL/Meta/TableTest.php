@@ -1,7 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord\SQL\Source;
-
-use pulledbits\ActiveRecord\SQL\Meta\Table;
+namespace pulledbits\ActiveRecord\SQL\Meta;
 
 class TableTest extends \PHPUnit_Framework_TestCase
 {

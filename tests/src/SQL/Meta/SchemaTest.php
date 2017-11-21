@@ -6,9 +6,7 @@
  * Time: 12:36
  */
 
-namespace pulledbits\ActiveRecord\SQL\Source;
-
-use pulledbits\ActiveRecord\SQL\Meta\Table;
+namespace pulledbits\ActiveRecord\SQL\Meta;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
