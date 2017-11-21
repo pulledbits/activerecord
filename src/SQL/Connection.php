@@ -3,20 +3,20 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\SQL\Meta\Configurator;
+use pulledbits\ActiveRecord\SQL\Meta\ConfiguratorFactory;
 
 class Connection
 {
     private $connection;
     private $configurator;
 
-    public function __construct(\PDO $connection, Configurator $configurator)
+    public function __construct(\PDO $connection, ConfiguratorFactory $configurator)
     {
         $this->connection = $connection;
         $this->configurator = $configurator;
     }
 
-    static function fromDatabaseURL(string $url, Configurator $configurator) : self
+    static function fromDatabaseURL(string $url, ConfiguratorFactory $configurator) : self
     {
         $parsedUrl = parse_url($url);
         return new self(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')), $configurator);

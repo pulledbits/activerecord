@@ -1,7 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-class Configurator
+class ConfiguratorFactory
 {
     private $generatorGeneratorFactory;
     private $path;
