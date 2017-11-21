@@ -3,7 +3,7 @@ namespace pulledbits\ActiveRecord\Source;
 
 use Psr\Http\Message\StreamInterface;
 
-final class EntityGeneratorGenerator implements GeneratorGenerator
+final class EntityConfiguratorGenerator implements ConfiguratorGenerator
 {
     const NEWLINE = PHP_EOL . "    ";
 

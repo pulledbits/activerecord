@@ -12,13 +12,13 @@ namespace pulledbits\ActiveRecord\Source;
 class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var GeneratorGeneratorFactory
+     * @var ConfiguratorGeneratorFactory
      */
     private $object;
 
     protected function setUp()
     {
-        $this->object = new GeneratorGeneratorFactory(new class implements Schema {
+        $this->object = new ConfiguratorGeneratorFactory(new class implements Schema {
             public function describeTable(string $tableIdentifier): array
             {
                 switch ($tableIdentifier) {
@@ -48,18 +48,18 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testMakeGeneratorGeneratorFromDescription_When_TableDescription_Expect_EntityGeneratorGenerator() {
         
-        $object = $this->object->makeGeneratorGenerator('base_table');
+        $object = $this->object->makeConfiguratorGenerator('base_table');
 
-        $expectedObject = new EntityGeneratorGenerator(['id']);
+        $expectedObject = new EntityConfiguratorGenerator(['id']);
         $expectedObject->requires(['a', 'b', 'c']);
         $this->assertEquals($expectedObject, $object);
     }
 
     public function testMakeGeneratorGeneratorFromDescription_When_WrappedEntityTypeIdentifier_Expect_WrappedEntityGeneratorGenerator() {
         
-        $object = $this->object->makeGeneratorGenerator('view');
+        $object = $this->object->makeConfiguratorGenerator('view');
 
-        $this->assertEquals(new WrappedEntityGeneratorGenerator('blabla'), $object);
+        $this->assertEquals(new WrappedEntityConfiguratorGenerator('blabla'), $object);
     }
 
 }

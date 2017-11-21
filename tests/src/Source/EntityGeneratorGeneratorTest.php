@@ -42,14 +42,14 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '};';
 
     /**
-     * @var EntityGeneratorGenerator
+     * @var EntityConfiguratorGenerator
      */
     private $object;
     private $stream;
 
     protected function setUp()
     {
-        $this->object = new EntityGeneratorGenerator(['id']);
+        $this->object = new EntityConfiguratorGenerator(['id']);
         $this->stream = createMockStreamInterface();
     }
 

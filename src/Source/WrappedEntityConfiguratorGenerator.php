@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\Source;
 
 use Psr\Http\Message\StreamInterface;
 
-final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
+final class WrappedEntityConfiguratorGenerator implements ConfiguratorGenerator
 {
     private $entityTypeIdentifier;
 

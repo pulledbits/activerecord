@@ -1,6 +1,6 @@
 <?php
 namespace pulledbits\ActiveRecord;
-use pulledbits\ActiveRecord\Source\GeneratorGeneratorFactory;
+use pulledbits\ActiveRecord\Source\ConfiguratorGeneratorFactory;
 
 return new class {
     public function __construct()
@@ -8,7 +8,7 @@ return new class {
         require getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
     }
 
-    public function generatorGeneratorFactory() : GeneratorGeneratorFactory {
-        return new GeneratorGeneratorFactory();
+    public function generatorGeneratorFactory() : ConfiguratorGeneratorFactory {
+        return new ConfiguratorGeneratorFactory();
     }
 };

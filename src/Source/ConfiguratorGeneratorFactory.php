@@ -2,7 +2,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-final class GeneratorGeneratorFactory
+final class ConfiguratorGeneratorFactory
 {
     private $sourceSchema;
 
@@ -11,13 +11,13 @@ final class GeneratorGeneratorFactory
         $this->sourceSchema = $sourceSchema;
     }
 
-    public function makeGeneratorGenerator(string $entityTypeIdentifier) : GeneratorGenerator
+    public function makeConfiguratorGenerator(string $entityTypeIdentifier) : ConfiguratorGenerator
     {
         $entityDescription = $this->sourceSchema->describeTable($entityTypeIdentifier);
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
-            return new WrappedEntityGeneratorGenerator($entityDescription['entityTypeIdentifier']);
+            return new WrappedEntityConfiguratorGenerator($entityDescription['entityTypeIdentifier']);
         }
-        $entityGeneratorGenerator = new EntityGeneratorGenerator($entityDescription['identifier']);
+        $entityGeneratorGenerator = new EntityConfiguratorGenerator($entityDescription['identifier']);
         $entityGeneratorGenerator->requires($entityDescription['requiredAttributeIdentifiers']);
         foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
             $entityGeneratorGenerator->references($referenceIdentifier, $reference['table'], $reference['where']);
