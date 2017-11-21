@@ -34,28 +34,22 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
 
     public function generate(StreamInterface $stream) : void
     {
+        $stream->write('<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {');
+        $stream->write(self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);");
 
-        $references = [];
+        if (count($this->requiredAttributeIdentifiers) > 0) {
+            $stream->write(self::NEWLINE . "\$record->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);");
+        }
+
         if (count($this->references) > 0) {
-            $references[] = '';
             foreach ($this->references as $referenceIdentifier => $reference) {
                 $where = [];
                 foreach ($reference['where'] as $referencedAttributeIdentifier => $localAttributeIdentifier) {
                     $where[] = '\'' . $referencedAttributeIdentifier . '\' => \'' . $localAttributeIdentifier . '\'';
                 }
-                $references[] = "\$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join(", ", $where) . "]);";
+                $stream->write(self::NEWLINE . "\$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join(", ", $where) . "]);");
             }
         }
-
-        $requires = '';
-        if (count($this->requiredAttributeIdentifiers) > 0) {
-            $requires = self::NEWLINE . "\$record->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);";
-        }
-
-        $stream->write('<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {' .
-            self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);" .
-            $requires .
-            join(self::NEWLINE, $references) .
-            self::NEWLINE . 'return $record;' . "\n" . '};');
+        $stream->write(self::NEWLINE . 'return $record;' . "\n" . '};');
     }
 }
