@@ -1,7 +1,6 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-
 class Configurator
 {
     private $generatorGeneratorFactory;
@@ -16,12 +15,12 @@ class Configurator
         }
     }
 
-    public function generate(string $entityTypeIdentifier)
+    public function generate(string $entityTypeIdentifier) : callable
     {
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
             $generator = $this->generatorGeneratorFactory->makeGeneratorGenerator($entityTypeIdentifier);
-            file_put_contents($configuratorPath, $generator->generate());
+            $generator->generate(\GuzzleHttp\Psr7\stream_for(fopen($configuratorPath, 'w')));
         }
         return require $configuratorPath;
     }
