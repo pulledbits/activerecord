@@ -9,6 +9,8 @@
 namespace pulledbits\ActiveRecord;
 
 
+use pulledbits\ActiveRecord\SQL\Entity;
+
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -24,7 +26,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                     /**
                      * @var $this \pulledbits\ActiveRecord\Schema
                      */
-                    $record = new \pulledbits\ActiveRecord\Entity($this, 'MyTable', $values);
+                    $record = new SQL\Entity($this, 'MyTable', $values);
                     $record->contains($values);
                     return $record;
                 }, $results);
@@ -89,7 +91,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function initializeRecord(string $entityTypeIdentifier, array $values): Record
             {
-                return new \pulledbits\ActiveRecord\Entity($this, $entityTypeIdentifier, [], [], []);
+                return new SQL\Entity($this, $entityTypeIdentifier, [], [], []);
             }
 
             public function executeProcedure(string $procedureIdentifier, array $arguments): void

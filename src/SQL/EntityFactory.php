@@ -1,10 +1,13 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord;
+namespace pulledbits\ActiveRecord\SQL;
 
 
-class EntityFactory
+use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\Schema;
+
+class EntityFactory implements \pulledbits\ActiveRecord\RecordFactory
 {
     private $schema;
 

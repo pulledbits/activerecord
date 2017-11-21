@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -34,14 +34,14 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '    return $record;';
 
     /**
-     * @var Entity
+     * @var Record
      */
     private $object;
     private $stream;
 
     protected function setUp()
     {
-        $this->object = new Entity(['id']);
+        $this->object = new Record(['id']);
         $this->stream = createMockStreamInterface();
     }
 
@@ -53,7 +53,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
             '    $this->recordFactory = $recordFactory;' . PHP_EOL .
             '    }' . PHP_EOL .
             '    public function configure() : Record {' . PHP_EOL .
-            '    $record = $this->recordFactory->createRecord();' . PHP_EOL .
+            '    $record = $this->recordFactory->makeRecord();' . PHP_EOL .
             $variantCode . PHP_EOL .
             '}};';
 

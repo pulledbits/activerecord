@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 
 class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
@@ -53,7 +53,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         
         $object = $this->object->makeConfiguratorGenerator('base_table');
 
-        $expectedObject = new Entity(['id']);
+        $expectedObject = new Record(['id']);
         $expectedObject->requires(['a', 'b', 'c']);
         $this->assertEquals($expectedObject, $object);
     }

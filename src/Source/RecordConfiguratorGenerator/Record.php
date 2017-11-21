@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use Psr\Http\Message\StreamInterface;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
-final class Entity implements RecordConfiguratorGenerator
+final class Record implements RecordConfiguratorGenerator
 {
     const NEWLINE = PHP_EOL . "    ";
 
@@ -42,7 +42,7 @@ final class Entity implements RecordConfiguratorGenerator
         $stream->write(self::NEWLINE . '$this->recordFactory = $recordFactory;');
         $stream->write(self::NEWLINE . '}');
         $stream->write(self::NEWLINE . 'public function configure() : Record {');
-        $stream->write(self::NEWLINE . '$record = $this->recordFactory->createRecord();');
+        $stream->write(self::NEWLINE . '$record = $this->recordFactory->makeRecord();');
         $stream->write(self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);");
 
         if (count($this->requiredAttributeIdentifiers) > 0) {

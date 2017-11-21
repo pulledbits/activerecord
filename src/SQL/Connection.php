@@ -4,7 +4,6 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\EntityFactory;
 use pulledbits\ActiveRecord\SQL\Meta\ConfiguratorFactory;
 
 class Connection

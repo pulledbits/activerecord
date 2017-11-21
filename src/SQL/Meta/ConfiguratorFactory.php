@@ -2,7 +2,7 @@
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\EntityFactory;
+use pulledbits\ActiveRecord\RecordFactory;
 
 class ConfiguratorFactory
 {
@@ -18,7 +18,7 @@ class ConfiguratorFactory
         }
     }
 
-    public function generate(EntityFactory $entityFactory, string $entityTypeIdentifier) : RecordConfigurator
+    public function generate(RecordFactory $recordFactory, string $entityTypeIdentifier) : RecordConfigurator
     {
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {

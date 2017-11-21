@@ -2,8 +2,6 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\EntityFactory;
-
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
 

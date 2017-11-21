@@ -1,6 +1,9 @@
 <?php
 
-namespace pulledbits\ActiveRecord;
+namespace pulledbits\ActiveRecord\SQL;
+
+use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\Schema;
 
 final class Entity implements Record
 {

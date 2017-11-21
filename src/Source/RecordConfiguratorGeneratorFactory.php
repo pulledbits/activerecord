@@ -2,7 +2,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 
 final class RecordConfiguratorGeneratorFactory
@@ -20,7 +20,7 @@ final class RecordConfiguratorGeneratorFactory
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
             return new WrappedEntity($entityDescription['entityTypeIdentifier']);
         }
-        $entityGeneratorGenerator = new Entity($entityDescription['identifier']);
+        $entityGeneratorGenerator = new Record($entityDescription['identifier']);
         $entityGeneratorGenerator->requires($entityDescription['requiredAttributeIdentifiers']);
         foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
             $entityGeneratorGenerator->references($referenceIdentifier, $reference['table'], $reference['where']);
