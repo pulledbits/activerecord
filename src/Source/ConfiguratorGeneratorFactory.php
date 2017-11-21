@@ -2,6 +2,9 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\WrappedEntity;
+
 final class ConfiguratorGeneratorFactory
 {
     private $sourceSchema;
@@ -15,9 +18,9 @@ final class ConfiguratorGeneratorFactory
     {
         $entityDescription = $this->sourceSchema->describeTable($entityTypeIdentifier);
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
-            return new WrappedEntityConfiguratorGenerator($entityDescription['entityTypeIdentifier']);
+            return new WrappedEntity($entityDescription['entityTypeIdentifier']);
         }
-        $entityGeneratorGenerator = new EntityConfiguratorGenerator($entityDescription['identifier']);
+        $entityGeneratorGenerator = new Entity($entityDescription['identifier']);
         $entityGeneratorGenerator->requires($entityDescription['requiredAttributeIdentifiers']);
         foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
             $entityGeneratorGenerator->references($referenceIdentifier, $reference['table'], $reference['where']);

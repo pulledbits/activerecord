@@ -1,10 +1,11 @@
 <?php
 
-namespace pulledbits\ActiveRecord\Source;
+namespace pulledbits\ActiveRecord\Source\ConfiguratorGenerator;
 
 use Psr\Http\Message\StreamInterface;
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator;
 
-final class WrappedEntityConfiguratorGenerator implements ConfiguratorGenerator
+final class WrappedEntity implements ConfiguratorGenerator
 {
     private $entityTypeIdentifier;
 

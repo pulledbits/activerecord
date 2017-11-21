@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use Psr\Http\Message\StreamInterface;
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\Entity;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -42,14 +42,14 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '};';
 
     /**
-     * @var EntityConfiguratorGenerator
+     * @var Entity
      */
     private $object;
     private $stream;
 
     protected function setUp()
     {
-        $this->object = new EntityConfiguratorGenerator(['id']);
+        $this->object = new Entity(['id']);
         $this->stream = createMockStreamInterface();
     }
 

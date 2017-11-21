@@ -9,6 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\WrappedEntity;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -21,7 +22,7 @@ class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $object = new WrappedEntityConfiguratorGenerator('MyTable');
+        $object = new WrappedEntity('MyTable');
 
         $object->generate($this->stream);
         $this->stream->seek(0);
@@ -29,7 +30,7 @@ class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('<?php return $this->generate("MyTable");', $this->stream->getContents());
     }
     public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $object = new WrappedEntityConfiguratorGenerator('MyTable2');
+        $object = new WrappedEntity('MyTable2');
 
         $object->generate($this->stream);
         $this->stream->seek(0);

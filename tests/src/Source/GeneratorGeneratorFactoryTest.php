@@ -9,6 +9,9 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\WrappedEntity;
+
 class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -50,7 +53,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         
         $object = $this->object->makeConfiguratorGenerator('base_table');
 
-        $expectedObject = new EntityConfiguratorGenerator(['id']);
+        $expectedObject = new Entity(['id']);
         $expectedObject->requires(['a', 'b', 'c']);
         $this->assertEquals($expectedObject, $object);
     }
@@ -59,7 +62,7 @@ class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         
         $object = $this->object->makeConfiguratorGenerator('view');
 
-        $this->assertEquals(new WrappedEntityConfiguratorGenerator('blabla'), $object);
+        $this->assertEquals(new WrappedEntity('blabla'), $object);
     }
 
 }
