@@ -18,7 +18,7 @@ class EntityFactory
 
     }
 
-    public function createRecord() : Record
+    public function makeRecord() : Record
     {
         return new Entity($this->schema, $this->entityTypeIdentifier);
     }
