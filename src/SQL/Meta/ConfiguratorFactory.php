@@ -18,7 +18,7 @@ class ConfiguratorFactory
         }
     }
 
-    public function generate(EntityFactory $recordFactory, string $entityTypeIdentifier) : RecordConfigurator
+    public function generate(EntityFactory $entityFactory, string $entityTypeIdentifier) : RecordConfigurator
     {
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {

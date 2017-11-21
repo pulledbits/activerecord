@@ -15,7 +15,6 @@ class EntityFactory
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
-
     }
 
     public function makeRecord() : Record
