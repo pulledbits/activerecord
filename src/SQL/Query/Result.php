@@ -25,9 +25,11 @@ class Result implements \Countable
 
     public function fetchAllAs(RecordFactory $recordFactory) : array
     {
+        $configurator = $this->configurator;
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = $recordFactory->createRecord($this->configurator);
+            $record = $recordFactory->createRecord();
+            $configurator($record);
             $record->contains($row);
             $records[] = $record;
         }
