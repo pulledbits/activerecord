@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord;
 
 
-class RecordFactory
+class EntityFactory
 {
     private $schema;
 

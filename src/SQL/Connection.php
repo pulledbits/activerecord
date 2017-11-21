@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\EntityFactory;
 use pulledbits\ActiveRecord\SQL\Meta\ConfiguratorFactory;
 
 class Connection
@@ -30,7 +30,7 @@ class Connection
     }
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
     {
-        return $this->configurator->generate(new RecordFactory($this->schema(), $entityTypeIdentifier), $entityTypeIdentifier);
+        return $this->configurator->generate(new EntityFactory($this->schema(), $entityTypeIdentifier), $entityTypeIdentifier);
     }
 
     public function execute(string $query, array $namedParameters) : Statement

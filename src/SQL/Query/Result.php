@@ -5,7 +5,7 @@ namespace pulledbits\ActiveRecord\SQL\Query;
 
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\EntityFactory;
 
 class Result implements \Countable
 {
