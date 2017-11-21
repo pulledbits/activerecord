@@ -53,8 +53,11 @@ class RecordConfiguratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
         
         $object = $this->object->makeConfiguratorGenerator('base_table');
 
-        $expectedObject = new Record(['id']);
-        $expectedObject->requires(['a', 'b', 'c']);
+        $expectedObject = new Record([
+            'identifier' => ['id'],
+            'requiredAttributeIdentifiers' => ['a', 'b', 'c'],
+            'references' => []
+        ]);
         $this->assertEquals($expectedObject, $object);
     }
 

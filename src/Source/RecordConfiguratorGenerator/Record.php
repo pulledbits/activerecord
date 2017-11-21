@@ -14,23 +14,25 @@ final class Record implements RecordConfiguratorGenerator
 
     private $references;
 
-    public function __construct(array $entityIdentifier)
+    public function __construct(array $entityDescription)
     {
-        $this->entityIdentifier = $entityIdentifier;
-        $this->requiredAttributeIdentifiers = [];
-        $this->references = [];
+        $this->entityIdentifier = $entityDescription['identifier'];
+        $this->requiredAttributeIdentifiers = $entityDescription['requiredAttributeIdentifiers'];
+        foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
+            $this->references[$referenceIdentifier] = [
+                'table' => $reference['table'],
+                'where' => $reference['where']
+            ];
+        }
+        $this->requiredAttributeIdentifiers = $entityDescription['requiredAttributeIdentifiers'];
+        $this->references = $entityDescription['references'];
     }
 
     public function requires(array $requiredAttributeIdentifiers) {
-        $this->requiredAttributeIdentifiers = $requiredAttributeIdentifiers;
     }
 
     public function references(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
     {
-        $this->references[$referenceIdentifier] = [
-            'table' => $referencedEntityIdentifier,
-            'where' => $conditions
-        ];
     }
 
     public function generateConfigurator(StreamInterface $stream) : void

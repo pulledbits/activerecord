@@ -40,7 +40,6 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->object = new Record(['id']);
         $this->stream = createMockStreamInterface();
     }
 
@@ -58,11 +57,20 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    private function createTableDescription(array $entityIdentifier, array $requiredAttributes, array $references) {
+        return [
+            'identifier' => $entityIdentifier,
+            'requiredAttributeIdentifiers' => $requiredAttributes,
+            'references' => $references
+        ];
+    }
+
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
-        $this->object->requires(["a", "b", "c"]);
-        $this->object->references("FkRatingContactmoment", "rating", [
-            'contactmoment_id' => 'id',
-        ]);
+        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], [
+            "FkRatingContactmoment" => ['table' => "rating", 'where' => [
+                'contactmoment_id' => 'id',
+            ]]
+        ]));
 
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
@@ -71,11 +79,12 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
-        $this->object->requires(["a", "b", "c"]);
-        $this->object->references("FkRatingContactmoment", "rating", [
-            'contactmoment_id' => 'id',
-            'foo_id' => 'bar_id'
-        ]);
+        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], [
+            "FkRatingContactmoment" => ['table' => "rating", 'where' => [
+                'contactmoment_id' => 'id',
+                'foo_id' => 'bar_id'
+            ]]
+        ]));
 
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
@@ -84,14 +93,14 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
-        $this->object->requires(["a", "b", "c"]);
-        $this->object->references("FkRatingContactmoment", "rating", [
-            'contactmoment_id' => 'id',
-        ]);
-        $this->object->references("FkRatingContactmoment2", "rating2", [
-            'contactmoment_id' => 'id',
-        ]);
-
+        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], [
+            "FkRatingContactmoment" => ['table' => "rating", 'where' => [
+                'contactmoment_id' => 'id'
+            ]],
+            "FkRatingContactmoment2" => ['table' => "rating2", 'where' => [
+                'contactmoment_id' => 'id'
+            ]]
+        ]));
 
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
@@ -100,10 +109,11 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
-        $this->object->references("FkRatingContactmoment", "rating", [
-            'contactmoment_id' => 'id',
-        ]);
-
+        $this->object = new Record($this->createTableDescription(['id'], [], [
+            "FkRatingContactmoment" => ['table' => "rating", 'where' => [
+                'contactmoment_id' => 'id',
+            ]]
+        ]));
 
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
@@ -113,8 +123,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
-        $this->object->requires(["a", "b", "c"]);
-
+        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], []));
 
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);

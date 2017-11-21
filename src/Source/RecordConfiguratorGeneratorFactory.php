@@ -20,11 +20,7 @@ final class RecordConfiguratorGeneratorFactory
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
             return new WrappedEntity($entityDescription['entityTypeIdentifier']);
         }
-        $entityGeneratorGenerator = new Record($entityDescription['identifier']);
-        $entityGeneratorGenerator->requires($entityDescription['requiredAttributeIdentifiers']);
-        foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
-            $entityGeneratorGenerator->references($referenceIdentifier, $reference['table'], $reference['where']);
-        }
+        $entityGeneratorGenerator = new Record($entityDescription);
 
         return $entityGeneratorGenerator;
     }
