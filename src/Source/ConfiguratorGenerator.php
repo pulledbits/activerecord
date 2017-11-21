@@ -7,5 +7,5 @@ use Psr\Http\Message\StreamInterface;
 
 interface ConfiguratorGenerator
 {
-    public function generate(StreamInterface $stream) : void;
+    public function generateConfigurator(StreamInterface $stream) : void;
 }

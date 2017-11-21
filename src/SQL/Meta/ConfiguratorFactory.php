@@ -20,7 +20,7 @@ class ConfiguratorFactory
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
             $generator = $this->generatorGeneratorFactory->makeConfiguratorGenerator($entityTypeIdentifier);
-            $generator->generate(\GuzzleHttp\Psr7\stream_for(fopen($configuratorPath, 'w')));
+            $generator->generateConfigurator(\GuzzleHttp\Psr7\stream_for(fopen($configuratorPath, 'w')));
         }
         return require $configuratorPath;
     }

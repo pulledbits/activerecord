@@ -33,7 +33,7 @@ final class Entity implements ConfiguratorGenerator
         ];
     }
 
-    public function generate(StreamInterface $stream) : void
+    public function generateConfigurator(StreamInterface $stream) : void
     {
         $stream->write('<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {');
         $stream->write(self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);");

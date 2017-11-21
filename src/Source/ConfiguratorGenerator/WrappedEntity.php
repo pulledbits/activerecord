@@ -14,7 +14,7 @@ final class WrappedEntity implements ConfiguratorGenerator
         $this->entityTypeIdentifier = $entityTypeIdentifier;
     }
 
-    public function generate(StreamInterface $stream) : void
+    public function generateConfigurator(StreamInterface $stream) : void
     {
         $stream->write('<?php return $this->generate("' . $this->entityTypeIdentifier . '");');
     }

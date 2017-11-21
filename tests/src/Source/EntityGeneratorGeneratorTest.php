@@ -59,7 +59,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
             'contactmoment_id' => 'id',
         ]);
 
-        $this->object->generate($this->stream);
+        $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
         $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
@@ -72,7 +72,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
             'foo_id' => 'bar_id'
         ]);
 
-        $this->object->generate($this->stream);
+        $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
         $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->stream->getContents());
@@ -88,7 +88,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         ]);
 
 
-        $this->object->generate($this->stream);
+        $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
         $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->stream->getContents());
@@ -100,7 +100,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         ]);
 
 
-        $this->object->generate($this->stream);
+        $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
 
@@ -111,7 +111,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->requires(["a", "b", "c"]);
 
 
-        $this->object->generate($this->stream);
+        $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
         $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->stream->getContents());
