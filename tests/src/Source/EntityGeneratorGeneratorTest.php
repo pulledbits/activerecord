@@ -14,36 +14,24 @@ use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    private $base = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
-    '    $record = $recordFactory->createRecord();' . PHP_EOL .
-    '    $record->identifiedBy(%s);' . PHP_EOL .
+    private $base = '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
-    '    return $record;' . PHP_EOL .
-    '}};';
+    '    return $record;';
 
-    private $baseTwoReferences = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
-    '    $record = $recordFactory->createRecord();' . PHP_EOL .
-    '    $record->identifiedBy(%s);' . PHP_EOL .
+    private $baseTwoReferences = '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
-    '    return $record;' . PHP_EOL .
-    '}};';
+    '    return $record;';
 
-    private $baseNoRequires = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
-    '    $record = $recordFactory->createRecord();' . PHP_EOL .
-    '    $record->identifiedBy(%s);' . PHP_EOL .
+    private $baseNoRequires = '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
-    '    return $record;' . PHP_EOL .
-    '}};';
+    '    return $record;';
 
-    private $baseNoReferences = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
-    '    $record = $recordFactory->createRecord();' . PHP_EOL .
-    '    $record->identifiedBy(%s);' . PHP_EOL .
+    private $baseNoReferences = '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
-    '    return $record;' . PHP_EOL .
-    '}};';
+    '    return $record;';
 
     /**
      * @var Entity
@@ -57,6 +45,20 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->stream = createMockStreamInterface();
     }
 
+    private function expectedCode(string $variantCode) {
+        return '<?php namespace pulledbits\ActiveRecord;' . PHP_EOL .
+            '    return new class($recordFactory) implements RecordConfigurator {' . PHP_EOL .
+            '    private $recordFactory;' . PHP_EOL .
+            '    public function __construct(RecordFactory $recordFactory) {' . PHP_EOL .
+            '    $this->recordFactory = $recordFactory;' . PHP_EOL .
+            '    }' . PHP_EOL .
+            '    public function configure() : Record {' . PHP_EOL .
+            '    $record = $this->recordFactory->createRecord();' . PHP_EOL .
+            $variantCode . PHP_EOL .
+            '}};';
+
+    }
+
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
         $this->object->requires(["a", "b", "c"]);
         $this->object->references("FkRatingContactmoment", "rating", [
@@ -66,7 +68,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
+        $this->assertEquals(sprintf($this->expectedCode($this->base), '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
@@ -79,7 +81,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->stream->getContents());
+        $this->assertEquals(sprintf($this->expectedCode($this->base), '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
@@ -95,7 +97,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->stream->getContents());
+        $this->assertEquals(sprintf($this->expectedCode($this->baseTwoReferences), '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
@@ -108,7 +110,7 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->stream->seek(0);
 
 
-        $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
+        $this->assertEquals(sprintf($this->expectedCode($this->baseNoRequires), '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
@@ -118,6 +120,6 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->stream->getContents());
+        $this->assertEquals(sprintf($this->expectedCode($this->baseNoReferences), '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->stream->getContents());
     }
 }

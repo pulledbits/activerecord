@@ -24,11 +24,11 @@ class Result implements \Countable
         return $this->statement->rowCount();
     }
 
-    public function fetchAllAs(RecordFactory $recordFactory) : array
+    public function fetchAllAs() : array
     {
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = $this->configurator->configure($recordFactory);
+            $record = $this->configurator->configure();
             $record->contains($row);
             $records[] = $record;
         }

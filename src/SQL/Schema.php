@@ -17,7 +17,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute();
-        return $result->fetchAllAs(new RecordFactory($this, $entityTypeIdentifier));
+        return $result->fetchAllAs();
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
