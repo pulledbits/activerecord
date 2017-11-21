@@ -9,6 +9,9 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
+use Psr\Http\Message\StreamInterface;
+use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
+
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     private $base = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
@@ -42,10 +45,12 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
      * @var EntityGeneratorGenerator
      */
     private $object;
+    private $stream;
 
     protected function setUp()
     {
         $this->object = new EntityGeneratorGenerator(['id']);
+        $this->stream = createMockStreamInterface();
     }
 
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
@@ -53,7 +58,11 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->object->generate());
+
+        $this->object->generate($this->stream);
+        $this->stream->seek(0);
+
+        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
@@ -62,7 +71,11 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
             'contactmoment_id' => 'id',
             'foo_id' => 'bar_id'
         ]);
-        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->object->generate());
+
+        $this->object->generate($this->stream);
+        $this->stream->seek(0);
+
+        $this->assertEquals(sprintf($this->base, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
@@ -73,18 +86,34 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->object->references("FkRatingContactmoment2", "rating2", [
             'contactmoment_id' => 'id',
         ]);
-        $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->object->generate());
+
+
+        $this->object->generate($this->stream);
+        $this->stream->seek(0);
+
+        $this->assertEquals(sprintf($this->baseTwoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
         $this->object->references("FkRatingContactmoment", "rating", [
             'contactmoment_id' => 'id',
         ]);
-        $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->object->generate());
+
+
+        $this->object->generate($this->stream);
+        $this->stream->seek(0);
+
+
+        $this->assertEquals(sprintf($this->baseNoRequires, '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
         $this->object->requires(["a", "b", "c"]);
-        $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->object->generate());
+
+
+        $this->object->generate($this->stream);
+        $this->stream->seek(0);
+
+        $this->assertEquals(sprintf($this->baseNoReferences, '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->stream->getContents());
     }
 }

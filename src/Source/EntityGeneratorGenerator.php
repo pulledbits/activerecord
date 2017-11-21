@@ -1,6 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\Source;
 
+use Psr\Http\Message\StreamInterface;
 
 final class EntityGeneratorGenerator implements GeneratorGenerator
 {
@@ -31,7 +32,7 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
         ];
     }
 
-    public function generate()
+    public function generate(StreamInterface $stream) : void
     {
 
         $references = [];
@@ -51,10 +52,10 @@ final class EntityGeneratorGenerator implements GeneratorGenerator
             $requires = self::NEWLINE . "\$record->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);";
         }
 
-        return '<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {' .
+        $stream->write('<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {' .
             self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);" .
             $requires .
             join(self::NEWLINE, $references) .
-            self::NEWLINE . 'return $record;' . "\n" . '};';
+            self::NEWLINE . 'return $record;' . "\n" . '};');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace pulledbits\ActiveRecord\Source;
 
+use Psr\Http\Message\StreamInterface;
 
 final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
 {
@@ -12,8 +13,8 @@ final class WrappedEntityGeneratorGenerator implements GeneratorGenerator
         $this->entityTypeIdentifier = $entityTypeIdentifier;
     }
 
-    public function generate()
+    public function generate(StreamInterface $stream) : void
     {
-        return '<?php return $this->generate("' . $this->entityTypeIdentifier . '");';
+        $stream->write('<?php return $this->generate("' . $this->entityTypeIdentifier . '");');
     }
 }
