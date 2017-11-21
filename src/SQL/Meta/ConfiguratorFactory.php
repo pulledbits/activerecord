@@ -6,7 +6,7 @@ class ConfiguratorFactory
     private $generatorGeneratorFactory;
     private $path;
 
-    public function __construct(\pulledbits\ActiveRecord\Source\ConfiguratorGeneratorFactory $generatorGeneratorFactory, string $path)
+    public function __construct(\pulledbits\ActiveRecord\Source\RecordConfiguratorGeneratorFactory $generatorGeneratorFactory, string $path)
     {
         $this->generatorGeneratorFactory = $generatorGeneratorFactory;
         $this->path = $path;

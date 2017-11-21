@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Entity;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase

@@ -5,7 +5,7 @@ namespace pulledbits\ActiveRecord\Source;
 
 use Psr\Http\Message\StreamInterface;
 
-interface ConfiguratorGenerator
+interface RecordConfiguratorGenerator
 {
     public function generateConfigurator(StreamInterface $stream) : void;
 }

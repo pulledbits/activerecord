@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\WrappedEntity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase

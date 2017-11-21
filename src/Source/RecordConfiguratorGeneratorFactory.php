@@ -2,10 +2,10 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\Entity;
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\WrappedEntity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 
-final class ConfiguratorGeneratorFactory
+final class RecordConfiguratorGeneratorFactory
 {
     private $sourceSchema;
 
@@ -14,7 +14,7 @@ final class ConfiguratorGeneratorFactory
         $this->sourceSchema = $sourceSchema;
     }
 
-    public function makeConfiguratorGenerator(string $entityTypeIdentifier) : ConfiguratorGenerator
+    public function makeConfiguratorGenerator(string $entityTypeIdentifier) : RecordConfiguratorGenerator
     {
         $entityDescription = $this->sourceSchema->describeTable($entityTypeIdentifier);
         if (array_key_exists('entityTypeIdentifier', $entityDescription)) {

@@ -9,19 +9,19 @@
 namespace pulledbits\ActiveRecord\Source;
 
 
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\Entity;
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator\WrappedEntity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Entity;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 
 class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ConfiguratorGeneratorFactory
+     * @var RecordConfiguratorGeneratorFactory
      */
     private $object;
 
     protected function setUp()
     {
-        $this->object = new ConfiguratorGeneratorFactory(new class implements Schema {
+        $this->object = new RecordConfiguratorGeneratorFactory(new class implements Schema {
             public function describeTable(string $tableIdentifier): array
             {
                 switch ($tableIdentifier) {

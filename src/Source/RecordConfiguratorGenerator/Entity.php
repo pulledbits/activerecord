@@ -1,10 +1,10 @@
 <?php
-namespace pulledbits\ActiveRecord\Source\ConfiguratorGenerator;
+namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use Psr\Http\Message\StreamInterface;
-use pulledbits\ActiveRecord\Source\ConfiguratorGenerator;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
-final class Entity implements ConfiguratorGenerator
+final class Entity implements RecordConfiguratorGenerator
 {
     const NEWLINE = PHP_EOL . "    ";
 
