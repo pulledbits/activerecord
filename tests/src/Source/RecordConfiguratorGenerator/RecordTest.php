@@ -6,13 +6,12 @@
  * Time: 15:30
  */
 
-namespace pulledbits\ActiveRecord\Source;
+namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
-class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
+class RecordTest extends \PHPUnit_Framework_TestCase
 {
     private $base = '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .

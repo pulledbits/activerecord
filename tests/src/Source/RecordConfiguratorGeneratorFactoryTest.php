@@ -12,7 +12,7 @@ namespace pulledbits\ActiveRecord\Source;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 
-class GeneratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
+class RecordConfiguratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RecordConfiguratorGeneratorFactory

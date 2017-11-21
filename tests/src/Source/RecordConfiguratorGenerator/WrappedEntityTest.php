@@ -6,13 +6,12 @@
  * Time: 15:30
  */
 
-namespace pulledbits\ActiveRecord\Source;
+namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
-class WrappedEntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
+class WrappedEntityTest extends \PHPUnit_Framework_TestCase
 {
     private $stream;
 
