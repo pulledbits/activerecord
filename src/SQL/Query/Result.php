@@ -4,6 +4,7 @@
 namespace pulledbits\ActiveRecord\SQL\Query;
 
 
+use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordFactory;
 
 class Result implements \Countable
@@ -12,7 +13,7 @@ class Result implements \Countable
     private $statement;
     private $configurator;
 
-    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, callable $configurator = null)
+    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, RecordConfigurator $configurator = null)
     {
         $this->statement = $statement;
         $this->configurator = $configurator;
@@ -25,10 +26,9 @@ class Result implements \Countable
 
     public function fetchAllAs(RecordFactory $recordFactory) : array
     {
-        $configurator = $this->configurator;
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = $configurator($recordFactory);
+            $record = $this->configurator->configure($recordFactory);
             $record->contains($row);
             $records[] = $record;
         }

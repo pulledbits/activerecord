@@ -14,36 +14,36 @@ use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    private $base = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    private $base = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
     '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
-    '};';
+    '}};';
 
-    private $baseTwoReferences = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    private $baseTwoReferences = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
     '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
-    '};';
+    '}};';
 
-    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    private $baseNoRequires = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
     '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
-    '};';
+    '}};';
 
-    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    private $baseNoReferences = '<?php namespace pulledbits\\ActiveRecord; return new class implements RecordConfigurator { public function configure(RecordFactory $recordFactory) : Record {' . PHP_EOL .
     '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
-    '};';
+    '}};';
 
     /**
      * @var Entity
