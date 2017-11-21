@@ -35,7 +35,8 @@ final class Entity implements RecordConfiguratorGenerator
 
     public function generateConfigurator(StreamInterface $stream) : void
     {
-        $stream->write('<?php return function(\\pulledbits\\ActiveRecord\\Entity $record) {');
+        $stream->write('<?php return function(\\pulledbits\\ActiveRecord\\RecordFactory $recordFactory) {');
+        $stream->write(self::NEWLINE . '$record = $recordFactory->createRecord();');
         $stream->write(self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);");
 
         if (count($this->requiredAttributeIdentifiers) > 0) {

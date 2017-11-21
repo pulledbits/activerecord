@@ -14,14 +14,16 @@ use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    private $base = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
+    private $base = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
     '};';
 
-    private $baseTwoReferences = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
+    private $baseTwoReferences = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
@@ -29,13 +31,15 @@ class EntityGeneratorGeneratorTest extends \PHPUnit_Framework_TestCase
     '    return $record;' . PHP_EOL .
     '};';
 
-    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
+    private $baseNoRequires = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->references(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
     '};';
 
-    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\Entity $record) {' . PHP_EOL .
+    private $baseNoReferences = '<?php return function(\pulledbits\ActiveRecord\RecordFactory $recordFactory) {' . PHP_EOL .
+    '    $record = $recordFactory->createRecord();' . PHP_EOL .
     '    $record->identifiedBy(%s);' . PHP_EOL .
     '    $record->requires(%s);' . PHP_EOL .
     '    return $record;' . PHP_EOL .
