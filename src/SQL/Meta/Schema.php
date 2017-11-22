@@ -65,11 +65,11 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         foreach ($this->schemaManager->listViews() as $view) {
             $viewIdentifier = $view->getName();
 
-            $tables[$viewIdentifier] = [
+            $tables[$viewIdentifier] = new RecordConfiguratorGenerator\Record([
                 'identifier' => [],
                 'requiredAttributeIdentifiers' => [],
                 'references' => []
-            ];
+            ]);
 
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {

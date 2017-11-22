@@ -30,8 +30,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'AnotherTable' => []
         ]);
 
-        $schemaDescription = $schema->describeTables(new Table());
-
         $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => [
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
@@ -39,7 +37,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                     'column_id' => 'extra_column_id'
                 ],
             ]
-        ]]), $schemaDescription['MyTable']);
+        ]]), $schema->describeTable('MyTable'));
         $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => [
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
@@ -47,7 +45,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                     'extra_column_id' => 'column_id'
                 ],
             ]
-        ]]), $schemaDescription['AnotherTable']);
+        ]]), $schema->describeTable('AnotherTable'));
     }
 
 
@@ -61,11 +59,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;'
         ]);
 
-        $schemaDescription = $schema->describeTables(new Table());
-        $this->assertArrayHasKey('MyView', $schemaDescription);
-        $this->assertEquals([], $schemaDescription['MyView']['identifier']);
-        $this->assertEquals([], $schemaDescription['MyView']['requiredAttributeIdentifiers']);
-        $this->assertEquals([], $schemaDescription['MyView']['references']);
+        $tableDescription = $schema->describeTable('MyView');
+
+        $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]), $tableDescription);
     }
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
@@ -120,8 +116,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`MyTable`;'
         ]);
 
-        $schemaDescription = $schema->describeTables(new Table());
+        $tableDescription = $schema->describeTable('MyTable_today');
 
-        $this->assertEquals(new WrappedEntity('MyTable'), $schemaDescription['MyTable_today']);
+        $this->assertEquals(new WrappedEntity('MyTable'), $tableDescription);
     }
 }
