@@ -27,13 +27,6 @@ final class Record implements RecordConfiguratorGenerator
         }
     }
 
-    public function requires(array $requiredAttributeIdentifiers) {
-    }
-
-    public function references(string $referenceIdentifier, string $referencedEntityIdentifier, array $conditions)
-    {
-    }
-
     public function generateConfigurator(StreamInterface $stream) : void
     {
         $stream->write(self::NEWLINE . 'return new class($recordFactory) implements \\pulledbits\\ActiveRecord\\RecordConfigurator {');
