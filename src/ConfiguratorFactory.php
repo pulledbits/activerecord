@@ -3,12 +3,12 @@ namespace pulledbits\ActiveRecord;
 
 class ConfiguratorFactory
 {
-    private $generatorGeneratorFactory;
+    private $sourceSchema;
     private $path;
 
-    public function __construct(\pulledbits\ActiveRecord\Source\RecordConfiguratorGeneratorFactory $generatorGeneratorFactory, string $path)
+    public function __construct(\pulledbits\ActiveRecord\Source\Schema $sourceSchema, string $path)
     {
-        $this->generatorGeneratorFactory = $generatorGeneratorFactory;
+        $this->sourceSchema = $sourceSchema;
         $this->path = $path;
         if (is_dir($this->path) === false) {
             mkdir($this->path);
@@ -19,7 +19,7 @@ class ConfiguratorFactory
     {
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
-            $generator = $this->generatorGeneratorFactory->makeConfiguratorGenerator($entityTypeIdentifier);
+            $generator = $this->sourceSchema->describeTable($entityTypeIdentifier);
             $generator->generateConfigurator(\GuzzleHttp\Psr7\stream_for(fopen($configuratorPath, 'w')));
         }
         return require $configuratorPath;

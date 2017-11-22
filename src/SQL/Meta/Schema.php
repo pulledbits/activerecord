@@ -34,7 +34,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function createConfigurator(string $targetDirectory)
     {
-        return new ConfiguratorFactory(new \pulledbits\ActiveRecord\Source\RecordConfiguratorGeneratorFactory($this), $targetDirectory);
+        return new ConfiguratorFactory($this, $targetDirectory);
     }
 
     public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator

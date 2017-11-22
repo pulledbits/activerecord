@@ -64,6 +64,22 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]), $tableDescription);
     }
 
+
+    public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
+    {
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
+            'MyView_bla' => 'CREATE VIEW `MyView` AS
+  SELECT
+    `schema`.`MyTable`.`name`   AS `name`,
+    `schema`.`MyTable`.`birthdate` AS `birthdate`
+  FROM `teach`.`thema`;'
+        ]);
+
+        $tableDescription = $schema->describeTable('MyView_bla');
+
+        $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]), $tableDescription);
+    }
+
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
     {
         $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
