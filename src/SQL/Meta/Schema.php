@@ -3,6 +3,7 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
@@ -33,7 +34,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         return new ConfiguratorFactory(new \pulledbits\ActiveRecord\Source\RecordConfiguratorGeneratorFactory($this), $targetDirectory);
     }
 
-    public function describeTable(string $tableIdentifier) : array
+    public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator
     {
         $table = $this->describeTables();
         return $table[$tableIdentifier];
@@ -51,10 +52,15 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         $reversedLinkedTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+                if (array_key_exists($reference['table'], $reversedLinkedTables) === false) {
+                    $reversedLinkedTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
+                }
                 $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
             }
         }
-        $tables = $reversedLinkedTables;
+        $tables = array_map(function(array $tableDescription) {
+            return new RecordConfiguratorGenerator\Record($tableDescription);
+        }, $reversedLinkedTables);
 
         foreach ($this->schemaManager->listViews() as $view) {
             $viewIdentifier = $view->getName();
@@ -75,9 +81,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
                 continue;
             }
 
-            $tables[$viewIdentifier] = [
-                'entityTypeIdentifier' => $possibleEntityTypeIdentifier
-            ];
+            $tables[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($possibleEntityTypeIdentifier);
         }
 
         return $tables;

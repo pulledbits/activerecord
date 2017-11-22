@@ -8,6 +8,9 @@
 
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
+
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -29,22 +32,22 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $schemaDescription = $schema->describeTables(new Table());
 
-        $this->assertEquals([
+        $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => [
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
                 'where' => [
                     'column_id' => 'extra_column_id'
                 ],
             ]
-        ], $schemaDescription['MyTable']['references']);
-        $this->assertEquals([
+        ]]), $schemaDescription['MyTable']);
+        $this->assertEquals(new Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => [
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
                 'where' => [
                     'extra_column_id' => 'column_id'
                 ],
             ]
-        ], $schemaDescription['AnotherTable']['references']);
+        ]]), $schemaDescription['AnotherTable']);
     }
 
 
@@ -119,6 +122,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $schemaDescription = $schema->describeTables(new Table());
 
-        $this->assertEquals('MyTable', $schemaDescription['MyTable_today']['entityTypeIdentifier']);
+        $this->assertEquals(new WrappedEntity('MyTable'), $schemaDescription['MyTable_today']);
     }
 }

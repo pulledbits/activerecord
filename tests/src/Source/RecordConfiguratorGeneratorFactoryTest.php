@@ -22,22 +22,17 @@ class RecordConfiguratorGeneratorFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new RecordConfiguratorGeneratorFactory(new class implements Schema {
-            public function describeTable(string $tableIdentifier): array
+            public function describeTable(string $tableIdentifier): RecordConfiguratorGenerator
             {
                 switch ($tableIdentifier) {
                     case 'base_table':
-                        return [
+                        return new Record([
                             'identifier' => ['id'],
                             'requiredAttributeIdentifiers' => ["a", "b", "c"],
                             'references' => []
-                        ];
+                        ]);
                     case 'view':
-                        return [
-                            'identifier' => ['id'],
-                            'entityTypeIdentifier' => 'blabla',
-                            'requiredAttributeIdentifiers' => ["a", "b", "c"],
-                            'references' => []
-                        ];
+                        return new WrappedEntity('blabla');
 
                 }
             }

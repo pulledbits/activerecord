@@ -16,13 +16,7 @@ final class RecordConfiguratorGeneratorFactory
 
     public function makeConfiguratorGenerator(string $entityTypeIdentifier) : RecordConfiguratorGenerator
     {
-        $entityDescription = $this->sourceSchema->describeTable($entityTypeIdentifier);
-        if (array_key_exists('entityTypeIdentifier', $entityDescription)) {
-            return new WrappedEntity($entityDescription['entityTypeIdentifier']);
-        }
-        $entityGeneratorGenerator = new Record($entityDescription);
-
-        return $entityGeneratorGenerator;
+        return $this->sourceSchema->describeTable($entityTypeIdentifier);
     }
 
 }
