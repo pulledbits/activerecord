@@ -5,13 +5,6 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 class SchemaFactory
 {
-
-    public static function makeFromDatabaseURL(string $url): Schema
-    {
-        $parsedUrl = parse_url($url);
-        return self::makeFromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
-    }
-
     public static function makeFromPDO(\PDO $pdo): Schema
     {
         $config = new \Doctrine\DBAL\Configuration();

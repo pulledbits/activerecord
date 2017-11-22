@@ -17,12 +17,6 @@ class Connection
         $this->configurator = $configurator;
     }
 
-    static function fromDatabaseURL(string $url, ConfiguratorFactory $configurator) : self
-    {
-        $parsedUrl = parse_url($url);
-        return new self(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')), $configurator);
-    }
-
     public function schema()
     {
         return new Schema(new QueryFactory($this));

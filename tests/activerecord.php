@@ -17,8 +17,13 @@ if (file_exists($targetDirectory) === false) {
 
 // test activiteit
 require __DIR__ . '/bootstrap.php';
-$sourceSchema = SchemaFactory::makeFromDatabaseURL($_SERVER['argv'][1]);
-$connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1], $sourceSchema->createConfigurator($targetDirectory));
+
+$parsedUrl = parse_url($url);
+$pdo = new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+
+
+$sourceSchema = SchemaFactory::makeFromPDO($pdo);
+$connection = new \pulledbits\ActiveRecord\SQL\Connection($pdo, $sourceSchema->createConfigurator($targetDirectory));
 $schema = $connection->schema();
 
 $starttijd = date('Y-m-d ') . '23:00:00';
