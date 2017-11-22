@@ -106,12 +106,11 @@ final class Entity implements Record
     public function create() : int
     {
         $missing = $this->calculateMissingValues();
-        if (count($missing) > 0) {
-            trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
-            return 0;
+        if (count($missing) === 0) {
+            return $this->schema->create($this->entityTypeIdentifier, $this->values);
         }
 
-        return $this->schema->create($this->entityTypeIdentifier, $this->values);
+        trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
     }
 
     private function fillConditions(array $conditions) {
