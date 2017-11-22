@@ -8,15 +8,14 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
     private $cachedTableDescriptions;
 
-    public function __construct(array $dbalTables, array $dbalViews)
+    public function __construct(array $prototypeTables, array $dbalViews)
     {
-        $this->cachedTableDescriptions = array_map(function (array $tableDescription) {
-            return new RecordConfiguratorGenerator\Record($tableDescription);
-        }, $dbalTables);
+        $this->cachedTableDescriptions = [];
+        foreach ($prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
+            $this->cachedTableDescriptions[$prototypeTableIdentifier] = new RecordConfiguratorGenerator\Record($prototypeTable);
+        }
 
-        foreach ($dbalViews as $view) {
-            $viewIdentifier = $view->getName();
-
+        foreach ($dbalViews as $viewIdentifier => $viewSQL) {
             $this->cachedTableDescriptions[$viewIdentifier] = new RecordConfiguratorGenerator\Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]);
 
             $underscorePosition = strpos($viewIdentifier, '_');
@@ -52,20 +51,25 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
     static function fromSchemaManager(AbstractSchemaManager $schemaManager) {
         $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
         $tables = [];
-        foreach ($schemaManager->listTables() as $table) {
-            $tables[$table->getName()] = $sourceTable->describe($table);
+        foreach ($schemaManager->listTables() as $dbalTable) {
+            $tables[$dbalTable->getName()] = $sourceTable->describe($dbalTable);
         }
-        $reversedLinkedTables = $tables;
+        $prototypeTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-                if (array_key_exists($reference['table'], $reversedLinkedTables) === false) {
-                    $reversedLinkedTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
+                if (array_key_exists($reference['table'], $prototypeTables) === false) {
+                    $prototypeTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
                 }
-                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
+                $prototypeTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
             }
         }
 
-        return new self($reversedLinkedTables, $schemaManager->listViews());
+        $prototypeViews = [];
+        foreach ($schemaManager->listViews() as $dbalView) {
+            $prototypeViews[$dbalView->getName()] = $dbalView->getSql();
+        }
+
+        return new self($prototypeTables, $prototypeViews);
     }
 
     public function createConfigurator(string $targetDirectory)
