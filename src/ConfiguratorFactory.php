@@ -10,9 +10,6 @@ class ConfiguratorFactory
     {
         $this->sourceSchema = $sourceSchema;
         $this->path = $path;
-        if (is_dir($this->path) === false) {
-            mkdir($this->path);
-        }
     }
 
     public function generate(RecordFactory $recordFactory, string $entityTypeIdentifier) : RecordConfigurator

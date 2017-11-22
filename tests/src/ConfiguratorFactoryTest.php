@@ -25,8 +25,11 @@ class ConfiguratorFactoryTest extends \PHPUnit_Framework_TestCase
     public function testGenerate_When_ExistingEntity_Expect_SourceFileGenerated()
     {
         $file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activity.php';
-        unlink($file);
+        if (file_exists($file)) {
+            unlink($file);
+        }
         $this->assertFileNotExists($file);
+
         $this->object->generate(new class implements RecordFactory{
 
             public function makeRecord(): Record
@@ -81,5 +84,6 @@ class ConfiguratorFactoryTest extends \PHPUnit_Framework_TestCase
         }, 'activity');
         $this->assertFileExists($file);
         $this->assertEquals('<?php namespace pulledbits\\ActiveRecord;' . PHP_EOL, fgets(fopen($file, 'r')));
+        unlink($file);
     }
 }
