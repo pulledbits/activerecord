@@ -84,6 +84,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->object = $connection->schema();
     }
 
+    protected function tearDown()
+    {
+        if (is_file(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php')) {
+            unlink(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'activiteit.php');
+        }
+    }
+
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {
         $this->assertEquals(1, $this->object->update('activiteit', ['werkvorm' => 'My Name'], ['id' => '3']));
     }
