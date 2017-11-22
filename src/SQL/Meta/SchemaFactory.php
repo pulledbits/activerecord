@@ -2,6 +2,7 @@
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use pulledbits\ActiveRecord\Source\TableDescription;
 
 class SchemaFactory
 {
@@ -22,11 +23,11 @@ class SchemaFactory
         }
         $prototypeTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
-            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+            foreach ($recordClassDescription->references as $referenceIdentifier => $reference) {
                 if (array_key_exists($reference['table'], $prototypeTables) === false) {
-                    $prototypeTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
+                    $prototypeTables[$reference['table']] = new TableDescription();
                 }
-                $prototypeTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
+                $prototypeTables[$reference['table']]->references[$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
             }
         }
 

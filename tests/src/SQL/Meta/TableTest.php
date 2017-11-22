@@ -60,8 +60,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $classDescription = $this->object->describe($mockTable);
-        $this->assertEquals(['name', 'birthdate'], $classDescription['identifier']);
-        $this->assertEquals(['birthdate', 'address'], $classDescription['requiredAttributeIdentifiers']);
+        $this->assertEquals(['name', 'birthdate'], $classDescription->identifier);
+        $this->assertEquals(['birthdate', 'address'], $classDescription->requiredAttributeIdentifiers);
         $this->assertEquals([
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
@@ -76,7 +76,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
                     'column_id' => 'extra_column_id'
                 ],
             ]
-        ], $classDescription['references']);
+        ], $classDescription->references);
     }
 
     public function testMakeReference_When_DefaultState_Expect_ReferenceWithConditions() {

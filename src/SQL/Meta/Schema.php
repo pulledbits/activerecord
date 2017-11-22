@@ -3,6 +3,7 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\ConfiguratorFactory;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+use pulledbits\ActiveRecord\Source\TableDescription;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
@@ -16,7 +17,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         }
 
         foreach ($prototypeViews as $viewIdentifier => $viewSQL) {
-            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]);
+            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\Record(new TableDescription());
 
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {

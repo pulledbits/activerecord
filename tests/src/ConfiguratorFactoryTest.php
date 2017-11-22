@@ -3,6 +3,8 @@
 namespace pulledbits\ActiveRecord;
 
 
+use pulledbits\ActiveRecord\Source\TableDescription;
+
 class ConfiguratorFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -13,11 +15,7 @@ class ConfiguratorFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema([
-            'activity' => [
-                'identifier' => [],
-                'requiredAttributeIdentifiers' => [],
-                'references' => []
-            ]
+            'activity' => new TableDescription([], [], [])
         ],[]);
         $this->object = $sourceSchema->createConfigurator();
     }

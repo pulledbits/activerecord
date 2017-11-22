@@ -9,6 +9,7 @@
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 
+use pulledbits\ActiveRecord\Source\TableDescription;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class RecordTest extends \PHPUnit_Framework_TestCase
@@ -54,15 +55,10 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             '    $record = $this->recordFactory->makeRecord();' . PHP_EOL .
             $variantCode . PHP_EOL .
             '}};';
-
     }
 
     private function createTableDescription(array $entityIdentifier, array $requiredAttributes, array $references) {
-        return [
-            'identifier' => $entityIdentifier,
-            'requiredAttributeIdentifiers' => $requiredAttributes,
-            'references' => $references
-        ];
+        return new TableDescription($entityIdentifier, $requiredAttributes, $references);
     }
 
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {

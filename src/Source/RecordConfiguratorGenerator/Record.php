@@ -3,6 +3,7 @@ namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use Psr\Http\Message\StreamInterface;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+use pulledbits\ActiveRecord\Source\TableDescription;
 
 final class Record implements RecordConfiguratorGenerator
 {
@@ -14,18 +15,16 @@ final class Record implements RecordConfiguratorGenerator
 
     private $references;
 
-    public function __construct(array $entityDescription)
+    public function __construct(TableDescription $entityDescription)
     {
-        $this->entityIdentifier = $entityDescription['identifier'];
-        $this->requiredAttributeIdentifiers = $entityDescription['requiredAttributeIdentifiers'];
-        foreach ($entityDescription['references'] as $referenceIdentifier => $reference) {
+        $this->entityIdentifier = $entityDescription->identifier;
+        $this->requiredAttributeIdentifiers = $entityDescription->requiredAttributeIdentifiers;
+        foreach ($entityDescription->references as $referenceIdentifier => $reference) {
             $this->references[$referenceIdentifier] = [
                 'table' => $reference['table'],
                 'where' => $reference['where']
             ];
         }
-        $this->requiredAttributeIdentifiers = $entityDescription['requiredAttributeIdentifiers'];
-        $this->references = $entityDescription['references'];
     }
 
     public function requires(array $requiredAttributeIdentifiers) {

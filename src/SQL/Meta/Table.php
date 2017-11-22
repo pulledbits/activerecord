@@ -1,29 +1,27 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
+use pulledbits\ActiveRecord\Source\TableDescription;
+
 final class Table implements \pulledbits\ActiveRecord\Source\Table
 {
-    public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : array {
-        $description = [
-            'identifier' => [],
-            'requiredAttributeIdentifiers' => [],
-            'references' => []
-        ];
+    public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : TableDescription {
+        $description = new TableDescription([], [], []);
 
         if ($dbalSchemaTable->hasPrimaryKey()) {
-            $description['identifier'] = $dbalSchemaTable->getPrimaryKeyColumns();
+            $description->identifier = $dbalSchemaTable->getPrimaryKeyColumns();
         }
 
         foreach ($dbalSchemaTable->getColumns() as $columnIdentifier => $column) {
             if ($column->getAutoincrement()) {
                 continue;
             } elseif ($column->getNotnull()) {
-                $description['requiredAttributeIdentifiers'][] = $columnIdentifier;
+                $description->requiredAttributeIdentifiers[] = $columnIdentifier;
             }
         }
 
         foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
-            $description['references'][join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = $this->makeReference($foreignKey->getForeignTableName(), array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns()));
+            $description->references[join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = $this->makeReference($foreignKey->getForeignTableName(), array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns()));
         }
 
         return $description;
