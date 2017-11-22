@@ -1,8 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord\SQL\Meta;
-
-use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+namespace pulledbits\ActiveRecord;
 
 class ConfiguratorFactory
 {

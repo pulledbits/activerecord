@@ -1,6 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
+use pulledbits\ActiveRecord\ConfiguratorFactory;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema

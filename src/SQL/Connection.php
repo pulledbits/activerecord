@@ -3,8 +3,8 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use pulledbits\ActiveRecord\ConfiguratorFactory;
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\SQL\Meta\ConfiguratorFactory;
 
 class Connection
 {
