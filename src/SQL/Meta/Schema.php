@@ -9,9 +9,49 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
     private $schemaManager;
 
+    private $cachedTableDescriptions;
+
     public function __construct(AbstractSchemaManager $schemaManager)
     {
         $this->schemaManager = $schemaManager;
+
+        $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
+
+        $tables = [];
+        foreach ($this->schemaManager->listTables() as $table) {
+            $tables[$table->getName()] = $sourceTable->describe($table);
+        }
+
+        $reversedLinkedTables = $tables;
+        foreach ($tables as $tableName => $recordClassDescription) {
+            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+                if (array_key_exists($reference['table'], $reversedLinkedTables) === false) {
+                    $reversedLinkedTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
+                }
+                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
+            }
+        }
+        $this->cachedTableDescriptions = array_map(function (array $tableDescription) {
+            return new RecordConfiguratorGenerator\Record($tableDescription);
+        }, $reversedLinkedTables);
+
+        foreach ($this->schemaManager->listViews() as $view) {
+            $viewIdentifier = $view->getName();
+
+            $this->cachedTableDescriptions[$viewIdentifier] = new RecordConfiguratorGenerator\Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]);
+
+            $underscorePosition = strpos($viewIdentifier, '_');
+            if ($underscorePosition < 1) {
+                continue;
+            }
+
+            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
+            if (array_key_exists($possibleEntityTypeIdentifier, $this->cachedTableDescriptions) === false) {
+                continue;
+            }
+
+            $this->cachedTableDescriptions[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($possibleEntityTypeIdentifier);
+        }
     }
 
     static function fromPDO(\PDO $pdo) : Schema
@@ -36,54 +76,6 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator
     {
-        $table = $this->describeTables();
-        return $table[$tableIdentifier];
-    }
-
-    public function describeTables()
-    {
-        $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
-
-        $tables = [];
-        foreach ($this->schemaManager->listTables() as $table) {
-            $tables[$table->getName()] = $sourceTable->describe($table);
-        }
-
-        $reversedLinkedTables = $tables;
-        foreach ($tables as $tableName => $recordClassDescription) {
-            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-                if (array_key_exists($reference['table'], $reversedLinkedTables) === false) {
-                    $reversedLinkedTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
-                }
-                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
-            }
-        }
-        $tables = array_map(function(array $tableDescription) {
-            return new RecordConfiguratorGenerator\Record($tableDescription);
-        }, $reversedLinkedTables);
-
-        foreach ($this->schemaManager->listViews() as $view) {
-            $viewIdentifier = $view->getName();
-
-            $tables[$viewIdentifier] = new RecordConfiguratorGenerator\Record([
-                'identifier' => [],
-                'requiredAttributeIdentifiers' => [],
-                'references' => []
-            ]);
-
-            $underscorePosition = strpos($viewIdentifier, '_');
-            if ($underscorePosition < 1) {
-                continue;
-            }
-
-            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
-            if (array_key_exists($possibleEntityTypeIdentifier, $tables) === false) {
-                continue;
-            }
-
-            $tables[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($possibleEntityTypeIdentifier);
-        }
-
-        return $tables;
+        return $this->cachedTableDescriptions[$tableIdentifier];
     }
 }
