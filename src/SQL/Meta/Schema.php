@@ -1,24 +1,18 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
-    private $schemaManager;
-
     private $cachedTableDescriptions;
 
-    public function __construct(AbstractSchemaManager $schemaManager)
+    public function __construct(array $dbalTables, array $dbalViews)
     {
-        $this->schemaManager = $schemaManager;
-
         $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
 
         $tables = [];
-        foreach ($this->schemaManager->listTables() as $table) {
+        foreach ($dbalTables as $table) {
             $tables[$table->getName()] = $sourceTable->describe($table);
         }
 
@@ -35,7 +29,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
             return new RecordConfiguratorGenerator\Record($tableDescription);
         }, $reversedLinkedTables);
 
-        foreach ($this->schemaManager->listViews() as $view) {
+        foreach ($dbalViews as $view) {
             $viewIdentifier = $view->getName();
 
             $this->cachedTableDescriptions[$viewIdentifier] = new RecordConfiguratorGenerator\Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]);
@@ -61,7 +55,8 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
             'pdo' => $pdo
         ];
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        return new self($conn->getSchemaManager());
+        $schemaManager = $conn->getSchemaManager();
+        return new self($schemaManager->listTables(), $schemaManager->listViews());
     }
     static function fromDatabaseURL(string $url) : self
     {

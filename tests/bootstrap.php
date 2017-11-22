@@ -10,36 +10,18 @@ namespace pulledbits\ActiveRecord\Test {
 
     $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-    function createMockSchema(array $tables)
+    function createMockSchema(array $prototypeTables)
     {
-        return new \pulledbits\ActiveRecord\SQL\Meta\Schema(new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
-        {
-
-            private $tables;
-            private $views;
-
-            public function __construct(array $tables)
-            {
-                $this->tables = $this->views = [];
-                foreach ($tables as $tableIdentifier => $columns) {
-                    if (is_array($columns)) {
-                        $this->tables[] = \pulledbits\ActiveRecord\Test\createMockTable($tableIdentifier, $columns);
-                    } elseif (is_string($columns)) {
-                        $this->views[] = \pulledbits\ActiveRecord\Test\createMockView($tableIdentifier, $columns);
-                    }
-                }
+        $tables = $views = [];
+        foreach ($prototypeTables as $tableIdentifier => $columns) {
+            if (is_array($columns)) {
+                $tables[] = \pulledbits\ActiveRecord\Test\createMockTable($tableIdentifier, $columns);
+            } elseif (is_string($columns)) {
+                $views[] = \pulledbits\ActiveRecord\Test\createMockView($tableIdentifier, $columns);
             }
+        }
 
-            public function listTables()
-            {
-                return $this->tables;
-            }
-
-            public function listViews()
-            {
-                return $this->views;
-            }
-        });
+        return new \pulledbits\ActiveRecord\SQL\Meta\Schema($tables, $views);
     }
 
     function createMockTable(string $tableIdentifier, array $columns) : \Doctrine\DBAL\Schema\Table
