@@ -1,6 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
@@ -9,25 +10,9 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function __construct(array $dbalTables, array $dbalViews)
     {
-        $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
-
-        $tables = [];
-        foreach ($dbalTables as $table) {
-            $tables[$table->getName()] = $sourceTable->describe($table);
-        }
-
-        $reversedLinkedTables = $tables;
-        foreach ($tables as $tableName => $recordClassDescription) {
-            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
-                if (array_key_exists($reference['table'], $reversedLinkedTables) === false) {
-                    $reversedLinkedTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
-                }
-                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
-            }
-        }
         $this->cachedTableDescriptions = array_map(function (array $tableDescription) {
             return new RecordConfiguratorGenerator\Record($tableDescription);
-        }, $reversedLinkedTables);
+        }, $dbalTables);
 
         foreach ($dbalViews as $view) {
             $viewIdentifier = $view->getName();
@@ -48,6 +33,12 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         }
     }
 
+    static function fromDatabaseURL(string $url) : self
+    {
+        $parsedUrl = parse_url($url);
+        return self::fromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+    }
+
     static function fromPDO(\PDO $pdo) : Schema
     {
         $config = new \Doctrine\DBAL\Configuration();
@@ -55,13 +46,26 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
             'pdo' => $pdo
         ];
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        $schemaManager = $conn->getSchemaManager();
-        return new self($schemaManager->listTables(), $schemaManager->listViews());
+        return self::fromSchemaManager($conn->getSchemaManager());
     }
-    static function fromDatabaseURL(string $url) : self
-    {
-        $parsedUrl = parse_url($url);
-        return self::fromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+
+    static function fromSchemaManager(AbstractSchemaManager $schemaManager) {
+        $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
+        $tables = [];
+        foreach ($schemaManager->listTables() as $table) {
+            $tables[$table->getName()] = $sourceTable->describe($table);
+        }
+        $reversedLinkedTables = $tables;
+        foreach ($tables as $tableName => $recordClassDescription) {
+            foreach ($recordClassDescription['references'] as $referenceIdentifier => $reference) {
+                if (array_key_exists($reference['table'], $reversedLinkedTables) === false) {
+                    $reversedLinkedTables[$reference['table']] = ['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []];
+                }
+                $reversedLinkedTables[$reference['table']]['references'][$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
+            }
+        }
+
+        return new self($reversedLinkedTables, $schemaManager->listViews());
     }
 
     public function createConfigurator(string $targetDirectory)
