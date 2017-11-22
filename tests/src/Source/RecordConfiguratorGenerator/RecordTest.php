@@ -45,12 +45,12 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
     private function expectedCode(string $variantCode) {
         return PHP_EOL .
-            '    return new class($recordFactory) implements RecordConfigurator {' . PHP_EOL .
+            '    return new class($recordFactory) implements \\pulledbits\\ActiveRecord\\RecordConfigurator {' . PHP_EOL .
             '    private $recordFactory;' . PHP_EOL .
-            '    public function __construct(RecordFactory $recordFactory) {' . PHP_EOL .
+            '    public function __construct(\\pulledbits\\ActiveRecord\\RecordFactory $recordFactory) {' . PHP_EOL .
             '    $this->recordFactory = $recordFactory;' . PHP_EOL .
             '    }' . PHP_EOL .
-            '    public function configure() : Record {' . PHP_EOL .
+            '    public function configure() : \\pulledbits\\ActiveRecord\\Record {' . PHP_EOL .
             '    $record = $this->recordFactory->makeRecord();' . PHP_EOL .
             $variantCode . PHP_EOL .
             '}};';
