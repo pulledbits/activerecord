@@ -20,7 +20,9 @@ class ConfiguratorFactory
         $configuratorPath = $this->path . DIRECTORY_SEPARATOR . $entityTypeIdentifier . '.php';
         if (is_file($configuratorPath) === false) {
             $generator = $this->sourceSchema->describeTable($entityTypeIdentifier);
-            $generator->generateConfigurator(\GuzzleHttp\Psr7\stream_for(fopen($configuratorPath, 'w')));
+            $stream = \GuzzleHttp\Psr7\stream_for(fopen($configuratorPath, 'w'));
+            $stream->write('<?php namespace pulledbits\\ActiveRecord;');
+            $generator->generateConfigurator($stream);
         }
         return require $configuratorPath;
     }

@@ -37,7 +37,6 @@ final class Record implements RecordConfiguratorGenerator
 
     public function generateConfigurator(StreamInterface $stream) : void
     {
-        $stream->write('<?php namespace pulledbits\\ActiveRecord;');
         $stream->write(self::NEWLINE . 'return new class($recordFactory) implements RecordConfigurator {');
         $stream->write(self::NEWLINE . 'private $recordFactory;');
         $stream->write(self::NEWLINE . 'public function __construct(RecordFactory $recordFactory) {');

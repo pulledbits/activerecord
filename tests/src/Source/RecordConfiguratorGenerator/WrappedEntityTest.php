@@ -26,7 +26,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
         $object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals('<?php return $this->generate("MyTable");', $this->stream->getContents());
+        $this->assertEquals(PHP_EOL . 'return $this->generate("MyTable");', $this->stream->getContents());
     }
     public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
         $object = new WrappedEntity('MyTable2');
@@ -34,6 +34,6 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
         $object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals('<?php return $this->generate("MyTable2");', $this->stream->getContents());
+        $this->assertEquals(PHP_EOL . 'return $this->generate("MyTable2");', $this->stream->getContents());
     }
 }

@@ -16,6 +16,6 @@ final class WrappedEntity implements RecordConfiguratorGenerator
 
     public function generateConfigurator(StreamInterface $stream) : void
     {
-        $stream->write('<?php return $this->generate("' . $this->entityTypeIdentifier . '");');
+        $stream->write(PHP_EOL . 'return $this->generate("' . $this->entityTypeIdentifier . '");');
     }
 }

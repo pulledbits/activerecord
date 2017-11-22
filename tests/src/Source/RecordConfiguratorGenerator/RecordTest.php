@@ -44,7 +44,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     private function expectedCode(string $variantCode) {
-        return '<?php namespace pulledbits\ActiveRecord;' . PHP_EOL .
+        return PHP_EOL .
             '    return new class($recordFactory) implements RecordConfigurator {' . PHP_EOL .
             '    private $recordFactory;' . PHP_EOL .
             '    public function __construct(RecordFactory $recordFactory) {' . PHP_EOL .
