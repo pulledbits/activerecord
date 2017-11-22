@@ -1,5 +1,7 @@
 <?php
 
+use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
+
 if (ini_get('zend.assertions') != 1) {
     exit('zend.assertions must be enabled');
 }
@@ -15,7 +17,7 @@ if (file_exists($targetDirectory) === false) {
 
 // test activiteit
 require __DIR__ . '/bootstrap.php';
-$sourceSchema = \pulledbits\ActiveRecord\SQL\Meta\Schema::fromDatabaseURL($_SERVER['argv'][1]);
+$sourceSchema = SchemaFactory::fromDatabaseURL($_SERVER['argv'][1]);
 $connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1], $sourceSchema->createConfigurator($targetDirectory));
 $schema = $connection->schema();
 

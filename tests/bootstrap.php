@@ -7,6 +7,7 @@ namespace pulledbits\ActiveRecord\Test {
 
     use PDO;
     use Psr\Http\Message\StreamInterface;
+    use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
 
     $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
@@ -41,7 +42,7 @@ namespace pulledbits\ActiveRecord\Test {
             }
         };
 
-        return \pulledbits\ActiveRecord\SQL\Meta\Schema::fromSchemaManager($schemaManager);
+        return SchemaFactory::fromSchemaManager($schemaManager);
     }
 
     function createMockTable(string $tableIdentifier, array $columns) : \Doctrine\DBAL\Schema\Table

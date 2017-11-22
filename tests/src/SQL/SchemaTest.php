@@ -8,6 +8,8 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
+
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -75,7 +77,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]);
-        $sourceSchema = Meta\Schema::fromPDO($pdo);
+        $sourceSchema = SchemaFactory::fromPDO($pdo);
         $configurator = $sourceSchema->createConfigurator(sys_get_temp_dir());
 
         $connection = new Connection($pdo, $configurator);
