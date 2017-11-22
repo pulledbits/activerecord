@@ -6,17 +6,17 @@ use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
-    private $cachedTableDescriptions;
+    private $recordConfiguratorGenerators;
 
-    public function __construct(array $prototypeTables, array $dbalViews)
+    public function __construct(array $prototypeTables, array $prototypeViews)
     {
-        $this->cachedTableDescriptions = [];
+        $this->recordConfiguratorGenerators = [];
         foreach ($prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
-            $this->cachedTableDescriptions[$prototypeTableIdentifier] = new RecordConfiguratorGenerator\Record($prototypeTable);
+            $this->recordConfiguratorGenerators[$prototypeTableIdentifier] = new RecordConfiguratorGenerator\Record($prototypeTable);
         }
 
-        foreach ($dbalViews as $viewIdentifier => $viewSQL) {
-            $this->cachedTableDescriptions[$viewIdentifier] = new RecordConfiguratorGenerator\Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]);
+        foreach ($prototypeViews as $viewIdentifier => $viewSQL) {
+            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\Record(['identifier' => [], 'requiredAttributeIdentifiers' => [], 'references' => []]);
 
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {
@@ -24,11 +24,11 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
             }
 
             $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
-            if (array_key_exists($possibleEntityTypeIdentifier, $this->cachedTableDescriptions) === false) {
+            if (array_key_exists($possibleEntityTypeIdentifier, $this->recordConfiguratorGenerators) === false) {
                 continue;
             }
 
-            $this->cachedTableDescriptions[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($possibleEntityTypeIdentifier);
+            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($possibleEntityTypeIdentifier);
         }
     }
 
@@ -39,6 +39,6 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator
     {
-        return $this->cachedTableDescriptions[$tableIdentifier];
+        return $this->recordConfiguratorGenerators[$tableIdentifier];
     }
 }
