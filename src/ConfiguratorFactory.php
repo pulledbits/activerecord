@@ -4,12 +4,10 @@ namespace pulledbits\ActiveRecord;
 class ConfiguratorFactory
 {
     private $sourceSchema;
-    private $path;
 
-    public function __construct(\pulledbits\ActiveRecord\Source\Schema $sourceSchema, string $path)
+    public function __construct(\pulledbits\ActiveRecord\Source\Schema $sourceSchema)
     {
         $this->sourceSchema = $sourceSchema;
-        $this->path = $path;
     }
 
     public function generate(RecordFactory $recordFactory, string $entityTypeIdentifier) : RecordConfigurator

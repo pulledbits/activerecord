@@ -32,9 +32,9 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         }
     }
 
-    public function createConfigurator(string $targetDirectory)
+    public function createConfigurator()
     {
-        return new ConfiguratorFactory($this, $targetDirectory);
+        return new ConfiguratorFactory($this);
     }
 
     public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator

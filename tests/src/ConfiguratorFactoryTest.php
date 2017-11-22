@@ -19,7 +19,7 @@ class ConfiguratorFactoryTest extends \PHPUnit_Framework_TestCase
                 'references' => []
             ]
         ],[]);
-        $this->object = $sourceSchema->createConfigurator(sys_get_temp_dir());
+        $this->object = $sourceSchema->createConfigurator();
     }
 
     public function testGenerate_When_ExistingEntity_Expect_SourceFileGenerated()
