@@ -17,7 +17,7 @@ if (file_exists($targetDirectory) === false) {
 
 // test activiteit
 require __DIR__ . '/bootstrap.php';
-$sourceSchema = SchemaFactory::fromDatabaseURL($_SERVER['argv'][1]);
+$sourceSchema = SchemaFactory::makeFromDatabaseURL($_SERVER['argv'][1]);
 $connection = \pulledbits\ActiveRecord\SQL\Connection::fromDatabaseURL($_SERVER['argv'][1], $sourceSchema->createConfigurator($targetDirectory));
 $schema = $connection->schema();
 

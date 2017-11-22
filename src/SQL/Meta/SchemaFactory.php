@@ -6,21 +6,21 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 class SchemaFactory
 {
 
-    public static function fromDatabaseURL(string $url): Schema
+    public static function makeFromDatabaseURL(string $url): Schema
     {
         $parsedUrl = parse_url($url);
-        return self::fromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
+        return self::makeFromPDO(new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')));
     }
 
-    public static function fromPDO(\PDO $pdo): Schema
+    public static function makeFromPDO(\PDO $pdo): Schema
     {
         $config = new \Doctrine\DBAL\Configuration();
         $connectionParams = ['pdo' => $pdo];
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        return self::fromSchemaManager($conn->getSchemaManager());
+        return self::makeFromSchemaManager($conn->getSchemaManager());
     }
 
-    public static function fromSchemaManager(AbstractSchemaManager $schemaManager)
+    public static function makeFromSchemaManager(AbstractSchemaManager $schemaManager)
     {
         $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
         $tables = [];

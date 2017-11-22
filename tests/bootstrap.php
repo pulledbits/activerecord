@@ -42,7 +42,7 @@ namespace pulledbits\ActiveRecord\Test {
             }
         };
 
-        return SchemaFactory::fromSchemaManager($schemaManager);
+        return SchemaFactory::makeFromSchemaManager($schemaManager);
     }
 
     function createMockTable(string $tableIdentifier, array $columns) : \Doctrine\DBAL\Schema\Table
