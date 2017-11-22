@@ -40,3 +40,13 @@ assert($viewRecords[0]->starttijd === $starttijd, 'view records exist');
 
 assert($record->delete() === 1, 'delete confirms removal');
 echo 'Done testing';
+
+
+echo PHP_EOL . 'Cleanup...';
+foreach (glob($targetDirectory . DIRECTORY_SEPARATOR . "*") as $file) {
+    if (substr($file, 0, 1) !== '.') {
+        unlink($file);
+    }
+}
+rmdir($targetDirectory);
+echo 'DONE';
