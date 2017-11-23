@@ -6,7 +6,7 @@
  * Time: 15:30
  */
 
-namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+namespace pulledbits\ActiveRecord\Source\RecordConfigurator;
 
 
 use pulledbits\ActiveRecord\RecordType;

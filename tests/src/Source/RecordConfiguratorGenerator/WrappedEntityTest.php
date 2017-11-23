@@ -6,13 +6,13 @@
  * Time: 15:30
  */
 
-namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+namespace pulledbits\ActiveRecord\Source\RecordConfigurator;
 
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+use pulledbits\ActiveRecord\Source\RecordConfigurator;
 use pulledbits\ActiveRecord\SQL\EntityType;
 
 class WrappedEntityTest extends \PHPUnit_Framework_TestCase

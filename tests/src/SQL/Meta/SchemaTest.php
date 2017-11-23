@@ -8,8 +8,8 @@
 
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
+use pulledbits\ActiveRecord\Source\RecordConfigurator\Record;
+use pulledbits\ActiveRecord\Source\RecordConfigurator\WrappedEntity;
 use pulledbits\ActiveRecord\Source\TableDescription;
 use pulledbits\ActiveRecord\SQL\Connection;
 use function pulledbits\ActiveRecord\Test\createMockPDOMultiple;
