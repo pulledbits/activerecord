@@ -1,7 +1,6 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-use pulledbits\ActiveRecord\ConfiguratorFactory;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
 
@@ -31,11 +30,6 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
             $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($this->recordConfiguratorGenerators[$possibleEntityTypeIdentifier]);
         }
-    }
-
-    public function createConfigurator()
-    {
-        return new ConfiguratorFactory($this);
     }
 
     public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator

@@ -3,18 +3,17 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\ConfiguratorFactory;
 use pulledbits\ActiveRecord\RecordConfigurator;
 
 class Connection
 {
     private $connection;
-    private $configurator;
+    private $sourceSchema;
 
-    public function __construct(\PDO $connection, ConfiguratorFactory $configurator)
+    public function __construct(\PDO $connection, \pulledbits\ActiveRecord\Source\Schema $sourceSchema)
     {
         $this->connection = $connection;
-        $this->configurator = $configurator;
+        $this->sourceSchema = $sourceSchema;
     }
 
     public function schema()
@@ -23,7 +22,7 @@ class Connection
     }
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
     {
-        return $this->configurator->generate(new EntityFactory($this->schema(), $entityTypeIdentifier), $entityTypeIdentifier);
+        return $this->sourceSchema->describeTable($entityTypeIdentifier)->generateConfigurator(new EntityFactory($this->schema(), $entityTypeIdentifier));
     }
 
     public function execute(string $query, array $namedParameters) : Statement

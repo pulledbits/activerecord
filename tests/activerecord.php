@@ -23,7 +23,7 @@ $pdo = new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1
 
 
 $sourceSchema = SchemaFactory::makeFromPDO($pdo);
-$connection = new \pulledbits\ActiveRecord\SQL\Connection($pdo, $sourceSchema->createConfigurator());
+$connection = new \pulledbits\ActiveRecord\SQL\Connection($pdo, $sourceSchema);
 $schema = $connection->schema();
 
 $starttijd = date('Y-m-d ') . '23:00:00';
