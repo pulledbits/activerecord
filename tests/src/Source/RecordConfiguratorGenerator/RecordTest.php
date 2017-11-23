@@ -53,7 +53,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     private function expectedConfigurator() {
-        return new \pulledbits\ActiveRecord\RecordConfigurator($this->entityType);
+        return $this->entityType->makeRecord();
     }
 
     private function expectedConfiguratorBase(array $identifiedBy, array $requires, array $reference) {
@@ -97,7 +97,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
         $configurator = $this->object->generateConfigurator();
 
-        $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator);
+        $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator->configure());
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
@@ -110,7 +110,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
         $configurator = $this->object->generateConfigurator();
 
-        $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']]), $configurator);
+        $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']]), $configurator->configure());
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
@@ -125,7 +125,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
         $configurator = $this->object->generateConfigurator();
 
-        $this->assertEquals($this->expectedConfiguratorBaseTwoReferences(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']], ['FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']]), $configurator);
+        $this->assertEquals($this->expectedConfiguratorBaseTwoReferences(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']], ['FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']]), $configurator->configure());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
@@ -138,7 +138,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $configurator = $this->object->generateConfigurator();
 
 
-        $this->assertEquals($this->expectedConfiguratorBaseNoRequires(['id'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator);
+        $this->assertEquals($this->expectedConfiguratorBaseNoRequires(['id'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator->configure());
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
@@ -146,6 +146,6 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
         $configurator = $this->object->generateConfigurator();
 
-        $this->assertEquals($this->expectedConfiguratorBaseNoReferences(['id'], ['a', 'b', 'c']), $configurator);
+        $this->assertEquals($this->expectedConfiguratorBaseNoReferences(['id'], ['a', 'b', 'c']), $configurator->configure());
     }
 }

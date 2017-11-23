@@ -8,6 +8,7 @@
 
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
+use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
@@ -21,6 +22,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
         $this->recordFactory = new EntityType(new class implements Schema {
             public function makeRecordType(string $entityTypeIdentifier): RecordType
             {
+                // TODO: Implement makeRecordType() method.
             }
 
             public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
@@ -45,36 +47,34 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
         }, 'RecordTest');
     }
 
-    private function makeWrappedEntityConfiguratorGenerator(RecordConfigurator $configurator) {
-        return new class($configurator) implements RecordConfiguratorGenerator {
-            private $configurator;
-            public function __construct(RecordConfigurator $configurator)
-            {
-                $this->configurator = $configurator;
-            }
-
+    private function makeWrappedEntityConfiguratorGenerator() {
+        return new class implements RecordConfiguratorGenerator, RecordConfigurator {
             public function generateConfigurator(): RecordConfigurator
             {
-                return $this->configurator;
+                return $this;
+            }
+
+            public function configure(): Record
+            {
             }
         };
     }
 
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $expectedConfigurator = new RecordConfigurator($this->recordFactory);
+        $expectedConfigurator = $this->makeWrappedEntityConfiguratorGenerator();
 
-        $object = new WrappedEntity($this->makeWrappedEntityConfiguratorGenerator($expectedConfigurator));
+        $object = new WrappedEntity($expectedConfigurator);
 
-        $configurator = $object->generateConfigurator();
+        $configurator = $object->generateConfigurator($this->recordFactory);
 
         $this->assertEquals($expectedConfigurator, $configurator);
     }
     public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $configurator = new RecordConfigurator($this->recordFactory);
+        $configurator = $this->makeWrappedEntityConfiguratorGenerator();
 
-        $object = new WrappedEntity($this->makeWrappedEntityConfiguratorGenerator($configurator));
+        $object = new WrappedEntity($configurator);
 
-        $object->generateConfigurator();
+        $object->generateConfigurator($this->recordFactory);
 
         $this->assertEquals($configurator, $configurator);
     }

@@ -1,14 +1,12 @@
 <?php
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
-use Psr\Http\Message\StreamInterface;
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
-use pulledbits\ActiveRecord\SQL\EntityType;
 
-final class Record implements RecordConfiguratorGenerator
+final class Record implements RecordConfiguratorGenerator, RecordConfigurator
 {
     const NEWLINE = PHP_EOL;
 
@@ -34,12 +32,22 @@ final class Record implements RecordConfiguratorGenerator
 
     public function generateConfigurator() : RecordConfigurator
     {
-        $configurator = new \pulledbits\ActiveRecord\RecordConfigurator($this->recordType);
-        $configurator->identifiedBy($this->entityIdentifier);
-        $configurator->requires($this->requiredAttributeIdentifiers);
-        foreach ($this->references as $referenceIdentifier => $reference) {
-            $configurator->references($referenceIdentifier, $reference['table'], $reference['where']);
+        return $this;
+    }
+
+    public function configure(): \pulledbits\ActiveRecord\Record
+    {
+        $record = $this->recordType->makeRecord();
+        $record->identifiedBy($this->entityIdentifier);
+        if (count($this->requiredAttributeIdentifiers) > 0) {
+            $record->requires($this->requiredAttributeIdentifiers);
         }
-        return $configurator;
+
+        if (count($this->references) > 0) {
+            foreach ($this->references as $referenceIdentifier => $reference) {
+                $record->references($referenceIdentifier,  $reference['table'], $reference['where']);
+            }
+        }
+        return $record;
     }
 }
