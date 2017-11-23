@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use Psr\Http\Message\StreamInterface;
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class WrappedEntity implements RecordConfiguratorGenerator
@@ -16,7 +16,7 @@ final class WrappedEntity implements RecordConfiguratorGenerator
         $this->wrappedEntityGenerator = $wrappedEntityGenerator;
     }
 
-    public function generateConfigurator(RecordFactory $recordFactory) : RecordConfigurator
+    public function generateConfigurator(RecordType $recordFactory) : RecordConfigurator
     {
         return $this->wrappedEntityGenerator->generateConfigurator($recordFactory);
     }

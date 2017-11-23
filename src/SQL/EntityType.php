@@ -7,7 +7,7 @@ namespace pulledbits\ActiveRecord\SQL;
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\Schema;
 
-class EntityFactory implements \pulledbits\ActiveRecord\RecordFactory
+class EntityType implements \pulledbits\ActiveRecord\RecordType
 {
     private $schema;
 

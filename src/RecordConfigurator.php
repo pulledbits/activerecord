@@ -11,7 +11,7 @@ class RecordConfigurator
     private $requiredAttributeIdentifiers = [];
     private $references = [];
 
-    public function __construct(RecordFactory $recordFactory) {
+    public function __construct(RecordType $recordFactory) {
         $this->recordFactory = $recordFactory;
     }
     public function identifiedBy(array $identifier) {

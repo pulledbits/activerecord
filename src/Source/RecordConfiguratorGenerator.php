@@ -3,9 +3,9 @@
 namespace pulledbits\ActiveRecord\Source;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\RecordType;
 
 interface RecordConfiguratorGenerator
 {
-    public function generateConfigurator(RecordFactory $recordFactory) : RecordConfigurator;
+    public function generateConfigurator(RecordType $recordFactory) : RecordConfigurator;
 }

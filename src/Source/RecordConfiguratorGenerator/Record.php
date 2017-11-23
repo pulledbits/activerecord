@@ -3,7 +3,7 @@ namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use Psr\Http\Message\StreamInterface;
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
 
@@ -30,7 +30,7 @@ final class Record implements RecordConfiguratorGenerator
         }
     }
 
-    public function generateConfigurator(RecordFactory $recordFactory) : RecordConfigurator
+    public function generateConfigurator(RecordType $recordFactory) : RecordConfigurator
     {
         $configurator = new \pulledbits\ActiveRecord\RecordConfigurator($recordFactory);
         $configurator->identifiedBy($this->entityIdentifier);

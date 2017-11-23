@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord;
 
 
-interface RecordFactory
+interface RecordType
 {
     public function makeRecord() : Record;
 }

@@ -11,7 +11,7 @@ namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use pulledbits\ActiveRecord\Schema;
 use pulledbits\ActiveRecord\Source\TableDescription;
-use pulledbits\ActiveRecord\SQL\EntityFactory;
+use pulledbits\ActiveRecord\SQL\EntityType;
 use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class RecordTest extends \PHPUnit_Framework_TestCase
@@ -24,7 +24,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->recordFactory = new EntityFactory(new class implements Schema {
+        $this->recordFactory = new EntityType(new class implements Schema {
             public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
             {
             }

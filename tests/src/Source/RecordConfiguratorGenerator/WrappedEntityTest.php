@@ -9,16 +9,16 @@
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
-use pulledbits\ActiveRecord\SQL\EntityFactory;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 class WrappedEntityTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->recordFactory = new EntityFactory(new class implements Schema {
+        $this->recordFactory = new EntityType(new class implements Schema {
             public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
             {
             }
@@ -49,7 +49,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
                 $this->configurator = $configurator;
             }
 
-            public function generateConfigurator(RecordFactory $recordFactory): RecordConfigurator
+            public function generateConfigurator(RecordType $recordFactory): RecordConfigurator
             {
                 return $this->configurator;
             }
