@@ -7,7 +7,7 @@ use pulledbits\ActiveRecord\Source\TableDescription;
 
 final class Record implements RecordConfiguratorGenerator
 {
-    const NEWLINE = PHP_EOL . "    ";
+    const NEWLINE = PHP_EOL;
 
     private $entityIdentifier;
 
@@ -29,17 +29,11 @@ final class Record implements RecordConfiguratorGenerator
 
     public function generateConfigurator(StreamInterface $stream) : void
     {
-        $stream->write(self::NEWLINE . 'return new class($recordFactory) implements \\pulledbits\\ActiveRecord\\RecordConfigurator {');
-        $stream->write(self::NEWLINE . 'private $recordFactory;');
-        $stream->write(self::NEWLINE . 'public function __construct(\\pulledbits\\ActiveRecord\\RecordFactory $recordFactory) {');
-        $stream->write(self::NEWLINE . '$this->recordFactory = $recordFactory;');
-        $stream->write(self::NEWLINE . '}');
-        $stream->write(self::NEWLINE . 'public function configure() : \\pulledbits\\ActiveRecord\\Record {');
-        $stream->write(self::NEWLINE . '$record = $this->recordFactory->makeRecord();');
-        $stream->write(self::NEWLINE . "\$record->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);");
+        $stream->write(self::NEWLINE . '$configurator = new \\pulledbits\\ActiveRecord\\RecordConfigurator($recordFactory);');
+        $stream->write(self::NEWLINE . "\$configurator->identifiedBy(['" . join("', '", $this->entityIdentifier) . "']);");
 
         if (count($this->requiredAttributeIdentifiers) > 0) {
-            $stream->write(self::NEWLINE . "\$record->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);");
+            $stream->write(self::NEWLINE . "\$configurator->requires(['" . join("', '", $this->requiredAttributeIdentifiers) . "']);");
         }
 
         if (count($this->references) > 0) {
@@ -48,9 +42,9 @@ final class Record implements RecordConfiguratorGenerator
                 foreach ($reference['where'] as $referencedAttributeIdentifier => $localAttributeIdentifier) {
                     $where[] = '\'' . $referencedAttributeIdentifier . '\' => \'' . $localAttributeIdentifier . '\'';
                 }
-                $stream->write(self::NEWLINE . "\$record->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join(", ", $where) . "]);");
+                $stream->write(self::NEWLINE . "\$configurator->references('" . $referenceIdentifier . "', '" . $reference['table'] . "', [" . join(", ", $where) . "]);");
             }
         }
-        $stream->write(self::NEWLINE . 'return $record;' . "\n" . '}};');
+        $stream->write(self::NEWLINE . "return \$configurator;");
     }
 }

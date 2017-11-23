@@ -14,24 +14,20 @@ use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
 
 class RecordTest extends \PHPUnit_Framework_TestCase
 {
-    private $base = '    $record->identifiedBy(%s);' . PHP_EOL .
-    '    $record->requires(%s);' . PHP_EOL .
-    '    $record->references(%s);' . PHP_EOL .
-    '    return $record;';
+    private $base = '$configurator->identifiedBy(%s);' . PHP_EOL .
+    '$configurator->requires(%s);' . PHP_EOL .
+    '$configurator->references(%s);';
 
-    private $baseTwoReferences = '    $record->identifiedBy(%s);' . PHP_EOL .
-    '    $record->requires(%s);' . PHP_EOL .
-    '    $record->references(%s);' . PHP_EOL .
-    '    $record->references(%s);' . PHP_EOL .
-    '    return $record;';
+    private $baseTwoReferences = '$configurator->identifiedBy(%s);' . PHP_EOL .
+    '$configurator->requires(%s);' . PHP_EOL .
+    '$configurator->references(%s);' . PHP_EOL .
+    '$configurator->references(%s);';
 
-    private $baseNoRequires = '    $record->identifiedBy(%s);' . PHP_EOL .
-    '    $record->references(%s);' . PHP_EOL .
-    '    return $record;';
+    private $baseNoRequires = '$configurator->identifiedBy(%s);' . PHP_EOL .
+    '$configurator->references(%s);';
 
-    private $baseNoReferences = '    $record->identifiedBy(%s);' . PHP_EOL .
-    '    $record->requires(%s);' . PHP_EOL .
-    '    return $record;';
+    private $baseNoReferences = '$configurator->identifiedBy(%s);' . PHP_EOL .
+    '$configurator->requires(%s);';
 
     /**
      * @var Record
@@ -46,15 +42,9 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
     private function expectedCode(string $variantCode) {
         return PHP_EOL .
-            '    return new class($recordFactory) implements \\pulledbits\\ActiveRecord\\RecordConfigurator {' . PHP_EOL .
-            '    private $recordFactory;' . PHP_EOL .
-            '    public function __construct(\\pulledbits\\ActiveRecord\\RecordFactory $recordFactory) {' . PHP_EOL .
-            '    $this->recordFactory = $recordFactory;' . PHP_EOL .
-            '    }' . PHP_EOL .
-            '    public function configure() : \\pulledbits\\ActiveRecord\\Record {' . PHP_EOL .
-            '    $record = $this->recordFactory->makeRecord();' . PHP_EOL .
+            '$configurator = new \\pulledbits\\ActiveRecord\\RecordConfigurator($recordFactory);' . PHP_EOL .
             $variantCode . PHP_EOL .
-            '}};';
+            'return $configurator;';
     }
 
     private function expectedCodeBase(string $identifiedBy, string $requires, string $reference) {
