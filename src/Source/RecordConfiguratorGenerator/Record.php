@@ -32,9 +32,9 @@ final class Record implements RecordConfiguratorGenerator
         }
     }
 
-    public function generateConfigurator(RecordType $recordFactory) : RecordConfigurator
+    public function generateConfigurator() : RecordConfigurator
     {
-        $configurator = new \pulledbits\ActiveRecord\RecordConfigurator($recordFactory);
+        $configurator = new \pulledbits\ActiveRecord\RecordConfigurator($this->recordType);
         $configurator->identifiedBy($this->entityIdentifier);
         $configurator->requires($this->requiredAttributeIdentifiers);
         foreach ($this->references as $referenceIdentifier => $reference) {

@@ -26,7 +26,7 @@ class Connection
 
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
     {
-        return $this->sourceSchema()->describeTable($entityTypeIdentifier)->generateConfigurator(new EntityType($this->schema(), $entityTypeIdentifier));
+        return $this->sourceSchema()->describeTable($entityTypeIdentifier)->generateConfigurator();
     }
 
     public function execute(string $query, array $namedParameters) : Statement

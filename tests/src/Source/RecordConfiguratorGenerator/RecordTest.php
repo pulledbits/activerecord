@@ -95,7 +95,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->entityType);
+        $configurator = $this->object->generateConfigurator();
 
         $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator);
     }
@@ -108,7 +108,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->entityType);
+        $configurator = $this->object->generateConfigurator();
 
         $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']]), $configurator);
     }
@@ -123,7 +123,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->entityType);
+        $configurator = $this->object->generateConfigurator();
 
         $this->assertEquals($this->expectedConfiguratorBaseTwoReferences(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']], ['FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']]), $configurator);
     }
@@ -135,7 +135,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->entityType);
+        $configurator = $this->object->generateConfigurator();
 
 
         $this->assertEquals($this->expectedConfiguratorBaseNoRequires(['id'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator);
@@ -144,7 +144,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
         $this->object = new Record($this->entityType, $this->createTableDescription(['id'], ["a", "b", "c"], []));
 
-        $configurator = $this->object->generateConfigurator($this->entityType);
+        $configurator = $this->object->generateConfigurator();
 
         $this->assertEquals($this->expectedConfiguratorBaseNoReferences(['id'], ['a', 'b', 'c']), $configurator);
     }

@@ -53,7 +53,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
                 $this->configurator = $configurator;
             }
 
-            public function generateConfigurator(RecordType $recordFactory): RecordConfigurator
+            public function generateConfigurator(): RecordConfigurator
             {
                 return $this->configurator;
             }
@@ -65,7 +65,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
 
         $object = new WrappedEntity($this->makeWrappedEntityConfiguratorGenerator($expectedConfigurator));
 
-        $configurator = $object->generateConfigurator($this->recordFactory);
+        $configurator = $object->generateConfigurator();
 
         $this->assertEquals($expectedConfigurator, $configurator);
     }
@@ -74,7 +74,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
 
         $object = new WrappedEntity($this->makeWrappedEntityConfiguratorGenerator($configurator));
 
-        $object->generateConfigurator($this->recordFactory);
+        $object->generateConfigurator();
 
         $this->assertEquals($configurator, $configurator);
     }
