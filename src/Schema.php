@@ -3,6 +3,8 @@ namespace pulledbits\ActiveRecord;
 
 interface Schema {
 
+    public function makeRecordType(string $entityTypeIdentifier) : RecordType;
+
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array;
 
     public function update(string $entityTypeIdentifier, array $values, array $conditions) : int;

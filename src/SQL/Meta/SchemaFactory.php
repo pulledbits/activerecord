@@ -3,18 +3,19 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use pulledbits\ActiveRecord\Source\TableDescription;
+use pulledbits\ActiveRecord\SQL\Connection;
 
 class SchemaFactory
 {
-    public static function makeFromPDO(\PDO $pdo): Schema
+    public static function makeFromPDO(Connection $connection, \PDO $pdo): Schema
     {
         $config = new \Doctrine\DBAL\Configuration();
         $connectionParams = ['pdo' => $pdo];
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        return self::makeFromSchemaManager($conn->getSchemaManager());
+        return self::makeFromSchemaManager($connection, $conn->getSchemaManager());
     }
 
-    public static function makeFromSchemaManager(AbstractSchemaManager $schemaManager)
+    public static function makeFromSchemaManager(Connection $connection, AbstractSchemaManager $schemaManager)
     {
         $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
         $tables = [];
@@ -36,6 +37,6 @@ class SchemaFactory
             $prototypeViews[$dbalView->getName()] = $dbalView->getSql();
         }
 
-        return new Schema($prototypeTables, $prototypeViews);
+        return new Schema($connection, $prototypeTables, $prototypeViews);
     }
 }

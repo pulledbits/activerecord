@@ -6,6 +6,7 @@ use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 final class Record implements RecordConfiguratorGenerator
 {
@@ -17,8 +18,9 @@ final class Record implements RecordConfiguratorGenerator
 
     private $references;
 
-    public function __construct(TableDescription $entityDescription)
+    public function __construct(RecordType $recordType, TableDescription $entityDescription)
     {
+        $this->recordType = $recordType;
         $this->entityIdentifier = $entityDescription->identifier;
         $this->requiredAttributeIdentifiers = $entityDescription->requiredAttributeIdentifiers;
         $this->references = [];

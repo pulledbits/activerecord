@@ -3,20 +3,29 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
+use pulledbits\ActiveRecord\SQL\Connection;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
     private $recordConfiguratorGenerators;
 
-    public function __construct(array $prototypeTables, array $prototypeViews)
+    public function __construct(Connection $connection, array $prototypeTables, array $prototypeViews)
     {
+        $this->connection = $connection;
+
+        $schema = $this->connection->schema();
+
+
         $this->recordConfiguratorGenerators = [];
         foreach ($prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
-            $this->recordConfiguratorGenerators[$prototypeTableIdentifier] = new RecordConfiguratorGenerator\Record($prototypeTable);
+            $recordType = new EntityType($schema, $prototypeTableIdentifier);
+            $this->recordConfiguratorGenerators[$prototypeTableIdentifier] = new RecordConfiguratorGenerator\Record($recordType, $prototypeTable);
         }
 
         foreach ($prototypeViews as $viewIdentifier => $viewSQL) {
-            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\Record(new TableDescription());
+            $recordType = new EntityType($schema, $viewIdentifier);
+            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\Record($recordType, new TableDescription());
 
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {

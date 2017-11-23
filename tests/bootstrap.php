@@ -7,11 +7,12 @@ namespace pulledbits\ActiveRecord\Test {
 
     use PDO;
     use Psr\Http\Message\StreamInterface;
+    use pulledbits\ActiveRecord\SQL\Connection;
     use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
 
     $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-    function createMockSchema(array $tables)
+    function createMockSchema(Connection $connection, array $tables)
     {
         $schemaManager = new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
         {
@@ -42,7 +43,7 @@ namespace pulledbits\ActiveRecord\Test {
             }
         };
 
-        return SchemaFactory::makeFromSchemaManager($schemaManager);
+        return SchemaFactory::makeFromSchemaManager($connection, $schemaManager);
     }
 
     function createMockTable(string $tableIdentifier, array $columns) : \Doctrine\DBAL\Schema\Table
@@ -281,7 +282,7 @@ namespace pulledbits\ActiveRecord\Test {
             {
                 $this->queries = $queries;
 
-                $tables = [];
+                $fullTables = [];
                 foreach ($this->queries as $query => $results) {
                     if (preg_match('/FROM (?<table>\w+)/', $query, $matches) === 1) {
                         $fullTables[] = [$matches['table'], 'BASE_TABLE'];

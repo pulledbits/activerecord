@@ -9,6 +9,7 @@
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 
+use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
 use pulledbits\ActiveRecord\Source\TableDescription;
 use pulledbits\ActiveRecord\SQL\EntityType;
@@ -20,11 +21,15 @@ class RecordTest extends \PHPUnit_Framework_TestCase
      * @var Record
      */
     private $object;
-    private $recordFactory;
+    private $entityType;
 
     protected function setUp()
     {
-        $this->recordFactory = new EntityType(new class implements Schema {
+        $this->entityType = new EntityType(new class implements Schema {
+            public function makeRecordType(string $entityTypeIdentifier): RecordType
+            {
+            }
+
             public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
             {
             }
@@ -48,7 +53,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     private function expectedConfigurator() {
-        return new \pulledbits\ActiveRecord\RecordConfigurator($this->recordFactory);
+        return new \pulledbits\ActiveRecord\RecordConfigurator($this->entityType);
     }
 
     private function expectedConfiguratorBase(array $identifiedBy, array $requires, array $reference) {
@@ -84,32 +89,32 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGenerate_When_ReferenceAddedLater_Expect_EntityGeneratorPHPCode() {
-        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], [
+        $this->object = new Record($this->entityType, $this->createTableDescription(['id'], ["a", "b", "c"], [
             "FkRatingContactmoment" => ['table' => "rating", 'where' => [
                 'contactmoment_id' => 'id',
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->recordFactory);
+        $configurator = $this->object->generateConfigurator($this->entityType);
 
         $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator);
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
-        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], [
+        $this->object = new Record($this->entityType, $this->createTableDescription(['id'], ["a", "b", "c"], [
             "FkRatingContactmoment" => ['table' => "rating", 'where' => [
                 'contactmoment_id' => 'id',
                 'foo_id' => 'bar_id'
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->recordFactory);
+        $configurator = $this->object->generateConfigurator($this->entityType);
 
         $this->assertEquals($this->expectedConfiguratorBase(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']]), $configurator);
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
-        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], [
+        $this->object = new Record($this->entityType, $this->createTableDescription(['id'], ["a", "b", "c"], [
             "FkRatingContactmoment" => ['table' => "rating", 'where' => [
                 'contactmoment_id' => 'id'
             ]],
@@ -118,28 +123,28 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->recordFactory);
+        $configurator = $this->object->generateConfigurator($this->entityType);
 
         $this->assertEquals($this->expectedConfiguratorBaseTwoReferences(['id'], ['a', 'b', 'c'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']], ['FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']]), $configurator);
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
-        $this->object = new Record($this->createTableDescription(['id'], [], [
+        $this->object = new Record($this->entityType, $this->createTableDescription(['id'], [], [
             "FkRatingContactmoment" => ['table' => "rating", 'where' => [
                 'contactmoment_id' => 'id',
             ]]
         ]));
 
-        $configurator = $this->object->generateConfigurator($this->recordFactory);
+        $configurator = $this->object->generateConfigurator($this->entityType);
 
 
         $this->assertEquals($this->expectedConfiguratorBaseNoRequires(['id'], ['FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']]), $configurator);
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
-        $this->object = new Record($this->createTableDescription(['id'], ["a", "b", "c"], []));
+        $this->object = new Record($this->entityType, $this->createTableDescription(['id'], ["a", "b", "c"], []));
 
-        $configurator = $this->object->generateConfigurator($this->recordFactory);
+        $configurator = $this->object->generateConfigurator($this->entityType);
 
         $this->assertEquals($this->expectedConfiguratorBaseNoReferences(['id'], ['a', 'b', 'c']), $configurator);
     }

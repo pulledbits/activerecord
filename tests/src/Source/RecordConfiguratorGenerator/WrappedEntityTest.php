@@ -19,6 +19,10 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->recordFactory = new EntityType(new class implements Schema {
+            public function makeRecordType(string $entityTypeIdentifier): RecordType
+            {
+            }
+
             public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
             {
             }

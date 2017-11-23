@@ -98,6 +98,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             {
                 // TODO: Implement executeProcedure() method.
             }
+
+            public function makeRecordType(string $entityTypeIdentifier): RecordType
+            {
+                // TODO: Implement makeRecordType() method.
+            }
         };
 
         $values = [

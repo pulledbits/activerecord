@@ -11,13 +11,23 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\Record;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator\WrappedEntity;
 use pulledbits\ActiveRecord\Source\TableDescription;
+use pulledbits\ActiveRecord\SQL\Connection;
+use function pulledbits\ActiveRecord\Test\createMockPDOMultiple;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
+    private $connection;
+    private $schema;
+
+    protected function setUp()
+    {
+        $this->connection = new Connection(createMockPDOMultiple([]));
+        $this->schema = $this->connection->schema();
+    }
 
     public function testDescribe_When_Default_Expect_ArrayWithClasses()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
+        $sourceSchema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
             'MyTable' => [
                 'extra_column_id' => [
                     'primaryKey' => false,
@@ -31,28 +41,28 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'AnotherTable' => []
         ]);
 
-        $this->assertEquals(new Record(new TableDescription([], [], [
+        $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription([], [], [
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
                 'where' => [
                     'column_id' => 'extra_column_id'
                 ],
             ]
-        ])), $schema->describeTable('MyTable'));
-        $this->assertEquals(new Record(new TableDescription([], [], [
+        ])), $sourceSchema->describeTable('MyTable'));
+        $this->assertEquals(new Record($this->schema->makeRecordType('AnotherTable'), new TableDescription([], [], [
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
                 'where' => [
                     'extra_column_id' => 'column_id'
                 ],
             ]
-        ])), $schema->describeTable('AnotherTable'));
+        ])), $sourceSchema->describeTable('AnotherTable'));
     }
 
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
             'MyView' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -62,13 +72,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $tableDescription = $schema->describeTable('MyView');
 
-        $this->assertEquals(new Record(new TableDescription()), $tableDescription);
+        $this->assertEquals(new Record($this->schema->makeRecordType('MyView'), new TableDescription()), $tableDescription);
     }
 
 
     public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
             'MyView_bla' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -78,12 +88,12 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $tableDescription = $schema->describeTable('MyView_bla');
 
-        $this->assertEquals(new Record(new TableDescription()), $tableDescription);
+        $this->assertEquals(new Record($this->schema->makeRecordType('MyView_bla'), new TableDescription()), $tableDescription);
     }
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema([
+        $schema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
             'MyTable' => [
                 'name' => [
                     'primaryKey' => true,

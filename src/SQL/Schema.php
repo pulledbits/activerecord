@@ -2,6 +2,8 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use pulledbits\ActiveRecord\RecordType;
+
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
 
@@ -9,6 +11,11 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function __construct(QueryFactory $queryFactory) {
         $this->queryFactory = $queryFactory;
+    }
+
+    public function makeRecordType(string $entityTypeIdentifier): RecordType
+    {
+        return new EntityType($this, $entityTypeIdentifier);
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {

@@ -21,7 +21,7 @@ class Connection
     }
     public function sourceSchema()
     {
-        return SchemaFactory::makeFromPDO($this->connection);
+        return SchemaFactory::makeFromPDO($this, $this->connection);
     }
 
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
