@@ -1,6 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
+use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
 use pulledbits\ActiveRecord\SQL\Connection;
@@ -41,7 +42,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         }
     }
 
-    public function describeTable(string $tableIdentifier) : RecordConfiguratorGenerator
+    public function describeTable(string $tableIdentifier) : RecordConfigurator
     {
         return $this->recordConfiguratorGenerators[$tableIdentifier];
     }

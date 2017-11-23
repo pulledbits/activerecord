@@ -3,19 +3,18 @@
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
-final class WrappedEntity implements RecordConfiguratorGenerator
+final class WrappedEntity implements RecordConfigurator
 {
-    private $wrappedEntityGenerator;
+    private $wrappedEntityConfigurator;
 
-    public function __construct(\pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator $wrappedEntityGenerator)
+    public function __construct(\pulledbits\ActiveRecord\RecordConfigurator $wrappedEntityConfigurator)
     {
-        $this->wrappedEntityGenerator = $wrappedEntityGenerator;
+        $this->wrappedEntityConfigurator = $wrappedEntityConfigurator;
     }
 
-    public function generateConfigurator() : RecordConfigurator
+    public function configure() : \pulledbits\ActiveRecord\Record
     {
-        return $this->wrappedEntityGenerator->generateConfigurator();
+        return $this->wrappedEntityConfigurator->configure();
     }
 }

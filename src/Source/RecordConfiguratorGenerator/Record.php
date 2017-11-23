@@ -3,10 +3,9 @@ namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
-use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 use pulledbits\ActiveRecord\Source\TableDescription;
 
-final class Record implements RecordConfiguratorGenerator, RecordConfigurator
+final class Record implements RecordConfigurator
 {
     const NEWLINE = PHP_EOL;
 
@@ -28,11 +27,6 @@ final class Record implements RecordConfiguratorGenerator, RecordConfigurator
                 'where' => $reference['where']
             ];
         }
-    }
-
-    public function generateConfigurator() : RecordConfigurator
-    {
-        return $this;
     }
 
     public function configure(): \pulledbits\ActiveRecord\Record
