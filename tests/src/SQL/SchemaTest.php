@@ -77,9 +77,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
             '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
         ]);
-        $sourceSchema = SchemaFactory::makeFromPDO($pdo);
-
-        $connection = new Connection($pdo, $sourceSchema);
+        $connection = new Connection($pdo);
         $this->object = $connection->schema();
     }
 
