@@ -135,6 +135,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $tableDescription = $schema->describeTable('MyTable_today');
 
-        $this->assertEquals(new WrappedEntity('MyTable'), $tableDescription);
+        $this->assertEquals(new WrappedEntity($schema->describeTable('MyTable')), $tableDescription);
     }
 }

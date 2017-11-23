@@ -3,19 +3,21 @@
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 use Psr\Http\Message\StreamInterface;
+use pulledbits\ActiveRecord\RecordConfigurator;
+use pulledbits\ActiveRecord\RecordFactory;
 use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
 final class WrappedEntity implements RecordConfiguratorGenerator
 {
-    private $entityTypeIdentifier;
+    private $wrappedEntityGenerator;
 
-    public function __construct(string $entityTypeIdentifier)
+    public function __construct(\pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator $wrappedEntityGenerator)
     {
-        $this->entityTypeIdentifier = $entityTypeIdentifier;
+        $this->wrappedEntityGenerator = $wrappedEntityGenerator;
     }
 
-    public function generateConfigurator(StreamInterface $stream) : void
+    public function generateConfigurator(RecordFactory $recordFactory) : RecordConfigurator
     {
-        $stream->write(PHP_EOL . 'return $this->generate($recordFactory, "' . $this->entityTypeIdentifier . '");');
+        return $this->wrappedEntityGenerator->generateConfigurator($recordFactory);
     }
 }

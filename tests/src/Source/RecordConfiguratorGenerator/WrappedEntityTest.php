@@ -8,32 +8,70 @@
 
 namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
 
-
-use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
+use pulledbits\ActiveRecord\RecordConfigurator;
+use pulledbits\ActiveRecord\RecordFactory;
+use pulledbits\ActiveRecord\Schema;
+use pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+use pulledbits\ActiveRecord\SQL\EntityFactory;
 
 class WrappedEntityTest extends \PHPUnit_Framework_TestCase
 {
-    private $stream;
-
     protected function setUp()
     {
-        $this->stream = createMockStreamInterface();
+        $this->recordFactory = new EntityFactory(new class implements Schema {
+            public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
+            {
+            }
+
+            public function update(string $entityTypeIdentifier, array $values, array $conditions): int
+            {
+            }
+
+            public function create(string $entityTypeIdentifier, array $values): int
+            {
+            }
+
+            public function delete(string $entityTypeIdentifier, array $conditions): int
+            {
+            }
+
+            public function executeProcedure(string $procedureIdentifier, array $arguments): void
+            {
+            }
+        }, 'RecordTest');
+    }
+
+    private function makeWrappedEntityConfiguratorGenerator(RecordConfigurator $configurator) {
+        return new class($configurator) implements RecordConfiguratorGenerator {
+            private $configurator;
+            public function __construct(RecordConfigurator $configurator)
+            {
+                $this->configurator = $configurator;
+            }
+
+            public function generateConfigurator(RecordFactory $recordFactory): RecordConfigurator
+            {
+                return $this->configurator;
+            }
+        };
     }
 
     public function testGenerate_When_DefaultState_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $object = new WrappedEntity('MyTable');
+        $expectedConfigurator = new RecordConfigurator($this->recordFactory);
 
-        $object->generateConfigurator($this->stream);
-        $this->stream->seek(0);
+        $object = new WrappedEntity($this->makeWrappedEntityConfiguratorGenerator($expectedConfigurator));
 
-        $this->assertEquals(PHP_EOL . 'return $this->generate($recordFactory, "MyTable");', $this->stream->getContents());
+        $configurator = $object->generateConfigurator($this->recordFactory);
+
+        $this->assertEquals($expectedConfigurator, $configurator);
     }
     public function testGenerate_When_OtherTable_Expect_EntityGeneratorWrappingOtherPHPCode() {
-        $object = new WrappedEntity('MyTable2');
+        $configurator = new RecordConfigurator($this->recordFactory);
 
-        $object->generateConfigurator($this->stream);
-        $this->stream->seek(0);
+        $object = new WrappedEntity($this->makeWrappedEntityConfiguratorGenerator($configurator));
 
-        $this->assertEquals(PHP_EOL . 'return $this->generate($recordFactory, "MyTable2");', $this->stream->getContents());
+        $object->generateConfigurator($this->recordFactory);
+
+        $this->assertEquals($configurator, $configurator);
     }
 }

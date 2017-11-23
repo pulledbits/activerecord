@@ -7,9 +7,9 @@ namespace pulledbits\ActiveRecord;
 class RecordConfigurator
 {
     private $recordFactory;
-    private $entityIdentifier;
-    private $requiredAttributeIdentifiers;
-    private $references;
+    private $entityIdentifier = [];
+    private $requiredAttributeIdentifiers = [];
+    private $references = [];
 
     public function __construct(RecordFactory $recordFactory) {
         $this->recordFactory = $recordFactory;

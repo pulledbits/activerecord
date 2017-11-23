@@ -2,10 +2,10 @@
 
 namespace pulledbits\ActiveRecord\Source;
 
-
-use Psr\Http\Message\StreamInterface;
+use pulledbits\ActiveRecord\RecordConfigurator;
+use pulledbits\ActiveRecord\RecordFactory;
 
 interface RecordConfiguratorGenerator
 {
-    public function generateConfigurator(StreamInterface $stream) : void;
+    public function generateConfigurator(RecordFactory $recordFactory) : RecordConfigurator;
 }

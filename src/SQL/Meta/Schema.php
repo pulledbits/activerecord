@@ -29,7 +29,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
                 continue;
             }
 
-            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($possibleEntityTypeIdentifier);
+            $this->recordConfiguratorGenerators[$viewIdentifier] = new RecordConfiguratorGenerator\WrappedEntity($this->recordConfiguratorGenerators[$possibleEntityTypeIdentifier]);
         }
     }
 
