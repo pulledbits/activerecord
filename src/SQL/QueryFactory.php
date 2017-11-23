@@ -17,7 +17,7 @@ class QueryFactory
 
     public function makeSelect(string $entityTypeIdentifier, array $attributeIdentifiers) : Query\Select
     {
-        return new Query\Select($this->connection, $entityTypeIdentifier, $attributeIdentifiers);
+        return new Query\Select($this->connection, $this->connection->recordConfigurator($entityTypeIdentifier), $entityTypeIdentifier, $attributeIdentifiers);
     }
 
     public function makeUpdate(string $tableIdentifier, array $values) : Query\Update
