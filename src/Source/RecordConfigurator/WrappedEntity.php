@@ -1,6 +1,6 @@
 <?php
 
-namespace pulledbits\ActiveRecord\Source\RecordConfiguratorGenerator;
+namespace pulledbits\ActiveRecord\Source\RecordConfigurator;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
 
