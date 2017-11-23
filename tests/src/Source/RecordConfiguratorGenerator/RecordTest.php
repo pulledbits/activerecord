@@ -57,6 +57,19 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             '}};';
     }
 
+    private function expectedCodeBase(string $identifiedBy, string $requires, string $reference) {
+        return sprintf($this->expectedCode($this->base), $identifiedBy, $requires, $reference);
+    }
+    private function expectedCodeBaseTwoReferences(string $identifiedBy, string $requires, string $reference1, string $reference2) {
+        return sprintf($this->expectedCode($this->baseTwoReferences), $identifiedBy, $requires, $reference1, $reference2);
+    }
+    private function expectedCodeBaseNoRequires(string $identifiedBy, string $reference) {
+        return sprintf($this->expectedCode($this->baseNoRequires), $identifiedBy, $reference);
+    }
+    private function expectedCodeBaseNoReferences(string $identifiedBy, string $requires) {
+        return sprintf($this->expectedCode($this->baseNoReferences), $identifiedBy, $requires);
+    }
+
     private function createTableDescription(array $entityIdentifier, array $requiredAttributes, array $references) {
         return new TableDescription($entityIdentifier, $requiredAttributes, $references);
     }
@@ -71,7 +84,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->expectedCode($this->base), '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
+        $this->assertEquals($this->expectedCodeBase('[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_ReferenceWithMultipleAttributes_Expect_EntityGeneratorPHPCode() {
@@ -85,7 +98,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->expectedCode($this->base), '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->stream->getContents());
+        $this->assertEquals($this->expectedCodeBase('[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id', 'foo_id' => 'bar_id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_TwoReferences_Expect_WithTwoReferencesWithoutEmptyLinePHPCode() {
@@ -101,7 +114,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->expectedCode($this->baseTwoReferences), '[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->stream->getContents());
+        $this->assertEquals($this->expectedCodeBaseTwoReferences('[\'id\']', '[\'a\', \'b\', \'c\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']", "'FkRatingContactmoment2', 'rating2', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_NoRequiredAttributeIdentifiers_Expect_WithoutRequiresCallPHPCode() {
@@ -115,7 +128,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->stream->seek(0);
 
 
-        $this->assertEquals(sprintf($this->expectedCode($this->baseNoRequires), '[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
+        $this->assertEquals($this->expectedCodeBaseNoRequires('[\'id\']', "'FkRatingContactmoment', 'rating', ['contactmoment_id' => 'id']"), $this->stream->getContents());
     }
 
     public function testGenerate_When_NoReferences_Expect_WithoutReferencesCallsPHPCode() {
@@ -124,6 +137,6 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->object->generateConfigurator($this->stream);
         $this->stream->seek(0);
 
-        $this->assertEquals(sprintf($this->expectedCode($this->baseNoReferences), '[\'id\']', '[\'a\', \'b\', \'c\']'), $this->stream->getContents());
+        $this->assertEquals($this->expectedCodeBaseNoReferences('[\'id\']', '[\'a\', \'b\', \'c\']'), $this->stream->getContents());
     }
 }
