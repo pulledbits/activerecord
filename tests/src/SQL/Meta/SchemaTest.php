@@ -22,38 +22,32 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $this->schema = $this->connection->schema();
     }
 
-    public function testDescribe_When_Default_Expect_ArrayWithClasses()
+    public function testConstructor_When_Default_Expect_ArrayWithRecordConfigurators()
     {
-        $sourceSchema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
-            'MyTable' => [
-                'extra_column_id' => [
-                    'primaryKey' => false,
-                    'auto_increment' => false,
-                    'required' => false,
-                    'references' => [
-                        'fk_anothertable_role' => ['AnotherTable', 'column_id']
-                    ]
-                ]
-            ],
-            'AnotherTable' => []
-        ]);
-
-        $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription([], [], [
+        $myTable = new TableDescription([], [], [
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
                 'where' => [
                     'column_id' => 'extra_column_id'
                 ],
             ]
-        ])), $sourceSchema->describeTable('MyTable'));
-        $this->assertEquals(new Record($this->schema->makeRecordType('AnotherTable'), new TableDescription([], [], [
+        ]);
+        $anotherTable = new TableDescription([], [], [
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
                 'where' => [
                     'extra_column_id' => 'column_id'
                 ],
             ]
-        ])), $sourceSchema->describeTable('AnotherTable'));
+        ]);
+
+        $sourceSchema = new Schema($this->connection, [
+            'MyTable' => $myTable,
+            'AnotherTable' => $anotherTable
+        ], []);
+
+        $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), $myTable), $sourceSchema->describeTable('MyTable'));
+        $this->assertEquals(new Record($this->schema->makeRecordType('AnotherTable'), $anotherTable), $sourceSchema->describeTable('AnotherTable'));
     }
 
 

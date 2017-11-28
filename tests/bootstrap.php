@@ -12,9 +12,8 @@ namespace pulledbits\ActiveRecord\Test {
 
     $applicationBootstrap = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-    function createMockSchema(Connection $connection, array $tables)
-    {
-        $schemaManager = new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
+    function createMockSchemaManager(array $tables) {
+        return new class($tables) extends \Doctrine\DBAL\Schema\MySqlSchemaManager
         {
 
             private $tables;
@@ -42,6 +41,11 @@ namespace pulledbits\ActiveRecord\Test {
                 return $this->views;
             }
         };
+    }
+
+    function createMockSchema(Connection $connection, array $tables)
+    {
+        $schemaManager = createMockSchemaManager($tables);
 
         return SchemaFactory::makeFromSchemaManager($connection, $schemaManager);
     }
