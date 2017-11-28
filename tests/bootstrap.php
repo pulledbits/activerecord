@@ -43,13 +43,6 @@ namespace pulledbits\ActiveRecord\Test {
         };
     }
 
-    function createMockSchema(Connection $connection, array $tables)
-    {
-        $schemaManager = createMockSchemaManager($tables);
-
-        return SchemaFactory::makeFromSchemaManager($connection, $schemaManager);
-    }
-
     function createMockTable(string $tableIdentifier, array $columns) : \Doctrine\DBAL\Schema\Table
     {
         return new class($tableIdentifier, $columns) extends \Doctrine\DBAL\Schema\Table

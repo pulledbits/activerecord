@@ -18,7 +18,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
         $this->schema = $this->connection->schema();
     }
 
-    public function testDescribe_When_Default_Expect_ArrayWithClasses()
+    public function testmakeFromSchemaManager_When_Default_Expect_ArrayWithRecordConfigurators()
     {
         $sourceSchema = SchemaFactory::makeFromSchemaManager($this->connection, createMockSchemaManager([
             'MyTable' => [

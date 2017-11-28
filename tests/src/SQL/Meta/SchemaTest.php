@@ -53,7 +53,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
+        $schema = new Schema($this->connection, [], [
             'MyView' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -69,7 +69,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
+        $schema = new Schema($this->connection, [], [
             'MyView_bla' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -84,49 +84,31 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
     {
-        $schema = \pulledbits\ActiveRecord\Test\createMockSchema($this->connection, [
-            'MyTable' => [
-                'name' => [
-                    'primaryKey' => true,
-                    'auto_increment' => true,
-                    'required' => true
-                ],
-                'birthdate' => [
-                    'primaryKey' => true,
-                    'auto_increment' => false,
-                    'required' => true
-                ],
-                'address' => [
-                    'primaryKey' => false,
-                    'auto_increment' => false,
-                    'required' => false
-                ],
 
-                'role_id' => [
-                    'primaryKey' => false,
-                    'auto_increment' => false,
-                    'required' => false,
-                    'references' => [
-                        'fk_othertable_role' => ['OtherTable', 'id']
-                    ]
-                ],
-                'role2_id' => [
-                    'primaryKey' => false,
-                    'auto_increment' => false,
-                    'required' => false,
-                    'references' => [
-                        'fk_anothertable_role' => ['AntoherTable', 'id']
-                    ]
-                ],
-                'extra_column_id' => [
-                    'primaryKey' => false,
-                    'auto_increment' => false,
-                    'required' => false,
-                    'references' => [
-                        'fk_anothertable_role' => ['AntoherTable', 'column_id']
-                    ]
+        $myTable = new TableDescription(['name', 'birthdate'], [], [
+            'FkOthertableRole' => [
+                'table' => 'OtherTable',
+                'where' => [
+                    'id' => 'role_id'
                 ],
             ],
+            'FkAnothertableRole' => [
+                'table' => 'AntoherTable',
+                'where' => [
+                    'id' => 'role2_id'
+                ],
+            ],
+            'FkAnothertableRole' => [
+                'table' => 'AnotherTable',
+                'where' => [
+                    'column_id' => 'extra_column_id'
+                ],
+            ]
+        ]);
+
+        $schema = new Schema($this->connection, [
+            'MyTable' => $myTable
+            ],[
             'MyTable_today' => 'CREATE VIEW `MyTable_today` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
