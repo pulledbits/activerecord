@@ -6,8 +6,6 @@ use pulledbits\ActiveRecord\RecordType;
 
 final class Record implements RecordConfigurator
 {
-    const NEWLINE = PHP_EOL;
-
     private $entityIdentifier;
 
     private $requiredAttributeIdentifiers;
