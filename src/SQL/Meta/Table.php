@@ -1,8 +1,6 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-use pulledbits\ActiveRecord\Source\TableDescription;
-
 final class Table implements \pulledbits\ActiveRecord\Source\Table
 {
     public function describe(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : TableDescription {

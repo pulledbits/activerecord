@@ -1,9 +1,8 @@
 <?php
-namespace pulledbits\ActiveRecord\Source\RecordConfigurator;
+namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
-use pulledbits\ActiveRecord\Source\TableDescription;
 
 final class Record implements RecordConfigurator
 {

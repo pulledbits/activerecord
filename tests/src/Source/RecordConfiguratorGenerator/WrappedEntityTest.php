@@ -13,6 +13,7 @@ use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
 use pulledbits\ActiveRecord\SQL\EntityType;
+use pulledbits\ActiveRecord\SQL\Meta\WrappedEntity;
 
 class WrappedEntityTest extends \PHPUnit_Framework_TestCase
 {

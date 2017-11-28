@@ -1,6 +1,6 @@
 <?php
 
-namespace pulledbits\ActiveRecord\Source\RecordConfigurator;
+namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
 

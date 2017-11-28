@@ -2,7 +2,6 @@
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use pulledbits\ActiveRecord\Source\TableDescription;
 use pulledbits\ActiveRecord\SQL\Connection;
 
 class SchemaFactory

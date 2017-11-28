@@ -11,9 +11,9 @@ namespace pulledbits\ActiveRecord\Source\RecordConfigurator;
 
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
-use pulledbits\ActiveRecord\Source\TableDescription;
 use pulledbits\ActiveRecord\SQL\EntityType;
-use function pulledbits\ActiveRecord\Test\createMockStreamInterface;
+use pulledbits\ActiveRecord\SQL\Meta\Record;
+use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
 class RecordTest extends \PHPUnit_Framework_TestCase
 {
