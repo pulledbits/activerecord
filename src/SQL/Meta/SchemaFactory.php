@@ -16,11 +16,10 @@ class SchemaFactory
 
     public static function makeFromSchemaManager(Connection $connection, AbstractSchemaManager $schemaManager)
     {
-        $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
         $tables = [];
         $fullTables = $connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
         foreach ($fullTables->fetchAll() as $baseTable) {
-            $tables[$baseTable[0]] = $sourceTable->describe($schemaManager->listTableDetails($baseTable[0]));
+            $tables[$baseTable[0]] = TableDescription::makeFromDBALTable($schemaManager->listTableDetails($baseTable[0]));
         }
         $prototypeTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
@@ -28,7 +27,7 @@ class SchemaFactory
                 if (array_key_exists($reference['table'], $prototypeTables) === false) {
                     $prototypeTables[$reference['table']] = new TableDescription();
                 }
-                $prototypeTables[$reference['table']]->references[$referenceIdentifier] = $sourceTable->makeReference($tableName, array_flip($reference['where']));
+                $prototypeTables[$reference['table']]->references[$referenceIdentifier] = TableDescription::makeReference($tableName, array_flip($reference['where']));
             }
         }
 

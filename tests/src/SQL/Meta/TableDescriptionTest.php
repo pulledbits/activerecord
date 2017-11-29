@@ -1,18 +1,8 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-class TableTest extends \PHPUnit_Framework_TestCase
+class TableDescriptionTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * @var Table
-     */
-    private $object;
-
-    protected function setUp()
-    {
-        $this->object = new Table();
-    }
 
     public function testDescribe_When_DefaultState_Expect_ClassDescription()
     {
@@ -59,7 +49,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $classDescription = $this->object->describe($mockTable);
+        $classDescription = TableDescription::makeFromDBALTable($mockTable);
         $this->assertEquals(['name', 'birthdate'], $classDescription->identifier);
         $this->assertEquals(['birthdate', 'address'], $classDescription->requiredAttributeIdentifiers);
         $this->assertEquals([
@@ -86,7 +76,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
                 'referenced_column_id' => 'local_column_id'
             ]
         ];
-        $this->assertEquals($expectedReference, $this->object->makeReference('EntityTypeIdentifier', [
+        $this->assertEquals($expectedReference, TableDescription::makeReference('EntityTypeIdentifier', [
             'referenced_column_id' => 'local_column_id'
         ]));
     }
