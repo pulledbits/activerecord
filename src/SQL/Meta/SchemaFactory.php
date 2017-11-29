@@ -18,8 +18,9 @@ class SchemaFactory
     {
         $sourceTable = new \pulledbits\ActiveRecord\SQL\Meta\Table();
         $tables = [];
-        foreach ($schemaManager->listTables() as $dbalTable) {
-            $tables[$dbalTable->getName()] = $sourceTable->describe($dbalTable);
+        $fullTables = $connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
+        foreach ($fullTables->fetchAll() as $baseTable) {
+            $tables[$baseTable[0]] = $sourceTable->describe($schemaManager->listTableDetails($baseTable[0]));
         }
         $prototypeTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
