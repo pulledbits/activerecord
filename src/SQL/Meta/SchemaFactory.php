@@ -24,9 +24,6 @@ class SchemaFactory
         $prototypeTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription->references as $referenceIdentifier => $reference) {
-                if (array_key_exists($reference['table'], $prototypeTables) === false) {
-                    $prototypeTables[$reference['table']] = new TableDescription();
-                }
                 $prototypeTables[$reference['table']]->references[$referenceIdentifier] = TableDescription::makeReference($tableName, array_flip($reference['where']));
             }
         }

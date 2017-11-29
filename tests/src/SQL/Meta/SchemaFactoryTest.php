@@ -40,6 +40,12 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
                     'REFERENCED_TABLE_NAME' => 'AnotherTable',
                     'REFERENCED_COLUMN_NAME' => 'column_id'
                 ]
+            ],
+            '/SELECT \* FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/' => [
+                [
+                    'TABLE_NAME' => 'MyView',
+                    'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+                ]
             ]
         ]);
         $this->connection = new Connection($this->pdo);
