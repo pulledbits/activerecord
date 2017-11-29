@@ -277,10 +277,8 @@ namespace pulledbits\ActiveRecord\Test {
 
             public function __construct(array $queries)
             {
-                $this->queries = $queries;
-
                 $fullTables = [];
-                foreach ($this->queries as $query => $results) {
+                foreach ($queries as $query => $results) {
                     if (preg_match('/FROM (?<table>\w+)/', $query, $matches) === 1) {
                         $fullTables[] = [$matches['table'], 'BASE_TABLE'];
                     }
@@ -292,6 +290,9 @@ namespace pulledbits\ActiveRecord\Test {
                 $this->queries['/SHOW INDEX FROM \w+/'] = [];
                 $this->queries['/SELECT \* FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/'] = [];
                 $this->queries['/SELECT DATABASE()/'] = [];
+
+
+                $this->queries = array_merge($this->queries, $queries);
             }
 
             public function query($statement, $mode = \PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = array())
