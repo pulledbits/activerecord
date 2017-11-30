@@ -12,7 +12,7 @@ final class Entity implements Record
 
     private $entityTypeIdentifier;
 
-    private $primaryKey;
+    private $entityDescription;
 
     private $references;
 
@@ -24,9 +24,8 @@ final class Entity implements Record
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
+        $this->entityDescription = $entityDescription;
         $this->values = [];
-
-        $this->primaryKey =$entityDescription->identifier;
 
         $this->requiredAttributeIdentifiers = $entityDescription->requiredAttributeIdentifiers;
 
@@ -40,16 +39,6 @@ final class Entity implements Record
 
     public function contains(array $values) {
         $this->values += $values;
-    }
-
-    private function primaryKey() {
-        $sliced = [];
-        foreach ($this->values as $key => $value) {
-            if (in_array($key, $this->primaryKey, true)) {
-                $sliced[$key] = $value;
-            }
-        }
-        return $sliced;
     }
 
     public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
@@ -98,14 +87,14 @@ final class Entity implements Record
     {
         if ($this->missesRequiredValues()) {
             return 0;
-        } elseif ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->primaryKey()) > 0) {
+        } elseif ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->entityDescription->primaryKey($this->values)) > 0) {
             $this->values[$property] = $value;
         }
     }
 
     public function delete() : int
     {
-        return $this->schema->delete($this->entityTypeIdentifier, $this->primaryKey());
+        return $this->schema->delete($this->entityTypeIdentifier, $this->entityDescription->primaryKey($this->values));
     }
 
     public function create() : int
