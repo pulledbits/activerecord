@@ -18,8 +18,8 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
         $this->pdo = createMockPDOMultiple([]);
 
         $this->pdo->defineTables([
-            ['MyTable', 'BASE_TABLE'],
-            ['AnotherTable', 'BASE_TABLE']
+            ['MyTable', 'Table_type' => 'BASE_TABLE'],
+            ['AnotherTable', 'Table_type' => 'BASE_TABLE']
         ]);
         $this->pdo->defineViews([
             [
