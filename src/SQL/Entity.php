@@ -18,16 +18,12 @@ final class Entity implements Record
 
     private $values;
 
-    private $requiredAttributeIdentifiers;
-
     public function __construct(Schema $schema, string $entityTypeIdentifier, TableDescription $entityDescription)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->entityDescription = $entityDescription;
         $this->values = [];
-
-        $this->requiredAttributeIdentifiers = $entityDescription->requiredAttributeIdentifiers;
 
         if (count($entityDescription->references) > 0) {
             foreach ($entityDescription->references as $referenceIdentifier => $reference) {
@@ -46,10 +42,6 @@ final class Entity implements Record
             'entityTypeIdentifier' => $referencedEntityTypeIdentifier,
             'conditions' => $conditions
         ];
-    }
-
-    public function requires(array $attributeIdentifiers) {
-        $this->requiredAttributeIdentifiers = $attributeIdentifiers;
     }
 
     public function __get($property)

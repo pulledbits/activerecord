@@ -7,8 +7,6 @@ interface Record
 
     public function contains(array $values);
 
-    public function requires(array $attributeIdentifiers);
-
     public function missesRequiredValues() : bool;
 
     public function __get($property);
