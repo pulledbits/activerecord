@@ -10,6 +10,7 @@ namespace pulledbits\ActiveRecord;
 
 
 use pulledbits\ActiveRecord\SQL\Entity;
+use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
@@ -96,12 +97,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
             public function executeProcedure(string $procedureIdentifier, array $arguments): void
             {
-                // TODO: Implement executeProcedure() method.
             }
 
-            public function makeRecordType(string $entityTypeIdentifier): RecordType
+            public function makeRecordType(string $entityTypeIdentifier, TableDescription $entityDescription): RecordType
             {
-                // TODO: Implement makeRecordType() method.
             }
         };
 

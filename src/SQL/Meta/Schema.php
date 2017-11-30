@@ -21,20 +21,18 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : RecordConfigurator
     {
-        $recordType = new EntityType($schema, $tableIdentifier);
-
         if (array_key_exists($tableIdentifier, $this->prototypeTables)) {
-            return new Record($recordType, $this->prototypeTables[$tableIdentifier]);
+            return new Record($schema->makeRecordType($tableIdentifier, $this->prototypeTables[$tableIdentifier]));
         }
 
         if (array_key_exists($tableIdentifier, $this->prototypeViews)) {
             $underscorePosition = strpos($tableIdentifier, '_');
             if ($underscorePosition < 1) {
-                return new Record($recordType, new TableDescription());
+                return new Record($schema->makeRecordType($tableIdentifier, new TableDescription()));
             }
             $possibleEntityTypeIdentifier = substr($tableIdentifier, 0, $underscorePosition);
             if ($this->entityExists($possibleEntityTypeIdentifier) === false) {
-                return new Record($recordType, new TableDescription());
+                return new Record($schema->makeRecordType($tableIdentifier, new TableDescription()));
             }
             return new WrappedEntity($this->describeTable($schema, $possibleEntityTypeIdentifier));
         }

@@ -13,6 +13,7 @@ use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\Schema;
 use pulledbits\ActiveRecord\SQL\EntityType;
+use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 use pulledbits\ActiveRecord\SQL\Meta\WrappedEntity;
 
 class WrappedEntityTest extends \PHPUnit_Framework_TestCase
@@ -20,7 +21,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->recordFactory = new EntityType(new class implements Schema {
-            public function makeRecordType(string $entityTypeIdentifier): RecordType
+            public function makeRecordType(string $entityTypeIdentifier, TableDescription $tableDescription): RecordType
             {
             }
 
@@ -43,7 +44,7 @@ class WrappedEntityTest extends \PHPUnit_Framework_TestCase
             public function executeProcedure(string $procedureIdentifier, array $arguments): void
             {
             }
-        }, 'RecordTest');
+        }, 'RecordTest', new TableDescription());
     }
 
     private function makeWrappedEntityConfiguratorGenerator(Record $record) {

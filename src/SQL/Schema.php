@@ -3,6 +3,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordType;
+use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
@@ -13,9 +14,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $this->queryFactory = $queryFactory;
     }
 
-    public function makeRecordType(string $entityTypeIdentifier): RecordType
+    public function makeRecordType(string $entityTypeIdentifier, TableDescription $entityDescription): RecordType
     {
-        return new EntityType($this, $entityTypeIdentifier);
+        return new EntityType($this, $entityTypeIdentifier, $entityDescription);
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
