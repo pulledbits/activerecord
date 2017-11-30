@@ -6,36 +6,26 @@ use pulledbits\ActiveRecord\RecordType;
 
 final class Record implements RecordConfigurator
 {
-    private $entityIdentifier;
+    private $recordType;
 
-    private $requiredAttributeIdentifiers;
-
-    private $references;
+    private $entityDescription;
 
     public function __construct(RecordType $recordType, TableDescription $entityDescription)
     {
         $this->recordType = $recordType;
-        $this->entityIdentifier = $entityDescription->identifier;
-        $this->requiredAttributeIdentifiers = $entityDescription->requiredAttributeIdentifiers;
-        $this->references = [];
-        foreach ($entityDescription->references as $referenceIdentifier => $reference) {
-            $this->references[$referenceIdentifier] = [
-                'table' => $reference['table'],
-                'where' => $reference['where']
-            ];
-        }
+        $this->entityDescription = $entityDescription;
     }
 
     public function configure(): \pulledbits\ActiveRecord\Record
     {
         $record = $this->recordType->makeRecord();
-        $record->identifiedBy($this->entityIdentifier);
-        if (count($this->requiredAttributeIdentifiers) > 0) {
-            $record->requires($this->requiredAttributeIdentifiers);
+        $record->identifiedBy($this->entityDescription->identifier);
+        if (count($this->entityDescription->requiredAttributeIdentifiers) > 0) {
+            $record->requires($this->entityDescription->requiredAttributeIdentifiers);
         }
 
-        if (count($this->references) > 0) {
-            foreach ($this->references as $referenceIdentifier => $reference) {
+        if (count($this->entityDescription->references) > 0) {
+            foreach ($this->entityDescription->references as $referenceIdentifier => $reference) {
                 $record->references($referenceIdentifier,  $reference['table'], $reference['where']);
             }
         }
