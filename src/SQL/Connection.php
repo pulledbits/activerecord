@@ -21,7 +21,7 @@ class Connection
     }
     public function sourceSchema()
     {
-        return SchemaFactory::makeFromConnection($this, $this->connection);
+        return SchemaFactory::makeFromConnection($this);
     }
 
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
