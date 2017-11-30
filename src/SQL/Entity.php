@@ -42,10 +42,6 @@ final class Entity implements Record
         $this->values += $values;
     }
 
-    public function identifiedBy(array $primaryKey) {
-        $this->primaryKey = $primaryKey;
-    }
-
     private function primaryKey() {
         $sliced = [];
         foreach ($this->values as $key => $value) {
