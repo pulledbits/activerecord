@@ -9,7 +9,6 @@ use pulledbits\ActiveRecord\SQL\Query;
 
 class Update
 {
-    private $connection;
     private $tableIdentifier;
     private $values;
 
@@ -18,9 +17,8 @@ class Update
      */
     private $where;
 
-    public function __construct(Connection $connection, string $tableIdentifier, Query\Update\Values $values)
+    public function __construct(string $tableIdentifier, Query\Update\Values $values)
     {
-        $this->connection = $connection;
         $this->tableIdentifier = $tableIdentifier;
         $this->values = $values;
     }
@@ -30,13 +28,13 @@ class Update
         $this->where = $where;
     }
 
-    public function execute() : Result
+    public function execute(Connection $connection) : Result
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {
             $parameters = array_merge($parameters, $this->where->parameters());
         }
-        return new Result($this->connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters));
+        return new Result($connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters));
     }
 
 }

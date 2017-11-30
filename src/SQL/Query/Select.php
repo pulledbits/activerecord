@@ -3,14 +3,11 @@
 
 namespace pulledbits\ActiveRecord\SQL\Query;
 
-
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\SQL\Connection;
 
 class Select
 {
-    private $connection;
-    private $recordConfigurator;
     private $entityTypeIdentifier;
     private $attributeIdentifiers;
 
@@ -19,12 +16,11 @@ class Select
      */
     private $where;
 
-    public function __construct(Connection $connection, $entityTypeIdentifier, array $attributeIdentifiers)
+    public function __construct($entityTypeIdentifier, array $attributeIdentifiers)
     {
         if (count($attributeIdentifiers) === 0) {
             $attributeIdentifiers[] = '*';
         }
-        $this->connection = $connection;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->attributeIdentifiers = $attributeIdentifiers;
     }
@@ -34,8 +30,8 @@ class Select
         $this->where = $where;
     }
 
-    public function execute() : Result
+    public function execute(Connection $connection) : Result
     {
-        return $this->connection->query($this->entityTypeIdentifier,"SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
+        return $connection->query($this->entityTypeIdentifier,"SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
     }
 }

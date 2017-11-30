@@ -14,7 +14,7 @@ class Connection
     public function __construct(\PDO $connection)
     {
         $this->connection = $connection;
-        $this->schema = new Schema(new QueryFactory($this));
+        $this->schema = new Schema($this, new QueryFactory());
         $this->sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema($this, $this->schema);
     }
 

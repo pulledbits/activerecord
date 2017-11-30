@@ -8,19 +8,17 @@ use pulledbits\ActiveRecord\SQL\Connection;
 
 class Insert
 {
-    private $connection;
     private $tableIdentifier;
     private $values;
 
-    public function __construct(Connection $connection, string $tableIdentifier, PreparedParameters $values)
+    public function __construct(string $tableIdentifier, PreparedParameters $values)
     {
-        $this->connection = $connection;
         $this->tableIdentifier = $tableIdentifier;
         $this->values = $values;
     }
 
-    public function execute() : Result
+    public function execute(Connection $connection) : Result
     {
-        return new Result($this->connection->execute("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters()));
+        return new Result($connection->execute("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters()));
     }
 }
