@@ -2,7 +2,6 @@
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Table;
 use pulledbits\ActiveRecord\SQL\Connection;
 
 class SchemaFactory
@@ -21,6 +20,9 @@ class SchemaFactory
         $fullTables = $connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
         foreach ($fullTables->fetchAll() as $baseTable) {
             $dbalSchemaTable = $schemaManager->listTableDetails($baseTable[0]);
+            $columns = $schemaManager->listTableColumns($baseTable[0]);
+            $foreignKeys = $schemaManager->listTableForeignKeys($baseTable[0]);
+            $indexes = $schemaManager->listTableIndexes($baseTable[0]);
 
             $tables[$baseTable[0]] = new TableDescription([], [], []);
 

@@ -15,39 +15,85 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->pdo = createMockPDOMultiple([
-            '/SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'/' => [
-                ['MyTable', 'BASE_TABLE'],
-                ['AnotherTable', 'BASE_TABLE']
-            ],
-            '/SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra, COLUMN_COMMENT AS Comment, CHARACTER_SET_NAME AS CharacterSet, COLLATION_NAME AS Collation FROM information_schema\.COLUMNS WHERE TABLE_SCHEMA = DATABASE\(\) AND TABLE_NAME = \'\w+\'/' => [
-              [
-                  'Field' => 'extra_column_id',
-                  'Type' => 'INT',
-                  'Null' => 'YES',
-                  'Key' => '',
-                  'Default' => '',
-                  'Extra' => '',
-                  'Comment' => '',
-                  'CharacterSet' => '',
-                  'Collation' => ''
-              ]
-            ],
-            '/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'\w+\' AND k.table_schema = \'\' \/\**!50116 AND c.constraint_schema = \'\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/' => [
-                [
-                    'CONSTRAINT_NAME' => 'fk_anothertable_role',
-                    'COLUMN_NAME' => 'extra_column_id',
-                    'REFERENCED_TABLE_NAME' => 'AnotherTable',
-                    'REFERENCED_COLUMN_NAME' => 'column_id'
-                ]
-            ],
-            '/SELECT \* FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/' => [
-                [
-                    'TABLE_NAME' => 'MyView',
-                    'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
-                ]
+        $this->pdo = createMockPDOMultiple([]);
+
+        $this->pdo->defineTables([
+            ['MyTable', 'BASE_TABLE'],
+            ['AnotherTable', 'BASE_TABLE']
+        ]);
+        $this->pdo->defineViews([
+            [
+                'TABLE_NAME' => 'MyView',
+                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
             ]
         ]);
+
+        $this->pdo->defineColumns('MyTable', [
+            [
+            'Field' => 'id',
+            'Type' => 'INT',
+            'Null' => 'NO',
+            'Key' => 'PRI',
+            'Default' => '',
+            'Extra' => '',
+            'Comment' => '',
+            'CharacterSet' => '',
+            'Collation' => ''
+        ],
+            [
+                'Field' => 'extra_column_id',
+                'Type' => 'INT',
+                'Null' => 'YES',
+                'Key' => '',
+                'Default' => '',
+                'Extra' => '',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ]
+        ]);
+        $this->pdo->defineConstraints('MyTable', [
+            [
+                'CONSTRAINT_NAME' => 'fk_anothertable_role',
+                'COLUMN_NAME' => 'extra_column_id',
+                'REFERENCED_TABLE_NAME' => 'AnotherTable',
+                'REFERENCED_COLUMN_NAME' => 'column_id'
+            ]
+        ]);
+        $this->pdo->defineIndexes('MyTable', [
+            [
+            'Table' => 'MyTable',
+            'Non_unique' => '0',
+            'Key_name' => 'PRIMARY',
+            'Seq_in_index' => '1',
+            'Column_name' => 'id',
+            'Collation' => 'A',
+            'Cardinality' => '1',
+            'Sub_part' => null,
+            'Packed' => null,
+            'Null' => '',
+            'Index_type' => 'BTREE',
+            'Comment' => '',
+            'Index_comment' => ''
+            ]
+        ]);
+
+
+        $this->pdo->defineColumns('AnotherTable', [
+            [
+                'Field' => 'column_id',
+                'Type' => 'INT',
+                'Null' => 'YES',
+                'Key' => '',
+                'Default' => '',
+                'Extra' => '',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ]
+        ]);
+        $this->pdo->defineConstraints('AnotherTable', []);
+
         $this->connection = new Connection($this->pdo);
         $this->schema = new \pulledbits\ActiveRecord\SQL\Schema(new QueryFactory($this->connection));
     }
@@ -56,7 +102,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $sourceSchema = SchemaFactory::makeFromPDO($this->connection, $this->pdo);
 
-        $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription([], [], [
+        $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription(['id'], ['id'], [
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
                 'where' => [
