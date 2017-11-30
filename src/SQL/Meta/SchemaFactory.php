@@ -52,7 +52,7 @@ class SchemaFactory
         }
 
         $prototypeViews = [];
-        $fullViews = $connection->execute('SELECT * FROM information_schema.VIEWS WHERE TABLE_SCHEMA = \'\'', [])->fetchAll();
+        $fullViews = $connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = \'\'', [])->fetchAll();
         foreach ($fullViews as $fullView) {
             $prototypeViews[$fullView['TABLE_NAME']] = $fullView['VIEW_DEFINITION'];
         }

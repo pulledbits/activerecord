@@ -287,7 +287,7 @@ namespace pulledbits\ActiveRecord\Test {
                 }
 
                 $this->queries['/SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'/'] = $fullTables;
-                $this->queries['/SELECT \* FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/'] = [];
+                $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/'] = [];
                 $this->queries['/SELECT DATABASE()/'] = [];
 
 
@@ -303,7 +303,7 @@ namespace pulledbits\ActiveRecord\Test {
                 }
             }
             public function defineViews(array $viewResults) {
-                $this->queries['/SELECT \* FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/'] = $viewResults;
+                $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'\'/'] = $viewResults;
             }
             public function defineColumns(string $tableIdentifier, array $columnResults) {
                 $this->queries['/SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra, COLUMN_COMMENT AS Comment, CHARACTER_SET_NAME AS CharacterSet, COLLATION_NAME AS Collation FROM information_schema\.COLUMNS WHERE TABLE_SCHEMA = DATABASE\(\) AND TABLE_NAME = \'' . $tableIdentifier . '\'/'] = $columnResults;
