@@ -27,7 +27,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                     /**
                      * @var $this \pulledbits\ActiveRecord\Schema
                      */
-                    $record = new SQL\Entity($this, 'MyTable', $values);
+                    $record = new SQL\Entity($this, 'MyTable', new TableDescription());
                     $record->contains($values);
                     return $record;
                 }, $results);
@@ -109,12 +109,15 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($schema, 'MyTable');
-        $this->object->identifiedBy(['number']);
+        $this->object = new Entity($schema, 'MyTable', new TableDescription(['number'], [], [
+            'FkOthertableRole' => [
+                'table' => 'OtherTable',
+                'where' => [
+                    'id' => 'role_id'
+                ]
+            ]
+        ]));
         $this->object->contains($values);
-        $this->object->references('FkOthertableRole', 'OtherTable', [
-            'id' => 'role_id'
-        ]);
     }
 
     public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()

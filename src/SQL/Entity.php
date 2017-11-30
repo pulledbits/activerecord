@@ -4,6 +4,7 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\Schema;
+use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
 final class Entity implements Record
 {
@@ -19,14 +20,22 @@ final class Entity implements Record
 
     private $requiredAttributeIdentifiers;
 
-    public function __construct(Schema $schema, string $entityTypeIdentifier)
+    public function __construct(Schema $schema, string $entityTypeIdentifier, TableDescription $entityDescription)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
-        $this->primaryKey = [];
-        $this->references = [];
         $this->values = [];
-        $this->requiredAttributeIdentifiers = [];
+
+        $this->primaryKey =$entityDescription->identifier;
+
+        $this->requiredAttributeIdentifiers = $entityDescription->requiredAttributeIdentifiers;
+
+        if (count($entityDescription->references) > 0) {
+            foreach ($entityDescription->references as $referenceIdentifier => $reference) {
+                $this->references($referenceIdentifier,  $reference['table'], $reference['where']);
+            }
+        }
+
     }
 
     public function contains(array $values) {
