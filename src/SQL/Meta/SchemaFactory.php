@@ -28,12 +28,12 @@ class SchemaFactory
                 }
             }
 
-            $columns = $schemaManager->listTableColumns($baseTable[0]);
-            foreach ($columns as $columnIdentifier => $column) {
-                if ($column->getAutoincrement()) {
+            $columns = $connection->execute('SHOW FULL COLUMNS IN ' . $baseTable[0], [])->fetchAll();
+            foreach ($columns as $column) {
+                if ($column['Extra'] === 'auto_increment') {
                     continue;
-                } elseif ($column->getNotnull()) {
-                    $tables[$baseTable[0]]->requiredAttributeIdentifiers[] = $columnIdentifier;
+                } elseif ($column['Null'] === 'NO') {
+                    $tables[$baseTable[0]]->requiredAttributeIdentifiers[] = $column['Field'];
                 }
             }
 
