@@ -5,6 +5,7 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
+use pulledbits\ActiveRecord\SQL\Query\Result;
 
 class Connection
 {
@@ -20,11 +21,6 @@ class Connection
         return new Schema(new QueryFactory($this));
     }
 
-    public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
-    {
-        return SchemaFactory::makeFromConnection($this)->describeTable($entityTypeIdentifier);
-    }
-
     public function execute(string $query, array $namedParameters) : Statement
     {
         $pdostatement = $this->connection->prepare($query);
@@ -36,6 +32,12 @@ class Connection
         }
 
         return $statement;
+    }
+
+    public function query(string $entityTypeIdentifier, string $query, array $namedParameters) : Result {
+        $statement = $this->execute($query, $namedParameters);
+        $recordConfigurator = SchemaFactory::makeFromConnection($this)->describeTable($entityTypeIdentifier);
+        return new Result($statement, $recordConfigurator);
     }
 
 
