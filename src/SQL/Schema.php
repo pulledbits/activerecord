@@ -2,7 +2,7 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\RecordType;
+use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
@@ -16,9 +16,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $this->queryFactory = $queryFactory;
     }
 
-    public function makeRecordType(string $entityTypeIdentifier, TableDescription $entityDescription): RecordType
+    public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
     {
-        return new EntityType($this, $entityTypeIdentifier, $entityDescription);
+        return (new EntityType($this, $entityTypeIdentifier, $entityDescription))->makeRecord();
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
@@ -27,11 +27,10 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $result = $query->execute($this->connection);
 
         $sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema($this->connection, $this);
-        $recordType = $sourceSchema->describeTable($entityTypeIdentifier);
 
         $records = [];
         foreach ($result->fetchAll() as $row) {
-            $record = $recordType->makeRecord();
+            $record = $sourceSchema->makeRecord($entityTypeIdentifier);
             $record->contains($row);
             $records[] = $record;
         }

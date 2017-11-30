@@ -1,8 +1,8 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
+use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\SQL\Connection;
-use pulledbits\ActiveRecord\SQL\EntityType;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
@@ -68,13 +68,13 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         $this->prototypeEntities = $prototypeEntities;
     }
 
-    public function describeTable(string $tableIdentifier) : EntityType
+    public function makeRecord(string $tableIdentifier) : Record
     {
         if (array_key_exists($tableIdentifier, $this->prototypeEntities) === false) {
             $tableDescription = new TableDescription();
         } else {
             $tableDescription = $this->prototypeEntities[$tableIdentifier];
         }
-        return $this->schema->makeRecordType($tableIdentifier, $tableDescription);
+        return $this->schema->makeRecord($tableIdentifier, $tableDescription);
     }
 }

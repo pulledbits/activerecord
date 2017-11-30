@@ -207,8 +207,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'AnotherTable' => $anotherTable
         ]);
 
-        $this->assertEquals($this->schema->makeRecordType('MyTable', $myTable), $sourceSchema->describeTable('MyTable'));
-        $this->assertEquals($this->schema->makeRecordType('AnotherTable', $anotherTable), $sourceSchema->describeTable('AnotherTable'));
+        $this->assertEquals($this->schema->makeRecord('MyTable', $myTable), $sourceSchema->makeRecord('MyTable'));
+        $this->assertEquals($this->schema->makeRecord('AnotherTable', $anotherTable), $sourceSchema->makeRecord('AnotherTable'));
     }
 
 
@@ -218,9 +218,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'MyView' => new TableDescription()
         ]);
 
-        $tableDescription = $schema->describeTable('MyView');
+        $tableDescription = $schema->makeRecord('MyView');
 
-        $this->assertEquals($this->schema->makeRecordType('MyView', new TableDescription()), $tableDescription);
+        $this->assertEquals($this->schema->makeRecord('MyView', new TableDescription()), $tableDescription);
     }
 
 
@@ -228,9 +228,9 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     {
         $schema = new Schema($this->connection, $this->schema);
 
-        $tableDescription = $schema->describeTable('MyView_bla');
+        $tableDescription = $schema->makeRecord('MyView_bla');
 
-        $this->assertEquals($this->schema->makeRecordType('MyView_bla', new TableDescription()), $tableDescription);
+        $this->assertEquals($this->schema->makeRecord('MyView_bla', new TableDescription()), $tableDescription);
     }
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
@@ -243,8 +243,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'MyPerson_today' => $myPerson
         ]);
 
-        $tableDescription = $schema->describeTable('MyPerson_today');
+        $tableDescription = $schema->makeRecord('MyPerson_today');
 
-        $this->assertEquals($this->schema->makeRecordType('MyPerson_today', $myPerson), $tableDescription);
+        $this->assertEquals($this->schema->makeRecord('MyPerson_today', $myPerson), $tableDescription);
     }
 }

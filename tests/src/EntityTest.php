@@ -99,7 +99,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             {
             }
 
-            public function makeRecordType(string $entityTypeIdentifier, TableDescription $entityDescription): RecordType
+            public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
             {
             }
         };
