@@ -1,20 +1,10 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
-
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use pulledbits\ActiveRecord\SQL\Connection;
 
 class SchemaFactory
 {
-    public static function makeFromPDO(Connection $connection, \PDO $pdo): Schema
-    {
-        $config = new \Doctrine\DBAL\Configuration();
-        $connectionParams = ['pdo' => $pdo];
-        $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        return self::makeFromSchemaManager($connection, $conn->getSchemaManager());
-    }
-
-    public static function makeFromSchemaManager(Connection $connection, AbstractSchemaManager $schemaManager)
+    public static function makeFromConnection(Connection $connection): Schema
     {
         $tables = [];
         $fullTables = $connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);

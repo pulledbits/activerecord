@@ -117,7 +117,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testmakeFromSchemaManager_When_Default_Expect_ArrayWithRecordConfigurators()
     {
-        $sourceSchema = SchemaFactory::makeFromPDO($this->connection, $this->pdo);
+        $sourceSchema = SchemaFactory::makeFromConnection($this->connection, $this->pdo);
 
         $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription(['id'], ['id'], [
             'FkAnothertableRole' => [
