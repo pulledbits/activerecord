@@ -6,5 +6,5 @@ use pulledbits\ActiveRecord\SQL\EntityType;
 
 interface Schema
 {
-    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : EntityType;
+    public function describeTable(string $tableIdentifier) : EntityType;
 }

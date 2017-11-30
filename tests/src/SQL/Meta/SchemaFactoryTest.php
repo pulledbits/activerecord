@@ -127,7 +127,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
                     'column_id2' => 'extra_column_id2'
                 ],
             ]
-        ])), $sourceSchema->describeTable($this->schema, 'MyTable'));
+        ])), $sourceSchema->describeTable('MyTable'));
         $this->assertEquals($this->schema->makeRecordType('AnotherTable', new TableDescription([], [], [
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
@@ -136,6 +136,6 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
                     'extra_column_id2' => 'column_id2'
                 ],
             ]
-        ])), $sourceSchema->describeTable($this->schema, 'AnotherTable'));
+        ])), $sourceSchema->describeTable('AnotherTable'));
     }
 }

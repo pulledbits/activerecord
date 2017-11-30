@@ -41,19 +41,19 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $sourceSchema = new Schema([
+        $sourceSchema = new Schema($this->schema, [
             'MyTable' => $myTable,
             'AnotherTable' => $anotherTable
         ], []);
 
-        $this->assertEquals($this->schema->makeRecordType('MyTable', $myTable), $sourceSchema->describeTable($this->schema, 'MyTable'));
-        $this->assertEquals($this->schema->makeRecordType('AnotherTable', $anotherTable), $sourceSchema->describeTable($this->schema, 'AnotherTable'));
+        $this->assertEquals($this->schema->makeRecordType('MyTable', $myTable), $sourceSchema->describeTable('MyTable'));
+        $this->assertEquals($this->schema->makeRecordType('AnotherTable', $anotherTable), $sourceSchema->describeTable('AnotherTable'));
     }
 
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema([], [
+        $schema = new Schema($this->schema, [], [
             'MyView' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -61,7 +61,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;'
         ]);
 
-        $tableDescription = $schema->describeTable($this->schema, 'MyView');
+        $tableDescription = $schema->describeTable('MyView');
 
         $this->assertEquals($this->schema->makeRecordType('MyView', new TableDescription()), $tableDescription);
     }
@@ -69,7 +69,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema( [], [
+        $schema = new Schema($this->schema,  [], [
             'MyView_bla' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -77,7 +77,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`thema`;'
         ]);
 
-        $tableDescription = $schema->describeTable($this->schema, 'MyView_bla');
+        $tableDescription = $schema->describeTable('MyView_bla');
 
         $this->assertEquals($this->schema->makeRecordType('MyView_bla', new TableDescription()), $tableDescription);
     }
@@ -106,7 +106,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $schema = new Schema([
+        $schema = new Schema($this->schema, [
             'MyTable' => $myTable
             ],[
             'MyTable_today' => 'CREATE VIEW `MyTable_today` AS
@@ -116,8 +116,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
   FROM `teach`.`MyTable`;'
         ]);
 
-        $tableDescription = $schema->describeTable($this->schema, 'MyTable_today');
+        $tableDescription = $schema->describeTable('MyTable_today');
 
-        $this->assertEquals($schema->describeTable($this->schema, 'MyTable'), $tableDescription);
+        $this->assertEquals($schema->describeTable('MyTable'), $tableDescription);
     }
 }
