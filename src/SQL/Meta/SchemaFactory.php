@@ -19,18 +19,17 @@ class SchemaFactory
         $tables = [];
         $fullTables = $connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
         foreach ($fullTables->fetchAll() as $baseTable) {
-            $dbalSchemaTable = $schemaManager->listTableDetails($baseTable[0]);
-            $columns = $schemaManager->listTableColumns($baseTable[0]);
-            $foreignKeys = $schemaManager->listTableForeignKeys($baseTable[0]);
-            $indexes = $schemaManager->listTableIndexes($baseTable[0]);
-
             $tables[$baseTable[0]] = new TableDescription([], [], []);
 
-            if ($dbalSchemaTable->hasPrimaryKey()) {
-                $tables[$baseTable[0]]->identifier = $dbalSchemaTable->getPrimaryKeyColumns();
+            $indexes = $schemaManager->listTableIndexes($baseTable[0]);
+            foreach ($indexes as $index) {
+                if ($index->isPrimary()) {
+                    $tables[$baseTable[0]]->identifier = $index->getColumns();
+                }
             }
 
-            foreach ($dbalSchemaTable->getColumns() as $columnIdentifier => $column) {
+            $columns = $schemaManager->listTableColumns($baseTable[0]);
+            foreach ($columns as $columnIdentifier => $column) {
                 if ($column->getAutoincrement()) {
                     continue;
                 } elseif ($column->getNotnull()) {
@@ -38,8 +37,9 @@ class SchemaFactory
                 }
             }
 
-            foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
-                $tables[$baseTable[0]]->references[join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = TableDescription::makeReference($foreignKey->getForeignTableName(), array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns()));
+            $foreignKeys = $schemaManager->listTableForeignKeys($baseTable[0]);
+            foreach ($foreignKeys as $foreignKeyIdentifier => $foreignKey) {
+                $tables[$baseTable[0]]->references[join('', array_map('ucfirst', explode('_', $foreignKey->getName())))] = TableDescription::makeReference($foreignKey->getForeignTableName(), array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns()));
             }
         }
         $prototypeTables = $tables;
