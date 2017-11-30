@@ -9,6 +9,7 @@
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\SQL\Connection;
+use pulledbits\ActiveRecord\SQL\QueryFactory;
 use function pulledbits\ActiveRecord\Test\createMockPDOMultiple;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
@@ -178,7 +179,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
 
         $this->connection = new Connection($this->pdo);
-        $this->schema = $this->connection->schema();
+        $this->schema = new \pulledbits\ActiveRecord\SQL\Schema($this->connection, new QueryFactory());
     }
 
     public function testConstructor_When_Default_Expect_ArrayWithRecordConfigurators()
