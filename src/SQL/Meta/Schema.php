@@ -15,30 +15,28 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         $this->prototypeViews = $prototypeViews;
     }
 
+    private function entityExists($tableIdentifier) {
+        return array_key_exists($tableIdentifier, $this->prototypeTables) || array_key_exists($tableIdentifier, $this->prototypeViews);
+    }
+
     public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : RecordConfigurator
     {
-        $this->recordConfiguratorGenerators = [];
-        foreach ($this->prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
-            $recordType = new EntityType($schema, $prototypeTableIdentifier);
-            $this->recordConfiguratorGenerators[$prototypeTableIdentifier] = new Record($recordType, $prototypeTable);
+        $recordType = new EntityType($schema, $tableIdentifier);
+
+        if (array_key_exists($tableIdentifier, $this->prototypeTables)) {
+            return new Record($recordType, $this->prototypeTables[$tableIdentifier]);
         }
 
-        foreach ($this->prototypeViews as $viewIdentifier => $viewSQL) {
-            $recordType = new EntityType($schema, $viewIdentifier);
-            $this->recordConfiguratorGenerators[$viewIdentifier] = new Record($recordType, new TableDescription());
-
-            $underscorePosition = strpos($viewIdentifier, '_');
+        if (array_key_exists($tableIdentifier, $this->prototypeViews)) {
+            $underscorePosition = strpos($tableIdentifier, '_');
             if ($underscorePosition < 1) {
-                continue;
+                return new Record($recordType, new TableDescription());
             }
-
-            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
-            if (array_key_exists($possibleEntityTypeIdentifier, $this->recordConfiguratorGenerators) === false) {
-                continue;
+            $possibleEntityTypeIdentifier = substr($tableIdentifier, 0, $underscorePosition);
+            if ($this->entityExists($possibleEntityTypeIdentifier) === false) {
+                return new Record($recordType, new TableDescription());
             }
-
-            $this->recordConfiguratorGenerators[$viewIdentifier] = new WrappedEntity($this->recordConfiguratorGenerators[$possibleEntityTypeIdentifier]);
+            return new WrappedEntity($this->describeTable($schema, $possibleEntityTypeIdentifier));
         }
-        return $this->recordConfiguratorGenerators[$tableIdentifier];
     }
 }
