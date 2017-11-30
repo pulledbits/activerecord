@@ -111,12 +111,13 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->pdo->defineConstraints('AnotherTable', []);
 
-        $this->schema = new \pulledbits\ActiveRecord\SQL\Schema(new QueryFactory(new Connection($this->pdo)));
+        $this->connection = new Connection($this->pdo);
+        $this->schema = new \pulledbits\ActiveRecord\SQL\Schema(new QueryFactory($this->connection));
     }
 
     public function testmakeFromSchemaManager_When_Default_Expect_ArrayWithRecordConfigurators()
     {
-        $sourceSchema = SchemaFactory::makeFromConnection($this->pdo, $this->schema);
+        $sourceSchema = SchemaFactory::makeFromConnection($this->connection, $this->pdo);
 
         $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription(['id'], ['id'], [
             'FkAnothertableRole' => [

@@ -22,7 +22,7 @@ class Connection
 
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
     {
-        return SchemaFactory::makeFromConnection($this->connection, $this->schema())->describeTable($entityTypeIdentifier);
+        return SchemaFactory::makeFromConnection($this)->describeTable($entityTypeIdentifier);
     }
 
     public function execute(string $query, array $namedParameters) : Statement
