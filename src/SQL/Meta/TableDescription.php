@@ -34,6 +34,16 @@ class TableDescription extends Struct
         return $missing;
     }
 
+    public function prepareReference(string $identifier) {
+        if (array_key_exists($identifier, $this->references) === false) {
+            trigger_error('Reference does not exist `' . $identifier . '`', E_USER_ERROR);
+        }
+        return [
+            'entityTypeIdentifier' => $this->references[$identifier]['table'],
+            'conditions' => $this->references[$identifier]['where']
+        ];
+    }
+
     public function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName) {
         $fkIdentifier = join('', array_map('ucfirst', explode('_', $constraintName)));
         if (array_key_exists($fkIdentifier, $this->references)) {

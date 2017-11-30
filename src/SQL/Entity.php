@@ -14,8 +14,6 @@ final class Entity implements Record
 
     private $entityDescription;
 
-    private $references;
-
     private $values;
 
     public function __construct(Schema $schema, string $entityTypeIdentifier, TableDescription $entityDescription)
@@ -24,16 +22,6 @@ final class Entity implements Record
         $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->entityDescription = $entityDescription;
         $this->values = [];
-
-        if (count($entityDescription->references) > 0) {
-            foreach ($entityDescription->references as $referenceIdentifier => $reference) {
-                $this->references[$referenceIdentifier] = [
-                    'entityTypeIdentifier' => $reference['table'],
-                    'conditions' => $reference['where']
-                ];
-            }
-        }
-
     }
 
     public function contains(array $values) {
@@ -85,15 +73,6 @@ final class Entity implements Record
         return array_map(function($localColumnIdentifier) { return $this->__get($localColumnIdentifier); }, $conditions);
     }
 
-    private function prepareReference(string $identifier) {
-        if (array_key_exists($identifier, $this->references) === false) {
-            trigger_error('Reference does not exist `' . $identifier . '`', E_USER_ERROR);
-        }
-        $reference = $this->references[$identifier];
-        $reference['conditions'] = $this->fillConditions($reference['conditions']);
-        return $reference;
-    }
-
     private function mergeConditionsWith__callCustomConditions(array $conditions, array $arguments) {
         if (count($arguments) === 1) {
             return array_merge($arguments[0], $conditions);
@@ -104,12 +83,12 @@ final class Entity implements Record
     public function __call(string $method, array $arguments)
     {
         if (substr($method, 0, 7) === 'fetchBy') {
-            $reference = $this->prepareReference(substr($method, 7));
-            return $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
+            $reference = $this->entityDescription->prepareReference(substr($method, 7));
+            return $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($this->fillConditions($reference['conditions']), $arguments));
         } elseif (substr($method, 0, 11) === 'referenceBy') {
-            $reference = $this->prepareReference(substr($method, 11));
-            $this->schema->create($reference['entityTypeIdentifier'], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
-            $records = $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($reference['conditions'], $arguments));
+            $reference = $this->entityDescription->prepareReference(substr($method, 11));
+            $this->schema->create($reference['entityTypeIdentifier'], $this->mergeConditionsWith__callCustomConditions($this->fillConditions($reference['conditions']), $arguments));
+            $records = $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($this->fillConditions($reference['conditions']), $arguments));
             return $records[0];
         }
         return null;
