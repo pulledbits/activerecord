@@ -27,7 +27,10 @@ final class Entity implements Record
 
         if (count($entityDescription->references) > 0) {
             foreach ($entityDescription->references as $referenceIdentifier => $reference) {
-                $this->references($referenceIdentifier,  $reference['table'], $reference['where']);
+                $this->references[$referenceIdentifier] = [
+                    'entityTypeIdentifier' => $reference['table'],
+                    'conditions' => $reference['where']
+                ];
             }
         }
 
@@ -35,13 +38,6 @@ final class Entity implements Record
 
     public function contains(array $values) {
         $this->values += $values;
-    }
-
-    public function references(string $referenceIdentifier, string $referencedEntityTypeIdentifier, array $conditions) {
-        $this->references[$referenceIdentifier] = [
-            'entityTypeIdentifier' => $referencedEntityTypeIdentifier,
-            'conditions' => $conditions
-        ];
     }
 
     public function __get($property)
