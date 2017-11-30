@@ -21,7 +21,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $schema = new class implements \pulledbits\ActiveRecord\Schema {
+        $this->schema = new class implements \pulledbits\ActiveRecord\Schema {
             private function convertResultSet(array $results) {
                 return array_map(function(array $values) {
                     /**
@@ -109,7 +109,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($schema, 'MyTable', new TableDescription(['number'], [], [
+        $this->object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], [], [
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
                 'where' => [
@@ -120,11 +120,27 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->object->contains($values);
     }
 
-    public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()
+    public function testMissesRequiredValues_When_NotMissingRequiredProperties_Expect_False()
     {
         $this->assertFalse($this->object->missesRequiredValues());
-        $this->object->requires(['name']);
-        $this->assertTrue($this->object->missesRequiredValues());
+    }
+
+    public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()
+    {
+        $object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], ['name'], [
+            'FkOthertableRole' => [
+                'table' => 'OtherTable',
+                'where' => [
+                    'id' => 'role_id'
+                ]
+            ]
+        ]));
+        $object->contains([
+            'number' => '1',
+            'role_id' => '33',
+            'pole_id' => '3654',
+        ]);
+        $this->assertTrue($object->missesRequiredValues());
     }
 
     public function test__get_When_ExistingProperty_Expect_Value()
@@ -136,16 +152,28 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function test__set_When_ExistingProperty_Expect_ValueChanged()
     {
         $this->assertEquals('1', $this->object->number);
-        $this->object->number = '2';
+        $this->object->__set('number', '2');
         $this->assertEquals('2', $this->object->number);
     }
 
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
-        $this->object->requires(['name']);
-        $this->assertEquals('1', $this->object->number);
-        $this->object->number = '2';
-        $this->assertEquals('1', $this->object->number);
+        $object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], ['name'], [
+            'FkOthertableRole' => [
+                'table' => 'OtherTable',
+                'where' => [
+                    'id' => 'role_id'
+                ]
+            ]
+        ]));
+        $object->contains([
+            'number' => '1',
+            'role_id' => '33',
+            'pole_id' => '3654',
+        ]);
+        $this->assertEquals('1', $object->number);
+        $object->__set('number', '2');
+        $this->assertEquals('1', $object->number);
     }
 
     public function testDelete_When_ExistingProperty_Expect_Value()
@@ -164,11 +192,18 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
-        $this->object->requires(['name']);
-        $this->object->contains([]);
-        $this->assertEquals(0, $this->object->create());
-        $this->object->contains(['name' => 'Test']);
-        $this->assertEquals(1, $this->object->create());
+        $object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], ['name'], [
+            'FkOthertableRole' => [
+                'table' => 'OtherTable',
+                'where' => [
+                    'id' => 'role_id'
+                ]
+            ]
+        ]));
+        $object->contains([]);
+        $this->assertEquals(0, $object->create());
+        $object->contains(['name' => 'Test']);
+        $this->assertEquals(1, $object->create());
     }
 
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()

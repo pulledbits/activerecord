@@ -66,21 +66,7 @@ final class Entity implements Record
 
     public function missesRequiredValues(): bool
     {
-        return count($this->calculateMissingValues()) > 0;
-    }
-
-    private function calculateMissingValues() : array {
-        $missing = [];
-        foreach ($this->requiredAttributeIdentifiers as $requiredColumnIdentifier) {
-            if (array_key_exists($requiredColumnIdentifier, $this->values) === false) {
-                $missing[] = $requiredColumnIdentifier;
-                break;
-            } elseif ($this->values[$requiredColumnIdentifier] === null) {
-                $missing[] = $requiredColumnIdentifier;
-                break;
-            }
-        }
-        return $missing;
+        return count($this->entityDescription->calculateMissingValues($this->values)) > 0;
     }
 
     public function __set($property, $value)
@@ -99,7 +85,7 @@ final class Entity implements Record
 
     public function create() : int
     {
-        $missing = $this->calculateMissingValues();
+        $missing = $this->entityDescription->calculateMissingValues($this->values);
         if (count($missing) === 0) {
             return $this->schema->create($this->entityTypeIdentifier, $this->values);
         }

@@ -20,6 +20,20 @@ class TableDescription extends Struct
         return $sliced;
     }
 
+    public function calculateMissingValues(array $values) : array {
+        $missing = [];
+        foreach ($this->requiredAttributeIdentifiers as $requiredColumnIdentifier) {
+            if (array_key_exists($requiredColumnIdentifier, $values) === false) {
+                $missing[] = $requiredColumnIdentifier;
+                break;
+            } elseif ($values[$requiredColumnIdentifier] === null) {
+                $missing[] = $requiredColumnIdentifier;
+                break;
+            }
+        }
+        return $missing;
+    }
+
     public function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName) {
         $fkIdentifier = join('', array_map('ucfirst', explode('_', $constraintName)));
         if (array_key_exists($fkIdentifier, $this->references)) {
