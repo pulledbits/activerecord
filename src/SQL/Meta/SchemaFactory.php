@@ -21,10 +21,10 @@ class SchemaFactory
         foreach ($fullTables->fetchAll() as $baseTable) {
             $tables[$baseTable[0]] = new TableDescription([], [], []);
 
-            $indexes = $schemaManager->listTableIndexes($baseTable[0]);
+            $indexes = $connection->execute('SHOW INDEX FROM ' . $baseTable[0], [])->fetchAll();
             foreach ($indexes as $index) {
-                if ($index->isPrimary()) {
-                    $tables[$baseTable[0]]->identifier = $index->getColumns();
+                if ($index['Key_name'] === 'PRIMARY') {
+                    $tables[$baseTable[0]]->identifier[] = $index['Column_name'];
                 }
             }
 
