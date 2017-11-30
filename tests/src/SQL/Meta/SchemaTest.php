@@ -41,7 +41,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $sourceSchema = new Schema($this->connection, [
+        $sourceSchema = new Schema($this->connection->schema(), [
             'MyTable' => $myTable,
             'AnotherTable' => $anotherTable
         ], []);
@@ -53,7 +53,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->connection, [], [
+        $schema = new Schema($this->connection->schema(), [], [
             'MyView' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -69,7 +69,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->connection, [], [
+        $schema = new Schema($this->connection->schema(), [], [
             'MyView_bla' => 'CREATE VIEW `MyView` AS
   SELECT
     `schema`.`MyTable`.`name`   AS `name`,
@@ -106,7 +106,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $schema = new Schema($this->connection, [
+        $schema = new Schema($this->connection->schema(), [
             'MyTable' => $myTable
             ],[
             'MyTable_today' => 'CREATE VIEW `MyTable_today` AS

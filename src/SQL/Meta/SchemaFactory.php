@@ -49,6 +49,6 @@ class SchemaFactory
             $prototypeViews[$fullView['TABLE_NAME']] = $fullView['VIEW_DEFINITION'];
         }
 
-        return new Schema($connection, $prototypeTables, $prototypeViews);
+        return new Schema($connection->schema(), $prototypeTables, $prototypeViews);
     }
 }

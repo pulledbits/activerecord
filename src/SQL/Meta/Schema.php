@@ -2,20 +2,14 @@
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\SQL\Connection;
 use pulledbits\ActiveRecord\SQL\EntityType;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
     private $recordConfiguratorGenerators;
 
-    public function __construct(Connection $connection, array $prototypeTables, array $prototypeViews)
+    public function __construct(\pulledbits\ActiveRecord\SQL\Schema $schema, array $prototypeTables, array $prototypeViews)
     {
-        $this->connection = $connection;
-
-        $schema = $this->connection->schema();
-
-
         $this->recordConfiguratorGenerators = [];
         foreach ($prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
             $recordType = new EntityType($schema, $prototypeTableIdentifier);
