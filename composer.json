@@ -9,7 +9,6 @@
 	},
 	"require" : {
         "php": ">=7.1",
-		"doctrine/dbal": "^2.5",
 		"guzzlehttp/psr7": "1.4.2"
 	},
 	"require-dev" : {
