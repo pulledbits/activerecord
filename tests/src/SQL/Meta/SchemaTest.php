@@ -13,18 +13,178 @@ use function pulledbits\ActiveRecord\Test\createMockPDOMultiple;
 
 class SchemaTest extends \PHPUnit_Framework_TestCase
 {
+    private $pdo;
     private $connection;
     private $schema;
 
     protected function setUp()
     {
-        $this->connection = new Connection(createMockPDOMultiple([]));
+        $this->pdo = createMockPDOMultiple([]);
+
+        $this->pdo->defineTables([
+            ['MyTable', 'Table_type' => 'BASE_TABLE'],
+            ['AnotherTable', 'Table_type' => 'BASE_TABLE'],
+            ['MyPerson', 'Table_type' => 'BASE_TABLE'],
+        ]);
+        $this->pdo->defineViews([
+            [
+                'TABLE_NAME' => 'MyView',
+                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+            ],
+            [
+                'TABLE_NAME' => 'MyPerson_today',
+                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+            ],
+            [
+                'TABLE_NAME' => 'MyView_bla',
+                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+            ]
+        ]);
+
+        $this->pdo->defineColumns('MyTable', [
+            [
+                'Field' => 'id',
+                'Type' => 'INT',
+                'Null' => 'NO',
+                'Key' => 'PRI',
+                'Default' => '',
+                'Extra' => '',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ],
+            [
+                'Field' => 'id2',
+                'Type' => 'INT',
+                'Null' => 'NO',
+                'Key' => 'PRI',
+                'Default' => '',
+                'Extra' => 'auto_increment',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ],
+            [
+                'Field' => 'extra_column_id',
+                'Type' => 'INT',
+                'Null' => 'YES',
+                'Key' => '',
+                'Default' => '',
+                'Extra' => '',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ]
+        ]);
+        $this->pdo->defineConstraints('MyTable', [
+            [
+                'CONSTRAINT_NAME' => 'fk_anothertable_role',
+                'COLUMN_NAME' => 'extra_column_id',
+                'REFERENCED_TABLE_NAME' => 'AnotherTable',
+                'REFERENCED_COLUMN_NAME' => 'column_id'
+            ]
+        ]);
+        $this->pdo->defineIndexes('MyTable', [
+            [
+                'Table' => 'MyTable',
+                'Non_unique' => '0',
+                'Key_name' => 'PRIMARY',
+                'Seq_in_index' => '1',
+                'Column_name' => 'id',
+                'Collation' => 'A',
+                'Cardinality' => '1',
+                'Sub_part' => null,
+                'Packed' => null,
+                'Null' => '',
+                'Index_type' => 'BTREE',
+                'Comment' => '',
+                'Index_comment' => ''
+            ]
+        ]);
+
+
+        $this->pdo->defineColumns('AnotherTable', [
+            [
+                'Field' => 'column_id',
+                'Type' => 'INT',
+                'Null' => 'YES',
+                'Key' => '',
+                'Default' => '',
+                'Extra' => '',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ]
+        ]);
+        $this->pdo->defineConstraints('AnotherTable', []);
+
+        $this->pdo->defineColumns('MyPerson', [
+            [
+                'Field' => 'name',
+                'Type' => 'INT',
+                'Null' => 'YES',
+                'Key' => 'PRI',
+                'Default' => '',
+                'Extra' => '',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ],
+            [
+                'Field' => 'birthdate',
+                'Type' => 'INT',
+                'Null' => 'YES',
+                'Key' => 'PRI',
+                'Default' => '',
+                'Extra' => 'auto_increment',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ]
+        ]);
+        $this->pdo->defineIndexes('MyPerson', [
+            [
+                'Table' => 'MyPerson',
+                'Non_unique' => '0',
+                'Key_name' => 'PRIMARY',
+                'Seq_in_index' => '1',
+                'Column_name' => 'name',
+                'Collation' => 'A',
+                'Cardinality' => '1',
+                'Sub_part' => null,
+                'Packed' => null,
+                'Null' => '',
+                'Index_type' => 'BTREE',
+                'Comment' => '',
+                'Index_comment' => ''
+            ],
+            [
+                'Table' => 'MyPerson',
+                'Non_unique' => '0',
+                'Key_name' => 'PRIMARY',
+                'Seq_in_index' => '1',
+                'Column_name' => 'birthdate',
+                'Collation' => 'A',
+                'Cardinality' => '1',
+                'Sub_part' => null,
+                'Packed' => null,
+                'Null' => '',
+                'Index_type' => 'BTREE',
+                'Comment' => '',
+                'Index_comment' => ''
+            ]
+        ]);
+
+
+
+        $this->connection = new Connection($this->pdo);
         $this->schema = $this->connection->schema();
     }
 
     public function testConstructor_When_Default_Expect_ArrayWithRecordConfigurators()
     {
-        $myTable = new TableDescription([], [], [
+
+        $myTable = new TableDescription(['id'], ['id'], [
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
                 'where' => [
@@ -41,7 +201,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $sourceSchema = new Schema($this->schema, [
+        $sourceSchema = new Schema($this->connection, $this->schema, [
             'MyTable' => $myTable,
             'AnotherTable' => $anotherTable
         ]);
@@ -53,7 +213,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->schema, [
+        $schema = new Schema($this->connection, $this->schema, [
             'MyView' => new TableDescription()
         ]);
 
@@ -65,7 +225,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->schema,  ['MyView_bla' => new TableDescription()]);
+        $schema = new Schema($this->connection, $this->schema);
 
         $tableDescription = $schema->describeTable('MyView_bla');
 
@@ -75,34 +235,15 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
     {
 
-        $myTable = new TableDescription(['name', 'birthdate'], [], [
-            'FkOthertableRole' => [
-                'table' => 'OtherTable',
-                'where' => [
-                    'id' => 'role_id'
-                ],
-            ],
-            'FkAnothertableRole' => [
-                'table' => 'AntoherTable',
-                'where' => [
-                    'id' => 'role2_id'
-                ],
-            ],
-            'FkAnothertableRole' => [
-                'table' => 'AnotherTable',
-                'where' => [
-                    'column_id' => 'extra_column_id'
-                ],
-            ]
+        $myPerson = new TableDescription(['name', 'birthdate'], [], []);
+
+        $schema = new Schema($this->connection, $this->schema, [
+            'MyPerson' => $myPerson,
+            'MyPerson_today' => $myPerson
         ]);
 
-        $schema = new Schema($this->schema, [
-            'MyTable' => $myTable,
-            'MyTable_today' => $myTable
-        ]);
+        $tableDescription = $schema->describeTable('MyPerson_today');
 
-        $tableDescription = $schema->describeTable('MyTable_today');
-
-        $this->assertEquals($this->schema->makeRecordType('MyTable_today', $myTable), $tableDescription);
+        $this->assertEquals($this->schema->makeRecordType('MyPerson_today', $myPerson), $tableDescription);
     }
 }

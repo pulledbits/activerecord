@@ -15,7 +15,7 @@ class Connection
     {
         $this->connection = $connection;
         $this->schema = new Schema(new QueryFactory($this));
-        $this->sourceSchema = SchemaFactory::makeFromConnection($this);
+        $this->sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema($this, $this->schema);
     }
 
     public function schema()
