@@ -2,9 +2,9 @@
 
 namespace pulledbits\ActiveRecord\Source;
 
-use pulledbits\ActiveRecord\RecordConfigurator;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 interface Schema
 {
-    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier): RecordConfigurator;
+    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : EntityType;
 }

@@ -1,7 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Meta;
 
-use pulledbits\ActiveRecord\RecordConfigurator;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
@@ -18,7 +18,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         return array_key_exists($tableIdentifier, $this->prototypeTables) || array_key_exists($tableIdentifier, $this->prototypeViews);
     }
 
-    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : RecordConfigurator
+    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : EntityType
     {
         if (array_key_exists($tableIdentifier, $this->prototypeTables)) {
             return $schema->makeRecordType($tableIdentifier, $this->prototypeTables[$tableIdentifier]);

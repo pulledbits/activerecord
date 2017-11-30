@@ -1,21 +1,18 @@
 <?php
-
-
 namespace pulledbits\ActiveRecord\SQL\Query;
 
-
-use pulledbits\ActiveRecord\RecordConfigurator;
+use pulledbits\ActiveRecord\RecordType;
 
 class Result implements \Countable
 {
 
     private $statement;
-    private $configurator;
+    private $recordType;
 
-    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, RecordConfigurator $configurator = null)
+    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, RecordType $recordType = null)
     {
         $this->statement = $statement;
-        $this->configurator = $configurator;
+        $this->recordType = $recordType;
     }
 
     public function count()
@@ -27,7 +24,7 @@ class Result implements \Countable
     {
         $records = [];
         foreach ($this->statement->fetchAll() as $row) {
-            $record = $this->configurator->configure();
+            $record = $this->recordType->makeRecord();
             $record->contains($row);
             $records[] = $record;
         }
