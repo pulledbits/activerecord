@@ -52,8 +52,9 @@ class SchemaFactory
         }
 
         $prototypeViews = [];
-        foreach ($schemaManager->listViews() as $dbalView) {
-            $prototypeViews[$dbalView->getName()] = $dbalView->getSql();
+        $fullViews = $connection->execute('SELECT * FROM information_schema.VIEWS WHERE TABLE_SCHEMA = \'\'', [])->fetchAll();
+        foreach ($fullViews as $fullView) {
+            $prototypeViews[$fullView['TABLE_NAME']] = $fullView['VIEW_DEFINITION'];
         }
 
         return new Schema($connection, $prototypeTables, $prototypeViews);
