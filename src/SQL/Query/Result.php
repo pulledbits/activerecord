@@ -7,12 +7,10 @@ class Result implements \Countable
 {
 
     private $statement;
-    private $recordType;
 
-    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement, RecordType $recordType = null)
+    public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement)
     {
         $this->statement = $statement;
-        $this->recordType = $recordType;
     }
 
     public function count()
@@ -20,14 +18,8 @@ class Result implements \Countable
         return $this->statement->rowCount();
     }
 
-    public function fetchAllAs() : array
+    public function fetchAll() : array
     {
-        $records = [];
-        foreach ($this->statement->fetchAll() as $row) {
-            $record = $this->recordType->makeRecord();
-            $record->contains($row);
-            $records[] = $record;
-        }
-        return $records;
+        return $this->statement->fetchAll();
     }
 }

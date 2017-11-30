@@ -23,7 +23,7 @@ class Connection
         return $this->schema;
     }
 
-    public function execute(string $query, array $namedParameters) : Statement
+    public function execute(string $query, array $namedParameters) : Result
     {
         $pdostatement = $this->connection->prepare($query);
         $statement = new Statement($pdostatement);
@@ -33,12 +33,7 @@ class Connection
             trigger_error("Failed executing query `" . $query . "` (" . json_encode($pdostatement->debugDumpParams()) . "): " . $pdostatement->errorInfo()[2], E_USER_ERROR);
         }
 
-        return $statement;
-    }
-
-    public function query(string $entityTypeIdentifier, string $query, array $namedParameters) : Result {
-        $statement = $this->execute($query, $namedParameters);
-        return new Result($statement, $this->sourceSchema->describeTable($entityTypeIdentifier));
+        return new Result($statement);
     }
 
 

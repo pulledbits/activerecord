@@ -25,7 +25,17 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute($this->connection);
-        return $result->fetchAllAs();
+
+        $sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema($this->connection, $this);
+        $recordType = $sourceSchema->describeTable($entityTypeIdentifier);
+
+        $records = [];
+        foreach ($result->fetchAll() as $row) {
+            $record = $recordType->makeRecord();
+            $record->contains($row);
+            $records[] = $record;
+        }
+        return $records;
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
