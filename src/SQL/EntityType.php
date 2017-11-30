@@ -5,10 +5,11 @@ namespace pulledbits\ActiveRecord\SQL;
 
 
 use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\Schema;
 use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
-class EntityType implements \pulledbits\ActiveRecord\RecordType
+class EntityType implements \pulledbits\ActiveRecord\RecordType, RecordConfigurator
 {
     private $schema;
 
@@ -38,4 +39,9 @@ class EntityType implements \pulledbits\ActiveRecord\RecordType
         return $record;
     }
 
+
+    public function configure(): Record
+    {
+        return $this->makeRecord();
+    }
 }

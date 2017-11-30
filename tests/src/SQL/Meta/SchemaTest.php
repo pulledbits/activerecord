@@ -46,8 +46,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
             'AnotherTable' => $anotherTable
         ], []);
 
-        $this->assertEquals(new Record($this->schema->makeRecordType('MyTable', $myTable)), $sourceSchema->describeTable($this->schema, 'MyTable'));
-        $this->assertEquals(new Record($this->schema->makeRecordType('AnotherTable', $anotherTable)), $sourceSchema->describeTable($this->schema, 'AnotherTable'));
+        $this->assertEquals($this->schema->makeRecordType('MyTable', $myTable), $sourceSchema->describeTable($this->schema, 'MyTable'));
+        $this->assertEquals($this->schema->makeRecordType('AnotherTable', $anotherTable), $sourceSchema->describeTable($this->schema, 'AnotherTable'));
     }
 
 
@@ -63,7 +63,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $tableDescription = $schema->describeTable($this->schema, 'MyView');
 
-        $this->assertEquals(new Record($this->schema->makeRecordType('MyView', new TableDescription())), $tableDescription);
+        $this->assertEquals($this->schema->makeRecordType('MyView', new TableDescription()), $tableDescription);
     }
 
 
@@ -79,7 +79,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $tableDescription = $schema->describeTable($this->schema, 'MyView_bla');
 
-        $this->assertEquals(new Record($this->schema->makeRecordType('MyView_bla', new TableDescription())), $tableDescription);
+        $this->assertEquals($this->schema->makeRecordType('MyView_bla', new TableDescription()), $tableDescription);
     }
 
     public function testDescribe_When_ViewUsedWithExistingTableIdentifier_Expect_EntityTypeIdentifier()
@@ -118,6 +118,6 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
         $tableDescription = $schema->describeTable($this->schema, 'MyTable_today');
 
-        $this->assertEquals(new WrappedEntity($schema->describeTable($this->schema, 'MyTable')), $tableDescription);
+        $this->assertEquals($schema->describeTable($this->schema, 'MyTable'), $tableDescription);
     }
 }
