@@ -117,7 +117,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testmakeFromSchemaManager_When_Default_Expect_ArrayWithRecordConfigurators()
     {
-        $sourceSchema = SchemaFactory::makeFromConnection($this->connection, $this->pdo);
+        $sourceSchema = SchemaFactory::makeFromConnection($this->connection);
 
         $this->assertEquals(new Record($this->schema->makeRecordType('MyTable'), new TableDescription(['id'], ['id'], [
             'FkAnothertableRole' => [
@@ -127,7 +127,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
                     'column_id2' => 'extra_column_id2'
                 ],
             ]
-        ])), $sourceSchema->describeTable('MyTable'));
+        ])), $sourceSchema->describeTable($this->schema, 'MyTable'));
         $this->assertEquals(new Record($this->schema->makeRecordType('AnotherTable'), new TableDescription([], [], [
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
@@ -136,6 +136,6 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
                     'extra_column_id2' => 'column_id2'
                 ],
             ]
-        ])), $sourceSchema->describeTable('AnotherTable'));
+        ])), $sourceSchema->describeTable($this->schema, 'AnotherTable'));
     }
 }

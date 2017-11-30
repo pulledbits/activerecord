@@ -6,17 +6,24 @@ use pulledbits\ActiveRecord\SQL\EntityType;
 
 final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 {
-    private $recordConfiguratorGenerators;
+    private $prototypeTables;
+    private $prototypeViews;
 
-    public function __construct(\pulledbits\ActiveRecord\SQL\Schema $schema, array $prototypeTables, array $prototypeViews)
+    public function __construct(array $prototypeTables, array $prototypeViews)
+    {
+        $this->prototypeTables = $prototypeTables;
+        $this->prototypeViews = $prototypeViews;
+    }
+
+    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier) : RecordConfigurator
     {
         $this->recordConfiguratorGenerators = [];
-        foreach ($prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
+        foreach ($this->prototypeTables as $prototypeTableIdentifier => $prototypeTable) {
             $recordType = new EntityType($schema, $prototypeTableIdentifier);
             $this->recordConfiguratorGenerators[$prototypeTableIdentifier] = new Record($recordType, $prototypeTable);
         }
 
-        foreach ($prototypeViews as $viewIdentifier => $viewSQL) {
+        foreach ($this->prototypeViews as $viewIdentifier => $viewSQL) {
             $recordType = new EntityType($schema, $viewIdentifier);
             $this->recordConfiguratorGenerators[$viewIdentifier] = new Record($recordType, new TableDescription());
 
@@ -32,10 +39,6 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
             $this->recordConfiguratorGenerators[$viewIdentifier] = new WrappedEntity($this->recordConfiguratorGenerators[$possibleEntityTypeIdentifier]);
         }
-    }
-
-    public function describeTable(string $tableIdentifier) : RecordConfigurator
-    {
         return $this->recordConfiguratorGenerators[$tableIdentifier];
     }
 }

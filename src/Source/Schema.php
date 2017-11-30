@@ -6,5 +6,5 @@ use pulledbits\ActiveRecord\RecordConfigurator;
 
 interface Schema
 {
-    public function describeTable(string $tableIdentifier): RecordConfigurator;
+    public function describeTable(\pulledbits\ActiveRecord\SQL\Schema $schema, string $tableIdentifier): RecordConfigurator;
 }

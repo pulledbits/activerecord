@@ -38,7 +38,7 @@ class Connection
 
     public function query(string $entityTypeIdentifier, string $query, array $namedParameters) : Result {
         $statement = $this->execute($query, $namedParameters);
-        $recordConfigurator = $this->sourceSchema->describeTable($entityTypeIdentifier);
+        $recordConfigurator = $this->sourceSchema->describeTable($this->schema, $entityTypeIdentifier);
         return new Result($statement, $recordConfigurator);
     }
 
