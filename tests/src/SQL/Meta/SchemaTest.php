@@ -36,7 +36,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
             ],
             [
-                'TABLE_NAME' => 'MyView_bla',
+                'TABLE_NAME' => 'MyPureView_bla',
                 'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
             ]
         ]);

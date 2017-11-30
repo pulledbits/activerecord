@@ -56,15 +56,12 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {
-                $prototypeEntities[$viewIdentifier] = new TableDescription();
                 continue;
             }
             $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
             if (array_key_exists($possibleEntityTypeIdentifier, $prototypeEntities) === false) {
-                $prototypeEntities[$viewIdentifier] = new TableDescription();
                 continue;
             }
-
             $prototypeEntities[$viewIdentifier] = $prototypeEntities[$possibleEntityTypeIdentifier];
         }
 
@@ -73,8 +70,11 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function describeTable(string $tableIdentifier) : EntityType
     {
-        if (array_key_exists($tableIdentifier, $this->prototypeEntities)) {
-            return $this->schema->makeRecordType($tableIdentifier, $this->prototypeEntities[$tableIdentifier]);
+        if (array_key_exists($tableIdentifier, $this->prototypeEntities) === false) {
+            $tableDescription = new TableDescription();
+        } else {
+            $tableDescription = $this->prototypeEntities[$tableIdentifier];
         }
+        return $this->schema->makeRecordType($tableIdentifier, $tableDescription);
     }
 }
