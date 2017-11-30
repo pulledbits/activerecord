@@ -18,7 +18,18 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
     {
-        return (new EntityType($this, $entityTypeIdentifier, $entityDescription))->makeRecord();
+        $record = new Entity($this, $entityTypeIdentifier);
+        $record->identifiedBy($entityDescription->identifier);
+        if (count($entityDescription->requiredAttributeIdentifiers) > 0) {
+            $record->requires($entityDescription->requiredAttributeIdentifiers);
+        }
+
+        if (count($entityDescription->references) > 0) {
+            foreach ($entityDescription->references as $referenceIdentifier => $reference) {
+                $record->references($referenceIdentifier,  $reference['table'], $reference['where']);
+            }
+        }
+        return $record;
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
