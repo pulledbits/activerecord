@@ -41,6 +41,17 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
             'Collation' => ''
         ],
             [
+                'Field' => 'id2',
+                'Type' => 'INT',
+                'Null' => 'NO',
+                'Key' => 'PRI',
+                'Default' => '',
+                'Extra' => 'auto_increment',
+                'Comment' => '',
+                'CharacterSet' => '',
+                'Collation' => ''
+            ],
+            [
                 'Field' => 'extra_column_id',
                 'Type' => 'INT',
                 'Null' => 'YES',
@@ -58,7 +69,13 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
                 'COLUMN_NAME' => 'extra_column_id',
                 'REFERENCED_TABLE_NAME' => 'AnotherTable',
                 'REFERENCED_COLUMN_NAME' => 'column_id'
-            ]
+            ],
+            [
+            'CONSTRAINT_NAME' => 'fk_anothertable_role',
+            'COLUMN_NAME' => 'extra_column_id2',
+            'REFERENCED_TABLE_NAME' => 'AnotherTable',
+            'REFERENCED_COLUMN_NAME' => 'column_id2'
+        ]
         ]);
         $this->pdo->defineIndexes('MyTable', [
             [
@@ -106,7 +123,8 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
             'FkAnothertableRole' => [
                 'table' => 'AnotherTable',
                 'where' => [
-                    'column_id' => 'extra_column_id'
+                    'column_id' => 'extra_column_id',
+                    'column_id2' => 'extra_column_id2'
                 ],
             ]
         ])), $sourceSchema->describeTable('MyTable'));
@@ -114,7 +132,8 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
             'FkAnothertableRole' => [
                 'table' => 'MyTable',
                 'where' => [
-                    'extra_column_id' => 'column_id'
+                    'extra_column_id' => 'column_id',
+                    'extra_column_id2' => 'column_id2'
                 ],
             ]
         ])), $sourceSchema->describeTable('AnotherTable'));

@@ -37,15 +37,17 @@ class SchemaFactory
                 }
             }
 
-            $foreignKeys = $schemaManager->listTableForeignKeys($baseTable[0]);
-            foreach ($foreignKeys as $foreignKeyIdentifier => $foreignKey) {
-                $tables[$baseTable[0]]->references[join('', array_map('ucfirst', explode('_', $foreignKey->getName())))] = TableDescription::makeReference($foreignKey->getForeignTableName(), array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns()));
+            $foreignKeys = $connection->execute('SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'' . $baseTable[0] . '\' */ WHERE k.table_name = \'' . $baseTable[0] . '\' AND k.table_schema = \'\' /**!50116 AND c.constraint_schema = \'\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL', [])->fetchAll();
+            foreach ($foreignKeys as $foreignKey) {
+                $tables[$baseTable[0]]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
             }
         }
         $prototypeTables = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription->references as $referenceIdentifier => $reference) {
-                $prototypeTables[$reference['table']]->references[$referenceIdentifier] = TableDescription::makeReference($tableName, array_flip($reference['where']));
+                foreach ($reference['where'] as $localColumnIdentifier => $referencedColumnIdentifier) {
+                    $prototypeTables[$reference['table']]->addForeignKeyConstraint($referenceIdentifier, $localColumnIdentifier, $tableName, $referencedColumnIdentifier);
+                }
             }
         }
 

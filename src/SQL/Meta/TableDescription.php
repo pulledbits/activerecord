@@ -10,34 +10,15 @@ class TableDescription extends Struct
     public $requiredAttributeIdentifiers = [];
     public $references = [];
 
-    static function makeFromDBALTable(\Doctrine\DBAL\Schema\Table $dbalSchemaTable) : self
-    {
-        $description = new self([], [], []);
-
-        if ($dbalSchemaTable->hasPrimaryKey()) {
-            $description->identifier = $dbalSchemaTable->getPrimaryKeyColumns();
+    public function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName) {
+        $fkIdentifier = join('', array_map('ucfirst', explode('_', $constraintName)));
+        if (array_key_exists($fkIdentifier, $this->references)) {
+            $this->references[$fkIdentifier]['where'][$referencedColumnName] = $columnName;
+        } else {
+            $this->references[$fkIdentifier] = [
+                'table' => $referencedTableName,
+                'where' => [$referencedColumnName => $columnName]
+            ];
         }
-
-        foreach ($dbalSchemaTable->getColumns() as $columnIdentifier => $column) {
-            if ($column->getAutoincrement()) {
-                continue;
-            } elseif ($column->getNotnull()) {
-                $description->requiredAttributeIdentifiers[] = $columnIdentifier;
-            }
-        }
-
-        foreach ($dbalSchemaTable->getForeignKeys() as $foreignKeyIdentifier => $foreignKey) {
-            $description->references[join('', array_map('ucfirst', explode('_', $foreignKeyIdentifier)))] = self::makeReference($foreignKey->getForeignTableName(), array_combine($foreignKey->getForeignColumns(), $foreignKey->getLocalColumns()));
-        }
-
-        return $description;
-    }
-
-    static function makeReference(string $entityTypeIdentifier, array $conditions) : array
-    {
-        return [
-            'table' => $entityTypeIdentifier,
-            'where' => $conditions
-        ];
     }
 }
