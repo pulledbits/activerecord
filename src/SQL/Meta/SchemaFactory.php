@@ -46,7 +46,20 @@ class SchemaFactory
         $prototypeViews = [];
         $fullViews = $connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE()', [])->fetchAll();
         foreach ($fullViews as $fullView) {
-            $prototypeViews[$fullView['TABLE_NAME']] = $fullView['VIEW_DEFINITION'];
+            $viewIdentifier = $fullView['TABLE_NAME'];
+
+            $underscorePosition = strpos($viewIdentifier, '_');
+            if ($underscorePosition < 1) {
+                $prototypeTables[$viewIdentifier] = new TableDescription();
+                continue;
+            }
+            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
+            if (array_key_exists($possibleEntityTypeIdentifier, $prototypeTables) || array_key_exists($possibleEntityTypeIdentifier, $prototypeViews) === false) {
+                $prototypeTables[$viewIdentifier] = new TableDescription();
+                continue;
+            }
+
+            $prototypeTables[$viewIdentifier] = $prototypeTables[$possibleEntityTypeIdentifier];
         }
 
         return new Schema($connection->schema(), $prototypeTables, $prototypeViews);
