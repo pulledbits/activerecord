@@ -19,14 +19,10 @@ class Connection
     {
         return new Schema(new QueryFactory($this));
     }
-    public function sourceSchema()
-    {
-        return SchemaFactory::makeFromConnection($this);
-    }
 
     public function recordConfigurator(string $entityTypeIdentifier) : RecordConfigurator
     {
-        return $this->sourceSchema()->describeTable($entityTypeIdentifier);
+        return SchemaFactory::makeFromConnection($this)->describeTable($entityTypeIdentifier);
     }
 
     public function execute(string $query, array $namedParameters) : Statement
