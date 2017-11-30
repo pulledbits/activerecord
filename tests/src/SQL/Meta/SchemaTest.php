@@ -44,7 +44,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         $sourceSchema = new Schema($this->schema, [
             'MyTable' => $myTable,
             'AnotherTable' => $anotherTable
-        ], []);
+        ]);
 
         $this->assertEquals($this->schema->makeRecordType('MyTable', $myTable), $sourceSchema->describeTable('MyTable'));
         $this->assertEquals($this->schema->makeRecordType('AnotherTable', $anotherTable), $sourceSchema->describeTable('AnotherTable'));
@@ -53,12 +53,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->schema, [], [
-            'MyView' => 'CREATE VIEW `MyView` AS
-  SELECT
-    `schema`.`MyTable`.`name`   AS `name`,
-    `schema`.`MyTable`.`birthdate` AS `birthdate`
-  FROM `teach`.`thema`;'
+        $schema = new Schema($this->schema, [
+            'MyView' => new TableDescription()
         ]);
 
         $tableDescription = $schema->describeTable('MyView');
@@ -69,13 +65,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
 
     public function testDescribe_When_ViewWithUnderscoreNoExistingTableAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->schema,  [], [
-            'MyView_bla' => 'CREATE VIEW `MyView` AS
-  SELECT
-    `schema`.`MyTable`.`name`   AS `name`,
-    `schema`.`MyTable`.`birthdate` AS `birthdate`
-  FROM `teach`.`thema`;'
-        ]);
+        $schema = new Schema($this->schema,  ['MyView_bla' => new TableDescription()]);
 
         $tableDescription = $schema->describeTable('MyView_bla');
 
@@ -107,17 +97,12 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $schema = new Schema($this->schema, [
-            'MyTable' => $myTable
-            ],[
-            'MyTable_today' => 'CREATE VIEW `MyTable_today` AS
-  SELECT
-    `schema`.`MyTable`.`name`   AS `name`,
-    `schema`.`MyTable`.`birthdate` AS `birthdate`
-  FROM `teach`.`MyTable`;'
+            'MyTable' => $myTable,
+            'MyTable_today' => $myTable
         ]);
 
         $tableDescription = $schema->describeTable('MyTable_today');
 
-        $this->assertEquals($schema->describeTable('MyTable'), $tableDescription);
+        $this->assertEquals($this->schema->makeRecordType('MyTable_today', $myTable), $tableDescription);
     }
 }

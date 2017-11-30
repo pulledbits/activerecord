@@ -34,34 +34,33 @@ class SchemaFactory
                 $tables[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
             }
         }
-        $prototypeTables = $tables;
+        $prototypeEntities = $tables;
         foreach ($tables as $tableName => $recordClassDescription) {
             foreach ($recordClassDescription->references as $referenceIdentifier => $reference) {
                 foreach ($reference['where'] as $localColumnIdentifier => $referencedColumnIdentifier) {
-                    $prototypeTables[$reference['table']]->addForeignKeyConstraint($referenceIdentifier, $localColumnIdentifier, $tableName, $referencedColumnIdentifier);
+                    $prototypeEntities[$reference['table']]->addForeignKeyConstraint($referenceIdentifier, $localColumnIdentifier, $tableName, $referencedColumnIdentifier);
                 }
             }
         }
 
-        $prototypeViews = [];
         $fullViews = $connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE()', [])->fetchAll();
         foreach ($fullViews as $fullView) {
             $viewIdentifier = $fullView['TABLE_NAME'];
 
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {
-                $prototypeTables[$viewIdentifier] = new TableDescription();
+                $prototypeEntities[$viewIdentifier] = new TableDescription();
                 continue;
             }
             $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
-            if (array_key_exists($possibleEntityTypeIdentifier, $prototypeTables) || array_key_exists($possibleEntityTypeIdentifier, $prototypeViews) === false) {
-                $prototypeTables[$viewIdentifier] = new TableDescription();
+            if (array_key_exists($possibleEntityTypeIdentifier, $prototypeEntities) || array_key_exists($possibleEntityTypeIdentifier, $prototypeViews) === false) {
+                $prototypeEntities[$viewIdentifier] = new TableDescription();
                 continue;
             }
 
-            $prototypeTables[$viewIdentifier] = $prototypeTables[$possibleEntityTypeIdentifier];
+            $prototypeEntities[$viewIdentifier] = $prototypeEntities[$possibleEntityTypeIdentifier];
         }
 
-        return new Schema($connection->schema(), $prototypeTables, $prototypeViews);
+        return new Schema($connection->schema(), $prototypeEntities);
     }
 }
