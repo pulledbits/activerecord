@@ -14,11 +14,13 @@ class Connection
     public function __construct(\PDO $connection)
     {
         $this->connection = $connection;
+        $this->schema = new Schema(new QueryFactory($this));
+        $this->sourceSchema = SchemaFactory::makeFromConnection($this);
     }
 
     public function schema()
     {
-        return new Schema(new QueryFactory($this));
+        return $this->schema;
     }
 
     public function execute(string $query, array $namedParameters) : Statement
@@ -36,7 +38,7 @@ class Connection
 
     public function query(string $entityTypeIdentifier, string $query, array $namedParameters) : Result {
         $statement = $this->execute($query, $namedParameters);
-        $recordConfigurator = SchemaFactory::makeFromConnection($this)->describeTable($entityTypeIdentifier);
+        $recordConfigurator = $this->sourceSchema->describeTable($entityTypeIdentifier);
         return new Result($statement, $recordConfigurator);
     }
 
