@@ -12,7 +12,7 @@ namespace pulledbits\ActiveRecord;
 use pulledbits\ActiveRecord\SQL\Entity;
 use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Entity
@@ -187,7 +187,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @expectedExceptionMessageRegExp /^Required values are missing/
      */
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
@@ -225,7 +225,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @expectedExceptionMessageRegExp /^Reference does not exist/
      */
     public function test__call_When_NonExistingReference_Expect_Value() {

@@ -329,7 +329,7 @@ namespace pulledbits\ActiveRecord\Test {
                         return createMockPDOStatement($results);
                     }
                 }
-                throw new \PHPUnit_Framework_AssertionFailedError('Unexpected query \'' . $query . '\'');
+                throw new \PHPUnit\Framework\AssertionFailedError('Unexpected query \'' . $query . '\'');
             }
 
             public function setAttribute($attribute, $value) {
