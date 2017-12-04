@@ -14,13 +14,12 @@ class Connection
     public function __construct(\PDO $connection)
     {
         $this->connection = $connection;
-        $this->schema = new Schema($this, new QueryFactory());
-        $this->sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema($this, $this->schema);
     }
 
-    public function schema()
+    public function schema(string $schemaIdentifier)
     {
-        return $this->schema;
+        $schema = new Schema($this, new QueryFactory($schemaIdentifier));
+        return $schema;
     }
 
     public function execute(string $query, array $namedParameters) : Result

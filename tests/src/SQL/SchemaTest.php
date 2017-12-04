@@ -8,9 +8,10 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use PHPUnit\Framework\Error\Error;
 use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
 
-class SchemaTest extends \PHPUnit_Framework_TestCase
+class SchemaTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -21,7 +22,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $pdo = \pulledbits\ActiveRecord\Test\createMockPDOMultiple([
-            '/SELECT \* FROM activiteit WHERE id = :\w+$/' => [
+            '/SELECT \* FROM MySchema.activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'BlaBla'
                 ],
@@ -35,7 +36,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
-            '/SELECT \* FROM activiteit$/' => [
+            '/SELECT \* FROM MySchema.activiteit$/' => [
                 [
                     'werkvorm' => 'BlaBlaNoWhere'
                 ],
@@ -49,19 +50,19 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
-            '/SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE id = :param1$/' => [
+            '/SELECT id AS _id, werkvorm AS _werkvorm FROM MySchema.activiteit WHERE id = :param1$/' => [
                 [],
                 [],
                 [],
                 [],
                 []
             ],
-            '/^SELECT id AS _id, werkvorm AS _werkvorm FROM activiteit WHERE werkvorm = :\w+$/' => [
+            '/^SELECT id AS _id, werkvorm AS _werkvorm FROM MySchema.activiteit WHERE werkvorm = :\w+$/' => [
                 []
             ],
-            '/^UPDATE activiteit SET werkvorm = :\w+ WHERE id = :\w+$/' => 1,
-            '/^INSERT INTO activiteit \(werkvorm, id\) VALUES \(:\w+, :\w+\)$/' => 1,
-            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+$/' => [
+            '/^UPDATE MySchema.activiteit SET werkvorm = :\w+ WHERE id = :\w+$/' => 1,
+            '/^INSERT INTO MySchema.activiteit \(werkvorm, id\) VALUES \(:\w+, :\w+\)$/' => 1,
+            '/SELECT id, werkvorm FROM MySchema.activiteit WHERE id = :\w+$/' => [
                 [
                     'werkvorm' => 'Bla'
                 ],
@@ -69,16 +70,16 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             ],
-            '/SELECT id, werkvorm FROM activiteit WHERE id = :\w+ AND foo = :\w+$/' => [],
-            '/^DELETE FROM activiteit WHERE id = :\w+$/' => 1,
-            '/^DELETE FROM activiteit WHERE sid = :\w+$/' => false,
+            '/SELECT id, werkvorm FROM MySchema.activiteit WHERE id = :\w+ AND foo = :\w+$/' => [],
+            '/^DELETE FROM MySchema.activiteit WHERE id = :\w+$/' => 1,
+            '/^DELETE FROM MySchema.activiteit WHERE sid = :\w+$/' => false,
 
-            '/^INSERT INTO activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
-            '/^INSERT INTO activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
-            '/^CALL missing_procedure\(:\w+, :\w+\)/' => false
+            '/^INSERT INTO MySchema.activiteit \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
+            '/^INSERT INTO MySchema.activiteit \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
+            '/^CALL MySchema.missing_procedure\(:\w+, :\w+\)/' => false
         ]);
         $connection = new Connection($pdo);
-        $this->object = new \pulledbits\ActiveRecord\SQL\Schema($connection, new QueryFactory());
+        $this->object = new \pulledbits\ActiveRecord\SQL\Schema($connection, new QueryFactory('MySchema'));
     }
 
     protected function tearDown()
@@ -122,13 +123,13 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testDeleteFrom_When_Erroneous_Expect_Warning() {
-        $this->expectException('PHPUnit_Framework_Error');
+        $this->expectException('\PHPUnit\Framework\Error\Error');
         $this->expectExceptionMessageRegExp('/^Failed executing query/');
         $this->assertEquals(0, $this->object->delete('activiteit', ['sid' => '3']));
     }
 
     public function testExecuteProcedure_When_ExistingProcedure_Expect_ProcedureToBeCalled() {
-        $this->expectException('PHPUnit_Framework_Error');
+        $this->expectException('\PHPUnit\Framework\Error\Error');
         $this->expectExceptionMessageRegExp('/^Failed executing query/');
         $this->object->executeProcedure('missing_procedure', ['3', 'Foobar']);
     }
