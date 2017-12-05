@@ -19,6 +19,10 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $this->identifier = $identifier;
     }
 
+
+    private function qualifyEntityTypeIdentifier(string $entityTypeIdentifier) : string {
+        return $this->identifier . '.' . $entityTypeIdentifier;
+    }
     public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
     {
         return new Entity($this, $entityTypeIdentifier, $entityDescription);
@@ -45,7 +49,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
-        $query = $this->queryFactory->makeSelect($this->identifier . '.' . $entityTypeIdentifier, $attributeIdentifiers);
+        $query = $this->queryFactory->makeSelect($this->qualifyEntityTypeIdentifier($entityTypeIdentifier), $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute($this->connection);
 
@@ -60,26 +64,26 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return $records;
     }
 
-    public function update(string $tableIdentifier, array $values, array $conditions) : int {
-        $query = $this->queryFactory->makeUpdate($this->identifier . '.' . $tableIdentifier, $values);
+    public function update(string $entityTypeIdentifier, array $values, array $conditions) : int {
+        $query = $this->queryFactory->makeUpdate($this->qualifyEntityTypeIdentifier($entityTypeIdentifier), $values);
         $query->where($this->queryFactory->makeWhere($conditions));
         return count($query->execute($this->connection));
     }
 
-    public function create(string $tableIdentifier, array $values) : int {
-        $query = $this->queryFactory->makeInsert($this->identifier . '.' . $tableIdentifier, $values);
+    public function create(string $entityTypeIdentifier, array $values) : int {
+        $query = $this->queryFactory->makeInsert($this->qualifyEntityTypeIdentifier($entityTypeIdentifier), $values);
         return count($query->execute($this->connection));
     }
 
-    public function delete(string $tableIdentifier, array $conditions) : int {
-        $query = $this->queryFactory->makeDelete($this->identifier . '.' . $tableIdentifier);
+    public function delete(string $entityTypeIdentifier, array $conditions) : int {
+        $query = $this->queryFactory->makeDelete($this->qualifyEntityTypeIdentifier($entityTypeIdentifier));
         $query->where($this->queryFactory->makeWhere($conditions));
         return count($query->execute($this->connection));
     }
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
-        $query = $this->queryFactory->makeProcedure($this->identifier . '.' . $procedureIdentifier, $arguments);
+        $query = $this->queryFactory->makeProcedure($this->qualifyEntityTypeIdentifier($procedureIdentifier), $arguments);
         $query->execute($this->connection);
     }
 }
