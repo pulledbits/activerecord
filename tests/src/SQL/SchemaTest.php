@@ -79,7 +79,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
             '/^CALL MySchema.missing_procedure\(:\w+, :\w+\)/' => false
         ]);
         $connection = new Connection($pdo);
-        $this->object = new \pulledbits\ActiveRecord\SQL\Schema($connection, new QueryFactory('MySchema'), 'MySchema');
+        $this->object = new \pulledbits\ActiveRecord\SQL\Schema($connection, new QueryFactory(), 'MySchema');
     }
 
     protected function tearDown()

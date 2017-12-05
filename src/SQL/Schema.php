@@ -40,7 +40,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {
-        $query = $this->queryFactory->makeSelect($entityTypeIdentifier, $attributeIdentifiers);
+        $query = $this->queryFactory->makeSelect($this->identifier . '.' . $entityTypeIdentifier, $attributeIdentifiers);
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute($this->connection);
 
@@ -56,25 +56,25 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
 
     public function update(string $tableIdentifier, array $values, array $conditions) : int {
-        $query = $this->queryFactory->makeUpdate($tableIdentifier, $values);
+        $query = $this->queryFactory->makeUpdate($this->identifier . '.' . $tableIdentifier, $values);
         $query->where($this->queryFactory->makeWhere($conditions));
         return count($query->execute($this->connection));
     }
 
     public function create(string $tableIdentifier, array $values) : int {
-        $query = $this->queryFactory->makeInsert($tableIdentifier, $values);
+        $query = $this->queryFactory->makeInsert($this->identifier . '.' . $tableIdentifier, $values);
         return count($query->execute($this->connection));
     }
 
     public function delete(string $tableIdentifier, array $conditions) : int {
-        $query = $this->queryFactory->makeDelete($tableIdentifier);
+        $query = $this->queryFactory->makeDelete($this->identifier . '.' . $tableIdentifier);
         $query->where($this->queryFactory->makeWhere($conditions));
         return count($query->execute($this->connection));
     }
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void
     {
-        $query = $this->queryFactory->makeProcedure($procedureIdentifier, $arguments);
+        $query = $this->queryFactory->makeProcedure($this->identifier . '.' . $procedureIdentifier, $arguments);
         $query->execute($this->connection);
     }
 }
