@@ -4,21 +4,39 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
+use pulledbits\ActiveRecord\Result;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
 {
 
     private $connection;
     private $queryFactory;
+    private $identifier;
 
-    public function __construct(Connection $connection, QueryFactory $queryFactory) {
+    public function __construct(Connection $connection, QueryFactory $queryFactory, string $identifier) {
         $this->connection = $connection;
         $this->queryFactory = $queryFactory;
+        $this->identifier = $identifier;
     }
 
     public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
     {
         return new Entity($this, $entityTypeIdentifier, $entityDescription);
+    }
+
+    public function listTables(): Result
+    {
+        return $this->connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
+    }
+
+    public function listViews(): Result
+    {
+        return $this->connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = \'' . $this->identifier . '\'', []);
+    }
+
+    public function listForeignKeys(string $tableIdentifier): Result
+    {
+        return $this->connection->execute('SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'' . $tableIdentifier . '\' */ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->identifier . '\' /**!50116 AND c.constraint_schema = \'' . $this->identifier . '\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL', []);
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array {

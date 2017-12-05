@@ -19,10 +19,10 @@ if (file_exists($targetDirectory) === false) {
 require __DIR__ . '/bootstrap.php';
 
 $parsedUrl = parse_url($_SERVER['argv'][1]);
-$pdo = new \PDO($parsedUrl['scheme'] . ':dbname=' . substr($parsedUrl['path'], 1), $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+$pdo = new \PDO($parsedUrl['scheme'] . ':', $parsedUrl['user'], $parsedUrl['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
 
 $connection = new \pulledbits\ActiveRecord\SQL\Connection($pdo);
-$schema = $connection->schema();
+$schema = $connection->schema(substr($parsedUrl['path'], 1));
 
 $starttijd = date('Y-m-d ') . '23:00:00';
 

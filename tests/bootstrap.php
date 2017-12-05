@@ -272,12 +272,16 @@ namespace pulledbits\ActiveRecord\Test {
         {
 
             private $queries;
+            private $schema;
 
             public function __construct(array $queries)
             {
                 $fullTables = [];
+                $this->schema = '';
                 foreach ($queries as $query => $results) {
-                    if (preg_match('/FROM (?<table>\w+)/', $query, $matches) === 1) {
+                    if (preg_match('/(INTO|FROM|CALL)\s+((?<schema>\w+)\.)?(?<table>\w+)/', $query, $matches) === 1) {
+                        $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $matches['schema'] . '\'/'] = [];
+                        $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $matches['table'] . '\' AND k.table_schema = \'' . $matches['schema'] . '\' \/\**!50116 AND c.constraint_schema = \'' . $matches['schema'] . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = [];
                         $fullTables[] = [$matches['table'], 'BASE_TABLE'];
 
                         $this->defineColumns($matches['table'], []);
@@ -287,11 +291,14 @@ namespace pulledbits\ActiveRecord\Test {
                 }
 
                 $this->queries['/SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'/'] = $fullTables;
-                $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = DATABASE\(\)/'] = [];
                 $this->queries['/SELECT DATABASE()/'] = [];
 
 
                 $this->queries = array_merge($this->queries, $queries);
+            }
+
+            public function defineSchema(string $schemaIdentifier) : void {
+                $this->schema = $schemaIdentifier;
             }
 
             public function defineTables(array $tableResults) {
@@ -303,15 +310,15 @@ namespace pulledbits\ActiveRecord\Test {
                 }
             }
             public function defineViews(array $viewResults) {
-                $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = DATABASE\(\)/'] = $viewResults;
+                $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $this->schema . '\'/'] = $viewResults;
             }
             public function defineColumns(string $tableIdentifier, array $columnResults) {
-                $this->queries['/SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra, COLUMN_COMMENT AS Comment, CHARACTER_SET_NAME AS CharacterSet, COLLATION_NAME AS Collation FROM information_schema\.COLUMNS WHERE TABLE_SCHEMA = DATABASE\(\) AND TABLE_NAME = \'' . $tableIdentifier . '\'/'] = $columnResults;
+                $this->queries['/SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra, COLUMN_COMMENT AS Comment, CHARACTER_SET_NAME AS CharacterSet, COLLATION_NAME AS Collation FROM information_schema\.COLUMNS WHERE TABLE_SCHEMA = \'' . $this->schema . '\' AND TABLE_NAME = \'' . $tableIdentifier . '\'/'] = $columnResults;
                 $this->queries['/SHOW FULL COLUMNS IN ' . $tableIdentifier . '/'] = $columnResults;
 
             }
             public function defineConstraints(string $tableIdentifier, array $constraintResults) {
-                $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = DATABASE\(\) \/\**!50116 AND c.constraint_schema = DATABASE\(\) \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = $constraintResults;
+                $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->schema . '\' \/\**!50116 AND c.constraint_schema = \'' . $this->schema . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = $constraintResults;
             }
             public function defineIndexes(string $tableIdentifier, array $indexResults) {
                 $this->queries['/SHOW INDEX FROM ' . $tableIdentifier . '/'] = $indexResults;

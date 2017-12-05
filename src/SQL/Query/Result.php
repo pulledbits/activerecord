@@ -1,11 +1,8 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL\Query;
 
-use pulledbits\ActiveRecord\RecordType;
-
-class Result implements \Countable
+class Result implements \pulledbits\ActiveRecord\Result
 {
-
     private $statement;
 
     public function __construct(\pulledbits\ActiveRecord\SQL\Statement $statement)

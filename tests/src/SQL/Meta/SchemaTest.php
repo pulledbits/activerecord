@@ -22,6 +22,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
     {
         $this->pdo = createMockPDOMultiple([]);
 
+        $this->pdo->defineSchema('MySchema');
         $this->pdo->defineTables([
             ['MyTable', 'Table_type' => 'BASE_TABLE'],
             ['AnotherTable', 'Table_type' => 'BASE_TABLE'],
@@ -179,7 +180,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
 
 
         $this->connection = new Connection($this->pdo);
-        $this->schema = new \pulledbits\ActiveRecord\SQL\Schema($this->connection, new QueryFactory('MySchema'));
+        $this->schema = new \pulledbits\ActiveRecord\SQL\Schema($this->connection, new QueryFactory('MySchema'), 'MySchema');
     }
 
     public function testConstructor_When_Default_Expect_ArrayWithRecordConfigurators()

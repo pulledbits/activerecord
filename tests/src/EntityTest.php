@@ -102,6 +102,19 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
             {
             }
+
+            public function listTables(): Result
+            {
+                return [];
+            }
+
+            public function listForeignKeys(string $tableIdentifier): Result
+            {
+            }
+
+            public function listViews(): Result
+            {
+            }
         };
 
         $values = [

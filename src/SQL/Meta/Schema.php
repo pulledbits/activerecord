@@ -14,7 +14,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
         $this->schema = $schema;
 
         $tables = [];
-        $fullTables = $connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
+        $fullTables = $schema->listTables();
         foreach ($fullTables->fetchAll() as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
 
@@ -36,7 +36,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
                 }
             }
 
-            $foreignKeys = $connection->execute('SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'' . $tableIdentifier . '\' */ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = DATABASE() /**!50116 AND c.constraint_schema = DATABASE() */ AND k.`REFERENCED_COLUMN_NAME` is not NULL', [])->fetchAll();
+            $foreignKeys = $schema->listForeignKeys($tableIdentifier)->fetchAll();
             foreach ($foreignKeys as $foreignKey) {
                 $tables[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
             }
@@ -50,7 +50,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
             }
         }
 
-        $fullViews = $connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE()', [])->fetchAll();
+        $fullViews = $schema->listViews()->fetchAll();
         foreach ($fullViews as $fullView) {
             $viewIdentifier = $fullView['TABLE_NAME'];
 
