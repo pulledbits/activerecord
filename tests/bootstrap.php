@@ -282,6 +282,7 @@ namespace pulledbits\ActiveRecord\Test {
                     if (preg_match('/(INTO|FROM|CALL)\s+((?<schema>\w+)\.)?(?<table>\w+)/', $query, $matches) === 1) {
                         $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $matches['schema'] . '\'/'] = [];
                         $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $matches['table'] . '\' AND k.table_schema = \'' . $matches['schema'] . '\' \/\**!50116 AND c.constraint_schema = \'' . $matches['schema'] . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = [];
+                        $this->queries['/SHOW INDEX FROM ' . $matches['schema'] . '.' . $matches['table'] . '/'] = [];
                         $fullTables[] = [$matches['table'], 'BASE_TABLE'];
 
                         $this->defineColumns($matches['table'], []);
@@ -321,7 +322,7 @@ namespace pulledbits\ActiveRecord\Test {
                 $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->schema . '\' \/\**!50116 AND c.constraint_schema = \'' . $this->schema . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = $constraintResults;
             }
             public function defineIndexes(string $tableIdentifier, array $indexResults) {
-                $this->queries['/SHOW INDEX FROM ' . $tableIdentifier . '/'] = $indexResults;
+                $this->queries['/SHOW INDEX FROM ' . $this->schema . '.' . $tableIdentifier . '/'] = $indexResults;
             }
 
             public function query($statement, $mode = \PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = array())

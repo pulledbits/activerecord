@@ -35,7 +35,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listIndexesForTable(string $tableIdentifier): Result
     {
-        return $this->connection->execute('SHOW INDEX FROM ' . $tableIdentifier, []);
+        return $this->connection->execute('SHOW INDEX FROM ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
     }
 
     public function listViews(): Result
