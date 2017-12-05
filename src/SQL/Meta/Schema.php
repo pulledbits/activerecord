@@ -20,7 +20,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
             $tables[$tableIdentifier] = new TableDescription([], [], []);
 
-            $indexes = $connection->execute('SHOW INDEX FROM ' . $tableIdentifier, [])->fetchAll();
+            $indexes = $schema->listIndexesForTable($tableIdentifier)->fetchAll();
             foreach ($indexes as $index) {
                 if ($index['Key_name'] === 'PRIMARY') {
                     $tables[$tableIdentifier]->identifier[] = $index['Column_name'];
