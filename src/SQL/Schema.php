@@ -38,6 +38,11 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return $this->connection->execute('SHOW INDEX FROM ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
     }
 
+    public function listColumnsForTable(string $tableIdentifier): Result
+    {
+        return $this->connection->execute('SHOW FULL COLUMNS IN ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
+    }
+
     public function listViews(): Result
     {
         return $this->connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = \'' . $this->identifier . '\'', []);

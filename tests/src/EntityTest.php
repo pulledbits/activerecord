@@ -119,6 +119,10 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             public function listIndexesForTable(string $tableIdentifier): Result
             {
             }
+
+            public function listColumnsForTable(string $tableIdentifier): Result
+            {
+            }
         };
 
         $values = [

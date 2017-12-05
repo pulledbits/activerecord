@@ -283,6 +283,7 @@ namespace pulledbits\ActiveRecord\Test {
                         $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $matches['schema'] . '\'/'] = [];
                         $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $matches['table'] . '\' AND k.table_schema = \'' . $matches['schema'] . '\' \/\**!50116 AND c.constraint_schema = \'' . $matches['schema'] . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = [];
                         $this->queries['/SHOW INDEX FROM ' . $matches['schema'] . '.' . $matches['table'] . '/'] = [];
+                        $this->queries['/SHOW FULL COLUMNS IN ' . $matches['schema'] . '.' . $matches['table'] . '/'] = [];
                         $fullTables[] = [$matches['table'], 'BASE_TABLE'];
 
                         $this->defineColumns($matches['table'], []);
@@ -314,8 +315,7 @@ namespace pulledbits\ActiveRecord\Test {
                 $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $this->schema . '\'/'] = $viewResults;
             }
             public function defineColumns(string $tableIdentifier, array $columnResults) {
-                $this->queries['/SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra, COLUMN_COMMENT AS Comment, CHARACTER_SET_NAME AS CharacterSet, COLLATION_NAME AS Collation FROM information_schema\.COLUMNS WHERE TABLE_SCHEMA = \'' . $this->schema . '\' AND TABLE_NAME = \'' . $tableIdentifier . '\'/'] = $columnResults;
-                $this->queries['/SHOW FULL COLUMNS IN ' . $tableIdentifier . '/'] = $columnResults;
+                $this->queries['/SHOW FULL COLUMNS IN ' . $this->schema . '.' . $tableIdentifier . '/'] = $columnResults;
 
             }
             public function defineConstraints(string $tableIdentifier, array $constraintResults) {

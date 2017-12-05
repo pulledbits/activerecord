@@ -27,7 +27,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
                 }
             }
 
-            $columns = $connection->execute('SHOW FULL COLUMNS IN ' . $tableIdentifier, [])->fetchAll();
+            $columns = $schema->listColumnsForTable($tableIdentifier)->fetchAll();
             foreach ($columns as $column) {
                 if ($column['Extra'] === 'auto_increment') {
                     continue;

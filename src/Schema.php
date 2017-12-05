@@ -24,4 +24,6 @@ interface Schema {
     public function listViews() : Result;
 
     public function listIndexesForTable(string $tableIdentifier) : Result;
+
+    public function listColumnsForTable(string $tableIdentifier) : Result;
 }
