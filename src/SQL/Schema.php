@@ -13,11 +13,13 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     private $connection;
     private $queryFactory;
     private $identifier;
+    private $entityTypes;
 
     public function __construct(Connection $connection, QueryFactory $queryFactory, string $identifier) {
         $this->connection = $connection;
         $this->queryFactory = $queryFactory;
         $this->identifier = $identifier;
+        $this->entityTypes = new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []));
     }
 
 
@@ -31,7 +33,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listEntityTypes(): EntityTypes
     {
-        return new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []));
+        return $this->entityTypes;
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result

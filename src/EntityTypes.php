@@ -9,72 +9,72 @@ use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 class EntityTypes implements \Iterator, \ArrayAccess
 {
     private $schema;
+    private $entityIdentifiers;
     private $entityTypes;
 
     public function __construct(Schema $schema, Result $result)
     {
         $this->schema = $schema;
-        $tables = [];
-        $viewIdentifiers = [];
+        $this->entityTypes = [];
+
         foreach ($result->fetchAll() as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
-
             switch ($baseTable['Table_type']) {
                 case 'BASE_TABLE':
-                    $tables[$tableIdentifier] = new TableDescription([], [], []);
-
-                    $indexes = $schema->listIndexesForTable($tableIdentifier)->fetchAll();
-                    foreach ($indexes as $index) {
-                        if ($index['Key_name'] === 'PRIMARY') {
-                            $tables[$tableIdentifier]->identifier[] = $index['Column_name'];
-                        }
-                    }
-
-                    $columns = $schema->listColumnsForTable($tableIdentifier)->fetchAll();
-                    foreach ($columns as $column) {
-                        if ($column['Extra'] === 'auto_increment') {
-                            continue;
-                        } elseif ($column['Null'] === 'NO') {
-                            $tables[$tableIdentifier]->requiredAttributeIdentifiers[] = $column['Field'];
-                        }
-                    }
-
-                    $foreignKeys = $schema->listForeignKeys($tableIdentifier)->fetchAll();
-                    foreach ($foreignKeys as $foreignKey) {
-                        $tables[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
-                    }
+                    $this->entityIdentifiers[$tableIdentifier] = 'BASE_TABLE';
                     break;
                 case 'VIEW':
-                    $viewIdentifiers[] = $tableIdentifier;
+                    $this->entityIdentifiers[$tableIdentifier] = 'VIEW';
                     break;
             }
         }
+    }
 
-        $this->entityTypes = $tables;
-        foreach ($tables as $tableName => $recordClassDescription) {
-            foreach ($recordClassDescription->references as $referenceIdentifier => $reference) {
-                foreach ($reference['where'] as $localColumnIdentifier => $referencedColumnIdentifier) {
-                    $this->entityTypes[$reference['table']]->addForeignKeyConstraint($referenceIdentifier, $localColumnIdentifier, $tableName, $referencedColumnIdentifier);
-                }
+    private function retrieveTableDescription(string $tableIdentifier) : TableDescription
+    {
+        if (array_key_exists($tableIdentifier, $this->entityIdentifiers) === false) {
+            return new TableDescription();
+        } elseif (array_key_exists($tableIdentifier, $this->entityTypes) === false) {
+            $this->entityTypes[$tableIdentifier] = new TableDescription();
+        }
+
+        if ($this->entityIdentifiers[$tableIdentifier] === 'VIEW') {
+            $underscorePosition = strpos($tableIdentifier, '_');
+            if ($underscorePosition > 0) {
+                $possibleEntityTypeIdentifier = substr($tableIdentifier, 0, $underscorePosition);
+                $this->entityTypes[$tableIdentifier] = $this->retrieveTableDescription($possibleEntityTypeIdentifier);
+                return $this->entityTypes[$tableIdentifier];
             }
         }
 
-        foreach ($viewIdentifiers as $viewIdentifier) {
-            $underscorePosition = strpos($viewIdentifier, '_');
-            if ($underscorePosition < 1) {
-                continue;
+        $indexes = $this->schema->listIndexesForTable($tableIdentifier)->fetchAll();
+        foreach ($indexes as $index) {
+            if ($index['Key_name'] === 'PRIMARY') {
+                $this->entityTypes[$tableIdentifier]->identifier[] = $index['Column_name'];
             }
-            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
-            if (array_key_exists($possibleEntityTypeIdentifier, $this->entityTypes) === false) {
-                continue;
-            }
-            $this->entityTypes[$viewIdentifier] = $this->entityTypes[$possibleEntityTypeIdentifier];
         }
+
+        $columns = $this->schema->listColumnsForTable($tableIdentifier)->fetchAll();
+        foreach ($columns as $column) {
+            if ($column['Extra'] === 'auto_increment') {
+                continue;
+            } elseif ($column['Null'] === 'NO') {
+                $this->entityTypes[$tableIdentifier]->requiredAttributeIdentifiers[] = $column['Field'];
+            }
+        }
+
+        $foreignKeys = $this->schema->listForeignKeys($tableIdentifier)->fetchAll();
+        foreach ($foreignKeys as $foreignKey) {
+            $this->entityTypes[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
+            $this->retrieveTableDescription($foreignKey['REFERENCED_TABLE_NAME'])->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['REFERENCED_COLUMN_NAME'], $tableIdentifier, $foreignKey['COLUMN_NAME']);
+        }
+
+        return $this->entityTypes[$tableIdentifier];
     }
 
     public function current()
     {
-        return current($this->entityTypes);
+        return $this->retrieveTableDescription(key($this->entityTypes));
     }
 
     public function next()
@@ -104,10 +104,7 @@ class EntityTypes implements \Iterator, \ArrayAccess
 
     public function offsetGet($offset)
     {
-        if (array_key_exists($offset, $this->entityTypes) === false) {
-            return new TableDescription();
-        }
-        return $this->entityTypes[$offset];
+        return $this->retrieveTableDescription($offset);
     }
 
     public function offsetSet($offset, $value)
