@@ -50,6 +50,21 @@ class EntityTypes implements \Iterator, \ArrayAccess
                 }
             }
         }
+
+
+        $fullViews = $schema->listViews()->fetchAll();
+        foreach ($fullViews as $fullView) {
+            $viewIdentifier = $fullView['TABLE_NAME'];
+            $underscorePosition = strpos($viewIdentifier, '_');
+            if ($underscorePosition < 1) {
+                continue;
+            }
+            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
+            if (array_key_exists($possibleEntityTypeIdentifier, $this->entityTypes) === false) {
+                continue;
+            }
+            $this->entityTypes[$viewIdentifier] = $this->entityTypes[$possibleEntityTypeIdentifier];
+        }
     }
 
     public function current()

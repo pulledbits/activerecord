@@ -12,24 +12,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
     public function __construct(Connection $connection, \pulledbits\ActiveRecord\Schema $schema)
     {
         $this->schema = $schema;
-
-        $prototypeEntities = $schema->listTables();
-
-        $fullViews = $schema->listViews()->fetchAll();
-        foreach ($fullViews as $fullView) {
-            $viewIdentifier = $fullView['TABLE_NAME'];
-            $underscorePosition = strpos($viewIdentifier, '_');
-            if ($underscorePosition < 1) {
-                continue;
-            }
-            $possibleEntityTypeIdentifier = substr($viewIdentifier, 0, $underscorePosition);
-            if (isset($prototypeEntities[$possibleEntityTypeIdentifier]) === false) {
-                continue;
-            }
-            $prototypeEntities[$viewIdentifier] = $prototypeEntities[$possibleEntityTypeIdentifier];
-        }
-
-        $this->prototypeEntities = $prototypeEntities;
+        $this->prototypeEntities = $schema->listTables();
     }
 
     public function makeRecord(string $tableIdentifier) : Record
