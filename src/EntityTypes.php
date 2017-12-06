@@ -15,30 +15,38 @@ class EntityTypes implements \Iterator, \ArrayAccess
     {
         $this->schema = $schema;
         $tables = [];
+        $viewIdentifiers = [];
         foreach ($result->fetchAll() as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
 
-            $tables[$tableIdentifier] = new TableDescription([], [], []);
+            switch ($baseTable['Table_type']) {
+                case 'BASE_TABLE':
+                    $tables[$tableIdentifier] = new TableDescription([], [], []);
 
-            $indexes = $schema->listIndexesForTable($tableIdentifier)->fetchAll();
-            foreach ($indexes as $index) {
-                if ($index['Key_name'] === 'PRIMARY') {
-                    $tables[$tableIdentifier]->identifier[] = $index['Column_name'];
-                }
-            }
+                    $indexes = $schema->listIndexesForTable($tableIdentifier)->fetchAll();
+                    foreach ($indexes as $index) {
+                        if ($index['Key_name'] === 'PRIMARY') {
+                            $tables[$tableIdentifier]->identifier[] = $index['Column_name'];
+                        }
+                    }
 
-            $columns = $schema->listColumnsForTable($tableIdentifier)->fetchAll();
-            foreach ($columns as $column) {
-                if ($column['Extra'] === 'auto_increment') {
-                    continue;
-                } elseif ($column['Null'] === 'NO') {
-                    $tables[$tableIdentifier]->requiredAttributeIdentifiers[] = $column['Field'];
-                }
-            }
+                    $columns = $schema->listColumnsForTable($tableIdentifier)->fetchAll();
+                    foreach ($columns as $column) {
+                        if ($column['Extra'] === 'auto_increment') {
+                            continue;
+                        } elseif ($column['Null'] === 'NO') {
+                            $tables[$tableIdentifier]->requiredAttributeIdentifiers[] = $column['Field'];
+                        }
+                    }
 
-            $foreignKeys = $schema->listForeignKeys($tableIdentifier)->fetchAll();
-            foreach ($foreignKeys as $foreignKey) {
-                $tables[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
+                    $foreignKeys = $schema->listForeignKeys($tableIdentifier)->fetchAll();
+                    foreach ($foreignKeys as $foreignKey) {
+                        $tables[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
+                    }
+                    break;
+                case 'VIEW':
+                    $viewIdentifiers[] = $tableIdentifier;
+                    break;
             }
         }
 
@@ -51,10 +59,7 @@ class EntityTypes implements \Iterator, \ArrayAccess
             }
         }
 
-
-        $fullViews = $schema->listViews()->fetchAll();
-        foreach ($fullViews as $fullView) {
-            $viewIdentifier = $fullView['TABLE_NAME'];
+        foreach ($viewIdentifiers as $viewIdentifier) {
             $underscorePosition = strpos($viewIdentifier, '_');
             if ($underscorePosition < 1) {
                 continue;

@@ -31,7 +31,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listTables(): EntityTypes
     {
-        return new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []));
+        return new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []));
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result
@@ -42,11 +42,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     public function listColumnsForTable(string $tableIdentifier): Result
     {
         return $this->connection->execute('SHOW FULL COLUMNS IN ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
-    }
-
-    public function listViews(): Result
-    {
-        return $this->connection->execute('SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = \'' . $this->identifier . '\'', []);
     }
 
     public function listForeignKeys(string $tableIdentifier): Result

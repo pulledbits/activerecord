@@ -24,22 +24,20 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
 
         $this->pdo->defineSchema('MySchema');
         $this->pdo->defineTables([
-            ['MyTable', 'Table_type' => 'BASE_TABLE'],
-            ['AnotherTable', 'Table_type' => 'BASE_TABLE'],
-            ['MyPerson', 'Table_type' => 'BASE_TABLE'],
-        ]);
-        $this->pdo->defineViews([
+            ['Table_in_MySchema' => 'MyTable', 'Table_type' => 'BASE_TABLE'],
+            ['Table_in_MySchema' => 'AnotherTable', 'Table_type' => 'BASE_TABLE'],
+            ['Table_in_MySchema' => 'MyPerson', 'Table_type' => 'BASE_TABLE'],
             [
-                'TABLE_NAME' => 'MyView',
-                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+                'Table_in_MySchema' => 'MyView',
+                'Table_type' => 'VIEW'
             ],
             [
-                'TABLE_NAME' => 'MyPerson_today',
-                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+                'Table_in_MySchema' => 'MyPerson_today',
+                'Table_type' => 'VIEW'
             ],
             [
-                'TABLE_NAME' => 'MyPureView_bla',
-                'VIEW_DEFINITION' => 'SELECT * FROM MyTable;'
+                'Table_in_MySchema' => 'MyPureView_bla',
+                'Table_type' => 'VIEW'
             ]
         ]);
 

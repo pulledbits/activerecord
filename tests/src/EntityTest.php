@@ -112,10 +112,6 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             {
             }
 
-            public function listViews(): Result
-            {
-            }
-
             public function listIndexesForTable(string $tableIdentifier): Result
             {
             }

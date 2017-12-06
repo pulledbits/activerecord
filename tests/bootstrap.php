@@ -279,20 +279,22 @@ namespace pulledbits\ActiveRecord\Test {
                 $fullTables = [];
                 $this->schema = '';
                 foreach ($queries as $query => $results) {
-                    if (preg_match('/(INTO|FROM|CALL)\s+((?<schema>\w+)\.)?(?<table>\w+)/', $query, $matches) === 1) {
-                        $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $matches['schema'] . '\'/'] = [];
-                        $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $matches['table'] . '\' AND k.table_schema = \'' . $matches['schema'] . '\' \/\**!50116 AND c.constraint_schema = \'' . $matches['schema'] . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = [];
-                        $this->queries['/SHOW INDEX FROM ' . $matches['schema'] . '.' . $matches['table'] . '/'] = [];
-                        $this->queries['/SHOW FULL COLUMNS IN ' . $matches['schema'] . '.' . $matches['table'] . '/'] = [];
-                        $fullTables[] = [$matches['table'], 'BASE_TABLE'];
-
-                        $this->defineColumns($matches['table'], []);
-                        $this->defineConstraints($matches['table'], []);
-                        $this->defineIndexes($matches['table'], []);
+                    if (preg_match('/(INTO|FROM)\s+((?<schema>\w+)\.)?(?<table>\w+)/', $query, $matches) === 1) {
+                        $fullTables[$matches['schema']][] = ['Table_in_' . $matches['schema'] => $matches['table'], 'Table_type' => 'BASE_TABLE'];
                     }
                 }
 
-                $this->queries['/SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'/'] = $fullTables;
+                $this->queries = [];
+                foreach ($fullTables as $schemaIdentifier => $tables) {
+                    $this->schema = $schemaIdentifier;
+                    $this->defineTables($tables);
+                    foreach ($tables as $table) {
+                        $tableIdentifier = $table['Table_in_' . $schemaIdentifier];
+                        $this->defineColumns($tableIdentifier, []);
+                        $this->defineConstraints($tableIdentifier, []);
+                        $this->defineIndexes($tableIdentifier, []);
+                    }
+                }
                 $this->queries['/SELECT DATABASE()/'] = [];
 
 
@@ -304,15 +306,13 @@ namespace pulledbits\ActiveRecord\Test {
             }
 
             public function defineTables(array $tableResults) {
-                $this->queries['/SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'/'] = $tableResults;
+                $this->queries['/SHOW FULL TABLES IN ' . $this->schema . '/'] = $tableResults;
                 foreach ($tableResults as $tableResult) {
-                    $this->defineColumns($tableResult[0], []);
-                    $this->defineConstraints($tableResult[0], []);
-                    $this->defineIndexes($tableResult[0], []);
+                    $tableIdentifier = $tableResult['Table_in_' . $this->schema];
+                    $this->defineColumns($tableIdentifier, []);
+                    $this->defineConstraints($tableIdentifier, []);
+                    $this->defineIndexes($tableIdentifier, []);
                 }
-            }
-            public function defineViews(array $viewResults) {
-                $this->queries['/SELECT TABLE_NAME, VIEW_DEFINITION FROM information_schema\.VIEWS WHERE TABLE_SCHEMA = \'' . $this->schema . '\'/'] = $viewResults;
             }
             public function defineColumns(string $tableIdentifier, array $columnResults) {
                 $this->queries['/SHOW FULL COLUMNS IN ' . $this->schema . '.' . $tableIdentifier . '/'] = $columnResults;
