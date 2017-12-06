@@ -31,7 +31,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listTables(): EntityTypes
     {
-        return new EntityTypes($this->connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []));
+        return new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []));
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result

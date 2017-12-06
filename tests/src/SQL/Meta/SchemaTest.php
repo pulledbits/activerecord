@@ -203,10 +203,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $sourceSchema = new Schema($this->connection, $this->schema, [
-            'MyTable' => $myTable,
-            'AnotherTable' => $anotherTable
-        ]);
+        $sourceSchema = new Schema($this->connection, $this->schema);
 
         $this->assertEquals($this->schema->makeRecord('MyTable', $myTable), $sourceSchema->makeRecord('MyTable'));
         $this->assertEquals($this->schema->makeRecord('AnotherTable', $anotherTable), $sourceSchema->makeRecord('AnotherTable'));
@@ -215,9 +212,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
 
     public function testDescribe_When_ViewAvailable_Expect_ArrayWithReadableClasses()
     {
-        $schema = new Schema($this->connection, $this->schema, [
-            'MyView' => new TableDescription()
-        ]);
+        $schema = new Schema($this->connection, $this->schema);
 
         $tableDescription = $schema->makeRecord('MyView');
 
@@ -239,10 +234,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
 
         $myPerson = new TableDescription(['name', 'birthdate'], [], []);
 
-        $schema = new Schema($this->connection, $this->schema, [
-            'MyPerson' => $myPerson,
-            'MyPerson_today' => $myPerson
-        ]);
+        $schema = new Schema($this->connection, $this->schema);
 
         $tableDescription = $schema->makeRecord('MyPerson_today');
 
