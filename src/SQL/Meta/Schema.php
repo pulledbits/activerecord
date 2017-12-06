@@ -15,7 +15,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
         $tables = [];
         $fullTables = $schema->listTables();
-        foreach ($fullTables->fetchAll() as $baseTable) {
+        foreach ($fullTables as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
 
             $tables[$tableIdentifier] = new TableDescription([], [], []);

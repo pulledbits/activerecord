@@ -2,6 +2,7 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use pulledbits\ActiveRecord\EntityTypes;
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 use pulledbits\ActiveRecord\Result;
@@ -28,9 +29,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return new Entity($this, $entityTypeIdentifier, $entityDescription);
     }
 
-    public function listTables(): Result
+    public function listTables(): EntityTypes
     {
-        return $this->connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []);
+        return new EntityTypes($this->connection->execute('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'', []));
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result
