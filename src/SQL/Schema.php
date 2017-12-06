@@ -29,7 +29,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return new Entity($this, $entityTypeIdentifier, $entityDescription);
     }
 
-    public function listTables(): EntityTypes
+    public function listEntityTypes(): EntityTypes
     {
         return new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []));
     }

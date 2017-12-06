@@ -103,7 +103,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             {
             }
 
-            public function listTables(): EntityTypes
+            public function listEntityTypes(): EntityTypes
             {
                 return [];
             }

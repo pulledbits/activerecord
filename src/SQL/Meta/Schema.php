@@ -12,7 +12,7 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
     public function __construct(Connection $connection, \pulledbits\ActiveRecord\Schema $schema)
     {
         $this->schema = $schema;
-        $this->prototypeEntities = $schema->listTables();
+        $this->prototypeEntities = $schema->listEntityTypes();
     }
 
     public function makeRecord(string $tableIdentifier) : Record
