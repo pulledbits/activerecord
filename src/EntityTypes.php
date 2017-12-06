@@ -82,8 +82,11 @@ class EntityTypes implements \Iterator, \ArrayAccess
         return array_key_exists($offset, $this->entityTypes);
     }
 
-    public function &offsetGet($offset)
+    public function offsetGet($offset)
     {
+        if (array_key_exists($offset, $this->entityTypes) === false) {
+            return new TableDescription();
+        }
         return $this->entityTypes[$offset];
     }
 

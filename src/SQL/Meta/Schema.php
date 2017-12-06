@@ -34,11 +34,6 @@ final class Schema implements \pulledbits\ActiveRecord\Source\Schema
 
     public function makeRecord(string $tableIdentifier) : Record
     {
-        if (isset($this->prototypeEntities[$tableIdentifier]) === false) {
-            $tableDescription = new TableDescription();
-        } else {
-            $tableDescription = $this->prototypeEntities[$tableIdentifier];
-        }
-        return $this->schema->makeRecord($tableIdentifier, $tableDescription);
+        return $this->schema->makeRecord($tableIdentifier, $this->prototypeEntities[$tableIdentifier]);
     }
 }
