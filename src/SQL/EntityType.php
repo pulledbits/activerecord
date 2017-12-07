@@ -87,11 +87,10 @@ class EntityType
     public function create(array $values) : int
     {
         $missing = $this->calculateMissingValues($values);
-        if (count($missing) === 0) {
-            return $this->schema->create($this->entityTypeIdentifier, $values);
+        if (count($missing) > 0) {
+            trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
         }
-
-        trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
+        return $this->schema->create($this->entityTypeIdentifier, $values);
     }
 
     private function mergeValuesIntoConditions(array $referenceConditions, array $values, array $conditions) {
