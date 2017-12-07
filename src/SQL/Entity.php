@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\Schema;
-use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
+use pulledbits\ActiveRecord\SQL\Meta\EntityType;
 
 final class Entity implements Record
 {
@@ -16,7 +16,7 @@ final class Entity implements Record
 
     private $values;
 
-    public function __construct(Schema $schema, string $entityTypeIdentifier, TableDescription $entityDescription)
+    public function __construct(Schema $schema, string $entityTypeIdentifier, EntityType $entityDescription)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;

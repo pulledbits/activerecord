@@ -3,7 +3,7 @@
 namespace pulledbits\ActiveRecord;
 
 
-use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
+use pulledbits\ActiveRecord\SQL\Meta\EntityType;
 
 class EntityTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -67,6 +67,6 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
         $object = new EntityTypes($schema, $result);
 
-        $this->assertEquals(new TableDescription(), $object->retrieveTableDescription('NotExisting'));
+        $this->assertEquals(new EntityType(), $object->retrieveTableDescription('NotExisting'));
     }
 }

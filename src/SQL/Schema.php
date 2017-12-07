@@ -21,7 +21,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $this->entityTypes = new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []));
     }
 
-
     private function qualifyEntityTypeIdentifier(string $entityTypeIdentifier) : string {
         return $this->identifier . '.' . $entityTypeIdentifier;
     }

@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord;
 
 
-use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
+use pulledbits\ActiveRecord\SQL\Meta\EntityType;
 
 class EntityTypes
 {
@@ -31,12 +31,12 @@ class EntityTypes
         }
     }
 
-    public function retrieveTableDescription(string $tableIdentifier) : TableDescription
+    public function retrieveTableDescription(string $tableIdentifier) : EntityType
     {
         if (array_key_exists($tableIdentifier, $this->entityIdentifiers) === false) {
-            return new TableDescription();
+            return new EntityType();
         } elseif (array_key_exists($tableIdentifier, $this->entityTypes) === false) {
-            $this->entityTypes[$tableIdentifier] = new TableDescription();
+            $this->entityTypes[$tableIdentifier] = new EntityType();
         }
 
         if ($this->entityIdentifiers[$tableIdentifier] === 'VIEW') {

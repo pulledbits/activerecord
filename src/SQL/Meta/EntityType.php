@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\SQL\Meta;
 
 use pulledbits\ActiveRecord\Struct;
 
-class TableDescription extends Struct
+class EntityType extends Struct
 {
     public $identifier = [];
     public $requiredAttributeIdentifiers = [];

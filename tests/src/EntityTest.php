@@ -10,7 +10,7 @@ namespace pulledbits\ActiveRecord;
 
 
 use pulledbits\ActiveRecord\SQL\Entity;
-use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
+use pulledbits\ActiveRecord\SQL\Meta\EntityType;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +27,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
                     /**
                      * @var $this \pulledbits\ActiveRecord\Schema
                      */
-                    $record = new SQL\Entity($this, 'MyTable', new TableDescription());
+                    $record = new SQL\Entity($this, 'MyTable', new EntityType());
                     $record->contains($values);
                     return $record;
                 }, $results);
@@ -126,7 +126,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], [], [
+        $this->object = new Entity($this->schema, 'MyTable', new EntityType(['number'], [], [
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
                 'where' => [
@@ -144,7 +144,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()
     {
-        $object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], ['name'], [
+        $object = new Entity($this->schema, 'MyTable', new EntityType(['number'], ['name'], [
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
                 'where' => [
@@ -181,7 +181,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], ['name'], [
+        $object = new Entity($this->schema, 'MyTable', new EntityType(['number'], ['name'], [
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
                 'where' => [
@@ -215,7 +215,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
-        $object = new Entity($this->schema, 'MyTable', new TableDescription(['number'], ['name'], [
+        $object = new Entity($this->schema, 'MyTable', new EntityType(['number'], ['name'], [
             'FkOthertableRole' => [
                 'table' => 'OtherTable',
                 'where' => [
