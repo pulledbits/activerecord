@@ -105,21 +105,24 @@ class EntityType
         return $conditions;
     }
 
-    public function fetchBy(string $referenceIdentifier, array $values, array $conditions) : array {
+    private function findReference(string $referenceIdentifier) : array {
         if (array_key_exists($referenceIdentifier, $this->references) === false) {
             trigger_error('Reference does not exist `' . $referenceIdentifier . '`', E_USER_ERROR);
         }
-        $conditions = $this->mergeValuesIntoConditions($this->references[$referenceIdentifier]['conditions'], $values, $conditions);
-        return $this->schema->read($this->references[$referenceIdentifier]['entityTypeIdentifier'], [], $conditions);
+        return $this->references[$referenceIdentifier];
+    }
+
+    public function fetchBy(string $referenceIdentifier, array $values, array $conditions) : array {
+        $reference = $this->findReference($referenceIdentifier);
+        $conditions = $this->mergeValuesIntoConditions($reference['conditions'], $values, $conditions);
+        return $this->schema->read($reference['entityTypeIdentifier'], [], $conditions);
     }
 
     public function referenceBy(string $referenceIdentifier, array $values, array $conditions) : \pulledbits\ActiveRecord\Record {
-        if (array_key_exists($referenceIdentifier, $this->references) === false) {
-            trigger_error('Reference does not exist `' . $referenceIdentifier . '`', E_USER_ERROR);
-        }
-        $conditions = $this->mergeValuesIntoConditions($this->references[$referenceIdentifier]['conditions'], $values, $conditions);
-        $this->schema->create($this->references[$referenceIdentifier]['entityTypeIdentifier'], $conditions);
-        $records = $this->schema->read($this->references[$referenceIdentifier]['entityTypeIdentifier'], [], $conditions);
+        $reference = $this->findReference($referenceIdentifier);
+        $conditions = $this->mergeValuesIntoConditions($reference['conditions'], $values, $conditions);
+        $this->schema->create($reference['entityTypeIdentifier'], $conditions);
+        $records = $this->schema->read($reference['entityTypeIdentifier'], [], $conditions);
         return $records[0];
     }
 }
