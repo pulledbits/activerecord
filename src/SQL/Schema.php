@@ -4,7 +4,6 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\EntityTypes;
 use pulledbits\ActiveRecord\Record;
-use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 use pulledbits\ActiveRecord\Result;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema
@@ -26,9 +25,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     private function qualifyEntityTypeIdentifier(string $entityTypeIdentifier) : string {
         return $this->identifier . '.' . $entityTypeIdentifier;
     }
-    public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription): Record
+    public function makeRecord(string $entityTypeIdentifier): Record
     {
-        return new Entity($this, $entityTypeIdentifier, $entityDescription);
+        return new Entity($this, $entityTypeIdentifier, $this->entityTypes->retrieveTableDescription($entityTypeIdentifier));
     }
 
     public function listEntityTypes(): EntityTypes
@@ -56,11 +55,9 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         $query->where($this->queryFactory->makeWhere($conditions));
         $result = $query->execute($this->connection);
 
-        $sourceSchema = new \pulledbits\ActiveRecord\SQL\Meta\Schema($this->connection, $this);
-
         $records = [];
         foreach ($result->fetchAll() as $row) {
-            $record = $sourceSchema->makeRecord($entityTypeIdentifier);
+            $record = $this->makeRecord($entityTypeIdentifier);
             $record->contains($row);
             $records[] = $record;
         }

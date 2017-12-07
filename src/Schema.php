@@ -1,11 +1,9 @@
 <?php
 namespace pulledbits\ActiveRecord;
 
-use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
-
 interface Schema {
 
-    public function makeRecord(string $entityTypeIdentifier, TableDescription $entityDescription) : Record;
+    public function makeRecord(string $entityTypeIdentifier) : Record;
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions) : array;
 
