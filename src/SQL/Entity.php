@@ -7,18 +7,12 @@ use pulledbits\ActiveRecord\Schema;
 
 final class Entity implements Record
 {
-    private $schema;
-
-    private $entityTypeIdentifier;
-
     private $entityType;
 
     private $values;
 
-    public function __construct(Schema $schema, string $entityTypeIdentifier, EntityType $entityType)
+    public function __construct(EntityType $entityType)
     {
-        $this->schema = $schema;
-        $this->entityTypeIdentifier = $entityTypeIdentifier;
         $this->entityType = $entityType;
         $this->values = [];
     }

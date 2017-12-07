@@ -26,7 +26,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     }
     public function makeRecord(string $entityTypeIdentifier): Record
     {
-        return new Entity($this, $entityTypeIdentifier, $this->entityTypes->retrieveEntityType($entityTypeIdentifier));
+        return new Entity($this->entityTypes->retrieveEntityType($entityTypeIdentifier));
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result

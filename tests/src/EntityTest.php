@@ -31,7 +31,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
                     /**
                      * @var $this \pulledbits\ActiveRecord\Schema
                      */
-                    $record = new SQL\Entity($this, 'MyTable', new EntityType($this, 'MyTable'));
+                    $record = new SQL\Entity(new EntityType($this, 'MyTable'));
                     $record->contains($values);
                     return $record;
                 }, $results);
@@ -168,7 +168,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($this->schema, 'MyTable', new EntityType($this->schema, 'MyTable'));
+        $this->object = new Entity(new EntityType($this->schema, 'MyTable'));
         $this->object->contains($values);
     }
 
@@ -193,7 +193,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity($this->schema, 'MyTable2', new EntityType($this->schema, 'MyTable2'));
+        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -220,7 +220,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
-        $object = new Entity($this->schema, 'MyTable2', new EntityType($this->schema, 'MyTable2'));
+        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
         $object->contains([]);
         $this->assertEquals(0, $object->create());
         $object->contains(['name' => 'Test']);
