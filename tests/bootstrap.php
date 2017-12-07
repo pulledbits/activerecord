@@ -6,71 +6,55 @@ namespace pulledbits\ActiveRecord\Test {
      */
 
     use PDO;
-    use Psr\Http\Message\StreamInterface;
     use pulledbits\ActiveRecord\Result;
 
     require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-    function createMockPDOStatement($results) {
-        if (is_callable($results)) {
-            return createMockPDOStatementCallable($results);
-        } elseif (is_array($results)) {
-            return createMockPDOStatementFetchAll($results);
+    function createMockPDOStatement($results, array $expectedParameterIdentifiers = [], array $expectedParameterValues = []) {
+        if (is_array($results)) {
+            $statement = createMockPDOStatementFetchAll($results);
         } elseif (is_int($results)) {
-            return createMockPDOStatementRowCount($results);
+            $statement = createMockPDOStatementRowCount($results);
         } elseif ($results === false) {
-            return createMockPDOStatementFail($results);
+            $statement = createMockPDOStatementFail($results);
         } elseif ($results === null) {
-            return createMockPDOStatementFetchAll([]);
+            $statement = createMockPDOStatementFetchAll([]);
+        } else {
+            $statement = createMockPDOStatementFail(false);
         }
-        return createMockPDOStatementFail(false);
+        $statement->expectParameters(array_combine($expectedParameterIdentifiers, $expectedParameterValues));
+        return $statement;
     }
 
-    function createMockPDOStatementCallable(string $query, callable $callable) {
-        return new class($query, $callable) extends \PDOStatement
+    trait PDOStatement_ExpectParameters {
+
+
+        private $expectedParameters;
+        public function expectParameters(array $expectedParameters) {
+            $this->expectedParameters = $expectedParameters;
+        }
+        public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR)
         {
-            private $callable;
-            private $query;
-            private $results;
+            if ($this->expectedParameters === null) {
 
-            public function __construct(string $query, callable $callable)
-            {
-                $this->query = $query;
-                $this->callable = $callable;
+            } elseif (array_key_exists($parameter, $this->expectedParameters) === false) {
+                trigger_error('Unexpected parameter ' . $parameter . ' with value ' . $value);
             }
-
-            public function fetchAll($how = \PDO::ATTR_DEFAULT_FETCH_MODE, $class_name = NULL, $ctor_args = NULL)
-            {
-                return $this->results;
-            }
-
-            public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
-            {
-                if ($fetch_style === \PDO::FETCH_ASSOC) {
-                    return next($this->results);
-                }
-            }
-
-            public function execute($bound_input_params = NULL)
-            {
-                $this->results = call_user_func($this->callable, $this->query);
-                if ($this->results === null) {
-                    throw new \PHPUnit\Framework\AssertionFailedError('Unexpected query \'' . $this->query . '\'');
-                }
-                return true;
-            }
-        };
+        }
     }
 
     function createMockPDOStatementFetchAll(array $results) {
         return new class($results) extends \PDOStatement
         {
+            use PDOStatement_ExpectParameters;
+
             private $results;
 
             public function __construct(array $results)
             {
                 $this->results = $results;
             }
+
 
             public function fetchAll($how = \PDO::ATTR_DEFAULT_FETCH_MODE, $class_name = NULL, $ctor_args = NULL)
             {
@@ -100,6 +84,8 @@ namespace pulledbits\ActiveRecord\Test {
     function createMockPDOStatementRowCount(int $results) {
         return new class($results) extends \PDOStatement
         {
+            use PDOStatement_ExpectParameters;
+
             private $results;
 
             public function __construct(int $results)
@@ -122,6 +108,8 @@ namespace pulledbits\ActiveRecord\Test {
     function createMockPDOStatementFail(bool $results) {
         return new class($results) extends \PDOStatement
         {
+            use PDOStatement_ExpectParameters;
+
             private $results;
 
             public function __construct(bool $results)
@@ -151,7 +139,7 @@ namespace pulledbits\ActiveRecord\Test {
         return new class() extends \PDO
         {
 
-            private $callback;
+            private $callback = [];
 
             public function __construct()
             {
@@ -159,91 +147,19 @@ namespace pulledbits\ActiveRecord\Test {
 
             public function callback(callable $callback)
             {
-                $this->callback = $callback;
+                $this->callback[] = $callback;
             }
 
             public function prepare($query, $options = null)
             {
-                return createMockPDOStatementCallable($query, $this->callback);
-            }
-        };
-    }
-
-    function createMockPDOMultiple(array $queries): \PDO
-    {
-        return new class($queries) extends \PDO
-        {
-
-            private $queries;
-            private $schema;
-
-            public function __construct(array $queries)
-            {
-                $fullTables = [];
-                $this->schema = '';
-                foreach ($queries as $query => $results) {
-                    if (preg_match('/(INTO|FROM)\s+((?<schema>\w+)\.)?(?<table>\w+)/', $query, $matches) === 1) {
-                        $fullTables[$matches['schema']][] = ['Table_in_' . $matches['schema'] => $matches['table'], 'Table_type' => 'BASE_TABLE'];
+                foreach ($this->callback as $callback) {
+                    preg_match_all('/(?<parameter>:\w+)/', $query, $matches);
+                    $statement = call_user_func($callback, $query, $matches['parameter']);
+                    if ($statement !== null) {
+                        return $statement;
                     }
                 }
-
-                $this->queries = [];
-                foreach ($fullTables as $schemaIdentifier => $tables) {
-                    $this->defineSchema($schemaIdentifier);
-                    $this->defineTables($tables);
-                    foreach ($tables as $table) {
-                        $tableIdentifier = $table['Table_in_' . $schemaIdentifier];
-                        $this->defineColumns($tableIdentifier, []);
-                        $this->defineConstraints($tableIdentifier, []);
-                        $this->defineIndexes($tableIdentifier, []);
-                    }
-                }
-                $this->queries = array_merge($this->queries, $queries);
-            }
-
-            public function defineSchema(string $schemaIdentifier) : void {
-                $this->schema = $schemaIdentifier;
-            }
-
-            public function defineTables(array $tableResults) {
-                $this->queries['/SHOW FULL TABLES IN ' . $this->schema . '/'] = $tableResults;
-                foreach ($tableResults as $tableResult) {
-                    $tableIdentifier = $tableResult['Table_in_' . $this->schema];
-                    $this->defineColumns($tableIdentifier, []);
-                    $this->defineConstraints($tableIdentifier, []);
-                    $this->defineIndexes($tableIdentifier, []);
-                }
-            }
-
-            public function defineColumns(string $tableIdentifier, array $columnResults) {
-                $this->queries['/SHOW FULL COLUMNS IN ' . $this->schema . '.' . $tableIdentifier . '/'] = $columnResults;
-
-            }
-            public function defineConstraints(string $tableIdentifier, array $constraintResults) {
-                $this->queries['/\(SELECT DISTINCT k\.`CONSTRAINT_NAME`, `k`\.`TABLE_NAME`, k\.`COLUMN_NAME`, k\.`REFERENCED_TABLE_NAME`, k\.`REFERENCED_COLUMN_NAME` \/\*\*\!50116 , c\.update_rule, c\.delete_rule \*\/ FROM information_schema\.key_column_usage k \/\*\*\!50116 INNER JOIN information_schema\.referential_constraints c ON   c\.constraint_name = k\.constraint_name AND   c\.table_name = \'' . $tableIdentifier . '\' \*\/ WHERE k\.table_name = \'' . $tableIdentifier . '\' AND k\.table_schema = \'' . $this->schema . '\' \/\*\*\!50116 AND c\.constraint_schema = \'' . $this->schema . '\' \*\/ AND k\.`REFERENCED_COLUMN_NAME` is not NULL\) UNION ALL \(SELECT DISTINCT k\.`CONSTRAINT_NAME`, k\.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k\.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`\.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k\.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` \/\*\*!50116 , c\.update_rule, c\.delete_rule \*\/ FROM information_schema\.key_column_usage k \/\*\*\!50116 INNER JOIN information_schema\.referential_constraints c ON   c\.constraint_name = k\.constraint_name AND   c\.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' \*\/ WHERE k\.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' AND k\.table_schema = \'' . $this->schema . '\' \/\*\*\!50116 AND c\.constraint_schema = \'' . $this->schema . '\' \*\/ AND k\.`REFERENCED_COLUMN_NAME` is not NULL\)/'] = $constraintResults;
-            }
-
-            public function defineIndexes(string $tableIdentifier, array $indexResults) {
-                $this->queries['/SHOW INDEX FROM ' . $this->schema . '.' . $tableIdentifier . '/'] = $indexResults;
-            }
-
-            public function prepare($query, $options = null)
-            {
-                foreach ($this->queries as $expectedQuery => $results) {
-                    if (preg_match($expectedQuery, $query, $match) === 1) {
-                        return createMockPDOStatement($results);
-                    }
-                }
-                throw new \PHPUnit\Framework\AssertionFailedError('Unexpected query \'' . $query . '\'');
-            }
-
-            public function setAttribute($attribute, $value) {
-            }
-            public function getAttribute($attribute) {
-                switch ($attribute) {
-                    case \PDO::ATTR_DRIVER_NAME:
-                        return 'mysql';
-                }
+                return createMockPDOStatementFail(false);
             }
         };
     }
@@ -317,207 +233,5 @@ namespace pulledbits\ActiveRecord\Test {
             'Comment' => '',
             'Index_comment' => ''
         ];
-    }
-
-    function createMockStreamInterface() {
-        return new class implements StreamInterface {
-
-            private $stream;
-
-            public function __construct()
-            {
-                $this->stream = fopen("php://memory", 'w+');
-            }
-
-            /**
-             * Reads all data from the stream into a string, from the beginning to end.
-             *
-             * This method MUST attempt to seek to the beginning of the stream before
-             * reading data and read the stream until the end is reached.
-             *
-             * Warning: This could attempt to load a large amount of data into memory.
-             *
-             * This method MUST NOT raise an exception in order to conform with PHP's
-             * string casting operations.
-             *
-             * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
-             * @return string
-             */
-            public function __toString()
-            {
-                $this->rewind();
-                return stream_get_contents($this->stream);
-            }
-
-            /**
-             * Closes the stream and any underlying resources.
-             *
-             * @return void
-             */
-            public function close()
-            {
-                fclose($this->stream);
-            }
-
-            /**
-             * Separates any underlying resources from the stream.
-             *
-             * After the stream has been detached, the stream is in an unusable state.
-             *
-             * @return resource|null Underlying PHP stream, if any
-             */
-            public function detach()
-            {
-            }
-
-            /**
-             * Get the size of the stream if known.
-             *
-             * @return int|null Returns the size in bytes if known, or null if unknown.
-             */
-            public function getSize()
-            {
-                return null;
-            }
-
-            /**
-             * Returns the current position of the file read/write pointer
-             *
-             * @return int Position of the file pointer
-             * @throws \RuntimeException on error.
-             */
-            public function tell()
-            {
-                return ftell($this->stream);
-            }
-
-            /**
-             * Returns true if the stream is at the end of the stream.
-             *
-             * @return bool
-             */
-            public function eof()
-            {
-                return feof($this->stream);
-            }
-
-            /**
-             * Returns whether or not the stream is seekable.
-             *
-             * @return bool
-             */
-            public function isSeekable()
-            {
-                return true;
-            }
-
-            /**
-             * Seek to a position in the stream.
-             *
-             * @link http://www.php.net/manual/en/function.fseek.php
-             * @param int $offset Stream offset
-             * @param int $whence Specifies how the cursor position will be calculated
-             *     based on the seek offset. Valid values are identical to the built-in
-             *     PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
-             *     offset bytes SEEK_CUR: Set position to current location plus offset
-             *     SEEK_END: Set position to end-of-stream plus offset.
-             * @throws \RuntimeException on failure.
-             */
-            public function seek($offset, $whence = SEEK_SET)
-            {
-                fseek($this->stream, $offset, $whence);
-            }
-
-            /**
-             * Seek to the beginning of the stream.
-             *
-             * If the stream is not seekable, this method will raise an exception;
-             * otherwise, it will perform a seek(0).
-             *
-             * @see seek()
-             * @link http://www.php.net/manual/en/function.fseek.php
-             * @throws \RuntimeException on failure.
-             */
-            public function rewind()
-            {
-                $this->seek(0);
-            }
-
-            /**
-             * Returns whether or not the stream is writable.
-             *
-             * @return bool
-             */
-            public function isWritable()
-            {
-                return true;
-            }
-
-            /**
-             * Write data to the stream.
-             *
-             * @param string $string The string that is to be written.
-             * @return int Returns the number of bytes written to the stream.
-             * @throws \RuntimeException on failure.
-             */
-            public function write($string)
-            {
-                return fwrite($this->stream, $string);
-            }
-
-            /**
-             * Returns whether or not the stream is readable.
-             *
-             * @return bool
-             */
-            public function isReadable()
-            {
-                return true;
-            }
-
-            /**
-             * Read data from the stream.
-             *
-             * @param int $length Read up to $length bytes from the object and return
-             *     them. Fewer than $length bytes may be returned if underlying stream
-             *     call returns fewer bytes.
-             * @return string Returns the data read from the stream, or an empty string
-             *     if no bytes are available.
-             * @throws \RuntimeException if an error occurs.
-             */
-            public function read($length)
-            {
-                return fread($this->stream, $length);
-            }
-
-            /**
-             * Returns the remaining contents in a string
-             *
-             * @return string
-             * @throws \RuntimeException if unable to read or an error occurs while
-             *     reading.
-             */
-            public function getContents()
-            {
-                return stream_get_contents($this->stream);
-            }
-
-            /**
-             * Get stream metadata as an associative array or retrieve a specific key.
-             *
-             * The keys returned are identical to the keys returned from PHP's
-             * stream_get_meta_data() function.
-             *
-             * @link http://php.net/manual/en/function.stream-get-meta-data.php
-             * @param string $key Specific metadata to retrieve.
-             * @return array|mixed|null Returns an associative array if no key is
-             *     provided. Returns a specific key value if a key is provided and the
-             *     value is found, or null if the key is not found.
-             */
-            public function getMetadata($key = null)
-            {
-                return stream_get_meta_data($this->stream);
-            }
-        };
     }
 }

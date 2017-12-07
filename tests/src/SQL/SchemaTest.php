@@ -8,8 +8,11 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
+use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
+
 class SchemaTest extends \PHPUnit\Framework\TestCase
 {
+    private $pdo;
 
     /**
      * @var Schema
@@ -18,86 +21,69 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $pdo = \pulledbits\ActiveRecord\Test\createMockPDOMultiple([
-            '/SELECT \* FROM MySchema.MyTable WHERE id = :\w+$/' => [
-                [
-                    'werkvorm' => 'BlaBla'
-                ],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                []
-            ],
-            '/SELECT \* FROM MySchema.MyTable$/' => [
-                [
-                    'werkvorm' => 'BlaBlaNoWhere'
-                ],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                []
-            ],
-            '/SELECT id AS _id, werkvorm AS _werkvorm FROM MySchema.MyTable WHERE id = :param1$/' => [
-                [],
-                [],
-                [],
-                [],
-                []
-            ],
-            '/^SELECT id AS _id, werkvorm AS _werkvorm FROM MySchema.MyTable WHERE werkvorm = :\w+$/' => [
-                []
-            ],
-            '/^UPDATE MySchema.MyTable SET werkvorm = :\w+ WHERE id = :\w+$/' => 1,
-            '/^INSERT INTO MySchema.MyTable \(werkvorm, id\) VALUES \(:\w+, :\w+\)$/' => 1,
-            '/SELECT id, werkvorm FROM MySchema.MyTable WHERE id = :\w+$/' => [
-                [
-                    'werkvorm' => 'Bla'
-                ],
-                [],
-                [],
-                []
-            ],
-            '/SELECT id, werkvorm FROM MySchema.MyTable WHERE id = :\w+ AND foo = :\w+$/' => [],
-            '/^DELETE FROM MySchema.MyTable WHERE id = :\w+$/' => 1,
-            '/^DELETE FROM MySchema.MyTable WHERE sid = :\w+$/' => false,
-
-            '/^INSERT INTO MySchema.MyTable \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
-            '/^INSERT INTO MySchema.MyTable \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
-            '/^CALL MySchema.missing_procedure\(:\w+, :\w+\)/' => false,
-            '/^CALL MySchema.existingProcedure\(:\w+, :\w+\)/' => null,
-            '/SELECT id, name FROM MySchema.MyPerson_today WHERE id = :\w+/' => [
-                [
-                    'werkvorm' => 'Bla'
-                ],
-                [],
-                [],
-                []
-            ]
-        ]);
-
-        $connection = new Connection($pdo);
+        $this->pdo = \pulledbits\ActiveRecord\Test\createMockPDOCallback('MySchema');
+        $connection = new Connection($this->pdo);
+        $this->pdo->callback(function(string $query) {
+            switch ($query) {
+                case 'SHOW FULL TABLES IN MySchema':
+                    return createMockPDOStatement([]);
+            }
+        });
         $this->object = new \pulledbits\ActiveRecord\SQL\Schema($connection, new QueryFactory(), 'MySchema');
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'UPDATE MySchema.MyTable SET werkvorm = ' . $matchedParameters[0] . ' WHERE id = ' . $matchedParameters[1]:
+                    return createMockPDOStatement(1, $matchedParameters, [
+                        'My Name',
+                        '3'
+                    ]);
+            }
+        });
         $this->assertEquals(1, $this->object->update('MyTable', ['werkvorm' => 'My Name'], ['id' => '3']));
     }
 
     public function testInsertValue_When_DefaultState_Expect_SQLInsertQueryWithPreparedValues() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'INSERT INTO MySchema.MyTable (werkvorm, id) VALUES ('.$matchedParameters[0].', '.$matchedParameters[1].')':
+                    return createMockPDOStatement(1, $matchedParameters, [
+                        'My Name',
+                        '3'
+                    ]);
+            }
+        });
         $this->assertEquals(1, $this->object->create('MyTable', ['werkvorm' => 'My Name', 'id' => '3']));
     }
 
     public function testSelectFrom_When_NoConditions_Expect_WhereLessSQL() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'SHOW INDEX FROM MySchema.MyTable':
+                case 'SHOW FULL COLUMNS IN MySchema.MyTable':
+                case '(SELECT DISTINCT k.`CONSTRAINT_NAME`, `k`.`TABLE_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'MyTable\' */ WHERE k.table_name = \'MyTable\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL) UNION ALL (SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.`REFERENCED_TABLE_NAME` = \'MyTable\' */ WHERE k.`REFERENCED_TABLE_NAME` = \'MyTable\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)':
+                    return createMockPDOStatement([]);
+
+                case 'SELECT * FROM MySchema.MyTable':
+                    return createMockPDOStatement([
+                        [
+                            'werkvorm' => 'BlaBlaNoWhere'
+                        ],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        []
+                    ], [], []);
+            }
+        });
+
         $records = $this->object->read('MyTable', [], []);
 
         $this->assertCount(10, $records);
@@ -105,6 +91,31 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
     }
 
     public function testSelectFrom_When_NoColumnIdentifiers_Expect_SQLSelectAsteriskQueryAndCallbackUsedForFetchAll() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'SHOW INDEX FROM MySchema.MyTable':
+                case 'SHOW FULL COLUMNS IN MySchema.MyTable':
+                case '(SELECT DISTINCT k.`CONSTRAINT_NAME`, `k`.`TABLE_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'MyTable\' */ WHERE k.table_name = \'MyTable\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL) UNION ALL (SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.`REFERENCED_TABLE_NAME` = \'MyTable\' */ WHERE k.`REFERENCED_TABLE_NAME` = \'MyTable\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)':
+                    return createMockPDOStatement([]);
+
+                case 'SELECT * FROM MySchema.MyTable WHERE id = ' . $matchedParameters[0]:
+                    return createMockPDOStatement([
+                        [
+                            'werkvorm' => 'BlaBla'
+                        ],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        []
+                    ], $matchedParameters, ['1']);
+            }
+        });
+
         $records = $this->object->read('MyTable', [], ['id' => '1']);
 
         $this->assertCount(10, $records);
@@ -112,6 +123,25 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
     }
 
     public function testSelectFrom_When_DefaultState_Expect_SQLSelectQueryAndCallbackUsedForFetchAll() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'SHOW INDEX FROM MySchema.MyTable':
+                case 'SHOW FULL COLUMNS IN MySchema.MyTable':
+                case '(SELECT DISTINCT k.`CONSTRAINT_NAME`, `k`.`TABLE_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'MyTable\' */ WHERE k.table_name = \'MyTable\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL) UNION ALL (SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.`REFERENCED_TABLE_NAME` = \'MyTable\' */ WHERE k.`REFERENCED_TABLE_NAME` = \'MyTable\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)':
+                    return createMockPDOStatement([]);
+
+                case 'SELECT id, werkvorm FROM MySchema.MyTable WHERE id = ' . $matchedParameters[0]:
+                    return createMockPDOStatement([
+                        [
+                            'werkvorm' => 'Bla'
+                        ],
+                        [],
+                        [],
+                        []
+                    ], $matchedParameters, ['1']);
+            }
+        });
+
         $records = $this->object->read('MyTable', ['id', 'werkvorm'], ['id' => '1']);
 
         $this->assertCount(4, $records);
@@ -119,6 +149,25 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
     }
 
     public function testRead_When_ViewWrappingBaseTable_Expect_PropertiesFromBaseTable() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'SHOW INDEX FROM MySchema.MyPerson_today':
+                case 'SHOW FULL COLUMNS IN MySchema.MyPerson_today':
+                case '(SELECT DISTINCT k.`CONSTRAINT_NAME`, `k`.`TABLE_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'MyPerson_today\' */ WHERE k.table_name = \'MyPerson_today\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL) UNION ALL (SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.`REFERENCED_TABLE_NAME` = \'MyPerson_today\' */ WHERE k.`REFERENCED_TABLE_NAME` = \'MyPerson_today\' AND k.table_schema = \'MySchema\' /**!50116 AND c.constraint_schema = \'MySchema\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)':
+                    return createMockPDOStatement([]);
+
+                case 'SELECT id, name FROM MySchema.MyPerson_today WHERE id = ' . $matchedParameters[0]:
+                    return createMockPDOStatement([
+                        [
+                            'werkvorm' => 'Bla'
+                        ],
+                        [],
+                        [],
+                        []
+                    ], $matchedParameters, ['1']);
+            }
+        });
+
         $records = $this->object->read('MyPerson_today', ['id', 'name'], ['id' => '1']);
 
         $this->assertCount(4, $records);
@@ -126,6 +175,12 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
     }
 
     public function testDeleteFrom_When_DefaultState_Expect_SQLDeleteQuery() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'DELETE FROM MySchema.MyTable WHERE id = ' . $matchedParameters[0]:
+                    return createMockPDOStatement(1, $matchedParameters, ['3']);
+            }
+        });
         $this->assertEquals(1, $this->object->delete('MyTable', ['id' => '3']));
     }
 
@@ -142,6 +197,12 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
     }
 
     public function testExecuteProcedure_When_ExistingProcedure_Expect_ProcedureToBeCalled() {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'CALL MySchema.existingProcedure(' . $matchedParameters[0] . ', ' . $matchedParameters[1] . ')':
+                    return createMockPDOStatement(1, $matchedParameters, ['3', 'Foobar']);
+            }
+        });
         $this->assertNull($this->object->executeProcedure('existingProcedure', ['3', 'Foobar']));
     }
 }

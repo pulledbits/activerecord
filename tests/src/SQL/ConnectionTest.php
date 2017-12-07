@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\SQL;
 
 
 use function pulledbits\ActiveRecord\Test\createMockPDOCallback;
-use function pulledbits\ActiveRecord\Test\createMockPDOMultiple;
+use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 
 class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,10 +13,10 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     {
         $pdo = createMockPDOCallback();
         $connection = new Connection($pdo);
-        $pdo->callback(function(string $query) {
+        $pdo->callback(function(string $query, array $matchedParameters) {
             switch ($query) {
                 case 'SHOW FULL TABLES IN MySchema':
-                    return [];
+                    return createMockPDOStatement([]);
             }
         });
 
