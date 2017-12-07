@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Result;
 
-final class Schema implements \pulledbits\ActiveRecord\Schema
+class Schema implements \pulledbits\ActiveRecord\Schema
 {
 
     private $connection;

@@ -1,10 +1,7 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL;
 
-
 use pulledbits\ActiveRecord\RecordTypes;
-use pulledbits\ActiveRecord\Result;
-use pulledbits\ActiveRecord\Schema;
 
 class EntityTypes implements RecordTypes
 {
@@ -12,7 +9,7 @@ class EntityTypes implements RecordTypes
     private $entityIdentifiers;
     private $entityTypes;
 
-    public function __construct(Schema $schema, Result $result)
+    public function __construct(Schema $schema, Query\Result $result)
     {
         $this->schema = $schema;
         $this->entityTypes = [];

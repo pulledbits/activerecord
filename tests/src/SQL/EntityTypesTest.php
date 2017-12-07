@@ -5,7 +5,7 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\Result;
-use pulledbits\ActiveRecord\Schema;
+use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 use function pulledbits\ActiveRecord\Test\createMockResult;
 
 class EntityTypesTest extends \PHPUnit\Framework\TestCase
@@ -13,30 +13,9 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testRetrieveTableDescription_When_EntityNotExists_Expect_EmptyTableDescription()
     {
-        $schema = new class implements Schema {
+        $schema = new class extends Schema {
+            public function __construct() {
 
-            public function makeRecord(string $entityTypeIdentifier): Record
-            {
-            }
-
-            public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
-            {
-            }
-
-            public function update(string $entityTypeIdentifier, array $values, array $conditions): int
-            {
-            }
-
-            public function create(string $entityTypeIdentifier, array $values): int
-            {
-            }
-
-            public function delete(string $entityTypeIdentifier, array $conditions): int
-            {
-            }
-
-            public function executeProcedure(string $procedureIdentifier, array $arguments): void
-            {
             }
 
             public function listForeignKeys(string $tableIdentifier): Result
@@ -54,20 +33,8 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
                 return createMockResult([]);
             }
         };
-        $result = new class implements Result {
 
-            public function fetchAll(): array
-            {
-                return [];
-            }
-
-            public function count()
-            {
-                return 0;
-            }
-        };
-
-        $object = new EntityTypes($schema, $result);
+        $object = new EntityTypes($schema, new \pulledbits\ActiveRecord\SQL\Query\Result(new Statement(createMockPDOStatement([]))));
 
         $this->assertEquals(new EntityType($schema, 'NotExisting'), $object->makeRecordType('NotExisting'));
     }
