@@ -4,6 +4,7 @@ namespace pulledbits\ActiveRecord;
 
 
 use pulledbits\ActiveRecord\SQL\EntityType;
+use function pulledbits\ActiveRecord\Test\createMockResult;
 
 class EntityTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,20 +37,19 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             {
             }
 
-            public function listEntityTypes(): EntityTypes
-            {
-            }
-
             public function listForeignKeys(string $tableIdentifier): Result
             {
+                return createMockResult([]);
             }
 
             public function listIndexesForTable(string $tableIdentifier): Result
             {
+                return createMockResult([]);
             }
 
             public function listColumnsForTable(string $tableIdentifier): Result
             {
+                return createMockResult([]);
             }
         };
         $result = new class implements Result {
@@ -67,6 +67,6 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
         $object = new EntityTypes($schema, $result);
 
-        $this->assertEquals(new EntityType(), $object->retrieveEntityType('NotExisting'));
+        $this->assertEquals(new EntityType($schema, 'NotExisting'), $object->retrieveEntityType('NotExisting'));
     }
 }

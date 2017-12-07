@@ -11,6 +11,10 @@ namespace pulledbits\ActiveRecord;
 
 use pulledbits\ActiveRecord\SQL\Entity;
 use pulledbits\ActiveRecord\SQL\EntityType;
+use function pulledbits\ActiveRecord\Test\createColumnResult;
+use function pulledbits\ActiveRecord\Test\createConstraintResult;
+use function pulledbits\ActiveRecord\Test\createIndexResult;
+use function pulledbits\ActiveRecord\Test\createMockResult;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +31,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
                     /**
                      * @var $this \pulledbits\ActiveRecord\Schema
                      */
-                    $record = new SQL\Entity($this, 'MyTable', new EntityType());
+                    $record = new SQL\Entity($this, 'MyTable', new EntityType($this, 'MyTable'));
                     $record->contains($values);
                     return $record;
                 }, $results);
@@ -110,14 +114,52 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
             public function listForeignKeys(string $tableIdentifier): Result
             {
+                switch ($tableIdentifier) {
+                    case 'MyTable':
+                        return createMockResult([
+                            createConstraintResult('fk_othertable_role', 'role_id', 'OtherTable', 'id')
+                        ]);
+
+                    case 'MyTable2':
+                        return createMockResult([
+                            createConstraintResult('fk_othertable_role', 'role_id', 'OtherTable', 'id')
+                        ]);
+                }
             }
 
             public function listIndexesForTable(string $tableIdentifier): Result
             {
+                switch ($tableIdentifier) {
+                    case 'MyTable':
+                        return createMockResult([
+                            createIndexResult($tableIdentifier, CONSTRAINT_KEY_PRIMARY, 'number')
+                        ]);
+
+                    case 'MyTable2':
+                        return createMockResult([
+                            createIndexResult($tableIdentifier, CONSTRAINT_KEY_PRIMARY, 'name')
+                        ]);
+                }
             }
 
             public function listColumnsForTable(string $tableIdentifier): Result
             {
+                switch ($tableIdentifier) {
+                    case 'MyTable':
+                        return createMockResult([
+                            createColumnResult('number', 'INT', true),
+                            createColumnResult('role_id', 'INT', true),
+                            createColumnResult('pole_id', 'INT', true)
+                        ]);
+
+                    case 'MyTable2':
+                        return createMockResult([
+                            createColumnResult('number', 'INT', true),
+                            createColumnResult('name', 'INT', false),
+                            createColumnResult('role_id', 'INT', true),
+                            createColumnResult('pole_id', 'INT', true)
+                        ]);
+                }
             }
         };
 
@@ -126,14 +168,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             'role_id' => '33',
             'pole_id' => '3654',
         ];
-        $this->object = new Entity($this->schema, 'MyTable', new EntityType(['number'], [], [
-            'FkOthertableRole' => [
-                'table' => 'OtherTable',
-                'where' => [
-                    'id' => 'role_id'
-                ]
-            ]
-        ]));
+        $this->object = new Entity($this->schema, 'MyTable', new EntityType($this->schema, 'MyTable'));
         $this->object->contains($values);
     }
 
@@ -144,14 +179,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()
     {
-        $object = new Entity($this->schema, 'MyTable', new EntityType(['number'], ['name'], [
-            'FkOthertableRole' => [
-                'table' => 'OtherTable',
-                'where' => [
-                    'id' => 'role_id'
-                ]
-            ]
-        ]));
+        $object = new Entity($this->schema, 'MyTable2', new EntityType($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -181,14 +209,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity($this->schema, 'MyTable', new EntityType(['number'], ['name'], [
-            'FkOthertableRole' => [
-                'table' => 'OtherTable',
-                'where' => [
-                    'id' => 'role_id'
-                ]
-            ]
-        ]));
+        $object = new Entity($this->schema, 'MyTable2', new EntityType($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -215,14 +236,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
-        $object = new Entity($this->schema, 'MyTable', new EntityType(['number'], ['name'], [
-            'FkOthertableRole' => [
-                'table' => 'OtherTable',
-                'where' => [
-                    'id' => 'role_id'
-                ]
-            ]
-        ]));
+        $object = new Entity($this->schema, 'MyTable2', new EntityType($this->schema, 'MyTable2'));
         $object->contains([]);
         $this->assertEquals(0, $object->create());
         $object->contains(['name' => 'Test']);

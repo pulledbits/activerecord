@@ -8,9 +8,6 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use PHPUnit\Framework\Error\Error;
-use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
-
 class SchemaTest extends \PHPUnit\Framework\TestCase
 {
 

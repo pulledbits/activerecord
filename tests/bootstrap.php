@@ -7,6 +7,7 @@ namespace pulledbits\ActiveRecord\Test {
 
     use PDO;
     use Psr\Http\Message\StreamInterface;
+    use pulledbits\ActiveRecord\Result;
 
     require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
@@ -314,13 +315,15 @@ namespace pulledbits\ActiveRecord\Test {
                     $this->defineIndexes($tableIdentifier, []);
                 }
             }
+
             public function defineColumns(string $tableIdentifier, array $columnResults) {
                 $this->queries['/SHOW FULL COLUMNS IN ' . $this->schema . '.' . $tableIdentifier . '/'] = $columnResults;
 
             }
             public function defineConstraints(string $tableIdentifier, array $constraintResults) {
-                $this->queries['/SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` \/\**!50116 , c.update_rule, c.delete_rule \*\/ FROM information_schema.key_column_usage k \/\**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'\w+\' \*\/ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->schema . '\' \/\**!50116 AND c.constraint_schema = \'' . $this->schema . '\' \*\/ AND k.`REFERENCED_COLUMN_NAME` is not NULL/'] = $constraintResults;
+                $this->queries['/\(SELECT DISTINCT k\.`CONSTRAINT_NAME`, `k`\.`TABLE_NAME`, k\.`COLUMN_NAME`, k\.`REFERENCED_TABLE_NAME`, k\.`REFERENCED_COLUMN_NAME` \/\*\*\!50116 , c\.update_rule, c\.delete_rule \*\/ FROM information_schema\.key_column_usage k \/\*\*\!50116 INNER JOIN information_schema\.referential_constraints c ON   c\.constraint_name = k\.constraint_name AND   c\.table_name = \'' . $tableIdentifier . '\' \*\/ WHERE k\.table_name = \'' . $tableIdentifier . '\' AND k\.table_schema = \'' . $this->schema . '\' \/\*\*\!50116 AND c\.constraint_schema = \'' . $this->schema . '\' \*\/ AND k\.`REFERENCED_COLUMN_NAME` is not NULL\) UNION ALL \(SELECT DISTINCT k\.`CONSTRAINT_NAME`, k\.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k\.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`\.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k\.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` \/\*\*!50116 , c\.update_rule, c\.delete_rule \*\/ FROM information_schema\.key_column_usage k \/\*\*\!50116 INNER JOIN information_schema\.referential_constraints c ON   c\.constraint_name = k\.constraint_name AND   c\.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' \*\/ WHERE k\.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' AND k\.table_schema = \'' . $this->schema . '\' \/\*\*\!50116 AND c\.constraint_schema = \'' . $this->schema . '\' \*\/ AND k\.`REFERENCED_COLUMN_NAME` is not NULL\)/'] = $constraintResults;
             }
+
             public function defineIndexes(string $tableIdentifier, array $indexResults) {
                 $this->queries['/SHOW INDEX FROM ' . $this->schema . '.' . $tableIdentifier . '/'] = $indexResults;
             }
@@ -349,6 +352,74 @@ namespace pulledbits\ActiveRecord\Test {
                 }
             }
         };
+    }
+
+    function createMockResult(array $results) : Result {
+        return new class($results) implements Result {
+
+            private $results;
+
+            public function __construct(array $results)
+            {
+                $this->results = $results;
+            }
+
+            public function fetchAll(): array
+            {
+                return $this->results;
+            }
+
+            public function count()
+            {
+                return count($this->results);
+            }
+        };
+    }
+
+    function createTableResult(string $tableIdentifier) {
+        return ['Table_in_' . $this->schema => $tableIdentifier, 'Table_type' => 'BASE_TABLE'];
+    }
+    function createColumnResult(string $columnIdentifier, string $typeIdentifier, bool $nullable) {
+        return [
+            'Field' => $columnIdentifier,
+            'Type' => $typeIdentifier,
+            'Null' => $nullable ? 'YES' : 'NO',
+            'Key' => 'PRI',
+            'Default' => '',
+            'Extra' => '',
+            'Comment' => '',
+            'CharacterSet' => '',
+            'Collation' => ''
+        ];
+    }
+    function createConstraintResult(string $identifier, string $localColumnIdentifier, string $referencedTableIdentifier, string $referencedColumnIdentifier) {
+        return [
+            'CONSTRAINT_NAME' => $identifier,
+            'COLUMN_NAME' => $localColumnIdentifier,
+            'REFERENCED_TABLE_NAME' => $referencedTableIdentifier,
+            'REFERENCED_COLUMN_NAME' => $referencedColumnIdentifier
+        ];
+    }
+
+    define('CONSTRAINT_KEY_UNIQUE', 'UNIQUE');
+    define('CONSTRAINT_KEY_FOREIGN', 'FOREIGN');
+    define('CONSTRAINT_KEY_PRIMARY', 'PRIMARY');
+    function createIndexResult(string $tableIdentifier, string $keyIdentifier, string $columnIdentifier) {
+        return [
+            'Table' => $tableIdentifier,
+            'Non_unique' => '0',
+            'Key_name' => $keyIdentifier,
+            'Seq_in_index' => '1',
+            'Column_name' => $columnIdentifier,
+            'Collation' => 'A',
+            'Cardinality' => '1',
+            'Sub_part' => null,
+            'Packed' => null,
+            'Null' => '',
+            'Index_type' => 'BTREE',
+            'Comment' => '',
+            'Index_comment' => ''
+        ];
     }
 
     function createMockStreamInterface() {

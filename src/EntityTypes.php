@@ -34,9 +34,9 @@ class EntityTypes
     public function retrieveEntityType(string $tableIdentifier) : EntityType
     {
         if (array_key_exists($tableIdentifier, $this->entityIdentifiers) === false) {
-            return new EntityType();
+            return new EntityType($this->schema, $tableIdentifier);
         } elseif (array_key_exists($tableIdentifier, $this->entityTypes) === false) {
-            $this->entityTypes[$tableIdentifier] = new EntityType();
+            $this->entityTypes[$tableIdentifier] = new EntityType($this->schema, $tableIdentifier);
         }
 
         if ($this->entityIdentifiers[$tableIdentifier] === 'VIEW') {
@@ -46,28 +46,6 @@ class EntityTypes
                 $this->entityTypes[$tableIdentifier] = $this->retrieveEntityType($possibleEntityTypeIdentifier);
                 return $this->entityTypes[$tableIdentifier];
             }
-        }
-
-        $indexes = $this->schema->listIndexesForTable($tableIdentifier)->fetchAll();
-        foreach ($indexes as $index) {
-            if ($index['Key_name'] === 'PRIMARY') {
-                $this->entityTypes[$tableIdentifier]->identifier[] = $index['Column_name'];
-            }
-        }
-
-        $columns = $this->schema->listColumnsForTable($tableIdentifier)->fetchAll();
-        foreach ($columns as $column) {
-            if ($column['Extra'] === 'auto_increment') {
-                continue;
-            } elseif ($column['Null'] === 'NO') {
-                $this->entityTypes[$tableIdentifier]->requiredAttributeIdentifiers[] = $column['Field'];
-            }
-        }
-
-        $foreignKeys = $this->schema->listForeignKeys($tableIdentifier)->fetchAll();
-        foreach ($foreignKeys as $foreignKey) {
-            $this->entityTypes[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
-            $this->retrieveEntityType($foreignKey['REFERENCED_TABLE_NAME'])->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['REFERENCED_COLUMN_NAME'], $tableIdentifier, $foreignKey['COLUMN_NAME']);
         }
 
         return $this->entityTypes[$tableIdentifier];

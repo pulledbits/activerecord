@@ -1,14 +1,35 @@
 <?php
 namespace pulledbits\ActiveRecord\SQL;
 
-
-use pulledbits\ActiveRecord\Struct;
-
-class EntityType extends Struct
+class EntityType
 {
-    public $identifier = [];
-    public $requiredAttributeIdentifiers = [];
-    public $references = [];
+    private $identifier = [];
+    private $requiredAttributeIdentifiers = [];
+    private $references = [];
+
+    public function __construct(\pulledbits\ActiveRecord\Schema $schema, $tableIdentifier)
+    {
+        $indexes = $schema->listIndexesForTable($tableIdentifier)->fetchAll();
+        foreach ($indexes as $index) {
+            if ($index['Key_name'] === 'PRIMARY') {
+                $this->identifier[] = $index['Column_name'];
+            }
+        }
+
+        $columns = $schema->listColumnsForTable($tableIdentifier)->fetchAll();
+        foreach ($columns as $column) {
+            if ($column['Extra'] === 'auto_increment') {
+                continue;
+            } elseif ($column['Null'] === 'NO') {
+                $this->requiredAttributeIdentifiers[] = $column['Field'];
+            }
+        }
+
+        $foreignKeys = $schema->listForeignKeys($tableIdentifier)->fetchAll();
+        foreach ($foreignKeys as $foreignKey) {
+            $this->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
+        }
+    }
 
     public function primaryKey(array $values) {
         $sliced = [];
