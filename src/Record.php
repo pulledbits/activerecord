@@ -9,8 +9,6 @@ interface Record
 
     public function __get($property);
 
-    public function read(string $entityTypeIdentifier, array $conditions): array;
-
     public function __set($property, $value);
 
     public function delete() : int;

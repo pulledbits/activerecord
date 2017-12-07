@@ -268,18 +268,4 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     public function test__call_When_NonExistingReference_Expect_Value() {
         $this->object->__call('fetchByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
     }
-
-
-    public function testRead_When_NoConditionsGiven_Expect_FullResultSet()
-    {
-        $records = $this->object->read("OtherTable", []);
-        $this->assertEquals('356', $records[0]->id);
-        $this->assertCount(5, $records);
-    }
-    public function testRead_When_ConditionsGiven_Expect_PartialResultSet()
-    {
-        $records = $this->object->read("OtherTable", ['id' => 'role_id']);
-        $this->assertEquals('356', $records[0]->id);
-        $this->assertCount(1, $records);
-    }
 }
