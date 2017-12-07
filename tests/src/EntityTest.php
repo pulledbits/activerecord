@@ -166,6 +166,12 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('1', $value);
     }
 
+    public function test__get_When_NotExistingProperty_Expect_Null()
+    {
+        $value = $this->object->doesnotexist;
+        $this->assertNull($value);
+    }
+
     public function test__set_When_ExistingProperty_Expect_ValueChanged()
     {
         $this->assertEquals('1', $this->object->number);
