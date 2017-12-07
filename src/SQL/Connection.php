@@ -18,8 +18,7 @@ class Connection
 
     public function schema(string $schemaIdentifier)
     {
-        $schema = new Schema($this, new QueryFactory($schemaIdentifier), $schemaIdentifier);
-        return $schema;
+        return new Schema($this, new QueryFactory($schemaIdentifier), $schemaIdentifier);
     }
 
     public function execute(string $query, array $namedParameters) : Result
