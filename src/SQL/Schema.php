@@ -2,8 +2,6 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\EntityTypes;
-use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\Result;
 
 final class Schema implements \pulledbits\ActiveRecord\Schema

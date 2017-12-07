@@ -1,9 +1,11 @@
 <?php
 
-namespace pulledbits\ActiveRecord;
+namespace pulledbits\ActiveRecord\SQL;
 
 
-use pulledbits\ActiveRecord\SQL\EntityType;
+use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\Result;
+use pulledbits\ActiveRecord\Schema;
 use function pulledbits\ActiveRecord\Test\createMockResult;
 
 class EntityTypesTest extends \PHPUnit\Framework\TestCase
