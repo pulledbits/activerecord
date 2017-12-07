@@ -12,7 +12,9 @@ namespace pulledbits\ActiveRecord\Test {
     require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
     function createMockPDOStatement($results) {
-        if (is_array($results)) {
+        if (is_callable($results)) {
+            return createMockPDOStatementCallable($results);
+        } elseif (is_array($results)) {
             return createMockPDOStatementFetchAll($results);
         } elseif (is_int($results)) {
             return createMockPDOStatementRowCount($results);
@@ -22,6 +24,42 @@ namespace pulledbits\ActiveRecord\Test {
             return createMockPDOStatementFetchAll([]);
         }
         return createMockPDOStatementFail(false);
+    }
+
+    function createMockPDOStatementCallable(string $query, callable $callable) {
+        return new class($query, $callable) extends \PDOStatement
+        {
+            private $callable;
+            private $query;
+            private $results;
+
+            public function __construct(string $query, callable $callable)
+            {
+                $this->query = $query;
+                $this->callable = $callable;
+            }
+
+            public function fetchAll($how = \PDO::ATTR_DEFAULT_FETCH_MODE, $class_name = NULL, $ctor_args = NULL)
+            {
+                return $this->results;
+            }
+
+            public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
+            {
+                if ($fetch_style === \PDO::FETCH_ASSOC) {
+                    return next($this->results);
+                }
+            }
+
+            public function execute($bound_input_params = NULL)
+            {
+                $this->results = call_user_func($this->callable, $this->query);
+                if ($this->results === null) {
+                    throw new \PHPUnit\Framework\AssertionFailedError('Unexpected query \'' . $this->query . '\'');
+                }
+                return true;
+            }
+        };
     }
 
     function createMockPDOStatementFetchAll(array $results) {
@@ -108,6 +146,29 @@ namespace pulledbits\ActiveRecord\Test {
         };
     }
 
+    function createMockPDOCallback() {
+
+        return new class() extends \PDO
+        {
+
+            private $callback;
+
+            public function __construct()
+            {
+            }
+
+            public function callback(callable $callback)
+            {
+                $this->callback = $callback;
+            }
+
+            public function prepare($query, $options = null)
+            {
+                return createMockPDOStatementCallable($query, $this->callback);
+            }
+        };
+    }
+
     function createMockPDOMultiple(array $queries): \PDO
     {
         return new class($queries) extends \PDO
@@ -164,11 +225,6 @@ namespace pulledbits\ActiveRecord\Test {
 
             public function defineIndexes(string $tableIdentifier, array $indexResults) {
                 $this->queries['/SHOW INDEX FROM ' . $this->schema . '.' . $tableIdentifier . '/'] = $indexResults;
-            }
-
-            public function query($statement, $mode = \PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = array())
-            {
-                return $this->prepare($statement);
             }
 
             public function prepare($query, $options = null)
