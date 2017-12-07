@@ -172,22 +172,6 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->object->contains($values);
     }
 
-    public function testMissesRequiredValues_When_NotMissingRequiredProperties_Expect_False()
-    {
-        $this->assertFalse($this->object->missesRequiredValues());
-    }
-
-    public function testMissesRequiredValues_When_MissingRequiredProperties_Expect_True()
-    {
-        $object = new Entity($this->schema, 'MyTable2', new EntityType($this->schema, 'MyTable2'));
-        $object->contains([
-            'number' => '1',
-            'role_id' => '33',
-            'pole_id' => '3654',
-        ]);
-        $this->assertTrue($object->missesRequiredValues());
-    }
-
     public function test__get_When_ExistingProperty_Expect_Value()
     {
         $value = $this->object->number;

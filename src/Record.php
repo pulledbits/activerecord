@@ -5,8 +5,6 @@ interface Record
 {
     public function contains(array $values);
 
-    public function missesRequiredValues() : bool;
-
     public function __get($property);
 
     public function __set($property, $value);

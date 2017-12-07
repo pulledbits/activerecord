@@ -27,11 +27,6 @@ final class Entity implements Record
         $this->values += $values;
     }
 
-    public function missesRequiredValues(): bool
-    {
-        return count($this->entityType->calculateMissingValues($this->values)) > 0;
-    }
-
     public function __get($property)
     {
         if (array_key_exists($property, $this->values) === false) {
@@ -42,7 +37,7 @@ final class Entity implements Record
 
     public function __set($property, $value)
     {
-        if ($this->missesRequiredValues()) {
+        if (count($this->entityType->calculateMissingValues($this->values)) > 0) {
             return 0;
         } elseif ($this->entityType->update([$property => $value], $this->entityType->primaryKey($this->values)) > 0) {
             $this->values[$property] = $value;
