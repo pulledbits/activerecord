@@ -376,8 +376,11 @@ namespace pulledbits\ActiveRecord\Test {
         };
     }
 
-    function createTableResult(string $tableIdentifier) {
-        return ['Table_in_' . $this->schema => $tableIdentifier, 'Table_type' => 'BASE_TABLE'];
+    function createTableResult(string $schemaIdentifier, string $tableIdentifier) {
+        return ['Table_in_' . $schemaIdentifier => $tableIdentifier, 'Table_type' => 'BASE_TABLE'];
+    }
+    function createViewResult(string $schemaIdentifier, string $tableIdentifier) {
+        return ['Table_in_' . $schemaIdentifier => $tableIdentifier, 'Table_type' => 'VIEW'];
     }
     function createColumnResult(string $columnIdentifier, string $typeIdentifier, bool $nullable) {
         return [

@@ -41,7 +41,6 @@ class EntityTypes implements RecordTypes
             if ($underscorePosition > 0) {
                 $possibleEntityTypeIdentifier = substr($recordTypeIdentifier, 0, $underscorePosition);
                 $this->entityTypes[$recordTypeIdentifier] = $this->makeRecordType($possibleEntityTypeIdentifier);
-                return $this->entityTypes[$recordTypeIdentifier];
             }
         }
 
