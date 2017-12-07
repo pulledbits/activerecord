@@ -24,10 +24,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
     private function qualifyEntityTypeIdentifier(string $entityTypeIdentifier) : string {
         return $this->identifier . '.' . $entityTypeIdentifier;
     }
-    public function makeRecord(string $entityTypeIdentifier): Record
-    {
-        return new Entity($this->entityTypes->retrieveEntityType($entityTypeIdentifier));
-    }
 
     public function listIndexesForTable(string $tableIdentifier): Result
     {
@@ -54,7 +50,7 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
 
         $records = [];
         foreach ($result->fetchAll() as $row) {
-            $record = $this->makeRecord($entityTypeIdentifier);
+            $record = new Entity($this->entityTypes->makeRecordType($entityTypeIdentifier));
             $record->contains($row);
             $records[] = $record;
         }

@@ -67,6 +67,6 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
         $object = new EntityTypes($schema, $result);
 
-        $this->assertEquals(new EntityType($schema, 'NotExisting'), $object->retrieveEntityType('NotExisting'));
+        $this->assertEquals(new EntityType($schema, 'NotExisting'), $object->makeRecordType('NotExisting'));
     }
 }

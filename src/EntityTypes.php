@@ -31,7 +31,7 @@ class EntityTypes
         }
     }
 
-    public function retrieveEntityType(string $tableIdentifier) : EntityType
+    public function makeRecordType(string $tableIdentifier) : EntityType
     {
         if (array_key_exists($tableIdentifier, $this->entityIdentifiers) === false) {
             return new EntityType($this->schema, $tableIdentifier);
@@ -43,7 +43,7 @@ class EntityTypes
             $underscorePosition = strpos($tableIdentifier, '_');
             if ($underscorePosition > 0) {
                 $possibleEntityTypeIdentifier = substr($tableIdentifier, 0, $underscorePosition);
-                $this->entityTypes[$tableIdentifier] = $this->retrieveEntityType($possibleEntityTypeIdentifier);
+                $this->entityTypes[$tableIdentifier] = $this->makeRecordType($possibleEntityTypeIdentifier);
                 return $this->entityTypes[$tableIdentifier];
             }
         }
