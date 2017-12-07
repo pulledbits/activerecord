@@ -6,7 +6,7 @@ namespace pulledbits\ActiveRecord;
 
 use pulledbits\ActiveRecord\SQL\Meta\TableDescription;
 
-class EntityTypes implements \Iterator, \ArrayAccess
+class EntityTypes
 {
     private $schema;
     private $entityIdentifiers;
@@ -17,6 +17,7 @@ class EntityTypes implements \Iterator, \ArrayAccess
         $this->schema = $schema;
         $this->entityTypes = [];
 
+        $this->entityIdentifiers = [];
         foreach ($result->fetchAll() as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
             switch ($baseTable['Table_type']) {
@@ -30,7 +31,7 @@ class EntityTypes implements \Iterator, \ArrayAccess
         }
     }
 
-    private function retrieveTableDescription(string $tableIdentifier) : TableDescription
+    public function retrieveTableDescription(string $tableIdentifier) : TableDescription
     {
         if (array_key_exists($tableIdentifier, $this->entityIdentifiers) === false) {
             return new TableDescription();
@@ -70,50 +71,5 @@ class EntityTypes implements \Iterator, \ArrayAccess
         }
 
         return $this->entityTypes[$tableIdentifier];
-    }
-
-    public function current()
-    {
-        return $this->retrieveTableDescription(key($this->entityTypes));
-    }
-
-    public function next()
-    {
-        return next($this->entityTypes);
-    }
-
-    public function key()
-    {
-        return key($this->entityTypes);
-    }
-
-    public function valid()
-    {
-        return $this->key() !== null;
-    }
-
-    public function rewind()
-    {
-        return reset($this->entityTypes);
-    }
-
-    public function offsetExists($offset)
-    {
-        return array_key_exists($offset, $this->entityTypes);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->retrieveTableDescription($offset);
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->entityTypes[$offset] = $value;
-    }
-
-    public function offsetUnset($offset)
-    {
-        unset($this->entityTypes[$offset]);
     }
 }
