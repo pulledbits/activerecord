@@ -3,6 +3,8 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
+use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
+use pulledbits\ActiveRecord\SQL\MySQL\Schema;
 use function pulledbits\ActiveRecord\Test\createMockPDOCallback;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 

@@ -1,10 +1,7 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord\SQL;
-
-
-use pulledbits\ActiveRecord\SQL\Query\PreparedParameters;
+namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 class QueryFactory
 {
@@ -18,7 +15,7 @@ class QueryFactory
         return new Query\Update($tableIdentifier, new Query\Update\Values($this->prepareParameters($values)));
     }
 
-    public function prepareParameters(array $values): PreparedParameters
+    public function prepareParameters(array $values): Query\PreparedParameters
     {
         return new Query\PreparedParameters($values);
     }

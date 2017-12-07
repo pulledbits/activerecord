@@ -2,7 +2,7 @@
 
 namespace pulledbits\ActiveRecord;
 
-use pulledbits\ActiveRecord\SQL\EntityType;
+use pulledbits\ActiveRecord\SQL\MySQL\EntityType;
 
 interface RecordTypes
 {

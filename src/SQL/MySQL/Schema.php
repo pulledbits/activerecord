@@ -1,8 +1,10 @@
 <?php
 
-namespace pulledbits\ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 use pulledbits\ActiveRecord\Result;
+use pulledbits\ActiveRecord\SQL\Connection;
+use pulledbits\ActiveRecord\SQL\Entity;
 
 class Schema implements \pulledbits\ActiveRecord\Schema
 {

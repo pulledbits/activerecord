@@ -4,8 +4,9 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
-use pulledbits\ActiveRecord\SQL\Meta\SchemaFactory;
-use pulledbits\ActiveRecord\SQL\Query\Result;
+use pulledbits\ActiveRecord\SQL\MySQL\Query\Result;
+use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
+use pulledbits\ActiveRecord\SQL\MySQL\Schema;
 
 class Connection
 {

@@ -1,8 +1,9 @@
 <?php
 
-namespace pulledbits\ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 use pulledbits\ActiveRecord\Result;
+use pulledbits\ActiveRecord\SQL\Statement;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 use function pulledbits\ActiveRecord\Test\createMockResult;
 use function pulledbits\ActiveRecord\Test\createTableResult;
@@ -37,14 +38,14 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testRetrieveTableDescription_When_EntityNotExists_Expect_EmptyTableDescription()
     {
-        $object = new EntityTypes($this->schema, new \pulledbits\ActiveRecord\SQL\Query\Result(new Statement(createMockPDOStatement([]))));
+        $object = new EntityTypes($this->schema, new Query\Result(new Statement(createMockPDOStatement([]))));
 
         $this->assertEquals(new EntityType($this->schema, 'NotExisting'), $object->makeRecordType('NotExisting'));
     }
 
     public function testRetrieveTableDescription_When_EntityIsView_Expect_EmptyTableDescriptionForViewIdentifier()
     {
-        $object = new EntityTypes($this->schema, new \pulledbits\ActiveRecord\SQL\Query\Result(new Statement(createMockPDOStatement([
+        $object = new EntityTypes($this->schema, new Query\Result(new Statement(createMockPDOStatement([
             createViewResult('MySchema', 'MyView')
         ]))));
 
@@ -53,7 +54,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testRetrieveTableDescription_When_EntityIsViewWrappedAroundOtherTable_Expect_EntityTypeForWrappedTable()
     {
-        $object = new EntityTypes($this->schema, new \pulledbits\ActiveRecord\SQL\Query\Result(new Statement(createMockPDOStatement([
+        $object = new EntityTypes($this->schema, new Query\Result(new Statement(createMockPDOStatement([
             createTableResult('MySchema', 'MyTable'),
             createViewResult('MySchema', 'MyTable_MyView')
         ]))));

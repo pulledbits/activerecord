@@ -1,6 +1,6 @@
 <?php
 
-namespace pulledbits\ActiveRecord\SQL\Query;
+namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 class Result implements \pulledbits\ActiveRecord\Result
 {

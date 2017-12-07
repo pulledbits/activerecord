@@ -1,10 +1,10 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord\SQL\Query\Update;
+namespace pulledbits\ActiveRecord\SQL\MySQL\Query\Update;
 
 
-use pulledbits\ActiveRecord\SQL\Query\PreparedParameters;
+use pulledbits\ActiveRecord\SQL\MySQL\Query\PreparedParameters;
 
 class Values
 {

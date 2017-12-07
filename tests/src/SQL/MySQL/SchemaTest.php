@@ -6,8 +6,10 @@
  * Time: 16:06
  */
 
-namespace pulledbits\ActiveRecord\SQL;
+namespace pulledbits\ActiveRecord\SQL\MySQL;
 
+use pulledbits\ActiveRecord\SQL\Connection;
+use pulledbits\ActiveRecord\SQL\MySQL;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 
 class SchemaTest extends \PHPUnit\Framework\TestCase
@@ -29,7 +31,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
                     return createMockPDOStatement([]);
             }
         });
-        $this->object = new \pulledbits\ActiveRecord\SQL\Schema($connection, new QueryFactory(), 'MySchema');
+        $this->object = new MySQL\Schema($connection, new QueryFactory(), 'MySchema');
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {

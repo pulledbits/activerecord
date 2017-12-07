@@ -1,11 +1,10 @@
 <?php
 
 
-namespace pulledbits\ActiveRecord\SQL\Query;
+namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 
 use pulledbits\ActiveRecord\SQL\Connection;
-use pulledbits\ActiveRecord\SQL\Query;
 
 class Update
 {
@@ -17,7 +16,7 @@ class Update
      */
     private $where;
 
-    public function __construct(string $tableIdentifier, Query\Update\Values $values)
+    public function __construct(string $tableIdentifier, Update\Values $values)
     {
         $this->tableIdentifier = $tableIdentifier;
         $this->values = $values;
