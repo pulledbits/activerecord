@@ -208,6 +208,20 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('1', $object->number);
     }
 
+    public function test__set_When_NulledRequiredProperty_Expect_NoChanges()
+    {
+        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
+        $object->contains([
+            'number' => '1',
+            'name' => null,
+            'role_id' => '33',
+            'pole_id' => '3654',
+        ]);
+        $this->assertEquals('1', $object->number);
+        $object->__set('number', '2');
+        $this->assertEquals('1', $object->number);
+    }
+
     public function testDelete_When_ExistingProperty_Expect_Value()
     {
         $this->assertEquals(1, $this->object->delete());
