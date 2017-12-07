@@ -382,14 +382,14 @@ namespace pulledbits\ActiveRecord\Test {
     function createViewResult(string $schemaIdentifier, string $tableIdentifier) {
         return ['Table_in_' . $schemaIdentifier => $tableIdentifier, 'Table_type' => 'VIEW'];
     }
-    function createColumnResult(string $columnIdentifier, string $typeIdentifier, bool $nullable) {
+    function createColumnResult(string $columnIdentifier, string $typeIdentifier, bool $nullable, bool $autoincrement = false) {
         return [
             'Field' => $columnIdentifier,
             'Type' => $typeIdentifier,
             'Null' => $nullable ? 'YES' : 'NO',
             'Key' => 'PRI',
             'Default' => '',
-            'Extra' => '',
+            'Extra' => $autoincrement ? 'auto_increment' : '',
             'Comment' => '',
             'CharacterSet' => '',
             'Collation' => ''

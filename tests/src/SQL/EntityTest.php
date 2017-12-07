@@ -123,7 +123,9 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
                     case 'MyTable2':
                         return createMockResult([
-                            createConstraintResult('fk_othertable_role', 'role_id', 'OtherTable', 'id')
+                            createConstraintResult('fk_othertable_role', 'role_id', 'OtherTable', 'id'),
+                            createConstraintResult('fk_othertable_role', 'role2_id', 'OtherTable', 'id2')
+
                         ]);
                 }
             }
@@ -158,6 +160,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
                             createColumnResult('number', 'INT', true),
                             createColumnResult('name', 'INT', false),
                             createColumnResult('role_id', 'INT', true),
+                            createColumnResult('role2_id', 'INT', true, true),
                             createColumnResult('pole_id', 'INT', true)
                         ]);
                 }
