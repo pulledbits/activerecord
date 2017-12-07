@@ -31,7 +31,7 @@ class EntityTypes
         }
     }
 
-    public function retrieveTableDescription(string $tableIdentifier) : EntityType
+    public function retrieveEntityType(string $tableIdentifier) : EntityType
     {
         if (array_key_exists($tableIdentifier, $this->entityIdentifiers) === false) {
             return new EntityType();
@@ -43,7 +43,7 @@ class EntityTypes
             $underscorePosition = strpos($tableIdentifier, '_');
             if ($underscorePosition > 0) {
                 $possibleEntityTypeIdentifier = substr($tableIdentifier, 0, $underscorePosition);
-                $this->entityTypes[$tableIdentifier] = $this->retrieveTableDescription($possibleEntityTypeIdentifier);
+                $this->entityTypes[$tableIdentifier] = $this->retrieveEntityType($possibleEntityTypeIdentifier);
                 return $this->entityTypes[$tableIdentifier];
             }
         }
@@ -67,7 +67,7 @@ class EntityTypes
         $foreignKeys = $this->schema->listForeignKeys($tableIdentifier)->fetchAll();
         foreach ($foreignKeys as $foreignKey) {
             $this->entityTypes[$tableIdentifier]->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
-            $this->retrieveTableDescription($foreignKey['REFERENCED_TABLE_NAME'])->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['REFERENCED_COLUMN_NAME'], $tableIdentifier, $foreignKey['COLUMN_NAME']);
+            $this->retrieveEntityType($foreignKey['REFERENCED_TABLE_NAME'])->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['REFERENCED_COLUMN_NAME'], $tableIdentifier, $foreignKey['COLUMN_NAME']);
         }
 
         return $this->entityTypes[$tableIdentifier];
