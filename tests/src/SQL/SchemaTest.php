@@ -74,6 +74,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
             '/^INSERT INTO MySchema.MyTable \(name. foo2\) VALUES \(:\w+, :\w+\)$/' => 1,
             '/^INSERT INTO MySchema.MyTable \(name. foo3, foo4\) VALUES \(:\w+, :\w+, :\w+\)$/' => 1,
             '/^CALL MySchema.missing_procedure\(:\w+, :\w+\)/' => false,
+            '/^CALL MySchema.existingProcedure\(:\w+, :\w+\)/' => null,
             '/SELECT id, name FROM MySchema.MyPerson_today WHERE id = :\w+/' => [
                 [
                     'werkvorm' => 'Bla'
@@ -134,9 +135,13 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->object->delete('MyTable', ['sid' => '3']));
     }
 
-    public function testExecuteProcedure_When_ExistingProcedure_Expect_ProcedureToBeCalled() {
+    public function testExecuteProcedure_When_MissingProcedureCalled_Expect_Error() {
         $this->expectException('\PHPUnit\Framework\Error\Error');
         $this->expectExceptionMessageRegExp('/^Failed executing query/');
         $this->object->executeProcedure('missing_procedure', ['3', 'Foobar']);
+    }
+
+    public function testExecuteProcedure_When_ExistingProcedure_Expect_ProcedureToBeCalled() {
+        $this->assertNull($this->object->executeProcedure('existingProcedure', ['3', 'Foobar']));
     }
 }
