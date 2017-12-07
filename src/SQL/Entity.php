@@ -4,7 +4,6 @@ namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
 use pulledbits\ActiveRecord\Schema;
-use pulledbits\ActiveRecord\SQL\Meta\EntityType;
 
 final class Entity implements Record
 {

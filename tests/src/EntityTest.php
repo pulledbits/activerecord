@@ -10,7 +10,7 @@ namespace pulledbits\ActiveRecord;
 
 
 use pulledbits\ActiveRecord\SQL\Entity;
-use pulledbits\ActiveRecord\SQL\Meta\EntityType;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
 {

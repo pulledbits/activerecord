@@ -4,7 +4,7 @@
 namespace pulledbits\ActiveRecord;
 
 
-use pulledbits\ActiveRecord\SQL\Meta\EntityType;
+use pulledbits\ActiveRecord\SQL\EntityType;
 
 class EntityTypes
 {

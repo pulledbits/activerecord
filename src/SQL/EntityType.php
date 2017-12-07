@@ -1,5 +1,5 @@
 <?php
-namespace pulledbits\ActiveRecord\SQL\Meta;
+namespace pulledbits\ActiveRecord\SQL;
 
 
 use pulledbits\ActiveRecord\Struct;
