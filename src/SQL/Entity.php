@@ -11,15 +11,15 @@ final class Entity implements Record
 
     private $entityTypeIdentifier;
 
-    private $entityDescription;
+    private $entityType;
 
     private $values;
 
-    public function __construct(Schema $schema, string $entityTypeIdentifier, EntityType $entityDescription)
+    public function __construct(Schema $schema, string $entityTypeIdentifier, EntityType $entityType)
     {
         $this->schema = $schema;
         $this->entityTypeIdentifier = $entityTypeIdentifier;
-        $this->entityDescription = $entityDescription;
+        $this->entityType = $entityType;
         $this->values = [];
     }
 
@@ -41,26 +41,26 @@ final class Entity implements Record
 
     public function missesRequiredValues(): bool
     {
-        return count($this->entityDescription->calculateMissingValues($this->values)) > 0;
+        return count($this->entityType->calculateMissingValues($this->values)) > 0;
     }
 
     public function __set($property, $value)
     {
         if ($this->missesRequiredValues()) {
             return 0;
-        } elseif ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->entityDescription->primaryKey($this->values)) > 0) {
+        } elseif ($this->schema->update($this->entityTypeIdentifier, [$property => $value], $this->entityType->primaryKey($this->values)) > 0) {
             $this->values[$property] = $value;
         }
     }
 
     public function delete() : int
     {
-        return $this->schema->delete($this->entityTypeIdentifier, $this->entityDescription->primaryKey($this->values));
+        return $this->schema->delete($this->entityTypeIdentifier, $this->entityType->primaryKey($this->values));
     }
 
     public function create() : int
     {
-        $missing = $this->entityDescription->calculateMissingValues($this->values);
+        $missing = $this->entityType->calculateMissingValues($this->values);
         if (count($missing) === 0) {
             return $this->schema->create($this->entityTypeIdentifier, $this->values);
         }
@@ -82,10 +82,10 @@ final class Entity implements Record
     public function __call(string $method, array $arguments)
     {
         if (substr($method, 0, 7) === 'fetchBy') {
-            $reference = $this->entityDescription->prepareReference(substr($method, 7));
+            $reference = $this->entityType->prepareReference(substr($method, 7));
             return $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($this->fillConditions($reference['conditions']), $arguments));
         } elseif (substr($method, 0, 11) === 'referenceBy') {
-            $reference = $this->entityDescription->prepareReference(substr($method, 11));
+            $reference = $this->entityType->prepareReference(substr($method, 11));
             $this->schema->create($reference['entityTypeIdentifier'], $this->mergeConditionsWith__callCustomConditions($this->fillConditions($reference['conditions']), $arguments));
             $records = $this->schema->read($reference['entityTypeIdentifier'], [], $this->mergeConditionsWith__callCustomConditions($this->fillConditions($reference['conditions']), $arguments));
             return $records[0];
