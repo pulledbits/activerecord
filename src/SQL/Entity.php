@@ -16,7 +16,8 @@ final class Entity implements Record
         $this->values = [];
     }
 
-    public function contains(array $values) {
+    public function contains(array $values)
+    {
         $this->values += $values;
     }
 
@@ -37,12 +38,12 @@ final class Entity implements Record
         }
     }
 
-    public function delete() : int
+    public function delete(): int
     {
         return $this->entityType->delete($this->entityType->primaryKey($this->values));
     }
 
-    public function create() : int
+    public function create(): int
     {
         return $this->entityType->create($this->values);
     }

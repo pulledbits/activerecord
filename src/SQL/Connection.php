@@ -21,7 +21,7 @@ class Connection
         return new Schema($this, new QueryFactory($schemaIdentifier), $schemaIdentifier);
     }
 
-    public function execute(string $query, array $namedParameters) : Result
+    public function execute(string $query, array $namedParameters): Result
     {
         $pdostatement = $this->connection->prepare($query);
         $statement = new Statement($pdostatement);

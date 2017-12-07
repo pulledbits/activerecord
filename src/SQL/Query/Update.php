@@ -28,7 +28,7 @@ class Update
         $this->where = $where;
     }
 
-    public function execute(Connection $connection) : Result
+    public function execute(Connection $connection): Result
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {

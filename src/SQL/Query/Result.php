@@ -1,4 +1,5 @@
 <?php
+
 namespace pulledbits\ActiveRecord\SQL\Query;
 
 class Result implements \pulledbits\ActiveRecord\Result
@@ -15,7 +16,7 @@ class Result implements \pulledbits\ActiveRecord\Result
         return $this->statement->rowCount();
     }
 
-    public function fetchAll() : array
+    public function fetchAll(): array
     {
         return $this->statement->fetchAll();
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace pulledbits\ActiveRecord\SQL;
 
 class EntityType
@@ -39,7 +40,18 @@ class EntityType
         }
     }
 
-    public function primaryKey(array $values) {
+    private function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName)
+    {
+        $fkIdentifier = join('', array_map('ucfirst', explode('_', $constraintName)));
+        if (array_key_exists($fkIdentifier, $this->references)) {
+            $this->references[$fkIdentifier]['conditions'][$referencedColumnName] = $columnName;
+        } else {
+            $this->references[$fkIdentifier] = ['entityTypeIdentifier' => $referencedTableName, 'conditions' => [$referencedColumnName => $columnName]];
+        }
+    }
+
+    public function primaryKey(array $values)
+    {
         $sliced = [];
         foreach ($values as $key => $value) {
             if (in_array($key, $this->identifier, true)) {
@@ -49,7 +61,27 @@ class EntityType
         return $sliced;
     }
 
-    public function calculateMissingValues(array $values) : array {
+    public function update(array $values, array $conditions): int
+    {
+        return $this->schema->update($this->entityTypeIdentifier, array_intersect_key($values, $this->columns), $conditions);
+    }
+
+    public function delete(array $conditions): int
+    {
+        return $this->schema->delete($this->entityTypeIdentifier, $conditions);
+    }
+
+    public function create(array $values): int
+    {
+        $missing = $this->calculateMissingValues($values);
+        if (count($missing) > 0) {
+            trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
+        }
+        return $this->schema->create($this->entityTypeIdentifier, $values);
+    }
+
+    public function calculateMissingValues(array $values): array
+    {
         $missing = [];
         foreach ($this->requiredAttributeIdentifiers as $requiredColumnIdentifier) {
             if (array_key_exists($requiredColumnIdentifier, $values) === false) {
@@ -63,39 +95,23 @@ class EntityType
         return $missing;
     }
 
-    private function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName) {
-        $fkIdentifier = join('', array_map('ucfirst', explode('_', $constraintName)));
-        if (array_key_exists($fkIdentifier, $this->references)) {
-            $this->references[$fkIdentifier]['conditions'][$referencedColumnName] = $columnName;
-        } else {
-            $this->references[$fkIdentifier] = [
-                'entityTypeIdentifier' => $referencedTableName,
-                'conditions' => [$referencedColumnName => $columnName]
-            ];
+    public function fetchBy(string $referenceIdentifier, array $values, array $conditions): array
+    {
+        $reference = $this->findReference($referenceIdentifier);
+        $conditions = $this->mergeValuesIntoConditions($reference['conditions'], $values, $conditions);
+        return $this->schema->read($reference['entityTypeIdentifier'], [], $conditions);
+    }
+
+    private function findReference(string $referenceIdentifier): array
+    {
+        if (array_key_exists($referenceIdentifier, $this->references) === false) {
+            trigger_error('Reference does not exist `' . $referenceIdentifier . '`', E_USER_ERROR);
         }
+        return $this->references[$referenceIdentifier];
     }
 
-    public function update(array $values, array $conditions) : int
+    private function mergeValuesIntoConditions(array $referenceConditions, array $values, array $conditions)
     {
-        return $this->schema->update($this->entityTypeIdentifier, array_intersect_key($values, $this->columns), $conditions);
-    }
-
-
-    public function delete(array $conditions) : int
-    {
-        return $this->schema->delete($this->entityTypeIdentifier, $conditions);
-    }
-
-    public function create(array $values) : int
-    {
-        $missing = $this->calculateMissingValues($values);
-        if (count($missing) > 0) {
-            trigger_error('Required values are missing: ' . join(', ', $missing), E_USER_ERROR);
-        }
-        return $this->schema->create($this->entityTypeIdentifier, $values);
-    }
-
-    private function mergeValuesIntoConditions(array $referenceConditions, array $values, array $conditions) {
         foreach ($referenceConditions as $referencedColumnIdentifier => $localColumnIdentifier) {
             if (array_key_exists($localColumnIdentifier, $values)) {
                 $conditions[$referencedColumnIdentifier] = $values[$localColumnIdentifier];
@@ -106,20 +122,8 @@ class EntityType
         return $conditions;
     }
 
-    private function findReference(string $referenceIdentifier) : array {
-        if (array_key_exists($referenceIdentifier, $this->references) === false) {
-            trigger_error('Reference does not exist `' . $referenceIdentifier . '`', E_USER_ERROR);
-        }
-        return $this->references[$referenceIdentifier];
-    }
-
-    public function fetchBy(string $referenceIdentifier, array $values, array $conditions) : array {
-        $reference = $this->findReference($referenceIdentifier);
-        $conditions = $this->mergeValuesIntoConditions($reference['conditions'], $values, $conditions);
-        return $this->schema->read($reference['entityTypeIdentifier'], [], $conditions);
-    }
-
-    public function referenceBy(string $referenceIdentifier, array $values, array $conditions) : \pulledbits\ActiveRecord\Record {
+    public function referenceBy(string $referenceIdentifier, array $values, array $conditions): \pulledbits\ActiveRecord\Record
+    {
         $reference = $this->findReference($referenceIdentifier);
         $conditions = $this->mergeValuesIntoConditions($reference['conditions'], $values, $conditions);
         $this->schema->create($reference['entityTypeIdentifier'], $conditions);

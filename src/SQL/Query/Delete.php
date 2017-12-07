@@ -25,7 +25,7 @@ class Delete
         $this->where = $where;
     }
 
-    public function execute(Connection $connection) : Result
+    public function execute(Connection $connection): Result
     {
         return $connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
     }

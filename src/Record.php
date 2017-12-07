@@ -1,4 +1,5 @@
 <?php
+
 namespace pulledbits\ActiveRecord;
 
 interface Record
@@ -9,9 +10,9 @@ interface Record
 
     public function __set($property, $value);
 
-    public function delete() : int;
+    public function delete(): int;
 
-    public function create() : int;
+    public function create(): int;
 
     public function __call(string $method, array $arguments);
 

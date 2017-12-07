@@ -1,4 +1,5 @@
 <?php
+
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\RecordTypes;
@@ -28,7 +29,7 @@ class EntityTypes implements RecordTypes
         }
     }
 
-    public function makeRecordType(string $recordTypeIdentifier) : EntityType
+    public function makeRecordType(string $recordTypeIdentifier): EntityType
     {
         if (array_key_exists($recordTypeIdentifier, $this->entityIdentifiers) === false) {
             return new EntityType($this->schema, $recordTypeIdentifier);
