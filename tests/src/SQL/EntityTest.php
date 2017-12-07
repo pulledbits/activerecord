@@ -270,4 +270,8 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     public function test__call_When_NonExistingReference_Expect_Value() {
         $this->object->__call('fetchByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
     }
+
+    public function test__call_When_InvalidCallToMagicMethod_Expect_Null() {
+        $this->assertNull($this->object->__call('InvalidCall', []));
+    }
 }
