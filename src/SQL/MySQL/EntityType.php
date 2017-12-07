@@ -66,7 +66,11 @@ class EntityType
         if (count($this->calculateMissingValues(array_merge($values, $changes))) > 0) {
             return 0;
         }
-        return $this->schema->update($this->entityTypeIdentifier, array_intersect_key($changes, $this->columns), $this->primaryKey($values));
+        $intersectedChanges = array_intersect_key($changes, $this->columns);
+        if (count($intersectedChanges) === 0) {
+            return 0;
+        }
+        return $this->schema->update($this->entityTypeIdentifier, $intersectedChanges, $this->primaryKey($values));
     }
 
     public function delete(array $conditions): int
