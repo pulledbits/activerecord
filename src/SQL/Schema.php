@@ -30,11 +30,6 @@ final class Schema implements \pulledbits\ActiveRecord\Schema
         return new Entity($this, $entityTypeIdentifier, $this->entityTypes->retrieveTableDescription($entityTypeIdentifier));
     }
 
-    public function listEntityTypes(): EntityTypes
-    {
-        return $this->entityTypes;
-    }
-
     public function listIndexesForTable(string $tableIdentifier): Result
     {
         return $this->connection->execute('SHOW INDEX FROM ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
