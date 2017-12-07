@@ -61,9 +61,12 @@ class EntityType
         return $sliced;
     }
 
-    public function update(array $values, array $conditions): int
+    public function update(array $changes, array $values): int
     {
-        return $this->schema->update($this->entityTypeIdentifier, array_intersect_key($values, $this->columns), $conditions);
+        if (count($this->calculateMissingValues(array_merge($values, $changes))) > 0) {
+            return 0;
+        }
+        return $this->schema->update($this->entityTypeIdentifier, array_intersect_key($changes, $this->columns), $this->primaryKey($values));
     }
 
     public function delete(array $conditions): int

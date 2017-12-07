@@ -32,9 +32,7 @@ final class Entity implements Record
 
     public function __set($property, $value)
     {
-        if (count($this->entityType->calculateMissingValues($this->values)) > 0) {
-            return 0;
-        } elseif ($this->entityType->update([$property => $value], $this->entityType->primaryKey($this->values)) > 0) {
+        if ($this->entityType->update([$property => $value], $this->values) > 0) {
             $this->values[$property] = $value;
         }
     }

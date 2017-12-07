@@ -73,6 +73,8 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             {
                 if ($tableIdentifier === 'MyTable' && $values === ['number' => '2'] && $conditions === ['number' => '1']) {
                     return 1;
+                } elseif ($tableIdentifier === 'MyTable2' && $values === ['name' => '2'] && $conditions === ['number' => '1']) {
+                    return 1;
                 }
                 return 0;
             }
@@ -142,7 +144,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
                     case 'MyTable2':
                         return createMockResult([
-                            createIndexResult($tableIdentifier, CONSTRAINT_KEY_PRIMARY, 'name')
+                            createIndexResult($tableIdentifier, CONSTRAINT_KEY_PRIMARY, 'number')
                         ]);
                 }
             }
@@ -217,6 +219,19 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('1', $object->number);
         $object->__set('number', '2');
         $this->assertEquals('1', $object->number);
+    }
+
+    public function test__set_When_MissingRequiredPropertyIsSet_Expect_Changes()
+    {
+        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
+        $object->contains([
+            'number' => '1',
+            'role_id' => '33',
+            'pole_id' => '3654',
+        ]);
+        $this->assertNull($object->name);
+        $object->__set('name', '2');
+        $this->assertEquals('2', $object->name);
     }
 
     public function test__set_When_NulledRequiredProperty_Expect_NoChanges()
