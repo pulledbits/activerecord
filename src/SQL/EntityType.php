@@ -7,6 +7,7 @@ class EntityType
     private $entityTypeIdentifier;
 
     private $identifier = [];
+    private $columns = [];
     private $requiredAttributeIdentifiers = [];
     private $references = [];
 
@@ -24,6 +25,7 @@ class EntityType
 
         $columns = $schema->listColumnsForTable($tableIdentifier)->fetchAll();
         foreach ($columns as $column) {
+            $this->columns[$column['Field']] = $column['Type'];
             if ($column['Extra'] === 'auto_increment') {
                 continue;
             } elseif ($column['Null'] === 'NO') {
@@ -75,7 +77,7 @@ class EntityType
 
     public function update(array $values, array $conditions) : int
     {
-        return $this->schema->update($this->entityTypeIdentifier, $values, $conditions);
+        return $this->schema->update($this->entityTypeIdentifier, array_intersect_key($values, $this->columns), $conditions);
     }
 
 

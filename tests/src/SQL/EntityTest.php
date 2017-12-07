@@ -195,6 +195,15 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('2', $this->object->number);
     }
 
+    public function test__set_When_NonExistingProperty_Expect_NoQueryValueUnchanged()
+    {
+        $this->object->contains(['numbero' => '1']);
+        $this->assertEquals('1', $this->object->numbero);
+        $this->object->__set('numbero', '2');
+        $this->assertEquals('1', $this->object->numbero);
+    }
+
+
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
         $object = new Entity(new EntityType($this->schema, 'MyTable2'));
