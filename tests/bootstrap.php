@@ -6,7 +6,6 @@ namespace pulledbits\ActiveRecord\Test {
      */
 
     use PDO;
-    use pulledbits\ActiveRecord\Result;
 
     require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
@@ -160,28 +159,6 @@ namespace pulledbits\ActiveRecord\Test {
                     }
                 }
                 return createMockPDOStatementFail(false);
-            }
-        };
-    }
-
-    function createMockResult(array $results) : Result {
-        return new class($results) implements Result {
-
-            private $results;
-
-            public function __construct(array $results)
-            {
-                $this->results = $results;
-            }
-
-            public function fetchAll(): array
-            {
-                return $this->results;
-            }
-
-            public function count()
-            {
-                return count($this->results);
             }
         };
     }

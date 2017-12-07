@@ -9,7 +9,6 @@ use function pulledbits\ActiveRecord\Test\createConstraintResult;
 use function pulledbits\ActiveRecord\Test\createIndexResult;
 use function pulledbits\ActiveRecord\Test\createMockPDOCallback;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
-use function pulledbits\ActiveRecord\Test\createMockResult;
 use function pulledbits\ActiveRecord\Test\createTableResult;
 use function pulledbits\ActiveRecord\Test\createViewResult;
 
