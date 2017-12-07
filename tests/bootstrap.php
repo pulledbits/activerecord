@@ -21,7 +21,7 @@ namespace pulledbits\ActiveRecord\Test {
         } elseif ($results === null) {
             return createMockPDOStatementFetchAll([]);
         }
-        return;
+        return createMockPDOStatementFail(false);
     }
 
     function createMockPDOStatementFetchAll(array $results) {
@@ -108,40 +108,6 @@ namespace pulledbits\ActiveRecord\Test {
         };
     }
 
-
-
-    function createMockPDO(string $query, array $results)
-    {
-        return new class($query, $results) extends \PDO
-        {
-
-            private $query;
-            private $results;
-
-            public function __construct(string $query, array $results)
-            {
-                $this->query = $query;
-                $this->results = $results;
-            }
-
-            public function prepare($query, $options = null)
-            {
-                if (preg_match($this->query, $query, $match) === 1) {
-                    return createMockPDOStatement($this->results);
-                }
-            }
-
-            public function setAttribute ($attribute, $value) {
-            }
-            public function getAttribute($attribute) {
-                switch ($attribute) {
-                    case \PDO::ATTR_DRIVER_NAME:
-                        return 'mysql';
-                }
-            }
-        };
-    }
-
     function createMockPDOMultiple(array $queries): \PDO
     {
         return new class($queries) extends \PDO
@@ -162,7 +128,7 @@ namespace pulledbits\ActiveRecord\Test {
 
                 $this->queries = [];
                 foreach ($fullTables as $schemaIdentifier => $tables) {
-                    $this->schema = $schemaIdentifier;
+                    $this->defineSchema($schemaIdentifier);
                     $this->defineTables($tables);
                     foreach ($tables as $table) {
                         $tableIdentifier = $table['Table_in_' . $schemaIdentifier];
@@ -171,9 +137,6 @@ namespace pulledbits\ActiveRecord\Test {
                         $this->defineIndexes($tableIdentifier, []);
                     }
                 }
-                $this->queries['/SELECT DATABASE()/'] = [];
-
-
                 $this->queries = array_merge($this->queries, $queries);
             }
 
