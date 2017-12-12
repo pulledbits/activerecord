@@ -45,7 +45,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
     {
         $query = $this->queryFactory->makeSelect($this->qualifyEntityTypeIdentifier($entityTypeIdentifier), $attributeIdentifiers);
-        $query->where($this->queryFactory->makeWhere($conditions));
+        $query->where($conditions);
         $result = $query->execute($this->connection);
 
         $records = [];
@@ -60,7 +60,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
     public function update(string $entityTypeIdentifier, array $values, array $conditions): int
     {
         $query = $this->queryFactory->makeUpdate($this->qualifyEntityTypeIdentifier($entityTypeIdentifier), $values);
-        $query->where($this->queryFactory->makeWhere($conditions));
+        $query->where($conditions);
         return count($query->execute($this->connection));
     }
 
@@ -73,7 +73,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
     public function delete(string $entityTypeIdentifier, array $conditions): int
     {
         $query = $this->queryFactory->makeDelete($this->qualifyEntityTypeIdentifier($entityTypeIdentifier));
-        $query->where($this->queryFactory->makeWhere($conditions));
+        $query->where($conditions);
         return count($query->execute($this->connection));
     }
 

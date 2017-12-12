@@ -5,6 +5,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\SQL\Connection;
+use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
 
 class Select
 {
@@ -25,9 +26,9 @@ class Select
         $this->attributeIdentifiers = $attributeIdentifiers;
     }
 
-    public function where(Where $where)
+    public function where(array $where)
     {
-        $this->where = $where;
+        $this->where = QueryFactory::makeWhere($where);
     }
 
     public function execute(Connection $connection): Result

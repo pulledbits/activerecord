@@ -5,6 +5,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 
 use pulledbits\ActiveRecord\SQL\Connection;
+use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
 
 class Update
 {
@@ -22,9 +23,9 @@ class Update
         $this->values = $values;
     }
 
-    public function where(Where $where)
+    public function where(array $where)
     {
-        $this->where = $where;
+        $this->where = QueryFactory::makeWhere($where);
     }
 
     public function execute(Connection $connection): Result

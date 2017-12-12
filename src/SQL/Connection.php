@@ -15,11 +15,12 @@ class Connection
     public function __construct(\PDO $connection)
     {
         $this->connection = $connection;
+        $this->queryFactory = new QueryFactory();
     }
 
     public function schema(string $schemaIdentifier)
     {
-        return new Schema($this, new QueryFactory($schemaIdentifier), $schemaIdentifier);
+        return new Schema($this, $this->queryFactory, $schemaIdentifier);
     }
 
     public function execute(string $query, array $namedParameters): Result
