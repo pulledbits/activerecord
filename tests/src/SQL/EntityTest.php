@@ -9,11 +9,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
-use pulledbits\ActiveRecord\Record;
-use pulledbits\ActiveRecord\Result;
-use pulledbits\ActiveRecord\SQL;
 use pulledbits\ActiveRecord\SQL\MySQL\EntityType;
-use pulledbits\ActiveRecord\SQL\MySQL\EntityTypes;
 use function pulledbits\ActiveRecord\Test\createColumnResult;
 use function pulledbits\ActiveRecord\Test\createConstraintResult;
 use function pulledbits\ActiveRecord\Test\createIndexResult;
