@@ -82,7 +82,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new EntityTypes($this->schema, new Query\Result(new Statement(createMockPDOStatement([]))));
+        $object = new EntityTypes($this->schema);
 
         $this->assertEquals(new EntityType($this->schema, 'NotExisting'), $object->makeRecordType('NotExisting'));
     }
@@ -99,9 +99,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new EntityTypes($this->schema, new Query\Result(new Statement(createMockPDOStatement([
-            createViewResult('MySchema', 'MyView')
-        ]))));
+        $object = new EntityTypes($this->schema);
 
         $this->assertEquals(new EntityType($this->schema, 'MyView'), $object->makeRecordType('MyView'));
     }
