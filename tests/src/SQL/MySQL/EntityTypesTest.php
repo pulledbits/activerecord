@@ -15,13 +15,17 @@ use function pulledbits\ActiveRecord\Test\createViewResult;
 class EntityTypesTest extends \PHPUnit\Framework\TestCase
 {
     private $schema;
+    private $pdo;
 
     protected function setUp() {
         $this->pdo = createMockPDOCallback();
         $this->pdo->callback(function(string $query) {
             switch ($query) {
                 case 'SHOW FULL TABLES IN MySchema':
-                    return createMockPDOStatement([]);
+                    return createMockPDOStatement([
+                        createTableResult('MySchema', 'MyTable'),
+                        createViewResult('MySchema', 'MyTable_MyView')
+                    ]);
 
                 case 'SHOW INDEX FROM MySchema.MyTable':
                     return createMockPDOStatement([
@@ -114,10 +118,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new EntityTypes($this->schema, new Query\Result(new Statement(createMockPDOStatement([
-            createTableResult('MySchema', 'MyTable'),
-            createViewResult('MySchema', 'MyTable_MyView')
-        ]))));
+        $object = new EntityTypes($this->schema);
 
         $this->assertEquals(new EntityType($this->schema, 'MyTable'), $object->makeRecordType('MyTable_MyView'));
     }

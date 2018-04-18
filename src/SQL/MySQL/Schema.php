@@ -19,7 +19,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
         $this->connection = $connection;
         $this->queryFactory = $queryFactory;
         $this->identifier = $identifier;
-        $this->entityTypes = new EntityTypes($this, $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []));
+        $this->entityTypes = new EntityTypes($this);
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result
@@ -81,5 +81,10 @@ class Schema implements \pulledbits\ActiveRecord\Schema
     {
         $query = $this->queryFactory->makeProcedure($this->qualifyEntityTypeIdentifier($procedureIdentifier), $arguments);
         $query->execute($this->connection);
+    }
+
+    public function listEntities() : Result
+    {
+        return $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []);
     }
 }

@@ -15,6 +15,8 @@ interface Schema
 
     public function executeProcedure(string $procedureIdentifier, array $arguments): void;
 
+    public function listEntities() : Result;
+
     public function listForeignKeys(string $tableIdentifier): Result;
 
     public function listIndexesForTable(string $tableIdentifier): Result;

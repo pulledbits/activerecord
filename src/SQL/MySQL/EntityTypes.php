@@ -10,13 +10,13 @@ class EntityTypes implements RecordTypes
     private $entityIdentifiers;
     private $entityTypes;
 
-    public function __construct(Schema $schema, \pulledbits\ActiveRecord\SQL\MySQL\Query\Result $result)
+    public function __construct(Schema $schema)
     {
         $this->schema = $schema;
         $this->entityTypes = [];
 
         $this->entityIdentifiers = [];
-        foreach ($result->fetchAll() as $baseTable) {
+        foreach ($schema->listEntities()->fetchAll() as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
             switch ($baseTable['Table_type']) {
                 case 'BASE_TABLE':
