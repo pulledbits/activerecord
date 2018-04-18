@@ -211,6 +211,16 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $object->create());
     }
 
+    public function test__call_When_CustomMethodCalled_Expect_ValueFromCustomMethod()
+    {
+        $this->object->bind('customMethod', function($a, $b, $c) {
+            if (get_class($this) === Entity::class) {
+                return 'custom' . $a . $b . $c;
+            }
+        });
+        $this->assertEquals('customabc', $this->object->__call('customMethod', ['a', 'b', 'c']));
+    }
+
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()
     {
         $this->pdo->callback(function(string $query, array $matchedParameters) {

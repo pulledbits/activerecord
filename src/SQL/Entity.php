@@ -11,10 +11,13 @@ final class Entity implements Record
 
     private $values;
 
+    private $methods;
+
     public function __construct(EntityType $entityType)
     {
         $this->entityType = $entityType;
         $this->values = [];
+        $this->methods = [];
     }
 
     public function contains(array $values)
@@ -47,6 +50,10 @@ final class Entity implements Record
         return $this->entityType->create($this->values);
     }
 
+    public function bind(string $methodIdentifier, callable $callback) : void {
+        $this->methods[$methodIdentifier] = \Closure::bind($callback, $this, __CLASS__);;
+    }
+
     public function __call(string $method, array $arguments)
     {
         $conditions = [];
@@ -58,6 +65,8 @@ final class Entity implements Record
             return $this->entityType->fetchBy(substr($method, 7), $this->values, $conditions);
         } elseif (substr($method, 0, 11) === 'referenceBy') {
             return $this->entityType->referenceBy(substr($method, 11), $this->values, $conditions);
+        } elseif (array_key_exists($method, $this->methods)) {
+            return call_user_func_array($this->methods[$method], $arguments);
         }
         return null;
     }

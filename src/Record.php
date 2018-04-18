@@ -16,4 +16,6 @@ interface Record
 
     public function __call(string $method, array $arguments);
 
+    public function bind(string $methodIdentifier, callable $callback) : void;
+
 }
