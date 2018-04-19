@@ -87,6 +87,10 @@ class EntityType
         return $this->schema->create($this->entityTypeIdentifier, $values);
     }
 
+    public function call(string $procedureIdentifier, array $arguments): void {
+        $this->schema->executeProcedure($procedureIdentifier, $arguments);
+    }
+
     public function calculateMissingValues(array $values): array
     {
         $missing = [];

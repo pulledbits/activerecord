@@ -103,6 +103,31 @@ namespace pulledbits\ActiveRecord\Test {
             }
         };
     }
+    function createMockPDOStatementProcedure() {
+        return new class extends \PDOStatement
+        {
+            use PDOStatement_ExpectParameters;
+
+            public function __construct()
+            {
+            }
+
+            public function rowCount()
+            {
+                return 0;
+            }
+
+            public function fetchAll($how = NULL, $class_name = NULL, $ctor_args = NULL)
+            {
+                return [];
+            }
+
+            public function execute($bound_input_params = NULL)
+            {
+                return true;
+            }
+        };
+    }
 
     function createMockPDOStatementFail(bool $results) {
         return new class($results) extends \PDOStatement

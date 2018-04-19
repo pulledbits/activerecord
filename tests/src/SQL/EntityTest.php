@@ -15,6 +15,7 @@ use function pulledbits\ActiveRecord\Test\createConstraintResult;
 use function pulledbits\ActiveRecord\Test\createIndexResult;
 use function pulledbits\ActiveRecord\Test\createMockPDOCallback;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
+use function pulledbits\ActiveRecord\Test\createMockPDOStatementProcedure;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
 {
@@ -198,15 +199,15 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $this->object->create());
     }
 
-    /**
-     * @expectedException \PHPUnit\Framework\Error\Error
-     * @expectedExceptionMessageRegExp /^Required values are missing/
-     */
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
         $object = new Entity(new EntityType($this->schema, 'MyTable2'));
         $object->contains([]);
+
+        $this->expectException('\PHPUnit\Framework\Error\Error');
+        $this->expectExceptionMessageRegExp('/^Required values are missing/');
         $this->assertEquals(0, $object->create());
+
         $object->contains(['name' => 'Test']);
         $this->assertEquals(1, $object->create());
     }
@@ -219,6 +220,20 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             }
         });
         $this->assertEquals('customabc', $this->object->__call('customMethod', ['a', 'b', 'c']));
+    }
+
+    public function test__call_When_CustomMethodWrappingProcedureCalled_Expect_ProcedureToBeCalledThroughEntityType()
+    {
+        $this->pdo->callback(function(string $query, array $matchedParameters) {
+            switch ($query) {
+                case 'CALL MySchema.customProcedure(' . $matchedParameters[0] . ', ' . $matchedParameters[1] . ', ' . $matchedParameters[2] . ')':
+                    return createMockPDOStatementProcedure();
+            }
+        });
+        $this->object->bind('customMethod', function($a, $b, $c) {
+            $this->entityType->call('customProcedure', [$a, $b, $c]);
+        });
+        $this->assertNull($this->object->__call('customMethod', ['a', 'b', 'c']));
     }
 
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()
@@ -295,11 +310,9 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('358', $record->id);
     }
 
-    /**
-     * @expectedException \PHPUnit\Framework\Error\Error
-     * @expectedExceptionMessageRegExp /^Reference does not exist/
-     */
     public function test__call_When_NonExistingReference_Expect_Value() {
+        $this->expectException('\PHPUnit\Framework\Error\Error');
+        $this->expectExceptionMessageRegExp('/^Reference does not exist/');
         $this->object->__call('fetchByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
     }
 
