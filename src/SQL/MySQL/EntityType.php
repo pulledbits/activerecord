@@ -42,8 +42,10 @@ class EntityType
         }
     }
 
-    public function makeRecord() {
-        return new Entity($this);
+    public function makeRecord(array $values) {
+        $record = new Entity($this);
+        $record->contains($values);
+        return $record;
     }
 
     private function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName)
