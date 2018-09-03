@@ -49,8 +49,9 @@ class Schema implements \pulledbits\ActiveRecord\Schema
         $result = $query->execute($this->connection);
 
         $records = [];
+        $recordType = $this->entityTypes->makeRecordType($entityTypeIdentifier);
         foreach ($result->fetchAll() as $row) {
-            $record = new Entity($this->entityTypes->makeRecordType($entityTypeIdentifier));
+            $record = new Entity($recordType);
             $record->contains($row);
             $records[] = $record;
         }
