@@ -2,6 +2,8 @@
 
 namespace pulledbits\ActiveRecord\SQL\MySQL;
 
+use pulledbits\ActiveRecord\SQL\Entity;
+
 class EntityType
 {
     private $schema;
@@ -38,6 +40,10 @@ class EntityType
         foreach ($foreignKeys as $foreignKey) {
             $this->addForeignKeyConstraint($foreignKey['CONSTRAINT_NAME'], $foreignKey['COLUMN_NAME'], $foreignKey['REFERENCED_TABLE_NAME'], $foreignKey['REFERENCED_COLUMN_NAME']);
         }
+    }
+
+    public function makeRecord() {
+        return new Entity($this);
     }
 
     private function addForeignKeyConstraint(string $constraintName, string $columnName, string $referencedTableName, string $referencedColumnName)

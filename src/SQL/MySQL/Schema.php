@@ -4,7 +4,6 @@ namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 use pulledbits\ActiveRecord\Result;
 use pulledbits\ActiveRecord\SQL\Connection;
-use pulledbits\ActiveRecord\SQL\Entity;
 
 class Schema implements \pulledbits\ActiveRecord\Schema
 {
@@ -51,7 +50,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
         $records = [];
         $recordType = $this->entityTypes->makeRecordType($entityTypeIdentifier);
         foreach ($result->fetchAll() as $row) {
-            $record = new Entity($recordType);
+            $record = $recordType->makeRecord();
             $record->contains($row);
             $records[] = $record;
         }
