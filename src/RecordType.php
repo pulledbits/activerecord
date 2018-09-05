@@ -4,9 +4,9 @@ namespace pulledbits\ActiveRecord;
 
 interface RecordType
 {
-    public function makeRecord(array $values);
+    public function makeRecord(array $values): \pulledbits\ActiveRecord\Entity;
 
-    public function primaryKey(array $values);
+    public function primaryKey(array $values) : array;
 
     public function update(array $changes, array $values): int;
 

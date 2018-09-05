@@ -43,7 +43,7 @@ class Table implements RecordType
         }
     }
 
-    public function makeRecord(array $values) {
+    public function makeRecord(array $values) : \pulledbits\ActiveRecord\Entity {
         $record = new Record($this);
         $record->contains($values);
         return $record;
@@ -59,7 +59,7 @@ class Table implements RecordType
         }
     }
 
-    public function primaryKey(array $values)
+    public function primaryKey(array $values) : array
     {
         $sliced = [];
         foreach ($values as $key => $value) {
