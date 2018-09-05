@@ -7,7 +7,7 @@ use pulledbits\ActiveRecord\RecordConfigurator;
 use pulledbits\ActiveRecord\SQL\Connection;
 use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
 
-class Select
+class Select implements \pulledbits\ActiveRecord\SQL\MySQL\Query
 {
     private $entityTypeIdentifier;
     private $attributeIdentifiers;

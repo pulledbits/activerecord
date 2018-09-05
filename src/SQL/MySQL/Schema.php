@@ -23,7 +23,8 @@ class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listIndexesForTable(string $tableIdentifier): Result
     {
-        return $this->connection->execute('SHOW INDEX FROM ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
+        $query = $this->queryFactory->makeRaw('SHOW INDEX FROM ' . $this->qualifyEntityTypeIdentifier($tableIdentifier));
+        return $query->execute($this->connection);
     }
 
     private function qualifyEntityTypeIdentifier(string $entityTypeIdentifier): string
@@ -33,12 +34,14 @@ class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listColumnsForTable(string $tableIdentifier): Result
     {
-        return $this->connection->execute('SHOW FULL COLUMNS IN ' . $this->qualifyEntityTypeIdentifier($tableIdentifier), []);
+        $query = $this->queryFactory->makeRaw('SHOW FULL COLUMNS IN ' . $this->qualifyEntityTypeIdentifier($tableIdentifier));
+        return $query->execute($this->connection);
     }
 
     public function listForeignKeys(string $tableIdentifier): Result
     {
-        return $this->connection->execute('(SELECT DISTINCT k.`CONSTRAINT_NAME`, `k`.`TABLE_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'' . $tableIdentifier . '\' */ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->identifier . '\' /**!50116 AND c.constraint_schema = \'' . $this->identifier . '\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)' . ' UNION ALL ' . '(SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' */ WHERE k.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->identifier . '\' /**!50116 AND c.constraint_schema = \'' . $this->identifier . '\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)', []);
+        $query = $this->queryFactory->makeRaw('(SELECT DISTINCT k.`CONSTRAINT_NAME`, `k`.`TABLE_NAME`, k.`COLUMN_NAME`, k.`REFERENCED_TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.table_name = \'' . $tableIdentifier . '\' */ WHERE k.table_name = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->identifier . '\' /**!50116 AND c.constraint_schema = \'' . $this->identifier . '\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)' . ' UNION ALL ' . '(SELECT DISTINCT k.`CONSTRAINT_NAME`, k.`REFERENCED_TABLE_NAME` AS `TABLE_NAME`, k.`REFERENCED_COLUMN_NAME` AS `COLUMN_NAME`, `k`.`TABLE_NAME` AS `REFERENCED_TABLE_NAME`, k.`COLUMN_NAME` AS `REFERENCED_COLUMN_NAME` /**!50116 , c.update_rule, c.delete_rule */ FROM information_schema.key_column_usage k /**!50116 INNER JOIN information_schema.referential_constraints c ON   c.constraint_name = k.constraint_name AND   c.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' */ WHERE k.`REFERENCED_TABLE_NAME` = \'' . $tableIdentifier . '\' AND k.table_schema = \'' . $this->identifier . '\' /**!50116 AND c.constraint_schema = \'' . $this->identifier . '\' */ AND k.`REFERENCED_COLUMN_NAME` is not NULL)');
+        return $query->execute($this->connection);
     }
 
     public function read(string $entityTypeIdentifier, array $attributeIdentifiers, array $conditions): array
@@ -83,6 +86,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
 
     public function listEntities() : Result
     {
-        return $this->connection->execute('SHOW FULL TABLES IN ' . $this->identifier, []);
+        $query = $this->queryFactory->makeRaw('SHOW FULL TABLES IN ' . $this->identifier);
+        return $query->execute($this->connection);
     }
 }

@@ -7,7 +7,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 use pulledbits\ActiveRecord\SQL\Connection;
 use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
 
-class Update
+class Update implements \pulledbits\ActiveRecord\SQL\MySQL\Query
 {
     private $tableIdentifier;
     private $values;

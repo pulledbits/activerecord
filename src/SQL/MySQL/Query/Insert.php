@@ -6,7 +6,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 use pulledbits\ActiveRecord\SQL\Connection;
 
-class Insert
+class Insert implements \pulledbits\ActiveRecord\SQL\MySQL\Query
 {
     private $tableIdentifier;
     private $values;

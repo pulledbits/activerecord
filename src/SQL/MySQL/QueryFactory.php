@@ -35,6 +35,11 @@ class QueryFactory
         return new Query\Delete($tableIdentifier);
     }
 
+
+    public function makeRaw(string $rawSQL) : Query\Raw {
+        return new Query\Raw($rawSQL);
+    }
+
     public function makeProcedure(string $procedureIdentifier, array $arguments): Query\Procedure
     {
         return new Query\Procedure($procedureIdentifier, self::prepareParameters($arguments));
