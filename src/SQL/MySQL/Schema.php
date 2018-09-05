@@ -11,14 +11,14 @@ class Schema implements \pulledbits\ActiveRecord\Schema
     private $connection;
     private $queryFactory;
     private $identifier;
-    private $entityTypes;
+    private $tables;
 
     public function __construct(Connection $connection, QueryFactory $queryFactory, string $identifier)
     {
         $this->connection = $connection;
         $this->queryFactory = $queryFactory;
         $this->identifier = $identifier;
-        $this->entityTypes = new Tables($this);
+        $this->tables = new Tables($this);
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result
@@ -48,7 +48,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
         $result = $query->execute($this->connection);
 
         $records = [];
-        $recordType = $this->entityTypes->makeEntityType($entityTypeIdentifier);
+        $recordType = $this->tables->makeEntityType($entityTypeIdentifier);
         foreach ($result->fetchAll() as $row) {
             $records[] = $recordType->makeEntity($row);
         }
