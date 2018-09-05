@@ -12,7 +12,7 @@ use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 use function pulledbits\ActiveRecord\Test\createTableResult;
 use function pulledbits\ActiveRecord\Test\createViewResult;
 
-class EntityTypesTest extends \PHPUnit\Framework\TestCase
+class TablesTest extends \PHPUnit\Framework\TestCase
 {
     private $schema;
     private $pdo;
@@ -82,7 +82,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new EntityTypes($this->schema);
+        $object = new Tables($this->schema);
 
         $this->assertEquals(new Table($this->schema, 'NotExisting'), $object->makeEntityType('NotExisting'));
     }
@@ -99,7 +99,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new EntityTypes($this->schema);
+        $object = new Tables($this->schema);
 
         $this->assertEquals(new Table($this->schema, 'MyView'), $object->makeEntityType('MyView'));
     }
@@ -116,7 +116,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new EntityTypes($this->schema);
+        $object = new Tables($this->schema);
 
         $this->assertEquals(new Table($this->schema, 'MyTable'), $object->makeEntityType('MyTable_MyView'));
     }

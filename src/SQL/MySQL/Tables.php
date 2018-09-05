@@ -4,26 +4,26 @@ namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 use pulledbits\ActiveRecord\RecordTypes;
 
-class EntityTypes implements RecordTypes
+class Tables implements RecordTypes
 {
     private $schema;
-    private $entityIdentifiers;
-    private $entityTypes;
+    private $tableIdentifiers;
+    private $tables;
 
     public function __construct(Schema $schema)
     {
         $this->schema = $schema;
-        $this->entityTypes = [];
+        $this->tables = [];
 
-        $this->entityIdentifiers = [];
+        $this->tableIdentifiers = [];
         foreach ($schema->listEntities()->fetchAll() as $baseTable) {
             $tableIdentifier = array_shift($baseTable);
             switch ($baseTable['Table_type']) {
                 case 'BASE_TABLE':
-                    $this->entityIdentifiers[$tableIdentifier] = 'BASE_TABLE';
+                    $this->tableIdentifiers[$tableIdentifier] = 'BASE_TABLE';
                     break;
                 case 'VIEW':
-                    $this->entityIdentifiers[$tableIdentifier] = 'VIEW';
+                    $this->tableIdentifiers[$tableIdentifier] = 'VIEW';
                     break;
             }
         }
@@ -31,20 +31,20 @@ class EntityTypes implements RecordTypes
 
     public function makeEntityType(string $recordTypeIdentifier): \pulledbits\ActiveRecord\EntityType
     {
-        if (array_key_exists($recordTypeIdentifier, $this->entityIdentifiers) === false) {
+        if (array_key_exists($recordTypeIdentifier, $this->tableIdentifiers) === false) {
             return new Table($this->schema, $recordTypeIdentifier);
-        } elseif (array_key_exists($recordTypeIdentifier, $this->entityTypes) === false) {
-            $this->entityTypes[$recordTypeIdentifier] = new Table($this->schema, $recordTypeIdentifier);
+        } elseif (array_key_exists($recordTypeIdentifier, $this->tables) === false) {
+            $this->tables[$recordTypeIdentifier] = new Table($this->schema, $recordTypeIdentifier);
         }
 
-        if ($this->entityIdentifiers[$recordTypeIdentifier] === 'VIEW') {
+        if ($this->tableIdentifiers[$recordTypeIdentifier] === 'VIEW') {
             $underscorePosition = strpos($recordTypeIdentifier, '_');
             if ($underscorePosition > 0) {
                 $possibleEntityTypeIdentifier = substr($recordTypeIdentifier, 0, $underscorePosition);
-                $this->entityTypes[$recordTypeIdentifier] = $this->makeEntityType($possibleEntityTypeIdentifier);
+                $this->tables[$recordTypeIdentifier] = $this->makeEntityType($possibleEntityTypeIdentifier);
             }
         }
 
-        return $this->entityTypes[$recordTypeIdentifier];
+        return $this->tables[$recordTypeIdentifier];
     }
 }

@@ -18,7 +18,7 @@ class Schema implements \pulledbits\ActiveRecord\Schema
         $this->connection = $connection;
         $this->queryFactory = $queryFactory;
         $this->identifier = $identifier;
-        $this->entityTypes = new EntityTypes($this);
+        $this->entityTypes = new Tables($this);
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result
