@@ -4,7 +4,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 use pulledbits\ActiveRecord\SQL\Connection;
 
-class Raw implements \pulledbits\ActiveRecord\SQL\MySQL\Query
+class Raw implements \pulledbits\ActiveRecord\SQL\Query
 {
     /**
      * @var string
@@ -15,7 +15,7 @@ class Raw implements \pulledbits\ActiveRecord\SQL\MySQL\Query
         $this->SQL = $SQL;
     }
 
-    public function execute(Connection $connection) : Result
+    public function execute(Connection $connection) : \pulledbits\ActiveRecord\Result
     {
         return $connection->execute($this->SQL, []);
     }

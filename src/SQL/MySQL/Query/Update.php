@@ -7,7 +7,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 use pulledbits\ActiveRecord\SQL\Connection;
 use pulledbits\ActiveRecord\SQL\MySQL\QueryFactory;
 
-class Update implements \pulledbits\ActiveRecord\SQL\MySQL\Query
+class Update implements \pulledbits\ActiveRecord\SQL\Query
 {
     private $tableIdentifier;
     private $values;
@@ -28,7 +28,7 @@ class Update implements \pulledbits\ActiveRecord\SQL\MySQL\Query
         $this->where = QueryFactory::makeWhere($where);
     }
 
-    public function execute(Connection $connection): Result
+    public function execute(Connection $connection): \pulledbits\ActiveRecord\Result
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {

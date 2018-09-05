@@ -6,7 +6,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 use pulledbits\ActiveRecord\SQL\Connection;
 
-class Insert implements \pulledbits\ActiveRecord\SQL\MySQL\Query
+class Insert implements \pulledbits\ActiveRecord\SQL\Query
 {
     private $tableIdentifier;
     private $values;
@@ -17,7 +17,7 @@ class Insert implements \pulledbits\ActiveRecord\SQL\MySQL\Query
         $this->values = $values;
     }
 
-    public function execute(Connection $connection): Result
+    public function execute(Connection $connection): \pulledbits\ActiveRecord\Result
     {
         return $connection->execute("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters());
     }

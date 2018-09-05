@@ -3,6 +3,7 @@
 
 namespace pulledbits\ActiveRecord\SQL\MySQL;
 
+
 class QueryFactory
 {
     static function prepareParameters(array $values): Query\PreparedParameters
@@ -15,32 +16,32 @@ class QueryFactory
         return new Query\Where(self::prepareParameters($conditions));
     }
 
-    public function makeSelect(string $entityTypeIdentifier, array $attributeIdentifiers): Query
+    public function makeSelect(string $entityTypeIdentifier, array $attributeIdentifiers): \pulledbits\ActiveRecord\SQL\Query
     {
         return new Query\Select($entityTypeIdentifier, $attributeIdentifiers);
     }
 
-    public function makeUpdate(string $tableIdentifier, array $values): Query
+    public function makeUpdate(string $tableIdentifier, array $values): \pulledbits\ActiveRecord\SQL\Query
     {
         return new Query\Update($tableIdentifier, new Query\Update\Values(self::prepareParameters($values)));
     }
 
-    public function makeInsert(string $tableIdentifier, array $values): Query
+    public function makeInsert(string $tableIdentifier, array $values): \pulledbits\ActiveRecord\SQL\Query
     {
         return new Query\Insert($tableIdentifier, self::prepareParameters($values));
     }
 
-    public function makeDelete(string $tableIdentifier): Query
+    public function makeDelete(string $tableIdentifier): \pulledbits\ActiveRecord\SQL\Query
     {
         return new Query\Delete($tableIdentifier);
     }
 
 
-    public function makeRaw(string $rawSQL) : Query {
+    public function makeRaw(string $rawSQL) : \pulledbits\ActiveRecord\SQL\Query {
         return new Query\Raw($rawSQL);
     }
 
-    public function makeProcedure(string $procedureIdentifier, array $arguments): Query
+    public function makeProcedure(string $procedureIdentifier, array $arguments): \pulledbits\ActiveRecord\SQL\Query
     {
         return new Query\Procedure($procedureIdentifier, self::prepareParameters($arguments));
     }

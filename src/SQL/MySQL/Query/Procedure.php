@@ -6,7 +6,7 @@ namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
 
 use pulledbits\ActiveRecord\SQL\Connection;
 
-class Procedure implements \pulledbits\ActiveRecord\SQL\MySQL\Query
+class Procedure implements \pulledbits\ActiveRecord\SQL\Query
 {
     private $procedureIdentifier;
     private $arguments;
@@ -17,7 +17,7 @@ class Procedure implements \pulledbits\ActiveRecord\SQL\MySQL\Query
         $this->arguments = $arguments;
     }
 
-    public function execute(Connection $connection) : Result
+    public function execute(Connection $connection) : \pulledbits\ActiveRecord\Result
     {
         return $connection->execute('CALL ' . $this->procedureIdentifier . '(' . join(", ", $this->arguments->extractParameterizedValues()) . ')', $this->arguments->extractParameters());
     }
