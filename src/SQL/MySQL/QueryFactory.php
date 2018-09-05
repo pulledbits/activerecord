@@ -15,32 +15,32 @@ class QueryFactory
         return new Query\Where(self::prepareParameters($conditions));
     }
 
-    public function makeSelect(string $entityTypeIdentifier, array $attributeIdentifiers): Query\Select
+    public function makeSelect(string $entityTypeIdentifier, array $attributeIdentifiers): Query
     {
         return new Query\Select($entityTypeIdentifier, $attributeIdentifiers);
     }
 
-    public function makeUpdate(string $tableIdentifier, array $values): Query\Update
+    public function makeUpdate(string $tableIdentifier, array $values): Query
     {
         return new Query\Update($tableIdentifier, new Query\Update\Values(self::prepareParameters($values)));
     }
 
-    public function makeInsert(string $tableIdentifier, array $values): Query\Insert
+    public function makeInsert(string $tableIdentifier, array $values): Query
     {
         return new Query\Insert($tableIdentifier, self::prepareParameters($values));
     }
 
-    public function makeDelete(string $tableIdentifier): Query\Delete
+    public function makeDelete(string $tableIdentifier): Query
     {
         return new Query\Delete($tableIdentifier);
     }
 
 
-    public function makeRaw(string $rawSQL) : Query\Raw {
+    public function makeRaw(string $rawSQL) : Query {
         return new Query\Raw($rawSQL);
     }
 
-    public function makeProcedure(string $procedureIdentifier, array $arguments): Query\Procedure
+    public function makeProcedure(string $procedureIdentifier, array $arguments): Query
     {
         return new Query\Procedure($procedureIdentifier, self::prepareParameters($arguments));
     }
