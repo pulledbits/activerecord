@@ -31,7 +31,7 @@ $schema->delete('contactmoment', ['starttijd' => $starttijd, 'les_id' => '2']);
 assert(count($schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '2'])) === 0, 'previous record exists');
 assert($schema->create('contactmoment', ['starttijd' => $starttijd, 'les_id' => '1', 'owner' => 'hameijer']) === 1, 'no record created');
 /**
- * @var $record \pulledbits\ActiveRecord\Record
+ * @var $record \pulledbits\ActiveRecord\Entity
  */
 $record = $schema->read('contactmoment', [], ['starttijd' => $starttijd, 'les_id' => '1'])[0];
 assert($record->les_id === '1', 'record is properly initialized');

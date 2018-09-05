@@ -2,7 +2,7 @@
 
 namespace pulledbits\ActiveRecord;
 
-interface Record
+interface Entity
 {
     public function contains(array $values);
 

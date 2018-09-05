@@ -18,5 +18,5 @@ interface RecordType
 
     public function fetchBy(string $referenceIdentifier, array $values, array $conditions): array;
 
-    public function referenceBy(string $referenceIdentifier, array $values, array $conditions): \pulledbits\ActiveRecord\Record;
+    public function referenceBy(string $referenceIdentifier, array $values, array $conditions): \pulledbits\ActiveRecord\Entity;
 }

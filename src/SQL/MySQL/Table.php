@@ -3,7 +3,7 @@
 namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 use pulledbits\ActiveRecord\RecordType;
-use pulledbits\ActiveRecord\SQL\Entity;
+use pulledbits\ActiveRecord\SQL\Record;
 
 class Table implements RecordType
 {
@@ -44,7 +44,7 @@ class Table implements RecordType
     }
 
     public function makeRecord(array $values) {
-        $record = new Entity($this);
+        $record = new Record($this);
         $record->contains($values);
         return $record;
     }
@@ -142,7 +142,7 @@ class Table implements RecordType
         return $conditions;
     }
 
-    public function referenceBy(string $referenceIdentifier, array $values, array $conditions): \pulledbits\ActiveRecord\Record
+    public function referenceBy(string $referenceIdentifier, array $values, array $conditions): \pulledbits\ActiveRecord\Entity
     {
         $reference = $this->findReference($referenceIdentifier);
         $conditions = $this->mergeValuesIntoConditions($reference['conditions'], $values, $conditions);

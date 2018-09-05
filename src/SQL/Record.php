@@ -2,10 +2,10 @@
 
 namespace pulledbits\ActiveRecord\SQL;
 
-use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\Entity;
 use pulledbits\ActiveRecord\SQL\MySQL\Table;
 
-final class Entity implements Record
+final class Record implements Entity
 {
     private $entityType;
 

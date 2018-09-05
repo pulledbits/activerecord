@@ -2,9 +2,9 @@
 
 namespace pulledbits\ActiveRecord\Source;
 
-use pulledbits\ActiveRecord\Record;
+use pulledbits\ActiveRecord\Entity;
 
 interface Schema
 {
-    public function makeRecord(string $tableIdentifier): Record;
+    public function makeRecord(string $tableIdentifier): Entity;
 }

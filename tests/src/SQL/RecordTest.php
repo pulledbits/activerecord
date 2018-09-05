@@ -17,10 +17,10 @@ use function pulledbits\ActiveRecord\Test\createMockPDOCallback;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatement;
 use function pulledbits\ActiveRecord\Test\createMockPDOStatementProcedure;
 
-class EntityTest extends \PHPUnit\Framework\TestCase
+class RecordTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Entity
+     * @var Record
      */
     private $object;
 
@@ -73,7 +73,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         });
         $connection = new Connection($this->pdo);
         $this->schema = $connection->schema('MySchema');
-        $this->object = new Entity(new Table($this->schema, 'MyTable'));
+        $this->object = new Record(new Table($this->schema, 'MyTable'));
         $this->object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -121,7 +121,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity(new Table($this->schema, 'MyTable2'));
+        $object = new Record(new Table($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -144,7 +144,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new Entity(new Table($this->schema, 'MyTable2'));
+        $object = new Record(new Table($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -157,7 +157,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_NulledRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity(new Table($this->schema, 'MyTable2'));
+        $object = new Record(new Table($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'name' => null,
@@ -201,7 +201,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
-        $object = new Entity(new Table($this->schema, 'MyTable2'));
+        $object = new Record(new Table($this->schema, 'MyTable2'));
         $object->contains([]);
 
         $this->expectException('\PHPUnit\Framework\Error\Error');
@@ -215,7 +215,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     public function test__call_When_CustomMethodCalled_Expect_ValueFromCustomMethod()
     {
         $this->object->bind('customMethod', function($a, $b, $c) {
-            if (get_class($this) === Entity::class) {
+            if (get_class($this) === Record::class) {
                 return 'custom' . $a . $b . $c;
             }
         });
