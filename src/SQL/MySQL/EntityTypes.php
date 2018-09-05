@@ -29,12 +29,12 @@ class EntityTypes implements RecordTypes
         }
     }
 
-    public function makeRecordType(string $recordTypeIdentifier): EntityType
+    public function makeRecordType(string $recordTypeIdentifier): Table
     {
         if (array_key_exists($recordTypeIdentifier, $this->entityIdentifiers) === false) {
-            return new EntityType($this->schema, $recordTypeIdentifier);
+            return new Table($this->schema, $recordTypeIdentifier);
         } elseif (array_key_exists($recordTypeIdentifier, $this->entityTypes) === false) {
-            $this->entityTypes[$recordTypeIdentifier] = new EntityType($this->schema, $recordTypeIdentifier);
+            $this->entityTypes[$recordTypeIdentifier] = new Table($this->schema, $recordTypeIdentifier);
         }
 
         if ($this->entityIdentifiers[$recordTypeIdentifier] === 'VIEW') {

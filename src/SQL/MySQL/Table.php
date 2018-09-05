@@ -2,9 +2,10 @@
 
 namespace pulledbits\ActiveRecord\SQL\MySQL;
 
+use pulledbits\ActiveRecord\RecordType;
 use pulledbits\ActiveRecord\SQL\Entity;
 
-class EntityType
+class Table implements RecordType
 {
     private $schema;
     private $entityTypeIdentifier;
@@ -99,7 +100,7 @@ class EntityType
         $this->schema->executeProcedure($procedureIdentifier, $arguments);
     }
 
-    public function calculateMissingValues(array $values): array
+    private function calculateMissingValues(array $values): array
     {
         $missing = [];
         foreach ($this->requiredAttributeIdentifiers as $requiredColumnIdentifier) {

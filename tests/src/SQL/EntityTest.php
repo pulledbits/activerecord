@@ -9,7 +9,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 
-use pulledbits\ActiveRecord\SQL\MySQL\EntityType;
+use pulledbits\ActiveRecord\SQL\MySQL\Table;
 use function pulledbits\ActiveRecord\Test\createColumnResult;
 use function pulledbits\ActiveRecord\Test\createConstraintResult;
 use function pulledbits\ActiveRecord\Test\createIndexResult;
@@ -73,7 +73,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         });
         $connection = new Connection($this->pdo);
         $this->schema = $connection->schema('MySchema');
-        $this->object = new Entity(new EntityType($this->schema, 'MyTable'));
+        $this->object = new Entity(new Table($this->schema, 'MyTable'));
         $this->object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -121,7 +121,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_MissingRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
+        $object = new Entity(new Table($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -144,7 +144,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
+        $object = new Entity(new Table($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'role_id' => '33',
@@ -157,7 +157,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function test__set_When_NulledRequiredProperty_Expect_NoChanges()
     {
-        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
+        $object = new Entity(new Table($this->schema, 'MyTable2'));
         $object->contains([
             'number' => '1',
             'name' => null,
@@ -201,7 +201,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate_When_RequiredValuesMissing_Expect_NoRecordsCreatedExpectError()
     {
-        $object = new Entity(new EntityType($this->schema, 'MyTable2'));
+        $object = new Entity(new Table($this->schema, 'MyTable2'));
         $object->contains([]);
 
         $this->expectException('\PHPUnit\Framework\Error\Error');

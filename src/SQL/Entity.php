@@ -3,7 +3,7 @@
 namespace pulledbits\ActiveRecord\SQL;
 
 use pulledbits\ActiveRecord\Record;
-use pulledbits\ActiveRecord\SQL\MySQL\EntityType;
+use pulledbits\ActiveRecord\SQL\MySQL\Table;
 
 final class Entity implements Record
 {
@@ -13,7 +13,7 @@ final class Entity implements Record
 
     private $methods;
 
-    public function __construct(EntityType $entityType)
+    public function __construct(Table $entityType)
     {
         $this->entityType = $entityType;
         $this->values = [];

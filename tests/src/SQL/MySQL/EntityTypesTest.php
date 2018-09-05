@@ -84,7 +84,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
         $object = new EntityTypes($this->schema);
 
-        $this->assertEquals(new EntityType($this->schema, 'NotExisting'), $object->makeRecordType('NotExisting'));
+        $this->assertEquals(new Table($this->schema, 'NotExisting'), $object->makeRecordType('NotExisting'));
     }
 
     public function testRetrieveTableDescription_When_EntityIsView_Expect_EmptyTableDescriptionForViewIdentifier()
@@ -101,7 +101,7 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
         $object = new EntityTypes($this->schema);
 
-        $this->assertEquals(new EntityType($this->schema, 'MyView'), $object->makeRecordType('MyView'));
+        $this->assertEquals(new Table($this->schema, 'MyView'), $object->makeRecordType('MyView'));
     }
 
     public function testRetrieveTableDescription_When_EntityIsViewWrappedAroundOtherTable_Expect_EntityTypeForWrappedTable()
@@ -118,6 +118,6 @@ class EntityTypesTest extends \PHPUnit\Framework\TestCase
 
         $object = new EntityTypes($this->schema);
 
-        $this->assertEquals(new EntityType($this->schema, 'MyTable'), $object->makeRecordType('MyTable_MyView'));
+        $this->assertEquals(new Table($this->schema, 'MyTable'), $object->makeRecordType('MyTable_MyView'));
     }
 }
