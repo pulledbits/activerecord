@@ -16,9 +16,11 @@ class Update implements \pulledbits\ActiveRecord\SQL\Query
      * @var Where
      */
     private $where;
+    private $connection;
 
-    public function __construct(string $tableIdentifier, Update\Values $values)
+    public function __construct(Connection $connection, string $tableIdentifier, Update\Values $values)
     {
+        $this->connection = $connection;
         $this->tableIdentifier = $tableIdentifier;
         $this->values = $values;
     }
@@ -28,13 +30,13 @@ class Update implements \pulledbits\ActiveRecord\SQL\Query
         $this->where = QueryFactory::makeWhere($where);
     }
 
-    public function execute(Connection $connection): \pulledbits\ActiveRecord\Result
+    public function execute(): \pulledbits\ActiveRecord\Result
     {
         $parameters = $this->values->parameters();
         if ($this->where !== null) {
             $parameters = array_merge($parameters, $this->where->parameters());
         }
-        return $connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters);
+        return $this->connection->execute("UPDATE " . $this->tableIdentifier . $this->values . $this->where, $parameters);
     }
 
 }

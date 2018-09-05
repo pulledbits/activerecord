@@ -6,5 +6,5 @@ namespace pulledbits\ActiveRecord\SQL;
 
 interface Query
 {
-    public function execute(Connection $connection) : \pulledbits\ActiveRecord\Result;
+    public function execute() : \pulledbits\ActiveRecord\Result;
 }

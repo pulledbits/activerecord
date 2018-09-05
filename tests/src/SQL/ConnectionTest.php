@@ -22,7 +22,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
             }
         });
 
-        $expectedSchema = new Schema($connection, new QueryFactory(), 'MySchema');
+        $expectedSchema = new Schema(new QueryFactory($connection), 'MySchema');
         $this->assertEquals($expectedSchema, $connection->schema('MySchema'));
     }
 }

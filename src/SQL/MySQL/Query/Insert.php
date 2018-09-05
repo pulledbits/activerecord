@@ -1,8 +1,6 @@
 <?php
 
-
 namespace pulledbits\ActiveRecord\SQL\MySQL\Query;
-
 
 use pulledbits\ActiveRecord\SQL\Connection;
 
@@ -11,14 +9,17 @@ class Insert implements \pulledbits\ActiveRecord\SQL\Query
     private $tableIdentifier;
     private $values;
 
-    public function __construct(string $tableIdentifier, PreparedParameters $values)
+    private $connection;
+
+    public function __construct(Connection $connection, string $tableIdentifier, PreparedParameters $values)
     {
+        $this->connection = $connection;
         $this->tableIdentifier = $tableIdentifier;
         $this->values = $values;
     }
 
-    public function execute(Connection $connection): \pulledbits\ActiveRecord\Result
+    public function execute(): \pulledbits\ActiveRecord\Result
     {
-        return $connection->execute("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters());
+        return $this->connection->execute("INSERT INTO " . $this->tableIdentifier . " (" . join(', ', $this->values->extractColumns()) . ") VALUES (" . join(', ', $this->values->extractParameterizedValues()) . ")", $this->values->extractParameters());
     }
 }

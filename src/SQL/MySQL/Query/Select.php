@@ -16,9 +16,12 @@ class Select implements \pulledbits\ActiveRecord\SQL\Query
      * @var Where
      */
     private $where;
+    private $connection;
 
-    public function __construct($entityTypeIdentifier, array $attributeIdentifiers)
+    public function __construct(Connection $connection, $entityTypeIdentifier, array $attributeIdentifiers)
     {
+        $this->connection = $connection;
+
         if (count($attributeIdentifiers) === 0) {
             $attributeIdentifiers[] = '*';
         }
@@ -31,8 +34,8 @@ class Select implements \pulledbits\ActiveRecord\SQL\Query
         $this->where = QueryFactory::makeWhere($where);
     }
 
-    public function execute(Connection $connection): \pulledbits\ActiveRecord\Result
+    public function execute(): \pulledbits\ActiveRecord\Result
     {
-        return $connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
+        return $this->connection->execute("SELECT " . join(', ', $this->attributeIdentifiers) . " FROM " . $this->entityTypeIdentifier . $this->where, $this->where->parameters());
     }
 }

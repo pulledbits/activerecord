@@ -10,15 +10,17 @@ class Procedure implements \pulledbits\ActiveRecord\SQL\Query
 {
     private $procedureIdentifier;
     private $arguments;
+    private $connection;
 
-    public function __construct(string $procedureIdentifier, PreparedParameters $arguments)
+    public function __construct(Connection $connection, string $procedureIdentifier, PreparedParameters $arguments)
     {
+        $this->connection = $connection;
         $this->procedureIdentifier = $procedureIdentifier;
         $this->arguments = $arguments;
     }
 
-    public function execute(Connection $connection) : \pulledbits\ActiveRecord\Result
+    public function execute() : \pulledbits\ActiveRecord\Result
     {
-        return $connection->execute('CALL ' . $this->procedureIdentifier . '(' . join(", ", $this->arguments->extractParameterizedValues()) . ')', $this->arguments->extractParameters());
+        return $this->connection->execute('CALL ' . $this->procedureIdentifier . '(' . join(", ", $this->arguments->extractParameterizedValues()) . ')', $this->arguments->extractParameters());
     }
 }

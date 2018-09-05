@@ -31,7 +31,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
                     return createMockPDOStatement([]);
             }
         });
-        $this->object = new MySQL\Schema($connection, new QueryFactory(), 'MySchema');
+        $this->object = new MySQL\Schema(new QueryFactory($connection), 'MySchema');
     }
 
     public function testUpdateWhere_When_DefaultState_Expect_SQLUpdateQueryWithWhereStatementAndParameters() {

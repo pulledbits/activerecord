@@ -15,9 +15,11 @@ class Delete implements \pulledbits\ActiveRecord\SQL\Query
      * @var Where
      */
     private $where;
+    private $connection;
 
-    public function __construct(string $tableIdentifier)
+    public function __construct(Connection $connection, string $tableIdentifier)
     {
+        $this->connection = $connection;
         $this->tableIdentifier = $tableIdentifier;
     }
 
@@ -26,8 +28,8 @@ class Delete implements \pulledbits\ActiveRecord\SQL\Query
         $this->where = QueryFactory::makeWhere($where);
     }
 
-    public function execute(Connection $connection): \pulledbits\ActiveRecord\Result
+    public function execute(): \pulledbits\ActiveRecord\Result
     {
-        return $connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
+        return $this->connection->execute("DELETE FROM " . $this->tableIdentifier . $this->where, $this->where->parameters());
     }
 }
