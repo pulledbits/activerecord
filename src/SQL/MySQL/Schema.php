@@ -9,12 +9,27 @@ class Schema implements \pulledbits\ActiveRecord\Schema
     private $queryFactory;
     private $identifier;
     private $tables;
+    private $tableIdentifiers;
 
     public function __construct(QueryFactory $queryFactory, string $identifier)
     {
         $this->queryFactory = $queryFactory;
         $this->identifier = $identifier;
-        $this->tables = new Tables($this);
+
+        $this->tables = [];
+
+        $this->tableIdentifiers = [];
+        foreach ($this->listEntities()->fetchAll() as $baseTable) {
+            $tableIdentifier = array_shift($baseTable);
+            switch ($baseTable['Table_type']) {
+                case 'BASE_TABLE':
+                    $this->tableIdentifiers[$tableIdentifier] = 'BASE_TABLE';
+                    break;
+                case 'VIEW':
+                    $this->tableIdentifiers[$tableIdentifier] = 'VIEW';
+                    break;
+            }
+        }
     }
 
     public function listIndexesForTable(string $tableIdentifier): Result
@@ -47,12 +62,32 @@ class Schema implements \pulledbits\ActiveRecord\Schema
         $result = $query->execute();
 
         $records = [];
-        $recordType = $this->tables->makeEntityType($entityTypeIdentifier);
+        $recordType = $this->makeEntityType($entityTypeIdentifier);
         foreach ($result->fetchAll() as $row) {
             $records[] = $recordType->makeEntity($row);
         }
         return $records;
     }
+
+    private function makeEntityType(string $recordTypeIdentifier): \pulledbits\ActiveRecord\EntityType
+    {
+        if (array_key_exists($recordTypeIdentifier, $this->tableIdentifiers) === false) {
+            return new Table($this, $recordTypeIdentifier);
+        } elseif (array_key_exists($recordTypeIdentifier, $this->tables) === false) {
+            $this->tables[$recordTypeIdentifier] = new Table($this, $recordTypeIdentifier);
+        }
+
+        if ($this->tableIdentifiers[$recordTypeIdentifier] === 'VIEW') {
+            $underscorePosition = strpos($recordTypeIdentifier, '_');
+            if ($underscorePosition > 0) {
+                $possibleEntityTypeIdentifier = substr($recordTypeIdentifier, 0, $underscorePosition);
+                $this->tables[$recordTypeIdentifier] = $this->makeEntityType($possibleEntityTypeIdentifier);
+            }
+        }
+
+        return $this->tables[$recordTypeIdentifier];
+    }
+
 
     public function update(string $entityTypeIdentifier, array $values, array $conditions): int
     {
