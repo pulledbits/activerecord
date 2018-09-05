@@ -7,15 +7,15 @@ use pulledbits\ActiveRecord\SQL\MySQL\Table;
 
 final class Record implements Entity
 {
-    private $entityType;
+    private $table;
 
     private $values;
 
     private $methods;
 
-    public function __construct(Table $entityType)
+    public function __construct(Table $table)
     {
-        $this->entityType = $entityType;
+        $this->table = $table;
         $this->values = [];
         $this->methods = [];
     }
@@ -35,19 +35,19 @@ final class Record implements Entity
 
     public function __set($property, $value)
     {
-        if ($this->entityType->update([$property => $value], $this->values) > 0) {
+        if ($this->table->update([$property => $value], $this->values) > 0) {
             $this->values[$property] = $value;
         }
     }
 
     public function delete(): int
     {
-        return $this->entityType->delete($this->entityType->primaryKey($this->values));
+        return $this->table->delete($this->table->primaryKey($this->values));
     }
 
     public function create(): int
     {
-        return $this->entityType->create($this->values);
+        return $this->table->create($this->values);
     }
 
     public function bind(string $methodIdentifier, callable $callback) : void {
@@ -62,9 +62,9 @@ final class Record implements Entity
         }
 
         if (substr($method, 0, 7) === 'fetchBy') {
-            return $this->entityType->fetchBy(substr($method, 7), $this->values, $conditions);
+            return $this->table->fetchBy(substr($method, 7), $this->values, $conditions);
         } elseif (substr($method, 0, 11) === 'referenceBy') {
-            return $this->entityType->referenceBy(substr($method, 11), $this->values, $conditions);
+            return $this->table->referenceBy(substr($method, 11), $this->values, $conditions);
         } elseif (array_key_exists($method, $this->methods)) {
             return call_user_func_array($this->methods[$method], $arguments);
         }
