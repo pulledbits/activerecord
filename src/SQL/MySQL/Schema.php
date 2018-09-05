@@ -3,7 +3,6 @@
 namespace pulledbits\ActiveRecord\SQL\MySQL;
 
 use pulledbits\ActiveRecord\Result;
-use pulledbits\ActiveRecord\SQL\Connection;
 
 class Schema implements \pulledbits\ActiveRecord\Schema
 {
