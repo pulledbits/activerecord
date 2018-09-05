@@ -29,7 +29,7 @@ class EntityTypes implements RecordTypes
         }
     }
 
-    public function makeRecordType(string $recordTypeIdentifier): Table
+    public function makeRecordType(string $recordTypeIdentifier): \pulledbits\ActiveRecord\RecordType
     {
         if (array_key_exists($recordTypeIdentifier, $this->entityIdentifiers) === false) {
             return new Table($this->schema, $recordTypeIdentifier);
