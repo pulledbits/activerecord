@@ -4,5 +4,5 @@ namespace pulledbits\ActiveRecord;
 
 interface RecordTypes
 {
-    public function makeRecordType(string $recordTypeIdentifier): RecordType;
+    public function makeEntityType(string $recordTypeIdentifier): EntityType;
 }

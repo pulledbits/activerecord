@@ -29,7 +29,7 @@ class EntityTypes implements RecordTypes
         }
     }
 
-    public function makeRecordType(string $recordTypeIdentifier): \pulledbits\ActiveRecord\RecordType
+    public function makeEntityType(string $recordTypeIdentifier): \pulledbits\ActiveRecord\EntityType
     {
         if (array_key_exists($recordTypeIdentifier, $this->entityIdentifiers) === false) {
             return new Table($this->schema, $recordTypeIdentifier);
@@ -41,7 +41,7 @@ class EntityTypes implements RecordTypes
             $underscorePosition = strpos($recordTypeIdentifier, '_');
             if ($underscorePosition > 0) {
                 $possibleEntityTypeIdentifier = substr($recordTypeIdentifier, 0, $underscorePosition);
-                $this->entityTypes[$recordTypeIdentifier] = $this->makeRecordType($possibleEntityTypeIdentifier);
+                $this->entityTypes[$recordTypeIdentifier] = $this->makeEntityType($possibleEntityTypeIdentifier);
             }
         }
 

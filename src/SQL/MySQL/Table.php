@@ -2,10 +2,10 @@
 
 namespace pulledbits\ActiveRecord\SQL\MySQL;
 
-use pulledbits\ActiveRecord\RecordType;
+use pulledbits\ActiveRecord\EntityType;
 use pulledbits\ActiveRecord\SQL\Record;
 
-class Table implements RecordType
+class Table implements EntityType
 {
     private $schema;
     private $entityTypeIdentifier;
@@ -43,7 +43,7 @@ class Table implements RecordType
         }
     }
 
-    public function makeRecord(array $values) : \pulledbits\ActiveRecord\Entity {
+    public function makeEntity(array $values) : \pulledbits\ActiveRecord\Entity {
         $record = new Record($this);
         $record->contains($values);
         return $record;

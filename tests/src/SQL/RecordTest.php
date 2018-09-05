@@ -231,7 +231,7 @@ class RecordTest extends \PHPUnit\Framework\TestCase
             }
         });
         $this->object->bind('customMethod', function($a, $b, $c) {
-            $this->entityType->call('customProcedure', [$a, $b, $c]);
+            $this->table->call('customProcedure', [$a, $b, $c]);
         });
         $this->assertNull($this->object->__call('customMethod', ['a', 'b', 'c']));
     }

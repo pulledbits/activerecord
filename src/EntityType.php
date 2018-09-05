@@ -2,9 +2,9 @@
 
 namespace pulledbits\ActiveRecord;
 
-interface RecordType
+interface EntityType
 {
-    public function makeRecord(array $values): \pulledbits\ActiveRecord\Entity;
+    public function makeEntity(array $values): \pulledbits\ActiveRecord\Entity;
 
     public function primaryKey(array $values) : array;
 
