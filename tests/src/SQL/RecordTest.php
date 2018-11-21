@@ -222,18 +222,18 @@ class RecordTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('customabc', $this->object->__call('customMethod', ['a', 'b', 'c']));
     }
 
-    public function test__call_When_CustomMethodWrappingProcedureCalled_Expect_ProcedureToBeCalledThroughEntityType()
+    public function test__call_When_CustomMethodMissing_Expect_ProcedureToBeCalledThroughEntityType()
     {
-        $this->pdo->callback(function(string $query, array $matchedParameters) {
+        $called = false;
+        $this->pdo->callback(function(string $query, array $matchedParameters) use (&$called) {
             switch ($query) {
                 case 'CALL MySchema.customProcedure(' . $matchedParameters[0] . ', ' . $matchedParameters[1] . ', ' . $matchedParameters[2] . ')':
+                    $called = true;
                     return createMockPDOStatementProcedure();
             }
         });
-        $this->object->bind('customMethod', function($a, $b, $c) {
-            $this->table->call('customProcedure', [$a, $b, $c]);
-        });
-        $this->assertNull($this->object->__call('customMethod', ['a', 'b', 'c']));
+        $this->assertNull($this->object->__call('customProcedure', ['a', 'b', 'c']));
+        $this->assertTrue($called);
     }
 
     public function test__call_When_ExistingReferenceFetchByCall_Expect_Value()
@@ -314,9 +314,5 @@ class RecordTest extends \PHPUnit\Framework\TestCase
         $this->expectException('\PHPUnit\Framework\Error\Error');
         $this->expectExceptionMessageRegExp('/^Reference does not exist/');
         $this->object->__call('fetchByFkOthertableRoleWhichActuallyDoesNotExist', [["extra" => '5']]);
-    }
-
-    public function test__call_When_InvalidCallToMagicMethod_Expect_Null() {
-        $this->assertNull($this->object->__call('InvalidCall', []));
     }
 }

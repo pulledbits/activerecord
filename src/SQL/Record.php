@@ -68,6 +68,6 @@ final class Record implements Entity
         } elseif (array_key_exists($method, $this->methods)) {
             return call_user_func_array($this->methods[$method], $arguments);
         }
-        return null;
+        return $this->table->call($method, $arguments);
     }
 }
